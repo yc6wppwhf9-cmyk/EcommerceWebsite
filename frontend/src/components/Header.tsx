@@ -73,7 +73,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       items: [
         { label: 'College Backpacks', slug: 'college-backpacks' },
         { label: 'School Backpacks', slug: 'school-backpacks' },
-        { label: 'Laptop/Office Backpacks', slug: 'laptop-backpacks' },
+        { label: 'Office Backpacks', slug: 'laptop-backpacks' },
         { label: 'Trekking Backpacks', slug: 'trekking-backpacks' },
       ]
     },
