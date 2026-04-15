@@ -74,6 +74,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         { label: 'College Backpacks', slug: 'college-backpacks' },
         { label: 'School Backpacks', slug: 'school-backpacks' },
         { label: 'Office Backpacks', slug: 'office-backpacks' },
+        { label: 'Trekking Backpacks', slug: 'trekking-backpacks' },
       ]
     },
     {
@@ -121,17 +122,16 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         </nav>
 
         <div className="flex-1 flex items-center justify-end font-outfit">
-          {/* Search pill — extra large screens */}
-          <button
-            onClick={onSearchOpen}
-            className="hidden xl:flex items-center gap-2 px-5 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 hover:border-white/30 transition-all text-white/60 hover:text-white mr-4"
-          >
-            <Search size={14} />
-            <span className="text-[11px] font-semibold uppercase tracking-widest">Search</span>
-          </button>
-
           {/* Icon group — all same size, equal gap */}
           <div className="hidden md:flex items-center gap-1">
+            {/* Search */}
+            <button
+              onClick={onSearchOpen}
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 text-white/80 hover:text-white hover:bg-white/10"
+            >
+              <Search size={20} />
+            </button>
+
             {/* Wishlist */}
             <Link
               to="/wishlist"
