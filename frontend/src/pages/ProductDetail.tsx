@@ -371,6 +371,7 @@ export const ProductDetail = () => {
                 </div>
               </AccordionItem>
             </div>
+          </div>
         </div>
 
         {/* AI Insight Section */}
