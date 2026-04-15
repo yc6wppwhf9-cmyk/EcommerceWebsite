@@ -197,8 +197,8 @@ export const AdminDashboard = () => {
   if (isLoading || !user) return null;
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg-main)] font-outfit selection:bg-priority-blue selection:text-white pt-20 transition-colors duration-300">
-      <div className="pt-12 pb-16 px-6">
+    <main className="min-h-screen bg-[var(--color-bg-main)] font-outfit selection:bg-priority-blue selection:text-white pt-24 transition-colors duration-300">
+      <div className="pb-16 px-6">
         <div className="max-w-[1400px] mx-auto px-4">
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
