@@ -99,10 +99,19 @@ export const AdminDashboard = () => {
     { label: 'Users', value: '0', icon: Users, color: 'bg-orange-600' },
   ];
 
+  const addVariant = () => setVariants((v: ColorVariant[]) => [...v, { color: '', colorCode: '#000000', image: '' }]);
+  const updateVariant = (i: number, key: keyof ColorVariant, val: string) =>
+    setVariants((v: ColorVariant[]) => v.map((item: ColorVariant, idx: number) => idx === i ? { ...item, [key]: val } : item));
+  const removeVariant = (i: number) => setVariants((v: ColorVariant[]) => v.filter((_: ColorVariant, idx: number) => idx !== i));
+
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = { ...formData, category: formData.subcategory || formData.category };
+      const payload = { 
+        ...formData, 
+        category: formData.subcategory || formData.category,
+        colors: variants.map(v => ({ name: v.color, code: v.colorCode, image: v.image }))
+      };
       if (editingProduct) {
         await api.updateProduct(editingProduct.id, payload);
         alert('Saved!');
@@ -114,6 +123,7 @@ export const AdminDashboard = () => {
       }
       api.getProducts().then(res => setProducts(res.products.map((p: any) => ({ ...p, id: String(p.id) }))));
       setFormData(BLANK_FORM());
+      setVariants([]);
     } catch { alert('Error!'); }
   };
 
@@ -122,8 +132,6 @@ export const AdminDashboard = () => {
   return (
     <main className="min-h-screen bg-[#f8f9fa] font-outfit pt-12 pb-20">
       <div className="max-w-[1400px] mx-auto px-6">
-        
-        {/* Header - Reduced Space */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <p className="text-[10px] font-black uppercase text-priority-blue tracking-tighter mb-1">Admin Panel</p>
@@ -141,8 +149,6 @@ export const AdminDashboard = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          
-          {/* Sidebar - Better Text Visibility */}
           <aside className="lg:w-60 shrink-0">
             <nav className="space-y-1.5">
               {tabs.map((tab) => (
@@ -150,9 +156,7 @@ export const AdminDashboard = () => {
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setIsAddingProduct(false); setEditingProduct(null); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all ${
-                    activeTab === tab.id 
-                      ? 'bg-priority-blue text-white shadow-md' 
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-white border border-transparent'
+                    activeTab === tab.id ? 'bg-priority-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-white border border-transparent'
                   }`}
                 >
                   <tab.icon size={16} />
@@ -162,10 +166,8 @@ export const AdminDashboard = () => {
             </nav>
           </aside>
 
-          {/* Main Content */}
           <div className="flex-1 min-w-0">
             <AnimatePresence mode="wait">
-              
               {activeTab === 'overview' && (
                 <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -178,13 +180,6 @@ export const AdminDashboard = () => {
                          <p className="text-xl font-black text-gray-900 tracking-tight">{m.value}</p>
                        </div>
                     ))}
-                  </div>
-
-                  <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-                    <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight mb-4 text-left">Recent Sales</h3>
-                    <div className="py-10 text-gray-400">
-                       <p className="text-[10px] font-bold uppercase">No orders yet</p>
-                    </div>
                   </div>
                 </motion.div>
               )}
@@ -204,7 +199,7 @@ export const AdminDashboard = () => {
                     <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-xl max-w-2xl mx-auto">
                         <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
                             <h3 className="text-sm font-black text-gray-900 uppercase">{editingProduct ? 'Edit Item' : 'Add New Item'}</h3>
-                            <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); }} className="p-2 hover:text-red-500"><X size={20} /></button>
+                            <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); setVariants([]); }} className="p-2 hover:text-red-500"><X size={20} /></button>
                         </div>
                         <form onSubmit={handleSaveProduct} className="space-y-6">
                             <div className="space-y-2">
@@ -221,24 +216,53 @@ export const AdminDashboard = () => {
                                     <input required type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: parseInt(e.target.value)||0})} className={inputCls} />
                                 </div>
                             </div>
-                            <CloudinaryUpload label="Photo" value={formData.images?.[0] || ''} onChange={(url) => setFormData({ ...formData, images: [url] })} />
+                            
+                            <CloudinaryUpload label="Main Photo" value={formData.images?.[0] || ''} onChange={(url) => setFormData({ ...formData, images: [url] })} />
+                            
+                            {/* --- MULTIPLE COLOURS SECTION --- */}
+                            <div className="pt-4 border-t border-gray-100">
+                                <div className="flex items-center justify-between mb-4">
+                                    <label className="text-[10px] font-black text-gray-900 uppercase">Different Colours & Photos</label>
+                                    <button type="button" onClick={addVariant} className="text-[9px] font-black text-priority-blue uppercase border border-priority-blue/20 px-3 py-1.5 rounded-lg">+ Add Colour</button>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                    {variants.map((v, i) => (
+                                        <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-200 relative">
+                                            <button type="button" onClick={() => removeVariant(i)} className="absolute top-2 right-2 text-red-500"><X size={14} /></button>
+                                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                                <div className="space-y-1">
+                                                    <label className="text-[8px] font-black text-gray-500 uppercase">Colour Name</label>
+                                                    <input type="text" value={v.color} onChange={(e) => updateVariant(i, 'color', e.target.value)} placeholder="e.g. Navy" className={inputCls} />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[8px] font-black text-gray-500 uppercase">Pick Color</label>
+                                                    <input type="color" value={v.colorCode} onChange={(e) => updateVariant(i, 'colorCode', e.target.value)} className="w-full h-10 rounded-lg p-1 bg-white border border-gray-200 cursor-pointer" />
+                                                </div>
+                                            </div>
+                                            <CloudinaryUpload label={`Photo for ${v.color || 'this colour'}`} value={v.image} onChange={(url) => updateVariant(i, 'image', url)} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-600 uppercase">Details</label>
+                                <label className="text-[10px] font-black text-gray-600 uppercase">Details/Description</label>
                                 <textarea rows={3} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className={`${inputCls} resize-none`} />
                             </div>
-                            <button type="submit" className="w-full py-4 bg-priority-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest">Save Item</button>
+                            <button type="submit" className="w-full py-4 bg-priority-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest">Save Product</button>
                         </form>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {products.map(p => (
-                        <div key={p.id} className="bg-white p-4 rounded-xl border border-gray-200 flex gap-4 hover:border-priority-blue transition-all">
+                        <div key={p.id} className="bg-white p-4 rounded-xl border border-gray-200 flex gap-4 hover:border-priority-blue transition-all group">
                           <img src={p.image} className="w-20 h-20 object-contain p-1 bg-gray-50 rounded-lg" />
                           <div className="flex-1 flex flex-col justify-between">
                             <h4 className="text-xs font-black text-gray-900 truncate">{p.name}</h4>
                             <p className="text-[10px] font-bold text-gray-400">₹ {p.price.toLocaleString()}</p>
                             <div className="flex gap-4 mt-2">
-                               <button onClick={() => { setEditingProduct(p); setFormData(p); setIsAddingProduct(true); }} className="text-[10px] font-black text-priority-blue uppercase">Edit</button>
+                               <button onClick={() => { setEditingProduct(p); setFormData(p); setVariants((p.variants || []).map((v:any) => ({ color: v.color||'', colorCode: v.colorCode||'#000', image: v.images?.[0]||'' }))); setIsAddingProduct(true); }} className="text-[10px] font-black text-priority-blue uppercase">Edit</button>
                                <button onClick={() => { if(window.confirm('Delete?')) api.deleteProduct(p.id).then(() => setProducts(x => x.filter(item => item.id !== p.id))) }} className="text-[10px] font-black text-red-500 uppercase">Delete</button>
                             </div>
                           </div>
@@ -250,7 +274,6 @@ export const AdminDashboard = () => {
               )}
 
               {activeTab === 'bulk' && <motion.div key="blk" initial={{ opacity: 0 }} animate={{ opacity: 1 }}><BulkUpload /></motion.div>}
-
             </AnimatePresence>
           </div>
         </div>
