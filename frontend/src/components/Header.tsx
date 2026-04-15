@@ -86,8 +86,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       ]
     },
     { title: 'ACCESSORIES', to: '/accessories' },
-    { title: 'PRIORITY JUNIOR', to: '/junior' },
-    { title: 'PREMIUM Collection', to: '/premium' },
+    { title: 'JUNIOR', to: '/junior' },
+    { title: 'PREMIUM', to: '/premium' },
   ];
 
   return (
