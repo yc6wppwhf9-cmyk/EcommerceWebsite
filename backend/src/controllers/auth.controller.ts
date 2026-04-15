@@ -42,15 +42,20 @@ export const login = async (req: Request, res: Response) => {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') { // code for "no rows found"
-        return res.status(401).json({ error: 'Invalid email or password' });
+      if (error.code === 'PGRST116') {
+        return res.status(401).json({ error: 'User not found' });
       }
       console.error('Database error during login:', error);
       return res.status(500).json({ error: 'Database error' });
     }
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Wrong password' });
     }
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: '7d' });
