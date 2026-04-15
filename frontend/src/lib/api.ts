@@ -11,8 +11,9 @@ function getToken(): string | null {
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
+  const isFormData = options.body instanceof FormData;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options.headers as Record<string, string>),
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -62,6 +63,19 @@ export const api = {
     request<any>(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteProduct: (id: string) =>
     request<any>(`/api/products/${id}`, { method: 'DELETE' }),
+
+  uploadImage: (formData: FormData) =>
+    request<{ url: string }>('/api/products/upload-image', {
+      method: 'POST',
+      body: formData,
+      headers: {}, // Let browser set multipart/form-data with boundary
+    }),
+  bulkUpload: (formData: FormData) =>
+    request<{ success: boolean; count: number }>('/api/products/bulk-upload', {
+      method: 'POST',
+      body: formData,
+      headers: {},
+    }),
 
   // Orders
   getOrders: () => request<any[]>('/api/orders'),

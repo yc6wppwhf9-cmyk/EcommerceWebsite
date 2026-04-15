@@ -8,8 +8,9 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../types';
-import { CloudinaryUpload } from '../components/CloudinaryUpload';
 import { api } from '../lib/api';
+import { BulkUpload } from '../components/BulkUpload';
+import { FileSpreadsheet } from 'lucide-react';
 
 // ─── Category maps ────────────────────────────────────────────
 const MAIN_CATEGORIES = [
@@ -106,6 +107,7 @@ export const AdminDashboard = () => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'inventory', label: 'Products', icon: Box },
+    { id: 'bulk', label: 'Bulk Actions', icon: FileSpreadsheet },
     { id: 'orders', label: 'Orders', icon: Truck },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'analytics', label: 'Settings', icon: Settings },
@@ -519,6 +521,17 @@ export const AdminDashboard = () => {
                       </div>
                     </div>
                   )}
+                </motion.div>
+              )}
+
+              {activeTab === 'bulk' && (
+                <motion.div 
+                  key="bulk"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-8"
+                >
+                  <BulkUpload />
                 </motion.div>
               )}
             </AnimatePresence>
