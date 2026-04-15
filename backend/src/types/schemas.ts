@@ -1,0 +1,45 @@
+import { z } from 'zod';
+
+export const registerSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, 'Name must be at least 2 characters'),
+    email: z.string().email('Invalid email format'),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    phone: z.string().optional(),
+  }),
+});
+
+export const loginSchema = z.object({
+  body: z.object({
+    email: z.string().email('Invalid email format'),
+    password: z.string().min(1, 'Password is required'),
+  }),
+});
+
+export const productSchema = z.object({
+  body: z.object({
+    name: z.string().min(2),
+    price: z.number().positive(),
+    original_price: z.number().positive(),
+    stock: z.number().int().nonnegative(),
+    category_id: z.string().uuid().optional(),
+    description: z.string().optional(),
+    sku: z.string().min(3),
+  }),
+});
+
+export const orderSchema = z.object({
+  body: z.object({
+    items: z.array(z.object({
+      product_id: z.string().uuid(),
+      quantity: z.number().int().positive(),
+    })).min(1),
+    shipping_name: z.string().min(2),
+    shipping_phone: z.string().min(10),
+    shipping_line1: z.string().min(5),
+    shipping_city: z.string().min(2),
+    shipping_state: z.string().min(2),
+    shipping_pincode: z.string().length(6),
+    payment_method: z.enum(['cod', 'online']).default('cod'),
+  }),
+});
