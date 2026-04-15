@@ -151,17 +151,19 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                     {user?.name?.charAt(0)}
                   </span>
                 </button>
-                <div className="absolute top-full right-0 w-56 mt-2 bg-white shadow-2xl z-50 rounded-2xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 p-2">
-                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue hover:bg-gray-50 rounded-xl transition-all">
-                    <LayoutDashboard size={16} /> {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
-                  </Link>
-                  <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
-                    {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                  </button>
-                  <div className="my-1 border-t border-gray-100" />
-                  <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                    <LogOut size={16} /> Logout
-                  </button>
+                <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                  <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 p-2">
+                    <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue hover:bg-gray-50 rounded-xl transition-all">
+                      <LayoutDashboard size={16} /> {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
+                    </Link>
+                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+                      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                    </button>
+                    <div className="my-1 border-t border-gray-100" />
+                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -169,13 +171,15 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 <Link to="/login" className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 ${location.pathname === '/login' ? 'bg-white text-priority-blue' : 'text-white/80 hover:text-white hover:bg-white/10'}`}>
                   <User size={20} />
                 </Link>
-                <div className="absolute top-full right-0 w-48 mt-2 bg-white shadow-2xl z-50 rounded-2xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100 p-2">
-                  <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue hover:bg-gray-50 rounded-xl transition-all">
-                    <User size={16} /> Login
-                  </Link>
-                  <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
-                    {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                  </button>
+                <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                  <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 p-2">
+                    <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue hover:bg-gray-50 rounded-xl transition-all">
+                      <User size={16} /> Login
+                    </Link>
+                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+                      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -229,7 +233,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               </button>
               {isAuthenticated ? (
                 <>
-                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>My Account</Link>
+                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
+                    {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
+                  </Link>
                   <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-center block">Logout</button>
                 </>
               ) : (

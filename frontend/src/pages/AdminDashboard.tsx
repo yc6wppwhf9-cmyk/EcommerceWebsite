@@ -74,6 +74,13 @@ export const AdminDashboard = () => {
   const [variants, setVariants] = useState<ColorVariant[]>([]);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
 
+  const metrics = [
+    { label: 'Revenue Today', value: '₹ 24,500', icon: TrendingUp, color: 'bg-emerald-500' },
+    { label: 'Total Sales', value: '1,284', icon: ShoppingBag, color: 'bg-priority-blue' },
+    { label: 'Active Users', value: '42', icon: Users, color: 'bg-orange-500' },
+    { label: 'Pending Ships', value: '12', icon: Truck, color: 'bg-purple-500' },
+  ];
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate('/login');
     if (user && user.role !== 'admin') navigate('/account');
