@@ -13,6 +13,9 @@ import orderRoutes from './routes/order.routes';
 
 const app = express();
 
+// Enable trust proxy for Render/Vercel
+app.set('trust proxy', 1);
+
 // --- Middleware ---
 app.use(helmet());
 app.use(compression());
