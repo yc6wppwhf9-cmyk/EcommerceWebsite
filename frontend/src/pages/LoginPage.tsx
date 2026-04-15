@@ -23,12 +23,11 @@ export const LoginPage = () => {
     e.preventDefault();
     setError('');
     try {
-      const success = mode === 'login'
-        ? await login(email, password)
-        : await register(name, email, password);
-      if (!success) setError('Invalid login credentials.');
-    } catch {
-      setError('Connection error. Please try again.');
+      await (mode === 'login'
+        ? login(email, password)
+        : register(name, email, password));
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong.');
     }
   };
 
