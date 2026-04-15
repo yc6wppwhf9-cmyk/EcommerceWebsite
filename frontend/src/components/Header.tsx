@@ -101,10 +101,10 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   ];
 
   return (
-    <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-700 h-16 ${
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${
       isScrolled 
-        ? 'bg-priority-blue/95 dark:bg-black/95 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl' 
-        : 'bg-priority-blue/30 dark:bg-black/30 backdrop-blur-md'
+        ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' 
+        : 'bg-transparent'
     }`}>
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center text-white">
 

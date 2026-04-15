@@ -14,6 +14,8 @@
     - DAYPACK
     - TOTE BAG
 - Renamed **Laptop/Office Backpacks** to **Office Backpacks**.
+- Updated search bar in navbar to use only a minimalist icon, removing the text pill for a cleaner UI.
+- Changed navbar position from `sticky` to `fixed` and set background to `transparent` at the top of the page. This allowing the header to perfectly overlay and "merge" with the hero images below.
 
 ### 2. Category System Updates (`constants/products.ts`)
 - Added new category definitions for all new subcategories.
