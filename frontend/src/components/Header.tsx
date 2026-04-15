@@ -101,8 +101,11 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   ];
 
   return (
-    <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-[0.8s] h-16 bg-[var(--color-nav-bg)] ${isScrolled ? 'shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md' : ''
-      }`}>
+    <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-700 h-16 ${
+      isScrolled 
+        ? 'bg-priority-blue/95 dark:bg-black/95 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl' 
+        : 'bg-priority-blue/30 dark:bg-black/30 backdrop-blur-md'
+    }`}>
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center text-white">
 
         <div className="flex-1 flex items-center">
