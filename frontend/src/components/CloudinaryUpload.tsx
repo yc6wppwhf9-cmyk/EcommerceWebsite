@@ -28,12 +28,15 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
     setUploading(true);
     setError('');
 
-    const form = new FormData();
-    form.append('file', file);
-    form.append('upload_preset', uploadPreset);
-    form.append('folder', 'priority-bags/products');
-
     try {
+      // Auto-compress and resize image before upload
+      const compressedFile = await compressImage(file);
+      
+      const form = new FormData();
+      form.append('file', compressedFile);
+      form.append('upload_preset', uploadPreset);
+      form.append('folder', 'priority-bags/products');
+
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         { method: 'POST', body: form }
@@ -45,11 +48,59 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
       } else {
         setError('Upload failed — check Cloudinary env vars');
       }
-    } catch {
-      setError('Upload failed — check your internet connection');
+    } catch (err: any) {
+      setError(err.message || 'Upload failed — check your internet connection');
     } finally {
       setUploading(false);
     }
+  };
+
+  // Helper function to compress image using Canvas
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Max resolution 2000px (standard for web products)
+          const MAX_SIZE = 2000;
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Export as WebP with 0.8 quality (very efficient size/quality balance)
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error('Compression failed'));
+            },
+            'image/webp',
+            0.8
+          );
+        };
+        img.onerror = () => reject(new Error('Failed to load image for compression'));
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+    });
   };
 
   const handleDrop = (e: React.DragEvent) => {
