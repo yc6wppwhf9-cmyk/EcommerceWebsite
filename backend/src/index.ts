@@ -47,11 +47,4 @@ app.get('/api/health', async (_req, res) => {
   }
 });
 
-// START SERVER
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(config.PORT, () => {
-    console.log(`🚀 Priority Bags Backend running on port ${config.PORT}`);
-  });
-}
-
 export default app;
