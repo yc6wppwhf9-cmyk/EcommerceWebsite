@@ -125,9 +125,43 @@ export const CategoryPage = () => {
             <div className="sticky top-32">
               <h2 className="text-[12px] font-black uppercase tracking-[0.2em] mb-6 border-b border-gray-900 pb-2">Filters</h2>
               
+              {subcategories.length > 0 && (
+                <FilterSection id="subcategories" title="Product Type">
+                  <div className="space-y-3">
+                    {subcategories.map(sub => (
+                      <label key={sub.id} className="flex items-center gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          className="hidden"
+                          checked={selectedSubcategories.includes(sub.slug)}
+                          onChange={() => setSelectedSubcategories(prev => 
+                            prev.includes(sub.slug) ? prev.filter(s => s !== sub.slug) : [...prev, sub.slug]
+                          )}
+                        />
+                        <div className={`w-3 h-3 border transition-colors ${selectedSubcategories.includes(sub.slug) ? 'bg-black border-black' : 'border-gray-200 group-hover:border-black'}`} />
+                        <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${selectedSubcategories.includes(sub.slug) ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
+                          {sub.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </FilterSection>
+              )}
+
+              <FilterSection id="gender" title="Style / Gender">
+                <div className="space-y-3">
+                  {['Unisex', 'Men', 'Women', 'Kids'].map(g => (
+                    <label key={g} className="flex items-center gap-3 cursor-pointer group">
+                      <div className="w-3 h-3 border border-gray-200 rounded-sm group-hover:border-black transition-colors" />
+                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-black uppercase tracking-widest transition-colors">{g}</span>
+                    </label>
+                  ))}
+                </div>
+              </FilterSection>
+
               <FilterSection id="features" title="Features">
                 <div className="space-y-3">
-                  {['Waterproof', 'Expandable', 'TSA Lock', 'Spinner Wheels'].map(feature => (
+                  {['Waterproof', 'Expandable', 'TSA Lock', 'Anti-Theft'].map(feature => (
                     <label key={feature} className="flex items-center gap-3 cursor-pointer group">
                       <div className="w-3 h-3 border border-gray-200 rounded-sm group-hover:border-black transition-colors" />
                       <span className="text-[10px] font-bold text-gray-400 group-hover:text-black uppercase tracking-widest transition-colors">{feature}</span>
@@ -136,35 +170,14 @@ export const CategoryPage = () => {
                 </div>
               </FilterSection>
 
-              <FilterSection id="colors" title="Colors">
-                 <div className="flex flex-wrap gap-2">
-                    {['#000000', '#F3C94C', '#FF7675', '#6AA5DE', '#A2D59B'].map(color => (
-                       <button key={color} className="w-6 h-6 rounded-full border border-gray-100" style={{ backgroundColor: color }} />
-                    ))}
-                 </div>
-              </FilterSection>
-
               <FilterSection id="sizes" title="Sizes">
                 <div className="space-y-3">
-                  {['Small / Cabin', 'Medium / Check-in', 'Large / Travel'].map(size => (
+                  {['Small / Cabin', 'Medium / Check-in', 'Large'].map(size => (
                     <label key={size} className="flex items-center gap-3 cursor-pointer group">
                       <div className="w-3 h-3 border border-gray-200 rounded-sm group-hover:border-black transition-colors" />
                       <span className="text-[10px] font-bold text-gray-400 group-hover:text-black uppercase tracking-widest transition-colors">{size}</span>
                     </label>
                   ))}
-                </div>
-              </FilterSection>
-              
-              <FilterSection id="price" title="Price">
-                <div className="pt-2">
-                  <input 
-                    type="range" min="400" max="10000" step="100"
-                    value={priceRange} onChange={(e) => setPriceRange(parseInt(e.target.value))}
-                    className="w-full accent-black h-px bg-gray-200"
-                  />
-                  <p className="mt-4 text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">
-                    Up to Rs. {priceRange.toLocaleString()}
-                  </p>
                 </div>
               </FilterSection>
             </div>
