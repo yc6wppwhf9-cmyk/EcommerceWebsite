@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { Product } from '../types';
 import { api } from '../lib/api';
 import { BulkUpload } from '../components/BulkUpload';
+import { CloudinaryUpload } from '../components/CloudinaryUpload';
 import { FileSpreadsheet } from 'lucide-react';
 
 // ─── Category maps ────────────────────────────────────────────
