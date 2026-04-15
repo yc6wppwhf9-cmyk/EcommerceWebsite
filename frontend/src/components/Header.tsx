@@ -73,19 +73,29 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       items: [
         { label: 'College Backpacks', slug: 'college-backpacks' },
         { label: 'School Backpacks', slug: 'school-backpacks' },
-        { label: 'Office Backpacks', slug: 'laptop-backpacks' },
+        { label: 'Office Backpacks', slug: 'office-backpacks' },
         { label: 'Trekking Backpacks', slug: 'trekking-backpacks' },
       ]
     },
     {
-      title: 'LUGGAGE',
-      to: '/luggage',
+      title: 'TRAVEL',
+      to: '/travel',
       items: [
-        { label: 'Soft Shell', slug: 'soft-luggage' },
-        { label: 'Hard Shell', slug: 'hard-luggage' },
+        { label: 'Luggage', slug: 'luggage' },
+        { label: 'Duffle', slug: 'duffle' },
+        { label: 'Trekking', slug: 'trekking' },
       ]
     },
-    { title: 'ACCESSORIES', to: '/accessories' },
+    {
+      title: 'ACCESSORIES',
+      to: '/accessories',
+      items: [
+        { label: 'Pouch', slug: 'pouch' },
+        { label: 'Lunch Bag', slug: 'lunch-bag' },
+        { label: 'Daypack', slug: 'daypack' },
+        { label: 'Tote Bag', slug: 'tote-bag' },
+      ]
+    },
     { title: 'JUNIOR', to: '/junior' },
     { title: 'PREMIUM', to: '/premium' },
   ];
