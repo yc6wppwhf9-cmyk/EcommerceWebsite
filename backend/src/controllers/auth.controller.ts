@@ -41,8 +41,17 @@ export const login = async (req: Request, res: Response) => {
       .eq('email', email)
       .single();
 
-    if (error || !user || !(await bcrypt.compare(password, user.password)))
+    if (error) {
+      if (error.code === 'PGRST116') { // code for "no rows found"
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+      console.error('Database error during login:', error);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: '7d' });
     res.json({
