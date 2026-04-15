@@ -29,6 +29,7 @@ export interface Product {
   createdAt: string;
   isPremium?: boolean;
   gender?: 'men' | 'women' | 'kids' | 'unisex';
+  ageRange?: string;
 }
 
 export interface CategoryInfo {

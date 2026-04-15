@@ -56,7 +56,7 @@ type ColorVariant = { color: string; colorCode: string; image: string };
 
 const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
-  gender: 'unisex', stock: 50, description: '', isPremium: false, images: [],
+  gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
   isNew: false, highlighted: false, // highlighted used for best seller
 });
@@ -216,13 +216,26 @@ export const AdminDashboard = () => {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Gender / Style</label>
-                                    <select value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value as any})} className={inputCls}>
+                                    <select value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value as any, ageRange: e.target.value === 'kids' ? formData.ageRange : ''})} className={inputCls}>
                                         <option value="unisex">Unisex / All</option>
                                         <option value="men">Men</option>
                                         <option value="women">Women</option>
                                         <option value="kids">Kids</option>
                                     </select>
                                 </div>
+
+                                {formData.gender === 'kids' && (
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Age Range (for Kids)</label>
+                                        <select value={formData.ageRange} onChange={(e) => setFormData({...formData, ageRange: e.target.value})} className={inputCls}>
+                                            <option value="">-- Pick Age Group --</option>
+                                            <option value="0-2">Infants (0-2 Yrs)</option>
+                                            <option value="3-5">Toddlers (3-5 Yrs)</option>
+                                            <option value="6-10">Elementary (6-10 Yrs)</option>
+                                            <option value="11-14">Junior / Teen (11-14 Yrs)</option>
+                                        </select>
+                                    </div>
+                                )}
                             </div>
 
                             {/* --- CATEGORIES --- */}
