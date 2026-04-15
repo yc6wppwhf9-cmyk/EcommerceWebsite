@@ -6,7 +6,7 @@ import {
   Plus, Edit3, Trash2, X, Check,
   TrendingUp, ShoppingBag, CreditCard,
   FileSpreadsheet, Image as ImageIcon,
-  Zap, Award, Percent
+  Zap, Award, Percent, Crown
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -293,6 +293,13 @@ export const AdminDashboard = () => {
                                         <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.highlighted ? 'left-5' : 'left-1'}`} />
                                     </div>
                                     <span className="flex items-center gap-1 text-[10px] font-black uppercase text-orange-600"><Award size={12}/> Mark as Best Seller</span>
+                                </label>
+                                <label className="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" checked={formData.isPremium} onChange={(e) => setFormData({...formData, isPremium: e.target.checked})} className="hidden" />
+                                    <div className={`w-10 h-6 rounded-full transition-all relative ${formData.isPremium ? 'bg-amber-500' : 'bg-gray-200'}`}>
+                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isPremium ? 'left-5' : 'left-1'}`} />
+                                    </div>
+                                    <span className="flex items-center gap-1 text-[10px] font-black uppercase text-amber-600"><Crown size={12}/> Premium Collection</span>
                                 </label>
                             </div>
 
