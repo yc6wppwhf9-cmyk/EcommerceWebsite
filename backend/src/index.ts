@@ -20,7 +20,8 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(compression());
 app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,

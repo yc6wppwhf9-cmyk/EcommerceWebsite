@@ -20,8 +20,8 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
       setError('Please select an image file (PNG, JPG, WEBP)');
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File too large — max 10MB');
+    if (file.size > 50 * 1024 * 1024) {
+      setError('File too large — max 50MB');
       return;
     }
 
@@ -116,7 +116,7 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
               <p className="text-[11px] font-black uppercase tracking-widest">
                 {uploading ? 'Uploading to Cloudinary…' : 'Click or drag & drop'}
               </p>
-              <p className="text-[10px] text-gray-300 font-medium">PNG · JPG · WEBP · Max 10MB</p>
+              <p className="text-[10px] text-gray-300 font-medium">PNG · JPG · WEBP · Max 50MB</p>
             </div>
           </button>
         )}

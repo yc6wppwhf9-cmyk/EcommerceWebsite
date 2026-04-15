@@ -7,9 +7,9 @@ import multer from 'multer';
 import { storage } from '../config/cloudinary';
 
 const router = Router();
-const upload = multer({ storage });
+const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
 const memoryStorage = multer.memoryStorage();
-const uploadExcel = multer({ storage: memoryStorage });
+const uploadExcel = multer({ storage: memoryStorage, limits: { fileSize: 50 * 1024 * 1024 } });
 
 router.get('/', ProductController.getProducts);
 router.get('/:slug', ProductController.getProductBySlug);
