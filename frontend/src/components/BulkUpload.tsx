@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { FileSpreadsheet, X, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { FileSpreadsheet, X, Upload, CheckCircle2, AlertCircle, Loader2, Check } from 'lucide-react';
 import { api } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 
