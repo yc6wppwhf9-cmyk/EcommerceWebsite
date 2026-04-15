@@ -17,9 +17,9 @@ import { CloudinaryUpload } from '../components/CloudinaryUpload';
 
 const MAIN_CATEGORIES = [
   { value: 'backpacks',    label: 'Backpacks' },
-  { value: 'luggage',      label: 'Luggage' },
+  { value: 'travel',       label: 'Travel' },
   { value: 'accessories',  label: 'Accessories' },
-  { value: 'kids',         label: 'Kids Collection' },
+  { value: 'junior',       label: 'Junior' },
   { value: 'premium',      label: 'Premium Collection' },
 ];
 
@@ -27,21 +27,21 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   backpacks: [
     { value: 'college-backpacks',   label: 'College Backpacks' },
     { value: 'school-backpacks',    label: 'School Backpacks' },
-    { value: 'laptop-backpacks',    label: 'Laptop Backpacks' },
+    { value: 'office-backpacks',    label: 'Office Backpacks' },
     { value: 'trekking-backpacks',  label: 'Trekking Backpacks' },
   ],
-  luggage: [
-    { value: 'cabin-luggage',       label: 'Cabin Luggage (≤ 20")' },
-    { value: 'check-in-luggage',    label: 'Check-in Luggage (24"+)' },
-    { value: 'trolley-bags',        label: 'Trolley Bags' },
-    { value: 'travel-sets',         label: 'Travel Sets' },
+  travel: [
+    { value: 'luggage',             label: 'Luggage' },
+    { value: 'duffle',              label: 'Duffle Bags' },
+    { value: 'trekking',            label: 'Trekking' },
   ],
   accessories: [
-    { value: 'duffle-bags',         label: 'Duffle Bags' },
-    { value: 'wallets',             label: 'Wallets & Pouches' },
-    { value: 'travel-accessories',  label: 'Travel Accessories' },
+    { value: 'pouch',               label: 'Pouches' },
+    { value: 'lunch-bag',           label: 'Lunch Bags' },
+    { value: 'daypack',             label: 'Daypacks' },
+    { value: 'tote-bag',            label: 'Tote Bags' },
   ],
-  kids: [
+  junior: [
     { value: 'school-backpacks',    label: 'School Backpacks' },
     { value: 'kids-accessories',    label: 'Kids Accessories' },
   ],
