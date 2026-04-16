@@ -95,7 +95,7 @@ export const AdminDashboard = () => {
         api.getOrders()
       ]);
       setProducts(prodRes.products.map((p: any) => ({ ...p, id: String(p.id) })));
-      setOrders(orderRes.orders);
+      setOrders(orderRes.data);
     } catch (err) {
       console.error('Fetch error:', err);
     }
