@@ -187,7 +187,7 @@ export const Home = () => {
       </section>
 
       {/* Editorial Banner (Keeping same as previous per customer screenshot) */}
-      <section className="relative bg-banner-blue overflow-hidden">
+      <section className="relative bg-banner-blue">
         {/* Mobile version */}
         <div className="md:hidden relative w-full h-[88vh] bg-[#F8F9FA] overflow-hidden" style={{ aspectRatio: '4/5' }}>
           <img src={IMG.banner} alt="New Arrival" className="absolute inset-0 w-full h-full object-contain object-center" />
