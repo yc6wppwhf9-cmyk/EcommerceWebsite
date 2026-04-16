@@ -10,7 +10,7 @@ const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
   { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', color: '#A368FB' },
   { label: '6 to 10 Years', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
-  { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png", color: '#FFBB5A' },
+  { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Beautiful_ Hero 1.  png", color: '#FFBB5A' },
 ];
 
 const CATEGORIES = [
@@ -88,8 +88,15 @@ export const JuniorPage = () => {
   return (
     <main className="bg-white min-h-screen overflow-x-hidden">
 
-      <section className="relative w-full h-[450px] md:h-[650px] overflow-hidden">
-        <img src="/junior/junior hero.png" alt="Junior Collection Preview" className="w-full h-full object-cover" />
+      {/* ═══════════════════════════════════════════════
+          RESPONSIVE HERO — scales with image's natural aspect ratio
+      ═══════════════════════════════════════════════ */}
+      <section className="relative w-full overflow-hidden">
+        <img
+          src="/junior/junior hero.png"
+          alt="Junior Collection Preview"
+          className="w-full h-auto object-contain block"
+        />
       </section>
 
       <section className="py-12 md:py-16 bg-white relative overflow-hidden">
@@ -122,7 +129,7 @@ export const JuniorPage = () => {
           <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-120px] mb-4 overflow-visible">
             <div className="relative w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
               <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 md:pt-16">
+              <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 md:pt-6">
                 <span className="font-outfit uppercase tracking-[0.2em] mb-2" style={{ fontSize: '28.36px', fontWeight: 400, color: '#966512' }}>New Arrival</span>
                 <h2 className="font-protest tracking-tight max-w-[433px] mx-auto" style={{ fontSize: '50.82px', color: '#3E92E6', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
               </div>
@@ -149,7 +156,7 @@ export const JuniorPage = () => {
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
               <div className="relative flex flex-col items-center pt-8" style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}>
-                <div className="overflow-hidden shadow-2xl mb-4" style={{ width: '285px', height: '400px', borderRadius: '5px' }}><img src="/junior/Beautiful_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
+                <div className="overflow-hidden shadow-2xl mb-4" style={{ width: '285px', height: '400px', borderRadius: '5px' }}><img src="/junior/Drift Sky Blue_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
                 <h3 className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
               </div>
             </div>

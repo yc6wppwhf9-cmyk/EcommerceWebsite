@@ -132,7 +132,7 @@ export const Home = () => {
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
-  
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const bestSellersRef = useRef<HTMLDivElement>(null);
 
@@ -245,11 +245,11 @@ export const Home = () => {
                   <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: '32.4px' }}>
                     Trendy {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(0, -1).join(' ')}
                   </p>
-                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[8px]" style={{ fontSize: '47.4px' }}>
+                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[32px]" style={{ fontSize: '47.4px' }}>
                     {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
-                
+
                 {/* Image below rectangle */}
                 <div className="w-[379px] h-[411px] overflow-hidden relative">
                   <img src={IMG.refPoster} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" />
@@ -303,10 +303,10 @@ export const Home = () => {
       </section>
 
       {/* Why Shop With Us */}
-      <section className="pt-12 pb-10 md:pt-20 md:pb-32 bg-[#F9F9F9] border-t border-gray-100">
+      <section className="pt-12 pb-10 md:pt-20 md:pb-32 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
         <div className="container mx-auto px-5 md:px-8">
           <div className="flex flex-col items-center mb-8 md:mb-20">
-            <p className="text-base md:text-3xl font-black text-[#14052b] uppercase tracking-[0.2em]">Why Shop With Us</p>
+            <p className="text-base md:text-base font-semibold text-[#14052b] uppercase tracking-[0.2em]">Why Shop With Us</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-16">
             {[
@@ -319,8 +319,8 @@ export const Home = () => {
                 <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 text-[#8750DA]">
                   <f.Icon size={26} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-[11px] md:text-xs font-black uppercase tracking-[0.12em]">{f.label}</h3>
-                <p className="text-[10px] md:text-[10px] font-semibold text-gray-400 leading-snug">{f.desc}</p>
+                <h3 className="text-base font-semibold uppercase tracking-[0.12em]">{f.label}</h3>
+                <p className="text-base font-semibold text-gray-400 leading-snug">{f.desc}</p>
               </div>
             ))}
           </div>
