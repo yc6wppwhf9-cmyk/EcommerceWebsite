@@ -93,7 +93,7 @@ export const JuniorPage = () => {
   return (
     <main className="bg-white min-h-screen overflow-x-hidden">
 
-      {/* Hero section removed for brevity as it's the same */}
+      {/* Hero section */}
       <section className="relative w-full h-[450px] md:h-[650px] overflow-hidden">
         <img
           src="/junior/junior hero.png"
@@ -102,7 +102,7 @@ export const JuniorPage = () => {
         />
       </section>
 
-      {/* Shop By Age section removed for brevity as it's the same */}
+      {/* Shop By Age section */}
       <section className="py-12 md:py-16 bg-white relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
@@ -154,7 +154,7 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      {/* New Arrival Banner removed for brevity as it's the same */}
+      {/* New Arrival Banner */}
       <section className="relative mt-24 mb-14 overflow-visible px-4 md:px-0 flex justify-center">
         <div className="absolute top-[-40px] inset-x-0 h-40 pointer-events-none opacity-20"
           style={{ backgroundImage: "linear-gradient(#c7d2fe 1px, transparent 1px), linear-gradient(90deg, #c7d2fe 1px, transparent 1px)", backgroundSize: "20px 20px" }} 
@@ -179,20 +179,21 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          ENHANCED SHOWCASE — with Tabs and Featured Card
+          ENHANCED SHOWCASE — with Exact Figma Metrics
       ═══════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 bg-white overflow-hidden">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
           
-          {/* Enhanced Tabs Styling */}
+          {/* Tabs Area: 829x24 | Active: #030014 | Inactive: #AEADB4 */}
           <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 mb-16 relative">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.label}
                 onClick={() => setActiveTab(cat.label)}
                 className={`relative pb-3 text-[11px] md:text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 ${
-                  activeTab === cat.label ? 'text-gray-900 scale-105' : 'text-gray-400 hover:text-gray-600'
+                  activeTab === cat.label ? 'scale-105' : 'hover:text-gray-600'
                 }`}
+                style={{ color: activeTab === cat.label ? '#030014' : '#AEADB4' }}
               >
                 {cat.label}
                 {activeTab === cat.label && (
@@ -203,23 +204,33 @@ export const JuniorPage = () => {
                 )}
               </button>
             ))}
-            {/* Gray underline that spans all tabs */}
             <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-100 -z-10" />
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             
-            {/* Featured Showcase Card (Left) */}
-            <div className="relative w-full lg:w-[350px] shrink-0">
-               <div className="rounded-[2rem] overflow-hidden border-[12px] border-[#FDBB5A] relative aspect-[3/4]">
-                 <img 
-                   src="/junior/Beautiful_ Hero 1.png"
-                   alt="Featured School Backpack"
-                   className="w-full h-full object-cover object-top"
-                 />
+            {/* Featured Card: Rectangle 334x486 Behind Image 305x444 */}
+            <div className="relative shrink-0 flex items-center justify-center lg:justify-start">
+               {/* Background Rectangle: 334x486 | #FAC05C | Corner: 5 */}
+               <div 
+                 className="relative flex items-center justify-center"
+                 style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}
+               >
+                 {/* Inner Image: 305x444 | Corner: 5 */}
+                 <div 
+                   className="overflow-hidden shadow-2xl"
+                   style={{ width: '305px', height: '444px', borderRadius: '5px' }}
+                 >
+                   <img 
+                     src="/junior/Beautiful_ Hero 1.png"
+                     alt="Featured School Backpack"
+                     className="w-full h-full object-cover object-top"
+                   />
+                 </div>
+
                  {/* Curvy Label Gradient */}
-                 <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/20 to-transparent flex items-end justify-center pb-8 p-4">
-                    <h3 className="font-dancing text-white text-[2.8rem] md:text-[3.2rem] leading-none text-center drop-shadow-lg">
+                 <div className="absolute bottom-4 inset-x-0 h-32 flex items-end justify-center pb-6">
+                    <h3 className="font-dancing text-white text-[2.8rem] md:text-[3.2rem] leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                       {activeTab}
                     </h3>
                  </div>
@@ -261,7 +272,6 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      {/* Best Sellers Section removed for brevity */}
     </main>
   );
 };
