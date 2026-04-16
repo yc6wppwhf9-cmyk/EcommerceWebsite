@@ -61,7 +61,7 @@ export const JuniorPage = () => {
               className="text-sm md:text-base text-gray-500 max-w-xl leading-relaxed mb-10 font-medium"
             >
               Ergonomic, vibrant, and built to survive the playground. Explore our latest collection designed for the next generation of explorers.
-            </p>
+            </motion.p>
           </div>
         </div>
         
