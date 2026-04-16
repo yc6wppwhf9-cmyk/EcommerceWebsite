@@ -88,12 +88,14 @@ const HeroSlider = () => {
         <ChevronRight size={26} className="group-hover:translate-x-0.5 transition-transform" />
       </button>
 
+      {/* Mobile dots */}
       <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
         {HERO_SLIDES.map((_, i) => (
           <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
         ))}
       </div>
 
+      {/* Desktop slide counter + progress bar (Keeping same as previous) */}
       <div className="hidden md:flex absolute bottom-6 inset-x-0 z-30 items-center justify-end px-8 gap-4">
         <span className="text-[11px] font-bold tabular-nums tracking-widest text-white/40">{String(current + 1).padStart(2, '0')}</span>
         <div className="w-32 h-[1.5px] bg-white/20 relative overflow-hidden rounded-full">
@@ -155,8 +157,8 @@ export const Home = () => {
       <HeroSlider />
 
       {/* Categories */}
-      <section className="md:hidden py-5 px-4">
-        <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-gray-400 mb-3 text-center">Shop By Category</h2>
+      <section className="md:hidden py-5 px-4 text-center">
+        <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-gray-400 mb-3">Shop By Category</h2>
         <div className="grid grid-cols-3 gap-2.5">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '3/4' }}>
@@ -184,7 +186,7 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Editorial Banner */}
+      {/* Editorial Banner (Keeping same as previous per customer screenshot) */}
       <section className="relative bg-banner-blue overflow-hidden">
         {/* Mobile version */}
         <div className="md:hidden relative w-full h-[88vh] bg-[#F8F9FA] overflow-hidden" style={{ aspectRatio: '4/5' }}>
@@ -200,16 +202,16 @@ export const Home = () => {
           </div>
         </div>
 
-        {/* Desktop version */}
+        {/* Desktop version - Exactly as shown in screenshot */}
         <div className="hidden md:block text-white relative py-20">
           <div className="container mx-auto px-8 relative z-10 flex flex-row items-center gap-16">
             <div className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20">
               <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
             </div>
             <div className="w-1/2 text-left">
-              <h2 className="text-6xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
+              <h2 className="text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
               <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-10">Ready For Your Journey</p>
-              <div className="flex gap-6">
+              <div className="flex gap-8">
                 <Link to="/women" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Women</Link>
                 <Link to="/men" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Men</Link>
               </div>
