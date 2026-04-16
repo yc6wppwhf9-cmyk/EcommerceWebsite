@@ -112,56 +112,77 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          NEW ARRIVAL BANNER — Refined Background & Doodles
+          NEW ARRIVAL BANNER — Portruding Blob Design
       ═══════════════════════════════════════════════ */}
-      <section
-        className="relative mx-4 md:mx-12 rounded-[2.5rem] overflow-hidden py-24 md:py-32 mb-2 mt-8 flex flex-col items-center justify-center text-center"
-        style={{ backgroundColor: '#8750DA' }}
-      >
-        {/* Doodles background (Group 36) */}
-        <div
-          className="absolute inset-0 opacity-20 pointer-events-none"
+      <section className="relative mt-20 mb-10 overflow-visible">
+        {/* The Grid Background Top */}
+        <div className="absolute top-[-40px] inset-x-0 h-40 pointer-events-none opacity-20"
           style={{
-            backgroundImage: "url('/junior/Group 36.png')",
-            backgroundSize: '220px',
-            backgroundRepeat: 'repeat',
-          }}
+            backgroundImage: "linear-gradient(#c7d2fe 1px, transparent 1px), linear-gradient(90deg, #c7d2fe 1px, transparent 1px)",
+            backgroundSize: "20px 20px"
+          }} 
         />
 
-        <div className="relative z-10 w-full max-w-[600px] flex flex-col items-center">
-          {/* Centered Yellow Blob Content */}
-          <div className="relative w-full flex flex-col items-center justify-center px-6">
-            <img
-              src="/junior/Layer 1.png"
-              alt=""
-              aria-hidden
-              className="w-[320px] md:w-[480px] pointer-events-none select-none"
-            />
+        <div
+          className="relative mx-4 md:mx-12 rounded-[2.5rem] py-20 flex flex-col items-center justify-center text-center overflow-visible shadow-sm"
+          style={{ backgroundColor: '#8750DA' }}
+        >
+          {/* Floating Yellow Blob Content */}
+          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-80px] md:mt-[-120px] mb-6 overflow-visible">
             
-            <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 md:pt-14">
-              <span className="text-[10px] md:text-[12px] font-outfit font-black uppercase tracking-[0.4em] text-[#5B2D8E] mb-2">
-                New Arrival
-              </span>
-              <h2 className="font-dancing text-[2.8rem] md:text-[4.2rem] text-[#4b48b5] leading-tight mb-0">
-                Made for Little
-              </h2>
-              <h2 className="font-dancing text-[2.8rem] md:text-[4.2rem] text-[#4b48b5] leading-tight">
-                Adventures
-              </h2>
+            <div className="relative w-[340px] md:w-[520px] overflow-visible">
+              <img
+                src="/junior/Layer 1.png"
+                alt=""
+                aria-hidden
+                className="w-full h-auto pointer-events-none select-none drop-shadow-xl"
+              />
+              
+              <div className="absolute inset-0 flex flex-col items-center justify-center pt-10 md:pt-16">
+                <span className="text-[10px] md:text-[12px] font-outfit font-black uppercase tracking-[0.4em] text-[#5B2D8E] mb-1">
+                  New Arrival
+                </span>
+                <h2 className="font-outfit font-bold text-[2.5rem] md:text-[4rem] text-[#4b48b5] leading-tight mb-0">
+                  Made for Little
+                </h2>
+                <h2 className="font-outfit font-bold text-[2.5rem] md:text-[4rem] text-[#4b48b5] leading-tight">
+                  Adventures
+                </h2>
+              </div>
             </div>
           </div>
 
+          {/* Doodles background (Group 36) - Specifically on sides */}
+          <div
+            className="absolute left-8 md:left-24 top-1/2 -translate-y-1/2 w-[200px] md:w-[350px] aspect-square opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: "url('/junior/Group 36.png')",
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'left center',
+            }}
+          />
+          <div
+            className="absolute right-8 md:right-24 top-1/2 -translate-y-1/2 w-[200px] md:w-[350px] aspect-square opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: "url('/junior/Group 36.png')",
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right center',
+            }}
+          />
+
           {/* Bottom Styled Links */}
-          <div className="flex gap-10 md:gap-20 mt-14">
+          <div className="flex gap-10 md:gap-24 mt-10 md:mt-14 relative z-10">
             <Link 
               to="/school-backpacks" 
-              className="text-white text-[11px] md:text-[12px] font-nunito font-black uppercase tracking-[0.2em] border-b-2 border-white pb-1.5 hover:scale-105 transition-transform"
+              className="text-white text-[12px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
             >
               Dreamy Styles
             </Link>
             <Link 
               to="/school-backpacks" 
-              className="text-white text-[11px] md:text-[12px] font-nunito font-black uppercase tracking-[0.2em] border-b-2 border-white pb-1.5 hover:scale-105 transition-transform"
+              className="text-white text-[12px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
             >
               Power Styles
             </Link>
