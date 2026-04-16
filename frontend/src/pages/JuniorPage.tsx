@@ -34,62 +34,14 @@ export const JuniorPage = () => {
     <main className="bg-white min-h-screen overflow-x-hidden">
 
       {/* ═══════════════════════════════════════════════
-          HERO — amber background + doodles pattern
+          HERO — Clean Editorial Image
       ═══════════════════════════════════════════════ */}
-      <section className="relative pt-16 overflow-hidden" style={{ backgroundColor: '#FDB913' }}>
-
-        {/* Doodles background */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "url('/junior/Group 36.png')",
-            backgroundSize: '340px',
-            backgroundRepeat: 'repeat',
-            opacity: 0.12,
-          }}
+      <section className="relative w-full h-[450px] md:h-[650px] overflow-hidden">
+        <img 
+          src="/junior/junior_hero_new.png" 
+          alt="Junior Collection Preview" 
+          className="w-full h-full object-cover"
         />
-
-        <div className="max-w-[1280px] mx-auto px-6 md:px-14 flex flex-col md:flex-row items-end gap-0 relative z-10">
-
-          {/* Left text */}
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.55 }}
-            className="flex-1 pb-10 md:pb-16 pt-10 md:pt-16"
-          >
-            <h1
-              className="text-[3.5rem] md:text-[5.2rem] leading-[1] font-black uppercase text-black mb-3 font-nunito"
-              style={{ letterSpacing: '-0.02em' }}
-            >
-              Ready For<br />Every<br />School Day.
-            </h1>
-            <p className="text-black/55 text-sm md:text-base font-bold font-nunito mb-8 tracking-wide">
-              Explore 2026 Collection
-            </p>
-            <Link
-              to="/school-backpacks"
-              className="inline-flex items-center gap-2 bg-black text-white font-nunito font-black text-[11px] uppercase tracking-widest px-8 py-3.5 rounded-full hover:scale-105 transition-transform"
-            >
-              Shop Now <ArrowRight size={14} />
-            </Link>
-          </motion.div>
-
-          {/* Right — hero photo */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex-1 flex justify-center md:justify-end items-end"
-          >
-            <img
-              src="/junior/Beautiful_ Hero 1.png"
-              alt="Kids with backpacks"
-              className="w-full max-w-[380px] h-[320px] md:h-[420px] object-cover object-top"
-              style={{ borderRadius: '2rem 2rem 0 0' }}
-            />
-          </motion.div>
-        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
