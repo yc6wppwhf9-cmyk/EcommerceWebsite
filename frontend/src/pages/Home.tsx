@@ -179,8 +179,12 @@ export const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60 mb-2">New Arrival</p>
-          <h2 className="text-3xl font-black uppercase tracking-tight text-white leading-none mb-1">Ready For</h2>
-          <p className="text-3xl font-black uppercase tracking-tight text-white/20 leading-none mb-6 select-none">Your Journey</p>
+          <p 
+            className="font-outfit font-normal uppercase tracking-[0.2em] text-white/50 mb-6 select-none"
+            style={{ fontSize: '16px' }}
+          >
+            Ready For Your Journey
+          </p>
           <div className="flex gap-5">
             <Link to="/women" className="text-[11px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Women</Link>
             <Link to="/men" className="text-[11px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Men</Link>
@@ -196,9 +200,11 @@ export const Home = () => {
               <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
             </div>
             <div className="w-1/2 text-left py-20">
-              <h2 className="text-6xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
-              <p className="text-[2.5rem] font-black leading-tight uppercase tracking-tighter text-white/50 select-none pointer-events-none">
-                Ready For<br />Your Journey
+              <p 
+                className="font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none"
+                style={{ fontSize: '16px' }}
+              >
+                Ready For Your Journey
               </p>
               <div className="flex gap-6 mt-10">
                 <Link to="/women" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Women</Link>
