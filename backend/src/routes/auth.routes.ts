@@ -2,7 +2,7 @@ import { Router } from 'express';
 import * as AuthController from '../controllers/auth.controller';
 import { validate } from '../middleware/validate';
 import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } from '../types/schemas';
-import { protect } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
 
@@ -11,6 +11,6 @@ router.post('/login', validate(loginSchema), AuthController.login);
 router.post('/verify-email', AuthController.verifyEmail);
 router.post('/forgot-password', validate(forgotPasswordSchema), AuthController.forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), AuthController.resetPassword);
-router.post('/change-password', protect, AuthController.changePassword);
+router.post('/change-password', authenticateToken, AuthController.changePassword);
 
 export default router;

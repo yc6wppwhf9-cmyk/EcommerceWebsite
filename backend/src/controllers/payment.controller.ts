@@ -41,4 +41,3 @@ export const verifyPayment = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: 'Invalid payment signature' });
   }
 };
-控制,Description:

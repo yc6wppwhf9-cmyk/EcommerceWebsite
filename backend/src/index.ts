@@ -50,7 +50,7 @@ app.get('/api/health', async (_req, res) => {
       status: 'ok', 
       db: 'connected', 
       timestamp: new Date().toISOString(),
-      version: '2.4.0'
+      version: '2.4.1'
     });
   } catch {
     res.status(503).json({ status: 'error', db: 'disconnected' });
@@ -72,4 +72,3 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 export default app;
-控制,Description:
