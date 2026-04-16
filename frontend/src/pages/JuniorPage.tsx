@@ -141,15 +141,15 @@ export const JuniorPage = () => {
               
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 md:pt-16">
                 <span 
-                  className="font-outfit uppercase tracking-[0.2em] text-[#5B2D8E] mb-2"
-                  style={{ fontSize: '28.36px', fontWeight: 400 }} /* Outfit Regular 28.36px */
+                  className="font-outfit uppercase tracking-[0.2em] mb-2"
+                  style={{ fontSize: '28.36px', fontWeight: 400, color: '#966512' }} /* Outfit Regular 28.36px | #966512 */
                 >
                   New Arrival
                 </span>
                 
                 {/* Main Title: Protest Riot | 50.82px | #3E92E6 */}
                 <h2 
-                  className="font-protest tracking-tight max-w-[433px] mx-auto italic"
+                  className="font-protest tracking-tight max-w-[433px] mx-auto"
                   style={{ fontSize: '50.82px', color: '#3E92E6', lineHeight: '104.7%' }}
                 >
                   Made for Little Adventures
@@ -178,17 +178,19 @@ export const JuniorPage = () => {
             }}
           />
 
-          {/* Bottom Styled Links */}
+          {/* Bottom Styled Links: Outfit SemiBold 16px | White */}
           <div className="flex gap-10 md:gap-32 mt-8 md:mt-12 relative z-10">
             <Link 
               to="/school-backpacks" 
-              className="text-white text-[13px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+              className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+              style={{ fontSize: '16px' }}
             >
               Dreamy Styles
             </Link>
             <Link 
               to="/school-backpacks" 
-              className="text-white text-[13px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+              className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+              style={{ fontSize: '16px' }}
             >
               Power Styles
             </Link>
