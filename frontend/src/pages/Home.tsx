@@ -270,9 +270,13 @@ export const Home = () => {
       <section className="pb-8 pt-10 md:pt-20 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4 md:px-8">
           <div className="flex items-end justify-between mb-6 md:mb-14">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-1">Most Loved</p>
-              <h2 className="text-lg md:text-3xl font-black uppercase tracking-[0.15em] text-[#14052b]">Shop Best Sellers</h2>
+            <div className="w-full text-center">
+              <h2 
+                className="font-outfit font-semibold uppercase tracking-[0.1em]" 
+                style={{ fontSize: '16px', color: '#030014' }}
+              >
+                Shop Best Sellers
+              </h2>
             </div>
             <Link to="/backpacks" className="hidden md:flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">
               View All <ArrowRight size={13} />
