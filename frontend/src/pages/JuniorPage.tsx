@@ -7,10 +7,10 @@ import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 
 const AGE_GROUPS = [
-  { label: '3–5 Yrs',  color: '#FF6B6B', emoji: '👧', slug: 'school-backpacks' },
-  { label: '6–9 Yrs',  color: '#4ECDC4', emoji: '👦', slug: 'school-backpacks' },
-  { label: '10–12 Yrs', color: '#A78BFA', emoji: '🧒', slug: 'school-backpacks' },
-  { label: '13+ Yrs',  color: '#F59E0B', emoji: '🧑', slug: 'college-backpacks' },
+  { label: '3–5 Yrs',  slug: 'school-backpacks', img: '/junior/Rectangle 28.png'            },
+  { label: '6–9 Yrs',  slug: 'school-backpacks', img: '/junior/Rectangle 29.png'            },
+  { label: '10–12 Yrs', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png"          },
+  { label: '13+ Yrs',  slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png" },
 ];
 
 export const JuniorPage = () => {
@@ -34,32 +34,37 @@ export const JuniorPage = () => {
     <main className="bg-white min-h-screen overflow-x-hidden">
 
       {/* ═══════════════════════════════════════════════
-          HERO BANNER  — amber/yellow background
+          HERO — amber background + doodles pattern
       ═══════════════════════════════════════════════ */}
       <section className="relative pt-16 overflow-hidden" style={{ backgroundColor: '#FDB913' }}>
-        {/* Subtle polka dots */}
+
+        {/* Doodles background */}
         <div
-          className="absolute inset-0 opacity-[0.07] pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(#000 1.5px,transparent 1.5px)', backgroundSize: '22px 22px' }}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: "url('/junior/Group 36.png')",
+            backgroundSize: '340px',
+            backgroundRepeat: 'repeat',
+            opacity: 0.12,
+          }}
         />
 
-        <div className="max-w-[1280px] mx-auto px-6 md:px-14 flex flex-col md:flex-row items-end gap-0">
-          {/* ── Left text ── */}
+        <div className="max-w-[1280px] mx-auto px-6 md:px-14 flex flex-col md:flex-row items-end gap-0 relative z-10">
+
+          {/* Left text */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55 }}
-            className="flex-1 pb-10 md:pb-16 pt-10 md:pt-16 z-10"
+            className="flex-1 pb-10 md:pb-16 pt-10 md:pt-16"
           >
             <h1
-              className="text-[3.8rem] md:text-[5.5rem] leading-[1] font-black uppercase text-black mb-4 font-nunito"
+              className="text-[3.5rem] md:text-[5.2rem] leading-[1] font-black uppercase text-black mb-3 font-nunito"
               style={{ letterSpacing: '-0.02em' }}
             >
-              Ready For Every<br />School Day.
+              Ready For<br />Every<br />School Day.
             </h1>
-            <p
-              className="text-black/60 text-sm md:text-base font-semibold font-nunito mb-8 max-w-xs leading-relaxed"
-            >
+            <p className="text-black/55 text-sm md:text-base font-bold font-nunito mb-8 tracking-wide">
               Explore 2026 Collection
             </p>
             <Link
@@ -70,7 +75,7 @@ export const JuniorPage = () => {
             </Link>
           </motion.div>
 
-          {/* ── Right image ── */}
+          {/* Right — hero photo */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -78,9 +83,9 @@ export const JuniorPage = () => {
             className="flex-1 flex justify-center md:justify-end items-end"
           >
             <img
-              src="/Creatives/editorial-4.jpg"
+              src="/junior/Beautiful_ Hero 1.png"
               alt="Kids with backpacks"
-              className="w-full max-w-[420px] h-[320px] md:h-[400px] object-cover object-top rounded-t-[2rem]"
+              className="w-full max-w-[380px] h-[320px] md:h-[420px] object-cover object-top"
               style={{ borderRadius: '2rem 2rem 0 0' }}
             />
           </motion.div>
@@ -88,18 +93,23 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          SHOP BY AGE
+          SHOP BY AGE — real kid photos in circles
       ═══════════════════════════════════════════════ */}
       <section className="py-14 md:py-20 bg-white">
         <div className="max-w-[1280px] mx-auto px-6 md:px-14">
           <div className="text-center mb-10">
-            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-400 font-nunito mb-1">Find Your Perfect Bag</p>
-            <h2 className="text-3xl md:text-4xl font-black uppercase text-[#1a1a1a] font-nunito" style={{ letterSpacing: '-0.01em' }}>
+            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-400 font-nunito mb-1">
+              Find Your Perfect Bag
+            </p>
+            <h2
+              className="text-3xl md:text-4xl font-black uppercase text-[#1a1a1a] font-nunito"
+              style={{ letterSpacing: '-0.01em' }}
+            >
               Shop By Age
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
             {AGE_GROUPS.map((group, i) => (
               <motion.div
                 key={group.label}
@@ -112,20 +122,19 @@ export const JuniorPage = () => {
                   to={`/${group.slug}`}
                   className="group flex flex-col items-center gap-4 p-5 rounded-3xl bg-gray-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                 >
-                  {/* Circle — will show photo when available */}
-                  <div
-                    className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center text-4xl md:text-5xl shadow-md group-hover:scale-105 transition-transform duration-300 overflow-hidden"
-                    style={{ backgroundColor: group.color + '33', border: `3px solid ${group.color}` }}
-                  >
-                    {/* Swap src for real photo: /Junior/age-3-5.jpg etc */}
-                    <span className="text-3xl md:text-4xl select-none">{group.emoji}</span>
+                  {/* Circle photo */}
+                  <div className="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
+                    <img
+                      src={group.img}
+                      alt={group.label}
+                      className="w-full h-full object-cover object-top"
+                    />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-black text-[#1a1a1a] font-nunito uppercase tracking-wide">{group.label}</p>
-                    <p
-                      className="text-[10px] font-bold mt-0.5 uppercase tracking-widest font-nunito"
-                      style={{ color: group.color }}
-                    >
+                    <p className="text-sm font-black text-[#1a1a1a] font-nunito uppercase tracking-wide">
+                      {group.label}
+                    </p>
+                    <p className="text-[10px] font-bold mt-0.5 uppercase tracking-widest font-nunito text-[#7C3AED]">
                       Shop Now →
                     </p>
                   </div>
@@ -137,33 +146,26 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          NEW ARRIVAL BANNER  — deep purple
+          NEW ARRIVAL BANNER — purple + real blob image
       ═══════════════════════════════════════════════ */}
       <section
         className="relative mx-4 md:mx-12 rounded-[2.5rem] overflow-hidden py-16 md:py-20 mb-2"
         style={{ background: 'linear-gradient(135deg, #5B2D8E 0%, #7C3AED 100%)' }}
       >
-        {/* Blob decoration */}
-        <div
-          className="absolute right-10 top-1/2 -translate-y-1/2 w-48 h-48 md:w-64 md:h-64 hidden md:block"
-          style={{
-            backgroundColor: '#FDB913',
-            borderRadius: '62% 38% 46% 54% / 60% 44% 56% 40%',
-            opacity: 0.9,
-          }}
-        />
-        <div
-          className="absolute right-32 top-8 w-16 h-16 rounded-full hidden md:block"
-          style={{ backgroundColor: '#FF6B6B', opacity: 0.6 }}
+        {/* Real yellow blob */}
+        <img
+          src="/junior/Layer 1.png"
+          alt=""
+          aria-hidden
+          className="absolute right-6 top-1/2 -translate-y-1/2 w-52 md:w-72 hidden md:block pointer-events-none select-none"
+          style={{ opacity: 0.92 }}
         />
 
         <div className="max-w-[1280px] mx-auto px-8 md:px-16 relative z-10">
-          <span
-            className="inline-block bg-white/20 text-white text-[9px] font-black tracking-[0.45em] uppercase px-4 py-1.5 rounded-full mb-5 font-nunito"
-          >
+          <span className="inline-block bg-white/20 text-white text-[9px] font-black tracking-[0.45em] uppercase px-4 py-1.5 rounded-full mb-5 font-nunito">
             New Arrival
           </span>
-          <h2 className="text-white font-nunito font-black text-4xl md:text-5xl uppercase leading-tight mb-2">
+          <h2 className="text-white font-nunito font-black text-4xl md:text-5xl uppercase leading-tight mb-1">
             Ready for Every
           </h2>
           <h2
@@ -190,10 +192,12 @@ export const JuniorPage = () => {
       ═══════════════════════════════════════════════ */}
       <section className="py-14 md:py-20 bg-white">
         <div className="max-w-[1280px] mx-auto px-6 md:px-14">
-          {/* Header */}
           <div className="flex items-end justify-between mb-8">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] font-nunito mb-1" style={{ color: '#7C3AED' }}>
+              <p
+                className="text-[10px] font-black uppercase tracking-[0.4em] font-nunito mb-1"
+                style={{ color: '#7C3AED' }}
+              >
                 Top Picks
               </p>
               <h2
@@ -212,26 +216,23 @@ export const JuniorPage = () => {
           </div>
 
           <div className="flex gap-6">
-            {/* Feature card */}
+            {/* Feature card with real hero photo */}
             <div
-              className="hidden lg:flex flex-col justify-between w-56 shrink-0 rounded-[2rem] p-7 relative overflow-hidden"
+              className="hidden lg:flex flex-col justify-between w-56 shrink-0 rounded-[2rem] overflow-hidden relative"
               style={{ backgroundColor: '#FDB913' }}
             >
-              <div>
+              <div className="p-7 pb-0">
                 <span className="text-[9px] font-black uppercase tracking-widest text-black/50 font-nunito block mb-2">
                   Featured
                 </span>
                 <h3 className="text-xl font-black uppercase text-black font-nunito leading-tight">
                   School<br />Backpacks
                 </h3>
-                <p className="text-xs text-black/50 mt-2 font-nunito leading-relaxed">
-                  Durable, ergonomic — designed for young learners.
-                </p>
               </div>
               <img
-                src="/Category/Backpack.jpg"
-                alt="Backpack"
-                className="w-full h-36 object-contain mt-4"
+                src="/junior/Beautiful_ Hero 1.png"
+                alt="School Backpacks"
+                className="w-full h-52 object-cover object-top mt-4"
               />
             </div>
 
@@ -275,7 +276,10 @@ export const JuniorPage = () => {
           <div className="max-w-[1280px] mx-auto px-6 md:px-14">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] font-nunito mb-1" style={{ color: '#FF6B6B' }}>
+                <p
+                  className="text-[10px] font-black uppercase tracking-[0.4em] font-nunito mb-1"
+                  style={{ color: '#FF6B6B' }}
+                >
                   Most Loved
                 </p>
                 <h2
