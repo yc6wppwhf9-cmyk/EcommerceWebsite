@@ -119,7 +119,7 @@ export const JuniorPage = () => {
                 className="absolute inset-x-0 w-full h-full object-fill pointer-events-none select-none"
                 style={{ transform: 'scaleX(1.15) scaleY(1.3)' }}
               />
-              <h2 className="relative text-xl md:text-2xl font-black text-[#1a1a1a] font-nunito tracking-wide px-8 py-1 z-10">
+              <h2 className="relative font-protest px-8 py-1 z-10" style={{ fontSize: '36px', color: '#A368FB', lineHeight: '125.7%', letterSpacing: '0%' }}>
                 Shop By Age
               </h2>
             </div>
