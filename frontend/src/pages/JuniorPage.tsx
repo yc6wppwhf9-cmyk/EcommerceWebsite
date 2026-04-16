@@ -39,7 +39,10 @@ const JuniorProductCard = ({ product }: { product: Product }) => (
 
     <div className="p-4 flex flex-col flex-1">
       <Link to={`/product/${product.id}`}>
-        <h3 className="text-[13px] md:text-[14px] font-outfit font-bold text-gray-900 leading-tight mb-2 line-clamp-2">
+        <h3 
+          className="font-outfit font-semibold leading-tight mb-2 line-clamp-2"
+          style={{ fontSize: '16px', color: '#030014' }}
+        >
           {product.name}
         </h3>
       </Link>
