@@ -103,9 +103,9 @@ export const LoginPage = () => {
           </div>
 
           <div className="pt-2">
-            <button type="button" className="text-[13px] text-gray-600 underline underline-offset-4 hover:text-black transition-colors">
+            <Link to="/forgot-password" className="text-[13px] text-gray-600 underline underline-offset-4 hover:text-black transition-colors">
               Forgot your password?
-            </button>
+            </Link>
           </div>
 
           <div className="pt-8 flex flex-col items-center gap-8">

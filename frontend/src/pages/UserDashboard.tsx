@@ -10,15 +10,35 @@ import { useNavigate } from 'react-router-dom';
 export const UserDashboard = () => {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('orders');
+  const [activeTab, setActiveTab] = useState('settings');
+  const [passForm, setPassForm] = useState({ current: '', new: '' });
+  const [showPassForm, setShowPassForm] = useState(false);
+  const [passLoading, setPassLoading] = useState(false);
+  const [passMsg, setPassMsg] = useState<{ type: 'success' | 'err', text: string } | null>(null);
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate('/login');
   }, [isAuthenticated, isLoading, navigate]);
 
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPassLoading(true);
+    setPassMsg(null);
+    try {
+      await api.changePassword({ currentPassword: passForm.current, newPassword: passForm.new });
+      setPassMsg({ type: 'success', text: 'Password updated successfully!' });
+      setPassForm({ current: '', new: '' });
+      setTimeout(() => setShowPassForm(false), 2000);
+    } catch (err: any) {
+      setPassMsg({ type: 'err', text: err.message || 'Change failed' });
+    } finally {
+      setPassLoading(false);
+    }
+  };
+
   const navItems = [
-    { id: 'orders', label: 'My Orders', icon: Package },
+    { id: 'settings', label: 'My Profile', icon: User },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
-    { id: 'settings', label: 'App Settings', icon: Settings },
   ];
 
   if (isLoading || !user) return null;
@@ -180,9 +200,63 @@ export const UserDashboard = () => {
                   <div className="bg-[var(--color-bg-card)] p-10 rounded-[2.5rem] border border-[var(--color-border-main)]">
                     <div className="flex items-center gap-3 mb-6">
                       <Lock size={20} className="text-priority-blue" />
-                      <h3 className="text-lg font-black font-outfit text-[var(--color-text-main)] uppercase">Security</h3>
+                      <h3 className="text-lg font-black font-outfit text-[var(--color-text-main)] uppercase tracking-widest">Security</h3>
                     </div>
-                    <button className="w-full py-4 bg-priority-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-xl shadow-priority-blue/20">Change Password</button>
+                    
+                    {!showPassForm ? (
+                      <button 
+                        onClick={() => setShowPassForm(true)}
+                        className="w-full py-4 bg-priority-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-xl shadow-priority-blue/20"
+                      >
+                        Change Password
+                      </button>
+                    ) : (
+                      <form onSubmit={handlePasswordChange} className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase text-gray-500 ml-1">Current Password</label>
+                          <input 
+                            required 
+                            type="password" 
+                            value={passForm.current}
+                            onChange={(e) => setPassForm({...passForm, current: e.target.value})}
+                            className="w-full p-4 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-2xl outline-none text-sm font-black font-outfit" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase text-gray-500 ml-1">New Password</label>
+                          <input 
+                            required 
+                            type="password" 
+                            value={passForm.new}
+                            onChange={(e) => setPassForm({...passForm, new: e.target.value})}
+                            className="w-full p-4 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-2xl outline-none text-sm font-black font-outfit" 
+                          />
+                        </div>
+                        
+                        {passMsg && (
+                          <p className={`text-[10px] font-bold uppercase tracking-widest text-center ${passMsg.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                            {passMsg.text}
+                          </p>
+                        )}
+                        
+                        <div className="flex gap-4">
+                          <button 
+                            type="submit" 
+                            disabled={passLoading}
+                            className="flex-1 py-4 bg-priority-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50"
+                          >
+                            {passLoading ? 'Updating...' : 'Update Password'}
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => { setShowPassForm(false); setPassMsg(null); }}
+                            className="px-6 py-4 bg-gray-100 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </motion.div>
               )}

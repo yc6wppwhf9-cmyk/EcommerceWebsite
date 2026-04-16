@@ -34,7 +34,7 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // Send Verification Email
-    const vUrl = `http://localhost:5173/verify-email?token=${vToken}`; // Should be frontend URL
+    const vUrl = `http://localhost:3000/verify-email?token=${vToken}`; // Projects Vite Port is 3000
     await Mailer.sendEmail(
       email,
       'Verify Your Account - Priority Bags',
@@ -89,7 +89,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.json({ message: 'If an account exists with that email, a reset link has been sent.' });
     }
 
-    const rUrl = `http://localhost:5173/reset-password?token=${rToken}`;
+    const rUrl = `http://localhost:3000/reset-password?token=${rToken}`;
     await Mailer.sendEmail(
       email,
       'Password Reset Request - Priority Bags',
@@ -97,6 +97,34 @@ export const forgotPassword = async (req: Request, res: Response) => {
     );
 
     res.json({ message: 'If an account exists with that email, a reset link has been sent.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const changePassword = async (req: any, res: Response) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('password')
+      .eq('id', userId)
+      .single();
+
+    if (error || !user) return res.status(404).json({ error: 'User not found' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ error: 'Incorrect current password' });
+
+    const hash = await bcrypt.hash(newPassword, 12);
+    await supabase
+      .from('users')
+      .update({ password: hash })
+      .eq('id', userId);
+
+    res.json({ message: 'Password updated successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

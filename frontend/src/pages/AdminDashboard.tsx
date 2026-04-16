@@ -585,17 +585,14 @@ export const AdminDashboard = () => {
 
               {activeTab === 'overview' && (
                 <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {metrics.map((m, i) => (
-                        <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                            <div className={`w-10 h-10 ${m.color} rounded-xl flex items-center justify-center text-white mb-4 relative z-10 group-hover:scale-110 transition-transform`}>
-                                <m.icon size={18} />
-                            </div>
-                            <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1 relative z-10">{m.label}</p>
-                            <p className="text-xl font-black text-gray-900 tracking-tight relative z-10">{m.value}</p>
-                            <div className="absolute -bottom-4 -right-4 text-gray-50 opacity-[0.03] group-hover:scale-125 transition-transform"><m.icon size={100} /></div>
+                    <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+                        <div className="w-16 h-16 bg-priority-blue/10 rounded-2xl flex items-center justify-center text-priority-blue mb-4">
+                            <LayoutDashboard size={32} />
                         </div>
-                        ))}
+                        <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">System Overview</h2>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 max-w-xs leading-relaxed">
+                            Real-time analytics and revenue metrics are currently hidden for a cleaner workspace. Use the sidebar to manage inventory and orders.
+                        </p>
                     </div>
                 </motion.div>
               )}
