@@ -2,8 +2,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 4000,
   JWT_SECRET: process.env.JWT_SECRET!,
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
   SUPABASE_URL: process.env.SUPABASE_URL!,
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   CORS_ORIGIN: process.env.CORS_ORIGIN!,
@@ -17,6 +19,9 @@ export const config = {
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
   FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.in',
+  // Shipping constants (single source of truth for backend + frontend)
+  SHIPPING_THRESHOLD: 1499,
+  SHIPPING_FEE: 99,
 };
 
 const requiredEnv = [

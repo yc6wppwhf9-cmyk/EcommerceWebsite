@@ -6,6 +6,28 @@ import { supabase } from '../config/supabase';
 import { config } from '../config/env';
 import * as Mailer from '../lib/mail';
 
+const isProduction = config.NODE_ENV === 'production';
+
+/** Attach JWT as an httpOnly cookie and a CSRF token as a readable cookie. */
+function setAuthCookies(res: Response, token: string) {
+  res.cookie('access_token', token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: '/',
+  });
+
+  const csrfToken = crypto.randomBytes(32).toString('hex');
+  res.cookie('csrf_token', csrfToken, {
+    httpOnly: false, // must be JS-readable for the double-submit pattern
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
+  });
+}
+
 export const register = async (req: Request, res: Response) => {
   const { name, email, password, phone } = req.body;
   if (!name || !email || !password)
@@ -34,7 +56,7 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // Send Verification Email
-    const vUrl = `http://localhost:3000/verify-email?token=${vToken}`; // Projects Vite Port is 3000
+    const vUrl = `${config.FRONTEND_URL}/verify-email?token=${vToken}`;
     await Mailer.sendEmail(
       email,
       'Verify Your Account - Priority Bags',
@@ -42,6 +64,8 @@ export const register = async (req: Request, res: Response) => {
     );
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: '7d' });
+    setAuthCookies(res, token);
+    // token is also returned in the body so non-browser clients (mobile/API) still work
     res.status(201).json({ user, token, message: 'Registration successful. Please check your email for verification.' });
   } catch (err: any) {
     console.error('register error', err);
@@ -74,7 +98,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
   if (!email) return res.status(400).json({ error: 'Email is required' });
 
   try {
-    const rToken = crypto.randomBytes(32).toString('hex');
+    const rRaw = crypto.randomBytes(32).toString('hex');
+    // Store a SHA-256 hash so a DB leak can't be used to reset accounts
+    const rToken = crypto.createHash('sha256').update(rRaw).digest('hex');
     const rExpires = new Date(Date.now() + 3600000).toISOString(); // 1 hour
 
     const { data: user, error } = await supabase
@@ -89,7 +115,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.json({ message: 'If an account exists with that email, a reset link has been sent.' });
     }
 
-    const rUrl = `http://localhost:3000/reset-password?token=${rToken}`;
+    // Email contains the raw token; DB stores the hash
+    const rUrl = `${config.FRONTEND_URL}/reset-password?token=${rRaw}`;
     await Mailer.sendEmail(
       email,
       'Password Reset Request - Priority Bags',
@@ -136,15 +163,17 @@ export const resetPassword = async (req: Request, res: Response) => {
 
   try {
     const hash = await bcrypt.hash(password, 12);
-    
+    // Hash the raw token from the URL to match what's stored in the DB
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
     const { data: user, error } = await supabase
       .from('users')
-      .update({ 
-        password: hash, 
-        reset_token: null, 
-        reset_token_expires: null 
+      .update({
+        password: hash,
+        reset_token: null,
+        reset_token_expires: null
       })
-      .eq('reset_token', token)
+      .eq('reset_token', tokenHash)
       .gt('reset_token_expires', new Date().toISOString())
       .select()
       .single();
@@ -155,6 +184,18 @@ export const resetPassword = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
+};
+
+export const logout = (_req: Request, res: Response) => {
+  const cookieOpts = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+    path: '/',
+  };
+  res.clearCookie('access_token', cookieOpts);
+  res.clearCookie('csrf_token', { ...cookieOpts, httpOnly: false });
+  res.json({ message: 'Logged out successfully' });
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -176,9 +217,10 @@ export const login = async (req: Request, res: Response) => {
     if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email address before logging in' });
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: '7d' });
+    setAuthCookies(res, token);
     res.json({
       user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, is_verified: user.is_verified, created_at: user.created_at },
-      token,
+      token, // also returned so non-browser clients can still use Bearer auth
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });

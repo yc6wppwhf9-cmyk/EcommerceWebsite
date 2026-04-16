@@ -25,7 +25,9 @@ export const Checkout = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const shipping = total >= 1499 ? 0 : 99;
+  const SHIPPING_THRESHOLD = Number(import.meta.env.VITE_SHIPPING_THRESHOLD ?? 1499);
+  const SHIPPING_FEE = Number(import.meta.env.VITE_SHIPPING_FEE ?? 99);
+  const shipping = total >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
   const grandTotal = total + shipping;
 
   const handlePlaceOrder = async () => {
@@ -42,7 +44,7 @@ export const Checkout = () => {
 
       // 2. Open Razorpay Checkout Gateway
       const options = {
-        key: 'rzp_test_Se4bOrVW10WdWT',
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'Priority Bags',
@@ -58,7 +60,7 @@ export const Checkout = () => {
               razorpay_signature: response.razorpay_signature,
             });
 
-            // 4. Save Final Order to Database
+            // 4. Save Final Order to Database — signature fields are re-verified server-side
             await api.createOrder({
               items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
               shipping_name: form.name,
@@ -70,7 +72,9 @@ export const Checkout = () => {
               shipping_pincode: form.pincode,
               payment_method: 'online',
               payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
             });
 
             clearCart();

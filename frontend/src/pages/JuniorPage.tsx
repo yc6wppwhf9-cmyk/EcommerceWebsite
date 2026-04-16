@@ -80,7 +80,7 @@ export const JuniorPage = () => {
             </div>
           ) : Object.keys(categorizedProducts).length > 0 ? (
             <div className="space-y-32">
-              {Object.entries(categorizedProducts).map(([category, items], sectionIdx) => (
+              {(Object.entries(categorizedProducts) as [string, Product[]][]).map(([category, items], sectionIdx) => (
                 <div key={category} className="group">
                   <div className="flex items-end justify-between mb-12 border-b border-gray-100 pb-8">
                     <div>

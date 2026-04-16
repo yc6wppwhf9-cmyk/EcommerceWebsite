@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
 interface NavItemProps {
+  key?: React.Key;
   title: string;
   to: string;
   items?: { label: string; slug: string }[];
@@ -124,7 +125,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         <nav className="hidden lg:block">
           <ul className="flex items-center">
-            {navData.map((nav) => <NavItem key={nav.title} {...nav} />)}
+            {navData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} />)}
           </ul>
         </nav>
 

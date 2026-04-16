@@ -27,5 +27,13 @@ export default defineConfig({
   server: {
     port: 3000,
     host: '0.0.0.0',
+    proxy: {
+      // In development, proxy /api/* to the backend so cookies are same-origin.
+      // Leave VITE_API_URL unset (or set to '') in your .env.development.
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
   },
 });

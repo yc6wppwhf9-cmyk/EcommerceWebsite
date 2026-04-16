@@ -14,7 +14,11 @@ export const getProducts = async (req: Request, res: Response) => {
     if (category)  query = query.eq('categories.slug', category);
     if (min_price) query = query.gte('price', Number(min_price));
     if (max_price) query = query.lte('price', Number(max_price));
-    if (search)    query = query.ilike('name', `%${search}%`);
+    if (search) {
+      // Escape ILIKE metacharacters so user input is treated as a literal string
+      const escaped = (search as string).replace(/[%_\\]/g, '\\$&');
+      query = query.ilike('name', `%${escaped}%`);
+    }
 
     const sortMap: Record<string, { column: string; ascending: boolean }> = {
       'price-asc':  { column: 'price', ascending: true },
@@ -22,7 +26,7 @@ export const getProducts = async (req: Request, res: Response) => {
       'rating':     { column: 'rating', ascending: false },
       'newest':     { column: 'created_at', ascending: false },
     };
-    const s = sortMap[sort] || { column: 'created_at', ascending: false };
+    const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
     query = query.order(s.column, { ascending: s.ascending });
 
     const pageNum = Number(page);
@@ -81,30 +85,57 @@ export const bulkUpload = async (req: Request, res: Response) => {
     const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
-    const products: any[] = xlsx.utils.sheet_to_json(sheet);
+    const rows: any[] = xlsx.utils.sheet_to_json(sheet);
 
-    if (!products.length) return res.status(400).json({ error: 'Excel sheet is empty' });
+    if (!rows.length) return res.status(400).json({ error: 'Excel sheet is empty' });
 
-    // Format data for Supabase (handle common column name variations)
-    const formatted = products.map(p => ({
-      name: p.name || p.Name,
-      description: p.description || p.Description || '',
-      price: Number(p.price || p.Price),
-      original_price: Number(p.original_price || p.Price || p.price),
-      category_id: p.category_id || p.Category,
-      stock: Number(p.stock || p.Stock || 0),
-      image_url: p.image_url || p.Image || '',
-      sku: p.sku || p.SKU || '',
-      is_premium: Boolean(p.is_premium || p.Premium),
-    }));
+    const valid: any[] = [];
+    const skipped: { row: number; reason: string }[] = [];
 
-    const { data, error } = await supabase.from('products').insert(formatted).select();
+    rows.forEach((p, idx) => {
+      const rowNum = idx + 2; // +2 because row 1 is the header
+      const name = (p.name || p.Name || '').toString().trim();
+      const sku = (p.sku || p.SKU || '').toString().trim();
+      const price = Number(p.price || p.Price);
+      const originalPrice = Number(p.original_price || p.Original_Price || p.Price || p.price);
+      const stock = Number(p.stock || p.Stock || 0);
+      const categoryId = (p.category_id || p.Category_ID || '').toString().trim();
+
+      if (!name) { skipped.push({ row: rowNum, reason: 'Missing name' }); return; }
+      if (!sku) { skipped.push({ row: rowNum, reason: 'Missing SKU' }); return; }
+      if (isNaN(price) || price <= 0) { skipped.push({ row: rowNum, reason: `Invalid price: ${p.price}` }); return; }
+      if (isNaN(originalPrice) || originalPrice <= 0) { skipped.push({ row: rowNum, reason: `Invalid original_price` }); return; }
+      if (isNaN(stock) || stock < 0) { skipped.push({ row: rowNum, reason: `Invalid stock: ${p.stock}` }); return; }
+
+      valid.push({
+        name,
+        description: (p.description || p.Description || '').toString().trim(),
+        price,
+        original_price: originalPrice,
+        category_id: categoryId || null,
+        stock: Math.floor(stock),
+        image: (p.image || p.Image || p.image_url || p.Image_URL || '').toString().trim(),
+        sku,
+        is_active: true,
+      });
+    });
+
+    if (!valid.length) {
+      return res.status(400).json({ error: 'No valid rows to import', skipped });
+    }
+
+    const { data, error } = await supabase.from('products').insert(valid).select();
     if (error) throw error;
 
-    res.status(201).json({ success: true, count: data.length });
+    res.status(201).json({
+      success: true,
+      inserted: data.length,
+      skipped_count: skipped.length,
+      skipped,
+    });
   } catch (err: any) {
     console.error('Bulk upload error:', err);
-    res.status(500).json({ error: 'Failed to process Excel file' });
+    res.status(500).json({ error: 'Failed to process Excel file', details: err.message });
   }
 };
 

@@ -1,24 +1,45 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+// In development the Vite proxy forwards /api/* to localhost:4000, making cookies
+// same-origin. In production set VITE_API_URL to your backend URL.
+const BASE = import.meta.env.VITE_API_URL || '';
 
-function getToken(): string | null {
+/**
+ * Read the CSRF token from the `csrf_token` cookie that the backend sets on
+ * login/register. The backend uses the double-submit cookie pattern:
+ *   - JWT lives in an httpOnly cookie (JS-invisible, immune to XSS)
+ *   - CSRF token lives in a regular cookie (JS-readable, origin-isolated)
+ *   - Every state-changing request echoes it as X-CSRF-Token header
+ */
+function getCsrfToken(): string {
   try {
-    const raw = localStorage.getItem('priority-bags-token');
-    return raw || null;
+    const match = document.cookie.split('; ').find((c) => c.startsWith('csrf_token='));
+    return match ? decodeURIComponent(match.split('=')[1]) : '';
   } catch {
-    return null;
+    return '';
   }
 }
 
+const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = getToken();
+  const method = (options.method || 'GET').toUpperCase();
   const isFormData = options.body instanceof FormData;
+
   const headers: Record<string, string> = {
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options.headers as Record<string, string>),
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${BASE}${path}`, { ...options, headers });
+  if (MUTATING.has(method)) {
+    const csrf = getCsrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+  }
+
+  const res = await fetch(`${BASE}${path}`, {
+    ...options,
+    headers,
+    credentials: 'include', // send httpOnly JWT cookie automatically
+  });
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data as T;
@@ -57,6 +78,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  logout: () =>
+    request<{ message: string }>('/api/auth/logout', { method: 'POST' }),
 
   // User
   getMe: () => request<any>('/api/users/me'),

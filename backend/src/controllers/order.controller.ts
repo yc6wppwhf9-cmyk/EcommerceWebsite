@@ -1,5 +1,7 @@
 import { Response } from 'express';
+import crypto from 'crypto';
 import { supabase } from '../config/supabase';
+import { config } from '../config/env';
 import { AuthRequest } from '../middleware/auth';
 import * as Mailer from '../lib/mail';
 
@@ -51,8 +53,25 @@ export const getOrderById = async (req: AuthRequest, res: Response) => {
 export const createOrder = async (req: AuthRequest, res: Response) => {
   const {
     items, shipping_name, shipping_phone, shipping_line1, shipping_line2,
-    shipping_city, shipping_state, shipping_pincode, payment_method, payment_id, notes,
+    shipping_city, shipping_state, shipping_pincode, payment_method, payment_id,
+    razorpay_order_id, razorpay_payment_id, razorpay_signature, notes,
   } = req.body;
+
+  // For online payments, verify the Razorpay signature server-side before creating
+  // the order. This prevents a malicious client from skipping payment and sending
+  // payment_method: 'online' with no valid payment.
+  if (payment_method === 'online') {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: 'Payment verification fields are required for online orders' });
+    }
+    const expectedSig = crypto
+      .createHmac('sha256', config.RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+    if (expectedSig !== razorpay_signature) {
+      return res.status(400).json({ error: 'Payment signature verification failed' });
+    }
+  }
 
   try {
     const productIds = items.map((i: any) => i.product_id);
@@ -84,7 +103,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const shipping_fee = subtotal >= 1499 ? 0 : 99;
+    const shipping_fee = subtotal >= config.SHIPPING_THRESHOLD ? 0 : config.SHIPPING_FEE;
     const total = subtotal + shipping_fee;
 
     // Use RPC for atomic transaction

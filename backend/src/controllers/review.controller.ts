@@ -34,6 +34,18 @@ export const createReview = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'You have already reviewed this product' });
     }
 
+    // A review is "verified purchase" only if the user has a delivered order for this product
+    const { data: purchaseCheck } = await supabase
+      .from('order_items')
+      .select('id, orders!inner(user_id, status)')
+      .eq('product_id', product_id)
+      .eq('orders.user_id', req.user!.id)
+      .eq('orders.status', 'delivered')
+      .limit(1)
+      .single();
+
+    const is_verified = !!purchaseCheck;
+
     const { data, error } = await supabase
       .from('reviews')
       .insert({
@@ -42,7 +54,7 @@ export const createReview = async (req: AuthRequest, res: Response) => {
         rating,
         title,
         body,
-        is_verified: true, // In a real app, you might verify this
+        is_verified,
       })
       .select()
       .single();
@@ -57,12 +69,21 @@ export const createReview = async (req: AuthRequest, res: Response) => {
 export const deleteReview = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const isAdmin = req.user?.role === 'admin';
-    
-    let query = supabase.from('reviews').delete().eq('id', id);
-    if (!isAdmin) query = query.eq('user_id', req.user?.id);
+    const userId = req.user!.id;
+    const isAdmin = req.user!.role === 'admin';
 
-    const { error } = await query;
+    // Fetch the review first to confirm it exists and check ownership
+    const { data: review, error: fetchErr } = await supabase
+      .from('reviews')
+      .select('id, user_id')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr || !review) return res.status(404).json({ error: 'Review not found' });
+    if (!isAdmin && review.user_id !== userId)
+      return res.status(403).json({ error: 'You can only delete your own reviews' });
+
+    const { error } = await supabase.from('reviews').delete().eq('id', id);
     if (error) throw error;
 
     res.json({ message: 'Review deleted' });

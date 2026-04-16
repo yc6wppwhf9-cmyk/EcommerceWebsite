@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import * as PaymentController from '../controllers/payment.controller';
 import { authenticateToken } from '../middleware/auth';
+import { validateCsrf } from '../middleware/csrf';
 
 const router = Router();
 
-// Protect these routes so only logged in users can initiate payments
-router.post('/create-order', authenticateToken, PaymentController.createOrder);
-router.post('/verify', authenticateToken, PaymentController.verifyPayment);
+router.post('/create-order', authenticateToken, validateCsrf, PaymentController.createOrder);
+router.post('/verify', authenticateToken, validateCsrf, PaymentController.verifyPayment);
 
 export default router;

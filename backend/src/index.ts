@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import { config } from './config/env';
 import { supabase } from './config/supabase';
 
@@ -13,6 +14,7 @@ import productRoutes from './routes/product.routes';
 import orderRoutes from './routes/order.routes';
 import reviewRoutes from './routes/review.routes';
 import paymentRoutes from './routes/payment.routes';
+import userRoutes from './routes/user.routes';
 
 const app = express();
 
@@ -22,24 +24,40 @@ app.set('trust proxy', 1);
 // --- Middleware ---
 app.use(helmet());
 app.use(compression());
-app.use(morgan('dev'));
+// Use 'combined' (Apache-style) in production for proper log aggregation
+app.use(morgan(config.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(cookieParser());
+// Keep JSON limit small; multer handles its own limits for file uploads
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
+// General API rate limit
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
 });
 app.use('/api/', limiter);
 
+// Stricter limiter for auth endpoints — prevents credential stuffing
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many auth attempts, please try again in 15 minutes.' },
+});
+
 // --- Routes ---
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/users', userRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {

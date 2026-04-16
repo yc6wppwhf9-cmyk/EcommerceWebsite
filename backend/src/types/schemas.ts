@@ -4,7 +4,7 @@ export const registerSchema = z.object({
   body: z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
     email: z.string().email('Invalid email format'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
     phone: z.string().optional(),
   }),
 });
@@ -41,7 +41,12 @@ export const orderSchema = z.object({
     shipping_state: z.string().min(2),
     shipping_pincode: z.string().length(6),
     payment_method: z.enum(['cod', 'online']).default('cod'),
+    // COD orders don't send payment fields; online orders must send all three
     payment_id: z.string().optional(),
+    razorpay_order_id: z.string().optional(),
+    razorpay_payment_id: z.string().optional(),
+    razorpay_signature: z.string().optional(),
+    notes: z.string().optional(),
   }),
 });
 export const reviewSchema = z.object({
@@ -62,6 +67,6 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
   body: z.object({
     token: z.string().min(1, 'Token is required'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
   }),
 });

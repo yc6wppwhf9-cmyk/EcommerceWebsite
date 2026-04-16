@@ -28,7 +28,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   useEffect(() => {
     if (query.length >= 2) {
       api.getProducts({ search: query }).then(res => {
-        if (res.success) setResults((res.data as unknown as Product[]).slice(0, 8));
+        setResults((res.products as Product[]).slice(0, 8));
       }).catch(() => {});
     } else {
       setResults([]);
