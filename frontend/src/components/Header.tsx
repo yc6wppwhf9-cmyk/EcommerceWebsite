@@ -29,13 +29,13 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-[90%] left-0 w-max min-w-[240px] bg-white shadow-2xl z-50 rounded-xl overflow-hidden border border-gray-100 p-2"
+            className="absolute top-[90%] left-0 w-max min-w-[240px] bg-white dark:bg-[#111] shadow-2xl z-50 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 p-2"
           >
             {items.map((item) => (
               <Link
                 key={item.slug}
                 to={`/${item.slug}`}
-                className="block px-5 py-3 text-[11px] font-semibold font-outfit tracking-widest text-priority-blue hover:text-black hover:bg-gray-50 rounded-lg transition-all uppercase"
+                className="block px-5 py-3 text-[11px] font-semibold font-outfit tracking-widest text-priority-blue dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-all uppercase"
               >
                 {item.label}
               </Link>
@@ -152,15 +152,15 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   </span>
                 </button>
                 <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 p-2">
-                    <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue hover:bg-gray-50 rounded-xl transition-all">
+                  <div className="bg-white dark:bg-[#111] shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 p-2">
+                    <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
                       <LayoutDashboard size={16} /> {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
                     </Link>
-                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
                       {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
                     </button>
-                    <div className="my-1 border-t border-gray-100" />
-                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                    <div className="my-1 border-t border-gray-100 dark:border-white/5" />
+                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all">
                       <LogOut size={16} /> Logout
                     </button>
                   </div>
@@ -172,11 +172,11 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   <User size={20} />
                 </Link>
                 <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 p-2">
-                    <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue hover:bg-gray-50 rounded-xl transition-all">
+                  <div className="bg-white dark:bg-[#111] shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 p-2">
+                    <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
                       <User size={16} /> Login
                     </Link>
-                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
                       {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
                     </button>
                   </div>
