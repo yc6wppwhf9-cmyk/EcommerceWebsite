@@ -7,16 +7,16 @@ import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 
 const AGE_GROUPS = [
-  { label: 'Below 3 Years',   slug: 'school-backpacks',  img: '/junior/Rectangle 28.png',            banner: '/junior/Rectangle 36.png' },
-  { label: '3 to 5 Years',    slug: 'school-backpacks',  img: '/junior/Rectangle 29.png',            banner: '/junior/3to 5.png'        },
-  { label: '6 to 10 Years',   slug: 'school-backpacks',  img: "/junior/Speedo_ Hero 1.png",          banner: '/junior/Rectangle 36.png' },
+  { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', banner: '/junior/Rectangle 36.png' },
+  { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', banner: '/junior/3to 5.png' },
+  { label: '6 to 10 Years', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png", banner: '/junior/Rectangle 36.png' },
   { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png", banner: '/junior/Rectangle 36.png' },
 ];
 
 export const JuniorPage = () => {
   const [schoolProducts, setSchoolProducts] = useState<Product[]>([]);
-  const [bestSellers, setBestSellers]         = useState<Product[]>([]);
-  const [isLoading, setIsLoading]             = useState(true);
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -37,9 +37,9 @@ export const JuniorPage = () => {
           HERO — Clean Editorial Image
       ═══════════════════════════════════════════════ */}
       <section className="relative w-full h-[450px] md:h-[650px] overflow-hidden">
-        <img 
-          src="/junior/junior_hero_new.png" 
-          alt="Junior Collection Preview" 
+        <img
+          src="/junior/junior hero.png"
+          alt="Junior Collection Preview"
           className="w-full h-full object-cover"
         />
       </section>
@@ -61,11 +61,11 @@ export const JuniorPage = () => {
 
           {/* Title with yellow banner highlight */}
           <div className="flex items-center justify-center gap-3 mb-10">
-            <img src="/junior/flower.png" alt="" aria-hidden className="w-7 h-7 select-none" />
+            <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
             <h2 className="font-protest" style={{ fontSize: '36px', color: '#A368FB', lineHeight: '125.7%' }}>
               Shop By Age
             </h2>
-            <img src="/junior/flower.png" alt="" aria-hidden className="w-7 h-7 select-none" />
+            <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
@@ -90,14 +90,14 @@ export const JuniorPage = () => {
                   />
 
                   {/* Banner label at bottom — alternates yellow / purple */}
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center" style={{ height: '36px' }}>
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center pt-2" style={{ height: '52px' }}>
                     <img
                       src={group.banner}
                       alt=""
                       aria-hidden
                       className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
                     />
-                    <p className="relative z-10 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white font-nunito drop-shadow-sm">
+                    <p className="relative z-10 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-white font-nunito drop-shadow-sm">
                       {group.label}
                     </p>
                   </div>
@@ -202,7 +202,7 @@ export const JuniorPage = () => {
             {/* Products */}
             {isLoading ? (
               <div className="flex-1 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
-                {[1,2,3,4].map(n => (
+                {[1, 2, 3, 4].map(n => (
                   <div key={n} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-3xl" />
                 ))}
               </div>
