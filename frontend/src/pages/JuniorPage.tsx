@@ -155,7 +155,7 @@ export const JuniorPage = () => {
       </section>
 
       {/* New Arrival Banner */}
-      <section className="relative mt-24 mb-14 overflow-visible px-4 md:px-0 flex justify-center">
+      <section className="relative mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
         <div className="absolute top-[-40px] inset-x-0 h-40 pointer-events-none opacity-20"
           style={{ backgroundImage: "linear-gradient(#c7d2fe 1px, transparent 1px), linear-gradient(90deg, #c7d2fe 1px, transparent 1px)", backgroundSize: "20px 20px" }} 
         />
@@ -181,7 +181,7 @@ export const JuniorPage = () => {
       {/* ═══════════════════════════════════════════════
           ENHANCED SHOWCASE — with Exact Figma Metrics
       ═══════════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-white overflow-hidden">
+      <section className="py-12 md:py-16 bg-white overflow-hidden">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
           
           {/* Tabs Area: 829x24 | Active: #030014 | Inactive: #AEADB4 */}
@@ -209,17 +209,17 @@ export const JuniorPage = () => {
 
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             
-            {/* Featured Card: Rectangle 334x486 Behind Image 305x444 */}
+            {/* Featured Card: Rectangle 334x486 Behind Image 285x400 */}
             <div className="relative shrink-0 flex items-center justify-center lg:justify-start">
                {/* Background Rectangle: 334x486 | #FAC05C | Corner: 5 */}
                <div 
                  className="relative flex items-center justify-center"
                  style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}
                >
-                 {/* Inner Image: 305x444 | Corner: 5 */}
+                 {/* Inner Image: 285x400 | Corner: 5 */}
                  <div 
                    className="overflow-hidden shadow-2xl"
-                   style={{ width: '305px', height: '444px', borderRadius: '5px' }}
+                   style={{ width: '285px', height: '400px', borderRadius: '5px' }}
                  >
                    <img 
                      src="/junior/Beautiful_ Hero 1.png"
@@ -228,9 +228,12 @@ export const JuniorPage = () => {
                    />
                  </div>
 
-                 {/* Curvy Label Gradient */}
-                 <div className="absolute bottom-4 inset-x-0 h-32 flex items-end justify-center pb-6">
-                    <h3 className="font-dancing text-white text-[2.8rem] md:text-[3.2rem] leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                 {/* Curvy Label: Protest Riot | 39.88px | #FFFFFF */}
+                 <div className="absolute bottom-4 inset-x-0 h-32 flex items-end justify-center pb-8 p-4">
+                    <h3 
+                      className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                      style={{ fontSize: '39.88px' }}
+                    >
                       {activeTab}
                     </h3>
                  </div>
