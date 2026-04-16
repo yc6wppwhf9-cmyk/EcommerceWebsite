@@ -110,19 +110,9 @@ export const JuniorPage = () => {
           {/* Title with yellow banner highlight */}
           <div className="flex items-center justify-center gap-3 mb-10">
             <img src="/junior/flower.png" alt="" aria-hidden className="w-7 h-7 select-none" />
-            <div className="relative flex items-center justify-center">
-              {/* Yellow banner behind text */}
-              <img
-                src="/junior/Rectangle 36.png"
-                alt=""
-                aria-hidden
-                className="absolute inset-x-0 w-full h-full object-fill pointer-events-none select-none"
-                style={{ transform: 'scaleX(1.15) scaleY(1.3)' }}
-              />
-              <h2 className="relative font-protest px-8 py-1 z-10" style={{ fontSize: '36px', color: '#A368FB', lineHeight: '125.7%', letterSpacing: '0%' }}>
-                Shop By Age
-              </h2>
-            </div>
+            <h2 className="font-protest" style={{ fontSize: '36px', color: '#A368FB', lineHeight: '125.7%' }}>
+              Shop By Age
+            </h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-7 h-7 select-none" />
           </div>
 
