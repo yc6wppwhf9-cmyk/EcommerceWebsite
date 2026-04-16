@@ -203,7 +203,7 @@ export const Home = () => {
         </div>
 
         {/* Desktop version - Exactly as shown in screenshot */}
-        <div className="hidden md:block text-white relative py-20">
+        <div className="hidden md:block text-white relative py-12">
           <div className="container mx-auto px-8 relative z-10 flex flex-row items-center gap-16">
             <div className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20">
               <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
