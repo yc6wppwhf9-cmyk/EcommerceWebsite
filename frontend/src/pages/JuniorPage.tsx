@@ -93,23 +93,21 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          SHOP BY AGE — real kid photos in circles
+          SHOP BY AGE — tall portrait cards
       ═══════════════════════════════════════════════ */}
-      <section className="py-14 md:py-20 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="max-w-[1280px] mx-auto px-6 md:px-14">
-          <div className="text-center mb-10">
-            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-400 font-nunito mb-1">
-              Find Your Perfect Bag
-            </p>
-            <h2
-              className="text-3xl md:text-4xl font-black uppercase text-[#1a1a1a] font-nunito"
-              style={{ letterSpacing: '-0.01em' }}
-            >
+
+          {/* Title with star decorations */}
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <span className="text-pink-400 text-lg">✦</span>
+            <h2 className="text-xl md:text-2xl font-black text-[#1a1a1a] font-nunito tracking-wide">
               Shop By Age
             </h2>
+            <span className="text-pink-400 text-lg">✦</span>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
             {AGE_GROUPS.map((group, i) => (
               <motion.div
                 key={group.label}
@@ -120,22 +118,20 @@ export const JuniorPage = () => {
               >
                 <Link
                   to={`/${group.slug}`}
-                  className="group flex flex-col items-center gap-4 p-5 rounded-3xl bg-gray-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  className="group relative block rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  style={{ aspectRatio: '3/4' }}
                 >
-                  {/* Circle photo */}
-                  <div className="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
-                    <img
-                      src={group.img}
-                      alt={group.label}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-black text-[#1a1a1a] font-nunito uppercase tracking-wide">
+                  {/* Full-bleed photo */}
+                  <img
+                    src={group.img}
+                    alt={group.label}
+                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  />
+
+                  {/* Bottom label */}
+                  <div className="absolute bottom-0 inset-x-0 bg-white/90 backdrop-blur-sm py-2.5 px-3 text-center">
+                    <p className="text-[11px] md:text-xs font-black uppercase tracking-widest text-[#1a1a1a] font-nunito">
                       {group.label}
-                    </p>
-                    <p className="text-[10px] font-bold mt-0.5 uppercase tracking-widest font-nunito text-[#7C3AED]">
-                      Shop Now →
                     </p>
                   </div>
                 </Link>
