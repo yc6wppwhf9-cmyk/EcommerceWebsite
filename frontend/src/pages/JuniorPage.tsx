@@ -109,7 +109,7 @@ export const JuniorPage = () => {
 
           {/* Title with yellow banner highlight */}
           <div className="flex items-center justify-center gap-3 mb-10">
-            <span className="text-pink-400 text-xl select-none">●</span>
+            <img src="/junior/flower.png" alt="" aria-hidden className="w-7 h-7 select-none" />
             <div className="relative flex items-center justify-center">
               {/* Yellow banner behind text */}
               <img
@@ -123,7 +123,7 @@ export const JuniorPage = () => {
                 Shop By Age
               </h2>
             </div>
-            <span className="text-pink-400 text-xl select-none">●</span>
+            <img src="/junior/flower.png" alt="" aria-hidden className="w-7 h-7 select-none" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
