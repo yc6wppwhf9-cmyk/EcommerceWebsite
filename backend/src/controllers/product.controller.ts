@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase';
 import * as xlsx from 'xlsx';
 
 export const getProducts = async (req: Request, res: Response) => {
-  const { category, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query as any;
+  const { category, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
   try {
     let query = supabase
@@ -105,5 +105,19 @@ export const bulkUpload = async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('Bulk upload error:', err);
     res.status(500).json({ error: 'Failed to process Excel file' });
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
+    res.json({ message: 'Product deleted successfully' });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to delete product', message: err.message });
   }
 };

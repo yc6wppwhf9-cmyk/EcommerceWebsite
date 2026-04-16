@@ -15,6 +15,7 @@ CREATE TABLE users (
   phone       VARCHAR(20),
   password    VARCHAR(255) NOT NULL,  -- bcrypt hash
   role        VARCHAR(20) DEFAULT 'customer' CHECK (role IN ('customer', 'admin')),
+  is_verified BOOLEAN DEFAULT false,
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
@@ -160,6 +161,78 @@ CREATE TABLE cart_items (
   updated_at  TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (user_id, product_id)
 );
+
+-- ─── Function: Atomic Order Creation ───────────────────────
+CREATE OR REPLACE FUNCTION create_order_v2(
+  p_user_id UUID,
+  p_subtotal DECIMAL,
+  p_shipping_fee DECIMAL,
+  p_total DECIMAL,
+  p_shipping_name VARCHAR,
+  p_shipping_phone VARCHAR,
+  p_shipping_line1 VARCHAR,
+  p_shipping_line2 VARCHAR,
+  p_shipping_city VARCHAR,
+  p_shipping_state VARCHAR,
+  p_shipping_pincode VARCHAR,
+  p_payment_method VARCHAR,
+  p_payment_id VARCHAR,
+  p_notes TEXT,
+  p_items JSONB
+) RETURNS UUID AS $$
+DECLARE
+  v_order_id UUID;
+  v_item RECORD;
+BEGIN
+  -- 1. Insert Order
+  INSERT INTO orders (
+    user_id, subtotal, shipping_fee, total,
+    shipping_name, shipping_phone, shipping_line1, shipping_line2,
+    shipping_city, shipping_state, shipping_pincode,
+    payment_method, payment_id, notes, status, payment_status
+  ) VALUES (
+    p_user_id, p_subtotal, p_shipping_fee, p_total,
+    p_shipping_name, p_shipping_phone, p_shipping_line1, p_shipping_line2,
+    p_shipping_city, p_shipping_state, p_shipping_pincode,
+    p_payment_method, p_payment_id, p_notes, 'confirmed', 
+    CASE WHEN p_payment_method = 'online' THEN 'paid' ELSE 'pending' END
+  ) RETURNING id INTO v_order_id;
+
+  -- 2. Insert Items and Decrement Stock
+  FOR v_item IN SELECT * FROM jsonb_to_recordset(p_items) AS x(product_id UUID, name VARCHAR, price DECIMAL, quantity INT, image VARCHAR)
+  LOOP
+    INSERT INTO order_items (order_id, product_id, name, price, quantity, image)
+    VALUES (v_order_id, v_item.product_id, v_item.name, v_item.price, v_item.quantity, v_item.image);
+
+    -- Atomic decrement (reuse logic or inline)
+    UPDATE products
+    SET stock = stock - v_item.quantity,
+        updated_at = NOW()
+    WHERE id = v_item.product_id AND stock >= v_item.quantity;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Insufficient stock for product %', v_item.product_id;
+    END IF;
+  END LOOP;
+
+  RETURN v_order_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ─── Function: Atomic Stock Decrement ───────────────────────
+CREATE OR REPLACE FUNCTION decrement_stock(product_id UUID, qty INT)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE products
+  SET stock = stock - qty,
+      updated_at = NOW()
+  WHERE id = product_id AND stock >= qty;
+  
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Insufficient stock for product %', product_id;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 -- ─── Trigger: update product rating on review change ─────────
 CREATE OR REPLACE FUNCTION update_product_rating()

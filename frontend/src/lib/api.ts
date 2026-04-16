@@ -78,10 +78,19 @@ export const api = {
     }),
 
   // Orders
-  getOrders: () => request<any[]>('/api/orders'),
+  getOrders: (params?: { page?: number; limit?: number }) => {
+    const qs = params ? '?' + new URLSearchParams(params as any).toString() : '';
+    return request<{ data: any[]; pagination: any }>(`/api/orders${qs}`);
+  },
   getOrder: (id: string) => request<any>(`/api/orders/${id}`),
   createOrder: (data: any) =>
     request<any>('/api/orders', { method: 'POST', body: JSON.stringify(data) }),
   updateOrderStatus: (id: string, status: string) =>
     request<any>(`/api/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+
+  // Reviews
+  getReviews: (productId: string) => request<any[]>(`/api/reviews/product/${productId}`),
+  createReview: (data: { product_id: string; rating: number; title?: string; body?: string }) =>
+    request<any>('/api/reviews', { method: 'POST', body: JSON.stringify(data) }),
+  deleteReview: (id: string) => request<any>(`/api/reviews/${id}`, { method: 'DELETE' }),
 };

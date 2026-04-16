@@ -4,15 +4,33 @@ import { AuthRequest } from '../middleware/auth';
 
 export const getOrders = async (req: AuthRequest, res: Response) => {
   try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const offset = (page - 1) * limit;
+
     const isAdmin = req.user?.role === 'admin';
-    let query = supabase.from('orders').select('*, order_items(*)').order('created_at', { ascending: false });
+    let query = supabase
+      .from('orders')
+      .select('*, order_items(*)', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
     if (!isAdmin) query = query.eq('user_id', req.user?.id);
 
-    const { data, error } = await query;
+    const { data, error, count } = await query;
     if (error) throw error;
-    res.json(data || []);
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+
+    res.json({
+      data: data || [],
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        pages: Math.ceil((count || 0) / limit)
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Server error', message: err.message });
   }
 };
 
@@ -32,11 +50,8 @@ export const getOrderById = async (req: AuthRequest, res: Response) => {
 export const createOrder = async (req: AuthRequest, res: Response) => {
   const {
     items, shipping_name, shipping_phone, shipping_line1, shipping_line2,
-    shipping_city, shipping_state, shipping_pincode, payment_method, notes,
+    shipping_city, shipping_state, shipping_pincode, payment_method, payment_id, notes,
   } = req.body;
-
-  if (!items?.length || !shipping_name || !shipping_phone || !shipping_line1 || !shipping_city || !shipping_state || !shipping_pincode)
-    return res.status(400).json({ error: 'Missing required order fields' });
 
   try {
     const productIds = items.map((i: any) => i.product_id);
@@ -55,49 +70,57 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
     for (const item of items) {
       const product = productMap[item.product_id];
-      if (!product) throw new Error('Product not found');
+      if (!product) throw new Error(`Product not found: ${item.product_id}`);
       if (product.stock < item.quantity) throw new Error(`Insufficient stock for ${product.name}`);
+      
       subtotal += product.price * item.quantity;
-      orderItems.push({ product_id: item.product_id, name: product.name, price: product.price, image: product.image, quantity: item.quantity });
+      orderItems.push({
+        product_id: item.product_id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: item.quantity
+      });
     }
 
     const shipping_fee = subtotal >= 1499 ? 0 : 99;
     const total = subtotal + shipping_fee;
 
-    const { data: order, error: oErr } = await supabase
-      .from('orders')
-      .insert({
-        user_id: req.user?.id, subtotal, shipping_fee, total,
-        shipping_name, shipping_phone, shipping_line1, shipping_line2: shipping_line2 || null,
-        shipping_city, shipping_state, shipping_pincode,
-        payment_method: payment_method || 'cod', notes: notes || null,
-        status: 'confirmed', payment_status: 'pending',
-      })
-      .select()
-      .single();
+    // Use RPC for atomic transaction
+    const { data: orderId, error: rpcErr } = await supabase.rpc('create_order_v2', {
+      p_user_id: req.user?.id,
+      p_subtotal: subtotal,
+      p_shipping_fee: shipping_fee,
+      p_total: total,
+      p_shipping_name: shipping_name,
+      p_shipping_phone: shipping_phone,
+      p_shipping_line1: shipping_line1,
+      p_shipping_line2: shipping_line2 || null,
+      p_shipping_city: shipping_city,
+      p_shipping_state: shipping_state,
+      p_shipping_pincode: shipping_pincode,
+      p_payment_method: payment_method || 'cod',
+      p_payment_id: payment_id || null,
+      p_notes: notes || null,
+      p_items: orderItems
+    });
 
-    if (oErr || !order) throw new Error('Failed to create order');
+    if (rpcErr) throw rpcErr;
 
-    const { error: iErr } = await supabase
-      .from('order_items')
-      .insert(orderItems.map((i) => ({ ...i, order_id: order.id })));
-
-    if (iErr) throw new Error('Failed to create order items');
-
-    for (const item of orderItems) {
-      await supabase.rpc('decrement_stock', { product_id: item.product_id, qty: item.quantity });
-    }
-
+    // Fetch and Return Final Order
     const { data: finalOrder } = await supabase
       .from('orders')
       .select('*, order_items(*)')
-      .eq('id', order.id)
+      .eq('id', orderId)
       .single();
 
     res.status(201).json(finalOrder);
   } catch (err: any) {
-    console.error('create order error', err);
-    res.status(400).json({ error: err.message || 'Order creation failed' });
+    console.error('❌ Create Order Exception:', err);
+    res.status(400).json({ 
+      error: err.message || 'Order creation failed',
+      details: err.details 
+    });
   }
 };
 

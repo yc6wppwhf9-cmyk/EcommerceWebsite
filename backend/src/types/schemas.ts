@@ -41,5 +41,14 @@ export const orderSchema = z.object({
     shipping_state: z.string().min(2),
     shipping_pincode: z.string().length(6),
     payment_method: z.enum(['cod', 'online']).default('cod'),
+    payment_id: z.string().optional(),
+  }),
+});
+export const reviewSchema = z.object({
+  body: z.object({
+    product_id: z.string().uuid(),
+    rating: z.number().int().min(1).max(5),
+    title: z.string().min(2).optional(),
+    body: z.string().min(5).optional(),
   }),
 });

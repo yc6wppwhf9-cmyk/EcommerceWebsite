@@ -142,7 +142,7 @@ export const AdminDashboard = () => {
   if (isLoading || !user) return null;
 
   return (
-    <main className="min-h-screen bg-[#f8f9fa] font-outfit pt-10 pb-20">
+    <main className="min-h-screen bg-[var(--color-bg-main)] font-outfit pt-10 pb-20 transition-colors duration-300">
       <div className="max-w-[1400px] mx-auto px-6">
         
         {/* Simple Header */}
@@ -168,7 +168,7 @@ export const AdminDashboard = () => {
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all ${
                     activeTab === tab.id 
                       ? 'bg-priority-blue text-white shadow-md' 
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-white border border-transparent'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-[var(--color-bg-card)] border border-transparent'
                   }`}
                 >
                   <tab.icon size={16} />

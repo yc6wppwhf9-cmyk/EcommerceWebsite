@@ -19,5 +19,6 @@ router.put('/:id', authenticateToken, requireAdmin, validate(productSchema.parti
 // New: Image Upload and Bulk Upload
 router.post('/upload-image', authenticateToken, requireAdmin, upload.single('image'), ProductController.uploadImage);
 router.post('/bulk-upload', authenticateToken, requireAdmin, uploadExcel.single('file'), ProductController.bulkUpload);
+router.delete('/:id', authenticateToken, requireAdmin, ProductController.deleteProduct);
 
 export default router;

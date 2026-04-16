@@ -24,3 +24,10 @@
 
 ### 3. Routing
 - Verified that all new category slugs are handled by the dynamic `CategoryPage` route.
+
+## Phase: Technical Audit & Stability
+Currently addressing critical risks and technical debt identified in the production audit:
+- Security: Hardcoded secrets and CORS defaults.
+- Reliability: Atomic stock management and DB transactions for orders.
+- Scalability: Order pagination and logging.
+- Features: Product deletion and User review system.

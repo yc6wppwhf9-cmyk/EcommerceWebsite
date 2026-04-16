@@ -13,8 +13,14 @@ export const register = async (req: Request, res: Response) => {
     const hash = await bcrypt.hash(password, 12);
     const { data: user, error } = await supabase
       .from('users')
-      .insert({ name, email, password: hash, phone: phone || null })
-      .select('id, name, email, phone, role, created_at')
+      .insert({ 
+        name, 
+        email, 
+        password: hash, 
+        phone: phone || null,
+        is_verified: false 
+      })
+      .select('id, name, email, phone, role, is_verified, created_at')
       .single();
 
     if (error) {

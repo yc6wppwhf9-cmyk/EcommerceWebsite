@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import morgan from 'morgan';
 import { config } from './config/env';
 import { supabase } from './config/supabase';
 
@@ -10,6 +11,7 @@ import { supabase } from './config/supabase';
 import authRoutes from './routes/auth.routes';
 import productRoutes from './routes/product.routes';
 import orderRoutes from './routes/order.routes';
+import reviewRoutes from './routes/review.routes';
 
 const app = express();
 
@@ -19,6 +21,7 @@ app.set('trust proxy', 1);
 // --- Middleware ---
 app.use(helmet());
 app.use(compression());
+app.use(morgan('dev'));
 app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -34,6 +37,7 @@ app.use('/api/', limiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {
@@ -49,6 +53,20 @@ app.get('/api/health', async (_req, res) => {
   } catch {
     res.status(503).json({ status: 'error', db: 'disconnected' });
   }
+});
+
+// --- Global Error Handler ---
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('❌ Global Error Handler:', err);
+  
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  res.status(status).json({
+    error: message,
+    status: 'error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 export default app;
