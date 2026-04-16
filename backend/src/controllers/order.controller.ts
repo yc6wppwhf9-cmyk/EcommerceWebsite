@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { supabase } from '../config/supabase';
 import { AuthRequest } from '../middleware/auth';
+import * as Mailer from '../lib/mail';
 
 export const getOrders = async (req: AuthRequest, res: Response) => {
   try {
@@ -125,17 +126,31 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 };
 
 export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
-  const { status } = req.body;
+  const { status, invoice_url } = req.body;
   const valid = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'];
   if (!valid.includes(status)) return res.status(400).json({ error: 'Invalid status' });
 
-  const { data, error } = await supabase
-    .from('orders')
-    .update({ status })
-    .eq('id', req.params.id)
-    .select()
-    .single();
+  try {
+    const { data: order, error } = await supabase
+      .from('orders')
+      .update({ status, invoice_url })
+      .eq('id', req.params.id)
+      .select('*, users(name, email)')
+      .single();
 
-  if (error || !data) return res.status(404).json({ error: 'Order not found' });
-  res.json(data);
+    if (error || !order) return res.status(404).json({ error: 'Order not found' });
+
+    // Send Shipping Email if status is 'shipped'
+    if (status === 'shipped') {
+      await Mailer.sendEmail(
+        (order as any).users.email,
+        'Your Order has been Shipped! - Priority Bags',
+        Mailer.getOrderShippedTemplate((order as any).users.name, order.id, invoice_url)
+      );
+    }
+
+    res.json(order);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Server error', message: err.message });
+  }
 };

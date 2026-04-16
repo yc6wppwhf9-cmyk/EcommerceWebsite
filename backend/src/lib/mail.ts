@@ -54,3 +54,19 @@ export const getPasswordResetTemplate = (name: string, url: string) => `
     <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags. All rights reserved.</p>
   </div>
 `;
+
+export const getOrderShippedTemplate = (name: string, orderId: string, invoiceUrl?: string) => `
+  <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #eee;">
+    <h2 style="font-weight: 700; font-size: 24px; color: ${PRIMARY_COLOR}; margin-bottom: 24px;">Your Order is on the Way!</h2>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Hi ${name},</p>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Great news! Your order <strong>#${orderId.slice(0,8).toUpperCase()}</strong> has been shipped and is heading your way.</p>
+    ${invoiceUrl ? `
+    <div style="margin: 32px 0;">
+      <a href="${invoiceUrl}" style="background: ${PRIMARY_COLOR}; color: white; padding: 14px 28px; text-decoration: none; font-weight: 600; border-radius: 4px; display: inline-block;">View Invoice</a>
+    </div>
+    ` : ''}
+    <p style="font-size: 14px; color: #666;">You can track your order status in your dashboard.</p>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 32px 0;">
+    <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags. All rights reserved.</p>
+  </div>
+`;

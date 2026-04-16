@@ -126,6 +126,7 @@ CREATE TABLE orders (
   payment_status  VARCHAR(30) DEFAULT 'pending'
                     CHECK (payment_status IN ('pending','paid','failed','refunded')),
   notes           TEXT,
+  invoice_url     VARCHAR(500),
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );

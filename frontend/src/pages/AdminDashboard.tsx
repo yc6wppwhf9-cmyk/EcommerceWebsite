@@ -68,17 +68,19 @@ export const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<Partial<Product>>(BLANK_FORM());
   const [variants, setVariants] = useState<ColorVariant[]>([]);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const metrics = [
     { label: 'Revenue Today', value: '₹ 24,500', icon: TrendingUp, color: 'bg-emerald-500' },
-    { label: 'Total Sales', value: '1,284', icon: ShoppingBag, color: 'bg-priority-blue' },
+    { label: 'Total Sales', value: orders.length.toString(), icon: ShoppingBag, color: 'bg-priority-blue' },
     { label: 'Active Users', value: '42', icon: Users, color: 'bg-orange-500' },
-    { label: 'Pending Ships', value: '12', icon: Truck, color: 'bg-purple-500' },
+    { label: 'Pending Ships', value: orders.filter(o => o.status === 'confirmed').length.toString(), icon: Truck, color: 'bg-purple-500' },
   ];
 
   useEffect(() => {
@@ -86,11 +88,21 @@ export const AdminDashboard = () => {
     if (user && user.role !== 'admin') navigate('/account');
   }, [isAuthenticated, isLoading, navigate, user]);
 
+  const fetchData = async () => {
+    try {
+      const [prodRes, orderRes] = await Promise.all([
+        api.getProducts(),
+        api.getOrders()
+      ]);
+      setProducts(prodRes.products.map((p: any) => ({ ...p, id: String(p.id) })));
+      setOrders(orderRes.orders);
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+
   useEffect(() => {
-    if (!isAuthenticated) return;
-    api.getProducts().then(res => {
-      setProducts(res.products.map((p: any) => ({ ...p, id: String(p.id) })));
-    }).catch(() => {});
+    if (isAuthenticated) fetchData();
   }, [isAuthenticated]);
 
   // Pricing Logic
@@ -132,11 +144,71 @@ export const AdminDashboard = () => {
         alert('Item added successfully!');
         setIsAddingProduct(false);
       }
-      api.getProducts().then(res => setProducts(res.products.map((p: any) => ({ ...p, id: String(p.id) }))));
+      fetchData();
       setFormData(BLANK_FORM());
       setVariants([]);
       setDiscountPercent(0);
     } catch { alert('Error saving! Check required fields'); }
+  };
+
+  const updateStatus = async (orderId: string, status: string, invoiceUrl?: string) => {
+    try {
+      await api.updateOrderStatus(orderId, status, invoiceUrl);
+      setSelectedOrder(null);
+      fetchData();
+      alert(`Order updated to ${status}!`);
+    } catch {
+      alert('Failed to update order status');
+    }
+  };
+
+  const printLabel = (order: any) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Shipping Label - #${order.id.slice(0, 8)}</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #000; }
+            .label-card { border: 2px solid #000; padding: 20px; max-width: 500px; margin: 0 auto; }
+            .header { border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+            .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; }
+            .order-id { font-size: 12px; font-weight: 700; color: #666; }
+            .address-box { margin-bottom: 30px; }
+            .address-label { font-size: 10px; font-weight: 900; text-transform: uppercase; color: #999; margin-bottom: 5px; }
+            .name { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+            .address-text { font-size: 14px; line-height: 1.5; font-weight: 500; }
+            .footer { border-top: 2px solid #000; pt-20; margin-top: 30px; display: flex; justify-content: space-between; align-items: center; }
+            .method { font-size: 11px; font-weight: 900; background: #000; color: #fff; padding: 4px 8px; border-radius: 4px; }
+          </style>
+        </head>
+        <body onload="window.print()">
+          <div class="label-card">
+            <div class="header">
+              <div class="logo">PRIORITY</div>
+              <div class="order-id">ORD-${order.id.slice(0, 8).toUpperCase()}</div>
+            </div>
+            <div class="address-box">
+              <div class="address-label">Deliver To</div>
+              <div class="name">${order.shipping_name}</div>
+              <div class="address-text">
+                ${order.shipping_line1}<br>
+                ${order.shipping_line2 ? order.shipping_line2 + '<br>' : ''}
+                ${order.shipping_city}, ${order.shipping_state} - ${order.shipping_pincode}<br>
+                <strong>Phone:</strong> ${order.shipping_phone}
+              </div>
+            </div>
+            <div class="footer">
+              <div class="method">${order.payment_method.toUpperCase()}</div>
+              <div style="font-weight: 900; font-size: 14px;">₹ ${order.total}</div>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   if (isLoading || !user) return null;
@@ -164,7 +236,7 @@ export const AdminDashboard = () => {
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setIsAddingProduct(false); setEditingProduct(null); }}
+                  onClick={() => { setActiveTab(tab.id); setIsAddingProduct(false); setEditingProduct(null); setSelectedOrder(null); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all ${
                     activeTab === tab.id 
                       ? 'bg-priority-blue text-white shadow-md' 
@@ -369,12 +441,118 @@ export const AdminDashboard = () => {
                             </div>
                             <div className="flex gap-4 mt-3">
                                <button onClick={() => { setEditingProduct(p); setFormData(p); setVariants((p.variants || []).map((v:any) => ({ color: v.color||'', colorCode: v.colorCode||'#000', image: v.images?.[0]||'' }))); setIsAddingProduct(true); }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
-                               <button onClick={() => { if(window.confirm('Delete?')) api.deleteProduct(p.id).then(() => setProducts(x => x.filter(item => item.id !== p.id))) }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
+                               <button onClick={() => { if(window.confirm('Delete?')) api.deleteProduct(p.id).then(() => fetchData()) }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
                             </div>
                           </div>
                           {p.isNew && <div className="absolute top-0 right-0 w-8 h-8"><div className="absolute top-0 right-0 w-[150%] h-4 bg-priority-blue text-[7px] font-black text-white flex items-center justify-center rotate-45 translate-x-[30%] translate-y-[20%] uppercase">New</div></div>}
                         </div>
                       ))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {activeTab === 'orders' && (
+                <motion.div key="ord" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div>
+                        <h2 className="text-sm font-black text-gray-900 uppercase">Manage Orders</h2>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">{orders.length} Total orders</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {orders.map(order => (
+                      <div key={order.id} className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-priority-blue transition-all">
+                        <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
+                          <div>
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="text-[11px] font-black text-gray-900">#ORD-{order.id.slice(0, 8).toUpperCase()}</span>
+                              <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                                order.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                order.status === 'delivered' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                {order.status}
+                              </span>
+                            </div>
+                            <p className="text-sm font-black text-gray-900 mb-0.5">{order.shipping_name}</p>
+                            <p className="text-[11px] font-bold text-gray-500">{order.shipping_phone} | {new Date(order.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-black text-gray-900">₹ {order.total}</p>
+                            <p className="text-[10px] font-black text-priority-blue uppercase tracking-widest">{order.payment_method}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                          <button onClick={() => printLabel(order)} className="px-4 py-2 bg-gray-900 text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
+                            <Truck size={14} /> Print Label
+                          </button>
+                          {order.status !== 'shipped' && order.status !== 'delivered' && (
+                            <button onClick={() => setSelectedOrder(order)} className="px-4 py-2 bg-priority-blue text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
+                                <Check size={14} /> Mark as Shipped
+                            </button>
+                          )}
+                          <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-[10px] font-black uppercase">
+                            View Details
+                          </button>
+                        </div>
+
+                        {/* Expandable Section for Items */}
+                        <div className="mt-6 pt-4 border-t border-gray-100">
+                          <div className="flex gap-4 overflow-x-auto pb-2">
+                            {order.order_items?.map((item: any, idx: number) => (
+                              <div key={idx} className="flex items-center gap-3 min-w-[200px] bg-gray-50 p-2 rounded-xl">
+                                <img src={item.image} className="w-10 h-10 object-contain" />
+                                <div>
+                                  <p className="text-[10px] font-black text-gray-900 truncate w-32">{item.name}</p>
+                                  <p className="text-[8px] font-bold text-gray-400">QTY: {item.quantity} | ₹ {item.price}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Shipping Modal */}
+                  {selectedOrder && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                      <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
+                        <h2 className="text-xl font-black text-gray-900 mb-2 uppercase italic tracking-tighter">Prepare Shipping</h2>
+                        <p className="text-xs font-bold text-gray-500 mb-8 uppercase tracking-widest underline decoration-priority-blue decoration-2">Order #ORD-{selectedOrder.id.slice(0, 8).toUpperCase()}</p>
+                        
+                        <div className="space-y-6">
+                           <CloudinaryUpload 
+                             label="Attach Manual Invoice (PDF/Image)" 
+                             value={selectedOrder.invoice_url || ''} 
+                             onChange={(url) => setSelectedOrder({...selectedOrder, invoice_url: url})}
+                           />
+                           
+                           <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                             <p className="text-[10px] font-black text-blue-800 uppercase leading-snug">
+                               Note: Changing status to "Shipped" will automatically email the customer with their tracking info and attached invoice.
+                             </p>
+                           </div>
+
+                           <div className="flex gap-3">
+                              <button 
+                                onClick={() => updateStatus(selectedOrder.id, 'shipped', selectedOrder.invoice_url)}
+                                className="flex-1 py-4 bg-priority-blue text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-priority-blue/30"
+                              >
+                                Confirm & Ship
+                              </button>
+                              <button 
+                                onClick={() => setSelectedOrder(null)}
+                                className="px-8 py-4 bg-gray-100 text-gray-500 rounded-xl text-xs font-black uppercase tracking-widest"
+                              >
+                                Cancel
+                              </button>
+                           </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </motion.div>

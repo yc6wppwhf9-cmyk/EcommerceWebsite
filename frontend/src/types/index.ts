@@ -94,6 +94,8 @@ export interface Order {
   shippingAddress: Address;
   paymentMethod: string;
   paymentId?: string;
+  notes?: string;
+  invoice_url?: string;
   createdAt: string;
   updatedAt: string;
 }

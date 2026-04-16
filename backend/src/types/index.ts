@@ -62,6 +62,7 @@ export interface Order {
   payment_id?: string;
   payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
   notes?: string;
+  invoice_url?: string;
   created_at: string;
   updated_at: string;
   order_items?: OrderItem[];

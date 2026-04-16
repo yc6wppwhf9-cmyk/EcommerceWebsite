@@ -51,7 +51,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           <div className="h-full w-full flex justify-center items-center p-4">
             <img
               alt={product.name}
-              className="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
               src={displayImage}
               referrerPolicy="no-referrer"
               loading="lazy"

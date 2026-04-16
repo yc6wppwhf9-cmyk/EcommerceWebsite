@@ -100,8 +100,11 @@ export const api = {
   getOrder: (id: string) => request<any>(`/api/orders/${id}`),
   createOrder: (data: any) =>
     request<any>('/api/orders', { method: 'POST', body: JSON.stringify(data) }),
-  updateOrderStatus: (id: string, status: string) =>
-    request<any>(`/api/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  updateOrderStatus: (id: string, status: string, invoice_url?: string) =>
+    request<any>(`/api/orders/${id}/status`, { 
+      method: 'PATCH', 
+      body: JSON.stringify({ status, invoice_url }) 
+    }),
 
   // Reviews
   getReviews: (productId: string) => request<any[]>(`/api/reviews/product/${productId}`),
