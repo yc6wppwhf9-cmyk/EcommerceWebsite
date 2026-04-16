@@ -101,11 +101,14 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${
-      isScrolled 
-        ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10 text-white' 
-        : 'bg-transparent text-gray-900'
-    }`}>
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${
+        isScrolled 
+          ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' 
+          : 'bg-transparent'
+      }`}
+      style={{ color: isScrolled ? 'white' : '#111' }}
+    >
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center">
 
         <div className="flex-1 flex items-center">

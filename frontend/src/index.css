@@ -70,7 +70,10 @@ html.dark {
 .dark .bg-white            { background-color: #111111 !important; }
 .dark .bg-gray-50          { background-color: #0d0d0d !important; }
 .dark .bg-gray-100         { background-color: #1a1a1a !important; }
-.dark .bg-\[\#f8f9fa\]       { background-color: #050505 !important; }
+.dark .bg-\[\#f8f9fa\],
+.dark .bg-\[\#F8FAFC\],
+.dark .bg-\[\#f4f7ff\],
+.dark .bg-\[\#fcf8f1\]       { background-color: #050505 !important; }
 .dark .bg-green-50         { background-color: #0a1a0a !important; }
 .dark .bg-red-50           { background-color: #1a0a0a !important; }
 
