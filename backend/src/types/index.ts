@@ -4,6 +4,10 @@ export interface User {
   email: string;
   phone?: string;
   role: 'customer' | 'admin';
+  is_verified: boolean;
+  verification_token?: string;
+  reset_token?: string;
+  reset_token_expires?: string;
   created_at: string;
 }
 

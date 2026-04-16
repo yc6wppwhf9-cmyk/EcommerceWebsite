@@ -25,6 +25,9 @@ import { Careers } from './pages/Careers';
 import { OurTeam } from './pages/OurTeam';
 import { ShippingPolicy, ReturnsRefunds, PrivacyPolicy, TermsOfService } from './pages/Policies';
 import { Wishlist } from './pages/Wishlist';
+import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -53,6 +56,9 @@ function AppContent() {
             <Route path="/junior" element={<JuniorPage />} />
             <Route path="/premium" element={<PremiumCollection />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/account" element={<UserDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/about" element={<AboutUs />} />

@@ -16,6 +16,9 @@ CREATE TABLE users (
   password    VARCHAR(255) NOT NULL,  -- bcrypt hash
   role        VARCHAR(20) DEFAULT 'customer' CHECK (role IN ('customer', 'admin')),
   is_verified BOOLEAN DEFAULT false,
+  verification_token VARCHAR(255),
+  reset_token VARCHAR(255),
+  reset_token_expires TIMESTAMPTZ,
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
