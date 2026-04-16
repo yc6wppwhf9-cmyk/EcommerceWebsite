@@ -241,11 +241,13 @@ export const Home = () => {
             {tabCategory && (
               <div className="hidden lg:block w-[379px] shrink-0 h-[506px] overflow-hidden relative group rounded-none">
                 {/* Yellow Recommendation Tag */}
-                <div className="w-[379px] h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white">
-                  <span className="text-[12px] font-bold uppercase tracking-[0.3em] mb-1 opacity-90">Trendy</span>
-                  <h3 className="text-[24px] font-black uppercase tracking-tight leading-none text-center px-4">
-                    {tabCategory.label}
-                  </h3>
+                <div className="w-[379px] h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
+                  <p className="font-semibold uppercase tracking-tight leading-[0.9] text-center" style={{ fontSize: '32.4px' }}>
+                    Trendy {tabCategory.label.split(' ').slice(0, -1).join(' ')}
+                  </p>
+                  <p className="font-bold uppercase tracking-tight leading-[0.9] text-center" style={{ fontSize: '47.4px' }}>
+                    {tabCategory.label.split(' ').slice(-1)[0]}S
+                  </p>
                 </div>
                 
                 {/* Image below rectangle */}
