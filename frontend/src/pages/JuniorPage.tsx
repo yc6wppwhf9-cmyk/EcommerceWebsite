@@ -114,6 +114,11 @@ export const JuniorPage = () => {
 
       <section className="relative mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
         <div className="relative w-full max-w-[1402px] rounded-[5px] py-10 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: '380px' }}>
+          
+          {/* Group 36 side Doodles - Restored and High Opacity */}
+          <div className="absolute left-4 md:left-24 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
+          <div className="absolute right-4 md:right-24 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
+
           <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-120px] mb-4 overflow-visible">
             <div className="relative w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
               <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
@@ -168,19 +173,22 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          EXACT BEST SELLERS SECTION (As per Image)
+          EXACT BEST SELLERS SECTION
       ═══════════════════════════════════════════════ */}
       <section className="py-20 bg-white relative">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
           
           <div className="text-center mb-12">
-            <h2 className="font-outfit font-black uppercase tracking-[0.2em] text-[16px] md:text-[20px] text-gray-900">
+            {/* FIGMA TYPOGRAPHY: Outfit SemiBold 16px #030014 */}
+            <h2 
+              className="font-outfit font-semibold uppercase tracking-[0.1em]" 
+              style={{ fontSize: '16px', color: '#030014' }}
+            >
               Shop Best Sellers
             </h2>
           </div>
 
           <div className="relative group">
-            {/* Arrows */}
             <button className="absolute left-[-20px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
               <ChevronLeft size={20} className="text-gray-600" />
             </button>
