@@ -7,10 +7,10 @@ import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 
 const AGE_GROUPS = [
-  { label: '3–5 Yrs',  slug: 'school-backpacks', img: '/junior/Rectangle 28.png'            },
-  { label: '6–9 Yrs',  slug: 'school-backpacks', img: '/junior/Rectangle 29.png'            },
-  { label: '10–12 Yrs', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png"          },
-  { label: '13+ Yrs',  slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png" },
+  { label: 'Below 3 Years',   slug: 'school-backpacks',  img: '/junior/Rectangle 28.png',            banner: '/junior/Rectangle 36.png' },
+  { label: '3 to 5 Years',    slug: 'school-backpacks',  img: '/junior/Rectangle 29.png',            banner: '/junior/3to 5.png'        },
+  { label: '6 to 10 Years',   slug: 'school-backpacks',  img: "/junior/Speedo_ Hero 1.png",          banner: '/junior/Rectangle 36.png' },
+  { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png", banner: '/junior/3to 5.png'        },
 ];
 
 export const JuniorPage = () => {
@@ -147,15 +147,15 @@ export const JuniorPage = () => {
                     className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                   />
 
-                  {/* Purple banner label at bottom */}
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center" style={{ height: '38px' }}>
+                  {/* Banner label at bottom — alternates yellow / purple */}
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center" style={{ height: '36px' }}>
                     <img
-                      src="/junior/3to 5.png"
+                      src={group.banner}
                       alt=""
                       aria-hidden
                       className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
                     />
-                    <p className="relative z-10 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-white font-nunito drop-shadow">
+                    <p className="relative z-10 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white font-nunito drop-shadow-sm">
                       {group.label}
                     </p>
                   </div>
