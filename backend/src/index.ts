@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.routes';
 import productRoutes from './routes/product.routes';
 import orderRoutes from './routes/order.routes';
 import reviewRoutes from './routes/review.routes';
+import paymentRoutes from './routes/payment.routes';
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {
@@ -48,7 +50,7 @@ app.get('/api/health', async (_req, res) => {
       status: 'ok', 
       db: 'connected', 
       timestamp: new Date().toISOString(),
-      version: '2.0.0'
+      version: '2.4.0'
     });
   } catch {
     res.status(503).json({ status: 'error', db: 'disconnected' });
@@ -70,3 +72,4 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 export default app;
+控制,Description:

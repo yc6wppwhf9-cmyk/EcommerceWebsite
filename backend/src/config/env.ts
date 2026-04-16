@@ -10,6 +10,8 @@ export const config = {
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || '',
   SMTP_HOST: process.env.SMTP_HOST || 'smtp.ethereal.email',
   SMTP_PORT: Number(process.env.SMTP_PORT) || 587,
   SMTP_USER: process.env.SMTP_USER,

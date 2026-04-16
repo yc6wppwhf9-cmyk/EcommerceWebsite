@@ -7,15 +7,117 @@ import { formatPrice } from '../constants/products';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
 
+declare const Razorpay: any;
+
 export const Checkout = () => {
   const { items, total, clearCart } = useCart();
-  const { isAuthenticated, setShowAuthModal, setAuthMode } = useAuth();
-  const [form, setForm] = useState({ name: '', email: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '' });
+  const { isAuthenticated, setShowAuthModal, setAuthMode, user } = useAuth();
+  const [form, setForm] = useState({ 
+    name: user?.name || '', 
+    email: user?.email || '', 
+    phone: '', 
+    line1: '', 
+    line2: '', 
+    city: '', 
+    state: '', 
+    pincode: '' 
+  });
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const shipping = total >= 1499 ? 0 : 99;
   const grandTotal = total + shipping;
+
+  const handlePlaceOrder = async () => {
+    if (!isFormValid) {
+        alert('Please fill all required delivery details.');
+        return;
+    }
+    
+    setIsProcessing(true);
+
+    try {
+      // 1. Create Razorpay Order on Backend
+      const orderData = await api.createPaymentOrder(grandTotal, `receipt_${Date.now()}`);
+
+      // 2. Open Razorpay Checkout Gateway
+      const options = {
+        key: 'rzp_test_Se4bOrVW10WdWT',
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'Priority Bags',
+        description: 'Elite Travel Gear Checkout',
+        image: '/Priority Logo-02.png',
+        order_id: orderData.id,
+        handler: async (response: any) => {
+          try {
+            // 3. Verify Payment with Signature
+            await api.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            // 4. Save Final Order to Database
+            await api.createOrder({
+              items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
+              shipping_name: form.name,
+              shipping_phone: form.phone,
+              shipping_line1: form.line1,
+              shipping_line2: form.line2 || undefined,
+              shipping_city: form.city,
+              shipping_state: form.state,
+              shipping_pincode: form.pincode,
+              payment_method: 'online',
+              payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id
+            });
+
+            clearCart();
+            setOrderPlaced(true);
+          } catch (err: any) {
+            alert('Payment verification failed: ' + err.message);
+          }
+        },
+        prefill: {
+          name: form.name,
+          email: form.email,
+          contact: form.phone,
+        },
+        theme: {
+          color: '#000000',
+        },
+        modal: {
+           ondismiss: function() {
+              setIsProcessing(false);
+           }
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        alert('Payment Failed: ' + response.error.description);
+        setIsProcessing(false);
+      });
+      rzp.open();
+    } catch (err: any) {
+      alert(err.message || 'Could not initiate payment. Please try again.');
+      setIsProcessing(false);
+    }
+  };
+
+  const updateField = (field: string, value: string) => setForm((f) => ({ ...f, [field]: value }));
+  const isFormValid = !!(form.name && form.email && form.phone && form.line1 && form.city && form.state && form.pincode);
+
+  if (!isAuthenticated) {
+    return (
+      <main className="container mx-auto px-4 py-32 text-center max-w-md font-outfit">
+        <h1 className="text-4xl font-black mb-6 uppercase tracking-tighter">Login Required</h1>
+        <p className="text-gray-400 mb-12 font-bold uppercase tracking-widest text-[11px] leading-loose">Please sign in to your priority account to continue with your premium order and secure your points.</p>
+        <button onClick={() => { setAuthMode('login'); setShowAuthModal(true); }} className="bg-priority-blue text-white font-black text-[11px] px-12 py-5 rounded-2xl hover:scale-105 transition-all tracking-[0.2em] uppercase shadow-2xl shadow-priority-blue/20">SIGN IN NOW</button>
+      </main>
+    );
+  }
 
   if (items.length === 0 && !orderPlaced) {
     return (
@@ -47,45 +149,8 @@ export const Checkout = () => {
     );
   }
 
-  const handlePlaceOrder = async () => {
-    setIsProcessing(true);
-    try {
-      await api.createOrder({
-        items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
-        shipping_name: form.name,
-        shipping_phone: form.phone,
-        shipping_line1: form.line1,
-        shipping_line2: form.line2 || undefined,
-        shipping_city: form.city,
-        shipping_state: form.state,
-        shipping_pincode: form.pincode,
-        payment_method: 'cod',
-      });
-      clearCart();
-      setOrderPlaced(true);
-    } catch (err: any) {
-      alert(err.message || 'Could not place order. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const updateField = (field: string, value: string) => setForm((f) => ({ ...f, [field]: value }));
-  const isFormValid = !!(form.name && form.email && form.phone && form.line1 && form.city && form.state && form.pincode);
-
-  if (!isAuthenticated) {
-    return (
-      <main className="container mx-auto px-4 py-32 text-center max-w-md font-outfit">
-        <h1 className="text-4xl font-black mb-6 uppercase tracking-tighter">Login Required</h1>
-        <p className="text-gray-400 mb-12 font-bold uppercase tracking-widest text-[11px] leading-loose">Please sign in to your priority account to continue with your premium order and secure your points.</p>
-        <button onClick={() => { setAuthMode('login'); setShowAuthModal(true); }} className="bg-priority-blue text-white font-black text-[11px] px-12 py-5 rounded-2xl hover:scale-105 transition-all tracking-[0.2em] uppercase shadow-2xl shadow-priority-blue/20">SIGN IN NOW</button>
-      </main>
-    );
-  }
-
   return (
     <main className="bg-white min-h-screen font-outfit selection:bg-priority-blue selection:text-white pb-32">
-      {/* Subtle Breadcrumb */}
       <nav className="border-b border-gray-100 bg-gray-50/30">
         <div className="container mx-auto px-4 md:px-8 py-3 md:py-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
            <Link to="/" className="hover:text-priority-blue transition-colors">Home</Link>
@@ -96,14 +161,12 @@ export const Checkout = () => {
 
       <div className="container mx-auto px-4 md:px-8 max-w-[1300px] pt-8 md:pt-16">
         <div className="flex flex-col lg:flex-row gap-10 md:gap-20">
-          {/* Main Content */}
           <div className="lg:w-[60%] space-y-8 md:space-y-16">
             <div className="space-y-2 md:space-y-4">
                <span className="text-priority-blue text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em]">Final Step</span>
                <h1 className="text-3xl md:text-6xl font-black tracking-tighter uppercase text-gray-900">Checkout</h1>
             </div>
 
-            {/* Delivery Form */}
             <section className="space-y-6 md:space-y-10">
               <div className="flex items-center gap-3 md:gap-4 border-b border-gray-100 pb-4 md:pb-6">
                  <div className="w-10 h-10 md:w-12 md:h-12 bg-priority-blue/5 rounded-xl md:rounded-2xl flex items-center justify-center">
@@ -138,7 +201,6 @@ export const Checkout = () => {
               </div>
             </section>
 
-            {/* Payment Summary */}
             <section className="bg-gray-50 rounded-2xl md:rounded-[3rem] p-6 md:p-12 border border-gray-100 space-y-6 relative overflow-hidden group">
                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-[2s]">
                   <CreditCard size={120} className="text-priority-blue" />
@@ -155,7 +217,6 @@ export const Checkout = () => {
             </section>
           </div>
 
-          {/* Sidebar Receipt */}
           <aside className="lg:w-[40%]">
             <div className="lg:sticky lg:top-24 bg-white rounded-2xl md:rounded-[3rem] border border-gray-100 shadow-2xl shadow-black/[0.03] p-6 md:p-12 space-y-6 md:space-y-10 mb-20 md:mb-0">
               <div>

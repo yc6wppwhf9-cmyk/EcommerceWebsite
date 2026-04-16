@@ -116,4 +116,17 @@ export const api = {
   createReview: (data: { product_id: string; rating: number; title?: string; body?: string }) =>
     request<any>('/api/reviews', { method: 'POST', body: JSON.stringify(data) }),
   deleteReview: (id: string) => request<any>(`/api/reviews/${id}`, { method: 'DELETE' }),
+
+  // Payments (Razorpay)
+  createPaymentOrder: (amount: number, receipt: string) =>
+    request<any>('/api/payments/create-order', {
+      method: 'POST',
+      body: JSON.stringify({ amount, receipt }),
+    }),
+  verifyPayment: (data: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) =>
+    request<any>('/api/payments/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
+控制,Description:
