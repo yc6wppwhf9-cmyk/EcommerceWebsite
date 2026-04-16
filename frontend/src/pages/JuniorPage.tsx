@@ -146,11 +146,13 @@ export const JuniorPage = () => {
                 >
                   New Arrival
                 </span>
-                <h2 className="font-outfit font-black text-[2.5rem] md:text-[4.2rem] text-[#4b48b5] leading-tight mb-[-10px]">
-                  Made for Little
-                </h2>
-                <h2 className="font-outfit font-black text-[2.5rem] md:text-[4.2rem] text-[#4b48b5] leading-tight">
-                  Adventures
+                
+                {/* Main Title: Protest Riot | 50.82px | #3E92E6 */}
+                <h2 
+                  className="font-protest tracking-tight max-w-[433px] mx-auto italic"
+                  style={{ fontSize: '50.82px', color: '#3E92E6', lineHeight: '104.7%' }}
+                >
+                  Made for Little Adventures
                 </h2>
               </div>
             </div>
