@@ -245,7 +245,7 @@ export const Home = () => {
                   <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: '32.4px' }}>
                     Trendy {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(0, -1).join(' ')}
                   </p>
-                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[15px]" style={{ fontSize: '47.4px' }}>
+                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[8px]" style={{ fontSize: '47.4px' }}>
                     {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
