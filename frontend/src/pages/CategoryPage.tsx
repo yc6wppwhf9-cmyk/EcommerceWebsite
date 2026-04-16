@@ -12,6 +12,8 @@ export const CategoryPage = () => {
   const [priceRange, setPriceRange] = useState<number>(10000);
   const [sortBy, setSortBy] = useState('newest');
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [openFilters, setOpenFilters] = useState<string[]>(['categories', 'price', 'colors', 'sizes', 'features']);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +44,10 @@ export const CategoryPage = () => {
     let result = allProducts.filter(product => {
       const matchesPrice = product.price <= priceRange;
       const matchesSub = selectedSubcategories.length === 0 || selectedSubcategories.includes(product.category);
-      return matchesPrice && matchesSub;
+      const matchesSize = selectedSizes.length === 0 || (product.size && selectedSizes.includes(product.size));
+      const matchesFeatures = selectedFeatures.length === 0 || (product.features && selectedFeatures.some(f => product.features.includes(f)));
+      
+      return matchesPrice && matchesSub && matchesSize && matchesFeatures;
     });
     
     if (sortBy === 'price-low') result.sort((a, b) => a.price - b.price);
@@ -163,8 +168,18 @@ export const CategoryPage = () => {
                 <div className="space-y-3">
                   {['Waterproof', 'Expandable', 'TSA Lock', 'Anti-Theft'].map(feature => (
                     <label key={feature} className="flex items-center gap-3 cursor-pointer group">
-                      <div className="w-3 h-3 border border-gray-200 rounded-sm group-hover:border-black transition-colors" />
-                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-black uppercase tracking-widest transition-colors">{feature}</span>
+                      <input
+                        type="checkbox"
+                        className="hidden"
+                        checked={selectedFeatures.includes(feature)}
+                        onChange={() => setSelectedFeatures(prev => 
+                          prev.includes(feature) ? prev.filter(f => f !== feature) : [...prev, feature]
+                        )}
+                      />
+                      <div className={`w-3 h-3 border transition-colors ${selectedFeatures.includes(feature) ? 'bg-black border-black' : 'border-gray-200 group-hover:border-black'}`} />
+                      <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${selectedFeatures.includes(feature) ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
+                        {feature}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -172,10 +187,24 @@ export const CategoryPage = () => {
 
               <FilterSection id="sizes" title="Sizes">
                 <div className="space-y-3">
-                  {['Small / Cabin', 'Medium / Check-in', 'Large'].map(size => (
-                    <label key={size} className="flex items-center gap-3 cursor-pointer group">
-                      <div className="w-3 h-3 border border-gray-200 rounded-sm group-hover:border-black transition-colors" />
-                      <span className="text-[10px] font-bold text-gray-400 group-hover:text-black uppercase tracking-widest transition-colors">{size}</span>
+                  {[
+                    { label: 'Small / Cabin', val: 'Small' },
+                    { label: 'Medium / Check-in', val: 'Medium' },
+                    { label: 'Large / XL', val: 'Large' }
+                  ].map(size => (
+                    <label key={size.val} className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        className="hidden"
+                        checked={selectedSizes.includes(size.val)}
+                        onChange={() => setSelectedSizes(prev => 
+                          prev.includes(size.val) ? prev.filter(s => s !== size.val) : [...prev, size.val]
+                        )}
+                      />
+                      <div className={`w-3 h-3 border transition-colors ${selectedSizes.includes(size.val) ? 'bg-black border-black' : 'border-gray-200 group-hover:border-black'}`} />
+                      <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${selectedSizes.includes(size.val) ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
+                        {size.label}
+                      </span>
                     </label>
                   ))}
                 </div>

@@ -58,6 +58,7 @@ const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
   gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
+  size: 'Medium', // Default size
   isNew: false, highlighted: false, // highlighted used for best seller
 });
 
@@ -324,6 +325,30 @@ export const AdminDashboard = () => {
                                         <option value="">-- Pick Sub-Category --</option>
                                         {(SUBCATEGORIES[formData.category || 'backpacks'] || []).map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                                     </select>
+                                </div>
+                            </div>
+
+                            {/* --- ATTRIBUTES (Size & Features) --- */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-priority-blue/5 rounded-2xl border border-priority-blue/10">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
+                                    <select value={formData.size} onChange={(e) => setFormData({...formData, size: e.target.value})} className={inputCls}>
+                                        <option value="Small">Small / Cabin</option>
+                                        <option value="Medium">Medium / Check-in</option>
+                                        <option value="Large">Large / XL</option>
+                                        <option value="One Size">One Size (Accessories)</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Key Features (Tags)</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="e.g. Waterproof, TSA Lock, Expandable"
+                                        value={Array.isArray(formData.features) ? formData.features.join(', ') : ''} 
+                                        onChange={(e) => setFormData({...formData, features: e.target.value.split(',').map(s => s.trim())})} 
+                                        className={inputCls} 
+                                    />
+                                    <p className="text-[9px] text-gray-400 font-bold uppercase ml-1 mt-1">Separate features with commas</p>
                                 </div>
                             </div>
 

@@ -28,6 +28,7 @@ export interface Product {
   sku: string;
   createdAt: string;
   isPremium?: boolean;
+  size?: string;
   gender?: 'men' | 'women' | 'kids' | 'unisex';
   ageRange?: string;
 }
