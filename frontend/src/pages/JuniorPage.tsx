@@ -160,7 +160,7 @@ export const JuniorPage = () => {
 
           {/* Doodles background (Group 36) - Specifically on sides */}
           <div
-            className="absolute left-8 md:left-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-30 pointer-events-none"
+            className="absolute left-8 md:left-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-60 pointer-events-none"
             style={{
               backgroundImage: "url('/junior/Group 36.png')",
               backgroundSize: 'contain',
@@ -169,7 +169,7 @@ export const JuniorPage = () => {
             }}
           />
           <div
-            className="absolute right-8 md:right-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-30 pointer-events-none"
+            className="absolute right-8 md:right-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-60 pointer-events-none"
             style={{
               backgroundImage: "url('/junior/Group 36.png')",
               backgroundSize: 'contain',
