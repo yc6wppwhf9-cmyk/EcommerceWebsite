@@ -64,7 +64,7 @@ const HeroSlider = () => {
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = true; }}
       onPointerLeave={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = false; }}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.div
           key={current}
           initial={{ opacity: 0 }}
