@@ -102,6 +102,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     { title: 'PREMIUM', to: '/premium' },
   ];
 
+  const isJunior = location.pathname === '/junior';
+  const logoSrc = isJunior ? '/junior/junior logo.png' : '/nav bar.png';
+
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${
@@ -116,9 +119,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         <div className="flex-1 flex items-center">
           <Link to="/" className="flex items-center">
             <img
-              src="/nav bar.png"
+              src={logoSrc}
               alt="Priority"
-              className={`w-[140px] h-auto transition-all duration-300 ${(!isScrolled && !isDarkMode) ? 'brightness-0' : ''}`}
+              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300 ${(!isScrolled && !isDarkMode && !isJunior) ? 'brightness-0' : ''}`}
             />
           </Link>
         </div>
@@ -213,7 +216,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         {isMenuOpen && (
           <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed inset-0 z-[60] bg-[var(--color-bg-main)] text-[var(--color-text-main)] overflow-y-auto font-outfit">
             <div className="flex justify-between items-center px-5 py-4 border-b border-[var(--color-border-main)]">
-              <img src="/nav bar.png" alt="Priority" className="w-[120px] h-auto dark:invert" />
+              <img src={logoSrc} alt="Priority" className={`${isJunior ? 'w-[100px]' : 'w-[120px]'} h-auto dark:invert`} />
               <button onClick={() => setIsMenuOpen(false)} className="p-2.5 border border-[var(--color-border-main)] rounded-full text-[var(--color-text-main)]"><X size={20} /></button>
             </div>
             <nav className="px-5 py-6 space-y-1">
