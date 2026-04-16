@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900;1000&family=Dancing+Script:wght@700&display=swap');
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
@@ -10,6 +10,8 @@ html.dark {
 
 @theme {
   --font-outfit: "Outfit", sans-serif;
+  --font-nunito: "Nunito", sans-serif;
+  --font-dancing: "Dancing Script", cursive;
 
   --color-priority-blue: #4b48b5;
   --color-priority-dark: #302a5e;
@@ -62,7 +64,9 @@ html.dark {
   }
 }
 
-.font-outfit { font-family: var(--font-outfit); }
+.font-outfit   { font-family: var(--font-outfit); }
+.font-nunito   { font-family: var(--font-nunito); }
+.font-dancing  { font-family: var(--font-dancing); }
 
 /* ─── Global Dark Mode Overrides ────────────────────────────────
    These cascade to every component without needing dark: on each element. */
