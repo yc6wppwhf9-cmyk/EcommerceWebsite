@@ -41,12 +41,14 @@ const ScrollToTop = () => {
 
 function AppContent() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
 
   return (
     <>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen relative bg-[var(--color-bg-main)] text-[var(--color-text-main)] transition-colors duration-300">
-        <Header onSearchOpen={() => setSearchOpen(true)} />
+        {!isAdmin && <Header onSearchOpen={() => setSearchOpen(true)} />}
         <div className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -73,12 +75,12 @@ function AppContent() {
             <Route path="/:category" element={<CategoryPage />} />
           </Routes>
         </div>
-        <Footer />
+        {!isAdmin && <Footer />}
       </div>
       <CartDrawer />
       <AuthModal />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-      <MobileBottomNav onSearchOpen={() => setSearchOpen(true)} />
+      {!isAdmin && <MobileBottomNav onSearchOpen={() => setSearchOpen(true)} />}
       <ToastContainer />
     </>
   );
