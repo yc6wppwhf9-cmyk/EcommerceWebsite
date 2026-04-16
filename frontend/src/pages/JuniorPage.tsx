@@ -113,8 +113,9 @@ export const JuniorPage = () => {
 
       {/* ═══════════════════════════════════════════════
           NEW ARRIVAL BANNER — Portruding Blob Design
+          Dimensions: 1402x458 | Corner: 5px | BG: #8750DA
       ═══════════════════════════════════════════════ */}
-      <section className="relative mt-20 mb-10 overflow-visible">
+      <section className="relative mt-24 mb-14 overflow-visible px-4 md:px-0 flex justify-center">
         {/* The Grid Background Top */}
         <div className="absolute top-[-40px] inset-x-0 h-40 pointer-events-none opacity-20"
           style={{
@@ -124,28 +125,31 @@ export const JuniorPage = () => {
         />
 
         <div
-          className="relative mx-4 md:mx-12 rounded-[2.5rem] py-20 flex flex-col items-center justify-center text-center overflow-visible shadow-sm"
+          className="relative w-full max-w-[1402px] h-auto min-h-[458px] rounded-[5px] py-20 flex flex-col items-center justify-center text-center overflow-visible shadow-sm"
           style={{ backgroundColor: '#8750DA' }}
         >
           {/* Floating Yellow Blob Content */}
-          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-80px] md:mt-[-120px] mb-6 overflow-visible">
+          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-150px] mb-8 overflow-visible">
             
-            <div className="relative w-[340px] md:w-[520px] overflow-visible">
+            <div className="relative w-[340px] md:w-[540px] overflow-visible">
               <img
                 src="/junior/Layer 1.png"
                 alt=""
                 aria-hidden
-                className="w-full h-auto pointer-events-none select-none drop-shadow-xl"
+                className="w-full h-auto pointer-events-none select-none drop-shadow-2xl"
               />
               
-              <div className="absolute inset-0 flex flex-col items-center justify-center pt-10 md:pt-16">
-                <span className="text-[10px] md:text-[12px] font-outfit font-black uppercase tracking-[0.4em] text-[#5B2D8E] mb-1">
+              <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 md:pt-16">
+                <span 
+                  className="font-outfit uppercase tracking-[0.2em] text-[#5B2D8E] mb-2"
+                  style={{ fontSize: '28.36px', fontWeight: 400 }} /* Outfit Regular 28.36px */
+                >
                   New Arrival
                 </span>
-                <h2 className="font-outfit font-bold text-[2.5rem] md:text-[4rem] text-[#4b48b5] leading-tight mb-0">
+                <h2 className="font-outfit font-black text-[2.5rem] md:text-[4.2rem] text-[#4b48b5] leading-tight mb-[-10px]">
                   Made for Little
                 </h2>
-                <h2 className="font-outfit font-bold text-[2.5rem] md:text-[4rem] text-[#4b48b5] leading-tight">
+                <h2 className="font-outfit font-black text-[2.5rem] md:text-[4.2rem] text-[#4b48b5] leading-tight">
                   Adventures
                 </h2>
               </div>
@@ -154,7 +158,7 @@ export const JuniorPage = () => {
 
           {/* Doodles background (Group 36) - Specifically on sides */}
           <div
-            className="absolute left-8 md:left-24 top-1/2 -translate-y-1/2 w-[200px] md:w-[350px] aspect-square opacity-30 pointer-events-none"
+            className="absolute left-8 md:left-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-30 pointer-events-none"
             style={{
               backgroundImage: "url('/junior/Group 36.png')",
               backgroundSize: 'contain',
@@ -163,7 +167,7 @@ export const JuniorPage = () => {
             }}
           />
           <div
-            className="absolute right-8 md:right-24 top-1/2 -translate-y-1/2 w-[200px] md:w-[350px] aspect-square opacity-30 pointer-events-none"
+            className="absolute right-8 md:right-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-30 pointer-events-none"
             style={{
               backgroundImage: "url('/junior/Group 36.png')",
               backgroundSize: 'contain',
@@ -173,16 +177,16 @@ export const JuniorPage = () => {
           />
 
           {/* Bottom Styled Links */}
-          <div className="flex gap-10 md:gap-24 mt-10 md:mt-14 relative z-10">
+          <div className="flex gap-10 md:gap-32 mt-8 md:mt-12 relative z-10">
             <Link 
               to="/school-backpacks" 
-              className="text-white text-[12px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+              className="text-white text-[13px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
             >
               Dreamy Styles
             </Link>
             <Link 
               to="/school-backpacks" 
-              className="text-white text-[12px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+              className="text-white text-[13px] font-outfit font-bold uppercase tracking-[0.2em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
             >
               Power Styles
             </Link>
