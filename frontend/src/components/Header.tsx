@@ -16,7 +16,7 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
   return (
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <Link
-        className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-semibold font-outfit tracking-[0.15em] text-white hover:text-white/70 transition-all duration-300 relative border-b-4 border-transparent hover:border-white uppercase"
+        className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-semibold font-outfit tracking-[0.15em] hover:opacity-70 transition-all duration-300 relative border-b-4 border-transparent hover:border-current uppercase"
         to={to}
       >
         {title}
@@ -103,17 +103,17 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${
       isScrolled 
-        ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' 
-        : 'bg-transparent'
+        ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10 text-white' 
+        : 'bg-transparent text-gray-900'
     }`}>
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center text-white">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center">
 
         <div className="flex-1 flex items-center">
           <Link to="/" className="flex items-center">
             <img
               src="/nav bar.png"
               alt="Priority"
-              className="w-[140px] h-auto"
+              className={`w-[140px] h-auto transition-all duration-300 ${!isScrolled ? 'brightness-0' : ''}`}
             />
           </Link>
         </div>
@@ -130,7 +130,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Search */}
             <button
               onClick={onSearchOpen}
-              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 text-white/80 hover:text-white hover:bg-white/10"
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
             >
               <Search size={20} />
             </button>
@@ -138,7 +138,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Wishlist */}
             <Link
               to="/wishlist"
-              className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 ${location.pathname === '/wishlist' ? 'bg-white text-priority-blue' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 ${location.pathname === '/wishlist' ? 'bg-white/20' : ''}`}
             >
               <Heart size={20} fill={location.pathname === '/wishlist' ? 'currentColor' : 'none'} />
             </Link>
@@ -168,7 +168,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               </div>
             ) : (
               <div className="relative group">
-                <Link to="/login" className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 ${location.pathname === '/login' ? 'bg-white text-priority-blue' : 'text-white/80 hover:text-white hover:bg-white/10'}`}>
+                <Link to="/login" className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 ${location.pathname === '/login' ? 'bg-white/20' : ''}`}>
                   <User size={20} />
                 </Link>
                 <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
@@ -187,7 +187,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Cart */}
             <button
               onClick={() => toggleCart()}
-              className={`w-10 h-10 flex items-center justify-center rounded-full relative transition-all duration-300 hover:bg-white/10 active:scale-95 ${(itemCount > 0 || location.pathname === '/checkout') ? 'text-white' : 'text-white/80 hover:text-white'}`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full relative transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 opacity-80 hover:opacity-100 ${(itemCount > 0 || location.pathname === '/checkout') ? '' : ''}`}
             >
               <ShoppingCart size={20} />
               {itemCount > 0 && (
