@@ -67,7 +67,7 @@ export const JuniorPage = () => {
         
         {/* Floating Decorative Elements */}
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1/3 h-full hidden lg:block">
-           <img src="/Category/Accessories.png" className="w-full h-auto object-contain rotate-12 opacity-20 scale-150" alt="" />
+           <img src="/Category/Accessories.jpg" className="w-full h-auto object-contain rotate-12 opacity-20 scale-150" alt="" />
         </div>
       </section>
 

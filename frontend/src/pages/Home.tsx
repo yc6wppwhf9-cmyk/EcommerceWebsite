@@ -16,7 +16,7 @@ const BACKPACK_TABS = [
 
 const HERO_SLIDES = [
   { src: '/Creatives/hero-main.jpg',     cta: 'Shop Campus Picks',     to: '/college-backpacks' },
-  { src: '/Creatives/editorial-1.jpg',   cta: 'Shop Junior Collection', to: '/junior' },
+  { src: '/Creatives/editorial-2.jpg',   cta: 'Shop Junior Collection', to: '/junior' },
   { src: '/Creatives/editorial-2.jpg',   cta: 'Shop Junior Collection', to: '/junior' },
   { src: '/Creatives/editorial-3.jpg',   cta: 'Shop Trekking Gear',     to: '/trekking-backpacks' },
   { src: '/Creatives/editorial-4.jpg',   cta: 'Shop Luggage',           to: '/luggage' },
@@ -24,9 +24,9 @@ const HERO_SLIDES = [
 ];
 
 const CATS = [
-  { to: '/backpacks',   label: 'Backpacks',   img: '/Category/Backpack.png'       },
-  { to: '/luggage',     label: 'Luggage',     img: '/Category/Travelling Bag.png' },
-  { to: '/accessories', label: 'Accessories', img: '/Category/Accessories.png'    },
+  { to: '/backpacks',   label: 'Backpacks',   img: '/Category/Backpack.jpg'       },
+  { to: '/luggage',     label: 'Luggage',     img: '/Category/Travelling Bag.jpg' },
+  { to: '/accessories', label: 'Accessories', img: '/Category/Accessories.jpg'    },
 ];
 
 const IMG = {
