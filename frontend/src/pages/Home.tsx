@@ -239,12 +239,20 @@ export const Home = () => {
 
           <div className="flex items-start gap-8">
             {tabCategory && (
-              <div className="hidden lg:block w-[420px] shrink-0 h-[520px] rounded-[3rem] overflow-hidden relative group" style={{ backgroundColor: tabCategory.bgColor }}>
-                <div className="absolute inset-0 p-10 z-10 flex flex-col justify-end">
-                  <h3 className="text-4xl font-semibold text-white uppercase tracking-tighter leading-none mb-4">{tabCategory.subtitle}</h3>
+              <div className="hidden lg:block w-[379px] shrink-0 h-[506px] overflow-hidden relative group rounded-none">
+                {/* Yellow Recommendation Tag */}
+                <div className="w-[379px] h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white">
+                  <span className="text-[12px] font-bold uppercase tracking-[0.3em] mb-1 opacity-90">Trendy</span>
+                  <h3 className="text-[24px] font-black uppercase tracking-tight leading-none text-center px-4">
+                    {tabCategory.label}
+                  </h3>
                 </div>
-                <img src={IMG.refPoster} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                
+                {/* Image below rectangle */}
+                <div className="w-[379px] h-[411px] overflow-hidden relative">
+                  <img src={IMG.refPoster} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                </div>
               </div>
             )}
             <div className="flex-1 relative min-w-0 w-full">
