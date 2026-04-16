@@ -179,7 +179,6 @@ export const JuniorPage = () => {
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
           
           <div className="text-center mb-12">
-            {/* FIGMA TYPOGRAPHY: Outfit SemiBold 16px #030014 */}
             <h2 
               className="font-outfit font-semibold uppercase tracking-[0.1em]" 
               style={{ fontSize: '16px', color: '#030014' }}
@@ -203,15 +202,6 @@ export const JuniorPage = () => {
                 <BestSellerCard key={product.id} product={product} />
               ))}
             </div>
-          </div>
-          
-          <div className="mt-24 text-center">
-            <p 
-              className="font-outfit font-normal uppercase tracking-[0.15em]" 
-              style={{ fontSize: '16px', color: '#B0B0B0' }}
-            >
-              Ready For Your Journey
-            </p>
           </div>
         </div>
       </section>

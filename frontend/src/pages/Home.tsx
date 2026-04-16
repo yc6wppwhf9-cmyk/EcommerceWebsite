@@ -200,6 +200,7 @@ export const Home = () => {
               <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
             </div>
             <div className="w-1/2 text-left py-20">
+              <h2 className="text-6xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
               <p 
                 className="font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none"
                 style={{ fontSize: '16px' }}
