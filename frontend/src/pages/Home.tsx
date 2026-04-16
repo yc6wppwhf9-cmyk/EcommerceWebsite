@@ -229,7 +229,7 @@ export const Home = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 md:pb-4 text-[13px] md:text-[16px] font-semibold uppercase tracking-[0.15em] md:tracking-[0.2em] transition-all relative whitespace-nowrap ${activeTab === tab.id ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`pb-3 md:pb-4 text-[14px] md:text-[16px] font-semibold uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all relative whitespace-nowrap ${activeTab === tab.id ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}
               >
                 {tab.label}
                 {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#8750DA] rounded-full" />}
