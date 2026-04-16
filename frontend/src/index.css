@@ -45,8 +45,20 @@ html.dark {
     background-color: var(--color-bg-main);
     color: var(--color-text-main);
     font-family: var(--font-outfit);
-    font-weight: 600;
+    font-weight: 400; /* Outfit Regular */
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Global Semi-Bold to Regular Override */
+  .font-semibold, 
+  [class*="font-semibold"],
+  b, strong {
+    font-weight: 500 !important; /* Medium (slightly thicker than 400 but not semi-bold) */
+  }
+
+  /* Force Regular for anything that was semi-bold */
+  *[class*="font-600"] {
+    font-weight: 400 !important;
   }
 }
 
