@@ -15,12 +15,11 @@ const BACKPACK_TABS = [
 ] as const;
 
 const HERO_SLIDES = [
-  { src: '/Creatives/hero-main.jpg',     cta: 'Shop Campus Picks',     to: '/college-backpacks' },
-  { src: '/Creatives/editorial-2.jpg',   cta: 'Shop Junior Collection', to: '/junior' },
-  { src: '/Creatives/editorial-2.jpg',   cta: 'Shop Junior Collection', to: '/junior' },
-  { src: '/Creatives/editorial-3.jpg',   cta: 'Shop Trekking Gear',     to: '/trekking-backpacks' },
-  { src: '/Creatives/editorial-4.jpg',   cta: 'Shop Luggage',           to: '/luggage' },
-  { src: '/Creatives/editorial-5.jpg',   cta: 'Shop Laptop Bags',       to: '/laptop-backpacks' },
+  { src: '/Creatives/hero-main.jpg',   cta: 'Shop Campus Picks',      to: '/college-backpacks' },
+  { src: '/Creatives/editorial-2.jpg', cta: 'Shop Junior Collection',  to: '/junior'            },
+  { src: '/Creatives/editorial-3.jpg', cta: 'Shop Trekking Gear',      to: '/trekking-backpacks'},
+  { src: '/Creatives/editorial-4.jpg', cta: 'Shop Luggage',            to: '/luggage'           },
+  { src: '/Creatives/editorial-5.jpg', cta: 'Shop Laptop Bags',        to: '/laptop-backpacks'  },
 ];
 
 const CATS = [
@@ -123,8 +122,8 @@ export const Home = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    api.getProducts().then(res => {
-      setBestSellers((res.products as unknown as Product[]).slice(0, 5));
+    api.getProducts({ sort: 'popular', limit: '8' }).then(res => {
+      setBestSellers(res.products as unknown as Product[]);
     }).catch(() => {});
   }, []);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -268,10 +267,16 @@ export const Home = () => {
       </section>
 
       {/* Best Sellers Section */}
-      <section className="pb-8 pt-10 md:pt-12 bg-white">
+      <section className="pb-8 pt-10 md:pt-20 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col items-center mb-6 md:mb-16">
-            <h2 className="text-base md:text-xl font-black uppercase tracking-[0.25em] md:tracking-[0.5em] text-[#14052b] mb-2">Best Sellers</h2>
+          <div className="flex items-end justify-between mb-6 md:mb-14">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-1">Most Loved</p>
+              <h2 className="text-lg md:text-3xl font-black uppercase tracking-[0.15em] text-[#14052b]">Shop Best Sellers</h2>
+            </div>
+            <Link to="/backpacks" className="hidden md:flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">
+              View All <ArrowRight size={13} />
+            </Link>
           </div>
 
           <div className="relative group/carousel">
