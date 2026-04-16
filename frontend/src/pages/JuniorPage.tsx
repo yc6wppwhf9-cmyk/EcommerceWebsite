@@ -90,14 +90,14 @@ export const JuniorPage = () => {
                   />
 
                   {/* Banner label at bottom — alternates yellow / purple */}
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center pt-2" style={{ height: '52px' }}>
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center pt-1" style={{ height: '60px' }}>
                     <img
                       src={group.banner}
                       alt=""
                       aria-hidden
                       className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
                     />
-                    <p className="relative z-10 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-white font-nunito drop-shadow-sm">
+                    <p className="relative z-10 text-[16px] font-outfit font-bold uppercase tracking-tight text-white drop-shadow-sm">
                       {group.label}
                     </p>
                   </div>
