@@ -114,7 +114,7 @@ export const JuniorPage = () => {
 
       <section className="relative mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
         <div className="relative w-full max-w-[1402px] rounded-[5px] py-10 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: '380px' }}>
-          
+
           {/* Group 36 side Doodles - Restored and High Opacity */}
           <div className="absolute left-4 md:left-24 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
           <div className="absolute right-4 md:right-24 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
@@ -148,10 +148,10 @@ export const JuniorPage = () => {
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
-               <div className="relative flex flex-col items-center pt-8" style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}>
-                 <div className="overflow-hidden shadow-2xl mb-4" style={{ width: '285px', height: '400px', borderRadius: '5px' }}><img src="/junior/Beautiful_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
-                 <h3 className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
-               </div>
+              <div className="relative flex flex-col items-center pt-8" style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}>
+                <div className="overflow-hidden shadow-2xl mb-4" style={{ width: '285px', height: '400px', borderRadius: '5px' }}><img src="/junior/Beautiful_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
+                <h3 className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
+              </div>
             </div>
             <div className="flex-1">
               {isLoading ? (
@@ -177,10 +177,11 @@ export const JuniorPage = () => {
       ═══════════════════════════════════════════════ */}
       <section className="py-20 bg-white relative">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
-          
+
           <div className="text-center mb-12">
-            <h2 
-              className="font-outfit font-semibold uppercase tracking-[0.1em]" 
+            {/* FIGMA TYPOGRAPHY: Outfit SemiBold 16px #030014 */}
+            <h2
+              className="font-outfit font-semibold uppercase tracking-[0.1em]"
               style={{ fontSize: '16px', color: '#030014' }}
             >
               Shop Best Sellers
@@ -203,6 +204,7 @@ export const JuniorPage = () => {
               ))}
             </div>
           </div>
+
         </div>
       </section>
 

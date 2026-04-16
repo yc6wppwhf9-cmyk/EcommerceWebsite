@@ -179,7 +179,7 @@ export const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60 mb-2">New Arrival</p>
-          <p 
+          <p
             className="font-outfit font-normal uppercase tracking-[0.2em] text-white/50 mb-6 select-none"
             style={{ fontSize: '16px' }}
           >
@@ -200,8 +200,7 @@ export const Home = () => {
               <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
             </div>
             <div className="w-1/2 text-left py-20">
-              <h2 className="text-6xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
-              <p 
+              <p
                 className="font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none"
                 style={{ fontSize: '16px' }}
               >
