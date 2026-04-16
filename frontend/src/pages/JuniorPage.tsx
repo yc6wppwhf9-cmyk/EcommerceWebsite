@@ -154,13 +154,18 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      {/* New Arrival Banner */}
+      {/* New Arrival Banner — Slimmer (Reduced Padding & Min-Height) */}
       <section className="relative mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
         <div className="absolute top-[-40px] inset-x-0 h-40 pointer-events-none opacity-20"
           style={{ backgroundImage: "linear-gradient(#c7d2fe 1px, transparent 1px), linear-gradient(90deg, #c7d2fe 1px, transparent 1px)", backgroundSize: "20px 20px" }} 
         />
-        <div className="relative w-full max-w-[1402px] h-auto min-h-[458px] rounded-[5px] py-20 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA' }}>
-          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-150px] mb-8 overflow-visible">
+        <div 
+          className="relative w-full max-w-[1402px] rounded-[5px] py-10 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" 
+          style={{ backgroundColor: '#8750DA', minHeight: '380px' }}
+        >
+          {/* Floating Yellow Blob Content - Refined Dimensions: 463x423 */}
+          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-120px] mb-4 overflow-visible">
+            
             <div className="relative w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
               <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 md:pt-16">
@@ -171,7 +176,9 @@ export const JuniorPage = () => {
           </div>
           <div className="absolute left-8 md:left-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-60 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
           <div className="absolute right-8 md:right-28 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-60 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
-          <div className="flex gap-10 md:gap-32 mt-8 md:mt-12 relative z-10">
+          
+          {/* Bottom Styled Links */}
+          <div className="flex gap-10 md:gap-32 mt-4 md:mt-6 relative z-10">
             <Link to="/school-backpacks" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: '16px' }}>Dreamy Styles</Link>
             <Link to="/school-backpacks" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: '16px' }}>Power Styles</Link>
           </div>
@@ -184,7 +191,7 @@ export const JuniorPage = () => {
       <section className="py-12 md:py-16 bg-white overflow-hidden">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
           
-          {/* Tabs Area: 829x24 | Active: #030014 | Inactive: #AEADB4 */}
+          {/* Tabs Area */}
           <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 mb-16 relative">
             {CATEGORIES.map((cat) => (
               <button
@@ -209,16 +216,16 @@ export const JuniorPage = () => {
 
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             
-            {/* Featured Card: Rectangle 334x486 Behind Image 285x400 */}
-            <div className="relative shrink-0 flex items-center justify-center lg:justify-start">
-               {/* Background Rectangle: 334x486 | #FAC05C | Corner: 5 */}
+            {/* Featured Card: Text moved BELOW the image */}
+            <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
+               {/* Container: 334x486 | #FAC05C | Corner: 5 */}
                <div 
-                 className="relative flex items-center justify-center"
+                 className="relative flex flex-col items-center pt-8"
                  style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}
                >
                  {/* Inner Image: 285x400 | Corner: 5 */}
                  <div 
-                   className="overflow-hidden shadow-2xl"
+                   className="overflow-hidden shadow-2xl mb-4"
                    style={{ width: '285px', height: '400px', borderRadius: '5px' }}
                  >
                    <img 
@@ -228,15 +235,13 @@ export const JuniorPage = () => {
                    />
                  </div>
 
-                 {/* Curvy Label: Protest Riot | 39.88px | #FFFFFF */}
-                 <div className="absolute bottom-4 inset-x-0 h-32 flex items-end justify-center pb-8 p-4">
-                    <h3 
-                      className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-                      style={{ fontSize: '39.88px' }}
-                    >
-                      {activeTab}
-                    </h3>
-                 </div>
+                 {/* Curvy Label: Protest Riot 39.88px - Moved BELOW image */}
+                 <h3 
+                   className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                   style={{ fontSize: '39.88px' }}
+                 >
+                   {activeTab}
+                 </h3>
                </div>
             </div>
 
