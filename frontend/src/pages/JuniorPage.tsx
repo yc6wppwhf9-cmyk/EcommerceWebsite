@@ -68,7 +68,7 @@ export const JuniorPage = () => {
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div
                 key={group.label}
@@ -79,25 +79,30 @@ export const JuniorPage = () => {
               >
                 <Link
                   to={`/${group.slug}`}
-                  className="group relative block rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="group relative block rounded-2xl md:rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 !overflow-visible"
                   style={{ aspectRatio: '3/4' }}
                 >
-                  {/* Full-bleed photo */}
-                  <img
-                    src={group.img}
-                    alt={group.label}
-                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  />
+                  {/* Full-bleed photo with its own rounded corners/hidden overflow */}
+                  <div className="absolute inset-0 rounded-2xl md:rounded-3xl overflow-hidden">
+                    <img
+                      src={group.img}
+                      alt={group.label}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
 
-                  {/* Banner label at bottom — alternates yellow / purple */}
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center pt-1" style={{ height: '60px' }}>
+                  {/* Banner label at bottom — reduced size and pulled down */}
+                  <div 
+                    className="absolute bottom-[-10px] inset-x-2 md:inset-x-4 flex items-center justify-center rounded-xl overflow-hidden shadow-lg z-20" 
+                    style={{ height: '42px' }}
+                  >
                     <img
                       src={group.banner}
                       alt=""
                       aria-hidden
                       className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
                     />
-                    <p className="relative z-10 text-[16px] font-outfit font-bold uppercase tracking-tight text-white drop-shadow-sm">
+                    <p className="relative z-10 text-[13px] md:text-[14px] font-outfit font-bold uppercase tracking-tight text-white drop-shadow-md">
                       {group.label}
                     </p>
                   </div>
@@ -112,7 +117,7 @@ export const JuniorPage = () => {
           NEW ARRIVAL BANNER — purple + real blob image
       ═══════════════════════════════════════════════ */}
       <section
-        className="relative mx-4 md:mx-12 rounded-[2.5rem] overflow-hidden py-16 md:py-20 mb-2"
+        className="relative mx-4 md:mx-12 rounded-[2.5rem] overflow-hidden py-16 md:py-20 mb-2 mt-8"
         style={{ background: 'linear-gradient(135deg, #5B2D8E 0%, #7C3AED 100%)' }}
       >
         {/* Real yellow blob */}
