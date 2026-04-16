@@ -53,6 +53,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const { itemCount, toggleCart } = useCart();
   const { isAuthenticated, user, logout } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -107,7 +108,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' 
           : 'bg-transparent'
       }`}
-      style={{ color: isScrolled ? 'white' : '#111' }}
+      style={{ color: isScrolled ? 'white' : (isDarkMode ? 'white' : '#111') }}
     >
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center">
 
@@ -116,7 +117,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <img
               src="/nav bar.png"
               alt="Priority"
-              className={`w-[140px] h-auto transition-all duration-300 ${!isScrolled ? 'brightness-0' : ''}`}
+              className={`w-[140px] h-auto transition-all duration-300 ${(!isScrolled && !isDarkMode) ? 'brightness-0' : ''}`}
             />
           </Link>
         </div>
