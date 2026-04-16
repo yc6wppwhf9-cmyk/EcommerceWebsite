@@ -243,10 +243,10 @@ export const Home = () => {
                 {/* Yellow Recommendation Tag */}
                 <div className="w-[379px] h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
                   <p className="font-semibold uppercase tracking-tight leading-[0.9] text-center" style={{ fontSize: '32.4px' }}>
-                    Trendy {tabCategory.label.split(' ').slice(0, -1).join(' ')}
+                    Trendy {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(0, -1).join(' ')}
                   </p>
                   <p className="font-bold uppercase tracking-tight leading-[0.9] text-center" style={{ fontSize: '47.4px' }}>
-                    {tabCategory.label.split(' ').slice(-1)[0]}S
+                    {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
                 
