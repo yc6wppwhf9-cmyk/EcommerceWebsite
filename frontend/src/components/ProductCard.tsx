@@ -46,7 +46,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   return (
     <div className="group flex flex-col font-outfit">
       {/* Product Image Container */}
-      <div className="relative aspect-[1/1] bg-white overflow-hidden transition-all duration-500 hover:shadow-lg">
+      <div className="relative aspect-[379/411] bg-white overflow-hidden transition-all duration-500 hover:shadow-lg">
         <Link to={`/product/${product.id}`} className="block h-full w-full">
           <div className="h-full w-full flex justify-center items-center p-4">
             <img
