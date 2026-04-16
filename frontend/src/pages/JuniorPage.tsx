@@ -204,6 +204,15 @@ export const JuniorPage = () => {
               ))}
             </div>
           </div>
+          
+          <div className="mt-24 text-center">
+            <p 
+              className="font-outfit font-normal uppercase tracking-[0.15em]" 
+              style={{ fontSize: '16px', color: '#B0B0B0' }}
+            >
+              Ready For Your Journey
+            </p>
+          </div>
         </div>
       </section>
 
