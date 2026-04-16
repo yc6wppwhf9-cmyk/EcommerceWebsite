@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ProductCard } from '../components/ProductCard';
 import { Link } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, ArrowRight, Truck, CreditCard, ShieldCheck, PackageCheck } from 'lucide-react';
@@ -47,6 +47,15 @@ const HeroSlider = () => {
   const next = () => setCurrent((p) => (p + 1) % HERO_SLIDES.length);
   const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
     <section
       className="relative w-full bg-black overflow-hidden aspect-[16/9]"
@@ -83,6 +92,14 @@ const HeroSlider = () => {
         {HERO_SLIDES.map((_, i) => (
           <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
         ))}
+      </div>
+
+      <div className="hidden md:flex absolute bottom-6 inset-x-0 z-30 items-center justify-end px-8 gap-4">
+        <span className="text-[11px] font-bold tabular-nums tracking-widest text-white/40">{String(current + 1).padStart(2, '0')}</span>
+        <div className="w-32 h-[1.5px] bg-white/20 relative overflow-hidden rounded-full">
+          <motion.div key={current} className="absolute inset-y-0 left-0 bg-white rounded-full" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 5, ease: 'linear' }} />
+        </div>
+        <span className="text-[11px] font-bold tabular-nums tracking-widest text-white/40">{String(HERO_SLIDES.length).padStart(2, '0')}</span>
       </div>
     </section>
   );
@@ -143,7 +160,7 @@ export const Home = () => {
         <div className="grid grid-cols-3 gap-2.5">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '3/4' }}>
-              <img src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover" />
+              <img src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-active:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-2.5">
                 <span className="block text-white text-[9px] font-black uppercase tracking-widest leading-none">{cat.label}</span>
@@ -158,6 +175,7 @@ export const Home = () => {
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative h-[560px] rounded-[3rem] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
               <img src={cat.img} alt={cat.label} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
               <div className="absolute bottom-10 right-10 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                 <ArrowRight size={24} className="text-gray-900" />
               </div>
@@ -169,8 +187,8 @@ export const Home = () => {
       {/* Editorial Banner */}
       <section className="relative bg-banner-blue overflow-hidden">
         {/* Mobile version */}
-        <div className="md:hidden relative w-full h-[88vh] bg-[#F8F9FA] overflow-hidden">
-          <img src={IMG.banner} alt="New Arrival" className="w-full h-full object-cover" />
+        <div className="md:hidden relative w-full h-[88vh] bg-[#F8F9FA] overflow-hidden" style={{ aspectRatio: '4/5' }}>
+          <img src={IMG.banner} alt="New Arrival" className="absolute inset-0 w-full h-full object-contain object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60 mb-2">New Arrival</p>
@@ -249,10 +267,10 @@ export const Home = () => {
       </section>
 
       {/* Best Sellers Section */}
-      <section className="pb-16 pt-10 md:pt-20 bg-white border-t border-gray-100 uppercase">
+      <section className="pb-16 pt-10 md:pt-20 bg-white border-t border-gray-100">
         <div className="max-w-[1440px] mx-auto px-4 md:px-14">
           <div className="text-center mb-12">
-            <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em]">Shop Best Sellers</h2>
+            <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em] uppercase">Shop Best Sellers</h2>
           </div>
           <div className="relative group">
             <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
