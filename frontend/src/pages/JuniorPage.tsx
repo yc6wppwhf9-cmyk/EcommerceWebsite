@@ -7,10 +7,10 @@ import { motion } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
 
 const AGE_GROUPS = [
-  { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', banner: '/junior/Rectangle 36.png' },
-  { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', banner: '/junior/3to 5.png' },
-  { label: '6 to 10 Years', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png", banner: '/junior/Rectangle 36.png' },
-  { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png", banner: '/junior/Rectangle 36.png' },
+  { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
+  { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', color: '#A368FB' },
+  { label: '6 to 10 Years', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
+  { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Drift Sky Blue_ Hero 1.png", color: '#FFBB5A' },
 ];
 
 const CATEGORIES = [
@@ -21,10 +21,8 @@ const CATEGORIES = [
   { label: 'Trolley Backpacks', filter: 'trolley-backpacks' },
 ];
 
-// local product card to match the figma reference specifically
 const JuniorProductCard = ({ product }: { product: Product }) => (
   <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl relative border border-gray-100/50">
-    {/* "NEW" Tag */}
     <div className="absolute top-2 right-2 z-10 bg-[#FFB347] text-white text-[9px] font-black px-2 py-0.5 rounded-sm uppercase tracking-tighter">
       New
     </div>
@@ -46,8 +44,6 @@ const JuniorProductCard = ({ product }: { product: Product }) => (
           {product.name}
         </h3>
       </Link>
-      
-      {/* Ratings Placeholder */}
       <div className="flex items-center gap-1 mb-3">
         <div className="flex">
           {[1, 2, 3, 4, 5].map(i => (
@@ -56,14 +52,12 @@ const JuniorProductCard = ({ product }: { product: Product }) => (
         </div>
         <span className="text-[10px] text-gray-400 font-outfit font-medium">10 reviews</span>
       </div>
-
       <div className="mt-auto flex flex-col gap-3">
         <div className="flex items-baseline gap-2">
           <span className="text-[15px] font-outfit font-bold text-[#7C3AED]">₹ {product.price}</span>
           <span className="text-[11px] text-gray-400 line-through">₹ {Math.round(product.price * 1.5)}</span>
           <span className="text-[11px] font-bold text-[#FF6B6B]">50% off</span>
         </div>
-
         <button className="w-full bg-[#8750DA] hover:bg-[#723ac9] text-white text-[10px] font-outfit font-black uppercase tracking-widest py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
           + Move to Cart
         </button>
@@ -102,7 +96,7 @@ export const JuniorPage = () => {
         />
       </section>
 
-      {/* Shop By Age section — Slanted/Full-width Banners */}
+      {/* Shop By Age section — Slanted Custom Banners */}
       <section className="py-12 md:py-16 bg-white relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
@@ -132,10 +126,10 @@ export const JuniorPage = () => {
               >
                 <Link
                   to={`/${group.slug}`}
-                  className="group relative block rounded-[5px] shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible"
+                  className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible"
                   style={{ aspectRatio: '305/444' }}
                 >
-                  <div className="absolute inset-0 rounded-[5px] overflow-hidden font-protest">
+                  <div className="absolute inset-0 rounded-xl overflow-hidden">
                     <img
                       src={group.img}
                       alt={group.label}
@@ -143,12 +137,15 @@ export const JuniorPage = () => {
                     />
                   </div>
 
+                  {/* Slanted Custom Banner Bottom-Full */}
                   <div 
-                    className="absolute bottom-[-10px] inset-x-0 flex items-center justify-center shadow-lg z-20" 
-                    style={{ height: '52px' }}
+                    className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20" 
+                    style={{ 
+                      height: '52px', 
+                      backgroundColor: group.color,
+                      borderTopLeftRadius: '40px',
+                    }}
                   >
-                    <div className="absolute inset-0 bg-[#FFBB5A] rounded-l-[40px] rounded-r-[5px] opacity-100" />
-                    <img src={group.banner} alt="" aria-hidden className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none opacity-0" />
                     <p className="relative z-10 text-[13px] md:text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm">{group.label}</p>
                   </div>
                 </Link>
@@ -185,13 +182,9 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          ENHANCED SHOWCASE — with Exact Figma Metrics
-      ═══════════════════════════════════════════════ */}
+      {/* Showcase Section */}
       <section className="py-12 md:py-16 bg-white overflow-hidden">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
-          
-          {/* Tabs Area — Reduced Gap to mb-6 */}
           <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 mb-6 relative">
             {CATEGORIES.map((cat) => (
               <button
@@ -215,15 +208,11 @@ export const JuniorPage = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
-            
-            {/* Featured Card */}
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
-               {/* Container: 334x486 | #FAC05C | Corner: 5 */}
                <div 
                  className="relative flex flex-col items-center pt-8"
                  style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}
                >
-                 {/* Inner Image: 285x400 | Corner: 5 */}
                  <div 
                    className="overflow-hidden shadow-2xl mb-4"
                    style={{ width: '285px', height: '400px', borderRadius: '5px' }}
@@ -234,8 +223,6 @@ export const JuniorPage = () => {
                      className="w-full h-full object-cover object-top"
                    />
                  </div>
-
-                 {/* Curvy Label: Protest Riot 39.88px - BELOW image */}
                  <h3 
                    className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                    style={{ fontSize: '39.88px' }}
@@ -244,8 +231,6 @@ export const JuniorPage = () => {
                  </h3>
                </div>
             </div>
-
-            {/* Product Grid */}
             <div className="flex-1">
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -275,7 +260,6 @@ export const JuniorPage = () => {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </section>
