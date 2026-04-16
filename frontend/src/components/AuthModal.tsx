@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
@@ -113,13 +114,13 @@ export const AuthModal = () => {
                   </div>
                   {authMode === 'login' && (
                     <div className="flex justify-end mt-1">
-                      <button
-                        type="button"
-                        onClick={() => { setShowAuthModal(false); window.location.href = '/forgot-password'; }}
+                      <Link
+                        to="/forgot-password"
+                        onClick={() => setShowAuthModal(false)}
                         className="text-xs font-bold text-priority-blue hover:text-priority-dark"
                       >
                         Forgot Password?
-                      </button>
+                      </Link>
                     </div>
                   )}
                 </div>
