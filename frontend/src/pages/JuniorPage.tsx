@@ -45,7 +45,7 @@ export const JuniorPage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          SHOP BY AGE — tall portrait cards
+          SHOP BY AGE — Slim portrait cards (305x444)
       ═══════════════════════════════════════════════ */}
       <section className="py-12 md:py-16 bg-white relative overflow-hidden">
         {/* Dotted grid background */}
@@ -68,7 +68,7 @@ export const JuniorPage = () => {
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8 lg:gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div
                 key={group.label}
@@ -79,10 +79,10 @@ export const JuniorPage = () => {
               >
                 <Link
                   to={`/${group.slug}`}
-                  className="group relative block rounded-2xl md:rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 !overflow-visible"
-                  style={{ aspectRatio: '3/4' }}
+                  className="group relative block rounded-[5px] shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible"
+                  style={{ aspectRatio: '305/444' }} /* Exactly 305x444 slim aspect */
                 >
-                  <div className="absolute inset-0 rounded-2xl md:rounded-3xl overflow-hidden">
+                  <div className="absolute inset-0 rounded-[5px] overflow-hidden">
                     <img
                       src={group.img}
                       alt={group.label}
@@ -115,7 +115,7 @@ export const JuniorPage = () => {
           NEW ARRIVAL BANNER — Portruding Blob Design
           Dimensions: 1402x458 | Corner: 5px | BG: #8750DA
       ═══════════════════════════════════════════════ */}
-      <section className="relative mt-24 mb-14 overflow-visible px-4 md:px-0 flex justify-center">
+      <section className="relative mt-32 mb-14 overflow-visible px-4 md:px-0 flex justify-center">
         {/* The Grid Background Top */}
         <div className="absolute top-[-40px] inset-x-0 h-40 pointer-events-none opacity-20"
           style={{
@@ -128,15 +128,15 @@ export const JuniorPage = () => {
           className="relative w-full max-w-[1402px] h-auto min-h-[458px] rounded-[5px] py-20 flex flex-col items-center justify-center text-center overflow-visible shadow-sm"
           style={{ backgroundColor: '#8750DA' }}
         >
-          {/* Floating Yellow Blob Content */}
+          {/* Floating Yellow Blob Content - Refined Dimensions: 463x423 */}
           <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-150px] mb-8 overflow-visible">
             
-            <div className="relative w-[340px] md:w-[540px] overflow-visible">
+            <div className="relative w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
               <img
                 src="/junior/Layer 1.png"
                 alt=""
                 aria-hidden
-                className="w-full h-auto pointer-events-none select-none drop-shadow-2xl"
+                className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl"
               />
               
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 md:pt-16">
