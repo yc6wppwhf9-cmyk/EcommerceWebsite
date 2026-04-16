@@ -95,16 +95,35 @@ export const JuniorPage = () => {
       {/* ═══════════════════════════════════════════════
           SHOP BY AGE — tall portrait cards
       ═══════════════════════════════════════════════ */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-14">
+      <section className="py-12 md:py-16 bg-white relative overflow-hidden">
+        {/* Dotted grid background */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(#c7d2fe 1.2px, transparent 1.2px)',
+            backgroundSize: '22px 22px',
+            opacity: 0.5,
+          }}
+        />
+        <div className="max-w-[1280px] mx-auto px-6 md:px-14 relative z-10">
 
-          {/* Title with star decorations */}
+          {/* Title with yellow banner highlight */}
           <div className="flex items-center justify-center gap-3 mb-10">
-            <span className="text-pink-400 text-lg">✦</span>
-            <h2 className="text-xl md:text-2xl font-black text-[#1a1a1a] font-nunito tracking-wide">
-              Shop By Age
-            </h2>
-            <span className="text-pink-400 text-lg">✦</span>
+            <span className="text-pink-400 text-xl select-none">●</span>
+            <div className="relative flex items-center justify-center">
+              {/* Yellow banner behind text */}
+              <img
+                src="/junior/Rectangle 36.png"
+                alt=""
+                aria-hidden
+                className="absolute inset-x-0 w-full h-full object-fill pointer-events-none select-none"
+                style={{ transform: 'scaleX(1.15) scaleY(1.3)' }}
+              />
+              <h2 className="relative text-xl md:text-2xl font-black text-[#1a1a1a] font-nunito tracking-wide px-8 py-1 z-10">
+                Shop By Age
+              </h2>
+            </div>
+            <span className="text-pink-400 text-xl select-none">●</span>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
@@ -128,9 +147,15 @@ export const JuniorPage = () => {
                     className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                   />
 
-                  {/* Bottom label */}
-                  <div className="absolute bottom-0 inset-x-0 bg-white/90 backdrop-blur-sm py-2.5 px-3 text-center">
-                    <p className="text-[11px] md:text-xs font-black uppercase tracking-widest text-[#1a1a1a] font-nunito">
+                  {/* Purple banner label at bottom */}
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center" style={{ height: '38px' }}>
+                    <img
+                      src="/junior/3to 5.png"
+                      alt=""
+                      aria-hidden
+                      className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
+                    />
+                    <p className="relative z-10 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-white font-nunito drop-shadow">
                       {group.label}
                     </p>
                   </div>
