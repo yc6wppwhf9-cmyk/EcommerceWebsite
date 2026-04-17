@@ -40,8 +40,17 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     credentials: 'include', // send httpOnly JWT cookie automatically
   });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
+  const text = await res.text();
+  let data: any = {};
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      if (!res.ok) throw new Error(`Server error (${res.status}). Please try again.`);
+    }
+  }
+
+  if (!res.ok) throw new Error(data.error || data.message || `Something went wrong (${res.status}). Please try again.`);
   return data as T;
 }
 

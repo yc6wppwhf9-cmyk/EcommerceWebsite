@@ -56,6 +56,7 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
 export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const { itemCount, toggleCart } = useCart();
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
@@ -65,6 +66,11 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isMenuOpen]);
 
   const navData = [
     {
@@ -213,37 +219,84 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed inset-0 z-[60] bg-[var(--color-bg-main)] text-[var(--color-text-main)] overflow-y-auto font-outfit">
-            <div className="flex justify-between items-center px-5 py-4 border-b border-[var(--color-border-main)]">
-              <img src={logoSrc} alt="Priority" className={`${isJunior ? 'w-[100px]' : 'w-[120px]'} h-auto dark:invert`} />
-              <button onClick={() => setIsMenuOpen(false)} className="p-2.5 border border-[var(--color-border-main)] rounded-full text-[var(--color-text-main)]"><X size={20} /></button>
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            className="fixed inset-0 z-[60] bg-white text-black flex flex-col font-outfit"
+            style={{ overscrollBehavior: 'contain' }}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center px-5 py-4 border-b border-gray-100 shrink-0">
+              <img src={logoSrc} alt="Priority" className={`${isJunior ? 'w-[100px]' : 'w-[120px]'} h-auto`} />
+              <button onClick={() => setIsMenuOpen(false)} className="p-2.5 border border-gray-200 rounded-full text-gray-700">
+                <X size={20} />
+              </button>
             </div>
-            <nav className="px-5 py-6 space-y-1">
+
+            {/* Scrollable nav area */}
+            <nav className="flex-1 overflow-y-auto px-5 py-3">
               {navData.map((nav) => (
-                <div key={nav.title}>
-                  <Link to={nav.to} className="block py-3.5 text-xl font-bold uppercase tracking-tight text-[var(--color-text-main)] border-b border-[var(--color-border-main)]" onClick={() => setIsMenuOpen(false)}>{nav.title}</Link>
-                  {nav.items && (
-                    <div className="pl-4 py-2 flex flex-col gap-1">
-                      {nav.items.map(item => (
-                        <Link key={item.slug} to={`/${item.slug}`} className="py-2 text-[16px] font-semibold uppercase text-[var(--color-text-muted)] tracking-widest" onClick={() => setIsMenuOpen(false)}>
-                          {item.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                <div key={nav.title} className="border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      to={nav.to}
+                      className="flex-1 py-4 text-[15px] font-bold uppercase tracking-[0.12em] text-black"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {nav.title}
+                    </Link>
+                    {nav.items && (
+                      <button
+                        onClick={() => setOpenAccordion(openAccordion === nav.title ? null : nav.title)}
+                        className="p-2 text-gray-400"
+                      >
+                        <ChevronDown
+                          size={18}
+                          className={`transition-transform duration-300 ${openAccordion === nav.title ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  <AnimatePresence>
+                    {nav.items && openAccordion === nav.title && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-4 pb-3 flex flex-col gap-0.5 bg-gray-50 rounded-xl mb-2">
+                          {nav.items.map(item => (
+                            <Link
+                              key={item.slug}
+                              to={`/${item.slug}`}
+                              className="py-3 text-[13px] font-semibold uppercase tracking-widest text-gray-500 hover:text-priority-blue border-b border-gray-100 last:border-0 transition-colors"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </nav>
-            <div className="px-5 pt-4 pb-8 border-t border-[var(--color-border-main)] space-y-3">
+
+            {/* Bottom actions */}
+            <div className="px-5 pt-4 pb-8 border-t border-gray-100 space-y-3 shrink-0">
               {isAuthenticated ? (
                 <>
-                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[16px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
+                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
                     {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
                   </Link>
-                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[16px] font-semibold uppercase tracking-widest text-center block">Logout</button>
+                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block">Logout</button>
                 </>
               ) : (
-                <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[16px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Member Login</Link>
+                <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Member Login</Link>
               )}
             </div>
           </motion.div>

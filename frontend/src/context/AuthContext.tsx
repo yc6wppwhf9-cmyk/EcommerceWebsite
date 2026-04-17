@@ -54,14 +54,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { user: raw } = await api.login(email, password);
       const user = mapApiUser(raw);
-      // JWT is set as an httpOnly cookie by the server — no localStorage token
       localStorage.setItem(USER_KEY, JSON.stringify(user));
       setState({ user, isAuthenticated: true, isLoading: false });
       setShowAuthModal(false);
       return true;
     } catch (err: any) {
       setState((s) => ({ ...s, isLoading: false }));
-      throw err;
+      const msg = err.message || '';
+      if (msg.includes('401') || msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('password') || msg.toLowerCase().includes('credentials'))
+        throw new Error('Incorrect email or password. Please try again.');
+      if (msg.includes('404') || msg.toLowerCase().includes('not found'))
+        throw new Error('No account found with this email. Please register first.');
+      if (msg.includes('5') || msg.toLowerCase().includes('server'))
+        throw new Error('Unable to connect. Please check your internet and try again.');
+      throw new Error(msg || 'Login failed. Please try again.');
     }
   }, []);
 
@@ -76,7 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return true;
     } catch (err: any) {
       setState((s) => ({ ...s, isLoading: false }));
-      throw err;
+      const msg = err.message || '';
+      if (msg.includes('409') || msg.toLowerCase().includes('already') || msg.toLowerCase().includes('exists'))
+        throw new Error('An account with this email already exists. Please log in instead.');
+      if (msg.includes('5') || msg.toLowerCase().includes('server'))
+        throw new Error('Unable to connect. Please check your internet and try again.');
+      throw new Error(msg || 'Registration failed. Please try again.');
     }
   }, []);
 
