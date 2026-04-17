@@ -10,8 +10,8 @@ export const getProducts = async (req: Request, res: Response) => {
         .from('products')
         .select('*, categories(name, slug)');
 
-      // Storefront usually filters by is_active, but Admin should see everything
-      if (category || isPremium || gender || sub_category) {
+      // Storefront filters active products; Admin passes no filters and sees everything
+      if (category || isPremium || gender || sub_category || search) {
         query = query.eq('is_active', true);
       }
 
@@ -125,7 +125,8 @@ export const createProduct = async (req: Request, res: Response) => {
       gender: body.gender || 'unisex',
       size: body.size || '',
       age_range: body.ageRange || body.age_range || '',
-      sub_category: body.sub_category || ''
+      sub_category: body.sub_category || '',
+      is_active: body.is_active !== undefined ? body.is_active : true
     };
 
     if (!productData.category_id) {
