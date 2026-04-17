@@ -12,13 +12,14 @@ export const getProducts = async (req: Request, res: Response) => {
         .eq('is_active', true);
 
       if (category && category !== 'premium') {
-        // Resolve category slug to ID to avoid complex join issues in PostgREST
+        // 1. Try resolving as a main Category Slug
         const { data: cat } = await supabase.from('categories').select('id').eq('slug', category).maybeSingle();
         if (cat) {
           query = query.eq('category_id', cat.id);
         } else {
-          // If category not found, return empty list
-          return res.json({ products: [], page: 1, limit: Number(limit), total: 0 });
+          // 2. If not a main category, try filtering by sub_category field directly
+          // This supports the Home.tsx tabs which use subcategory slugs
+          query = query.eq('sub_category', category);
         }
       }
       
