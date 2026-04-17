@@ -44,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
         email, 
         password: hash, 
         phone: phone || null,
-        is_verified: false,
+        is_verified: true,
         verification_token: vToken
       })
       .select('id, name, email, phone, role, is_verified, created_at')
@@ -66,7 +66,7 @@ export const register = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: '7d' });
     setAuthCookies(res, token);
     // token is also returned in the body so non-browser clients (mobile/API) still work
-    res.status(201).json({ user, token, message: 'Registration successful. Please check your email for verification.' });
+    res.status(201).json({ user, token, message: 'Registration successful.' });
   } catch (err: any) {
     console.error('register error', err);
     res.status(500).json({ error: 'Server error' });
@@ -220,7 +220,7 @@ export const login = async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).json({ error: 'Invalid credentials' });
 
-    if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email address before logging in' });
+    // if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email address before logging in' });
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, config.JWT_SECRET, { expiresIn: '7d' });
     setAuthCookies(res, token);
