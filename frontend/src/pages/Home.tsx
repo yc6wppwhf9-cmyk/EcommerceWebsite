@@ -109,8 +109,8 @@ const HeroSlider = () => {
 
 const BestSellerCard = ({ product }: { product: Product }) => (
   <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-    <Link to={`/product/${product.id}`} className="aspect-[379/411] bg-[#F9F9F9] overflow-hidden flex items-center justify-center p-6 md:p-10 mb-3">
-      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain" />
+    <Link to={`/product/${product.slug || product.id}`} className="aspect-[379/411] bg-[#F9F9F9] overflow-hidden flex items-center justify-center p-6 md:p-10 mb-3">
+      <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
     </Link>
     <div className="px-1">
       <Link to={`/product/${product.id}`}>
