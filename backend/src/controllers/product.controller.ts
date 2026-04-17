@@ -68,9 +68,48 @@ export const getProductBySlug = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-  const { data, error } = await supabase.from('products').insert(req.body).select().single();
-  if (error) return res.status(400).json({ error: error.message });
-  res.status(201).json(data);
+  try {
+    const body = { ...req.body };
+    const catName = body.category || 'backpacks';
+
+    // 1. Resolve Category ID
+    const { data: catData } = await supabase
+      .from('categories')
+      .select('id')
+      .or(`name.ilike.${catName},slug.eq.${catName}`)
+      .maybeSingle();
+    
+    // 2. Clean up & Map
+    const productData = {
+      sku: body.sku || 'PB-' + Math.random().toString(36).substring(2, 7).toUpperCase(),
+      slug: body.slug || (body.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+      name: body.name,
+      description: body.description || '',
+      price: body.price,
+      original_price: body.originalPrice || body.original_price || body.price,
+      category_id: catData?.id || body.category_id,
+      image: Array.isArray(body.images) ? body.images[0] : (body.image || ''),
+      images: body.images || [],
+      colors: body.colors || [],
+      features: body.features || [],
+      stock: body.stock || 0,
+      is_new: body.isNew || body.is_new || false,
+      is_highlighted: body.highlighted || body.is_highlighted || false,
+    };
+
+    if (!productData.category_id) {
+       // fallback to a default if not found
+       const { data: defaultCat } = await supabase.from('categories').select('id').limit(1).single();
+       productData.category_id = defaultCat?.id;
+    }
+
+    const { data, error } = await supabase.from('products').insert(productData).select().single();
+    if (error) throw error;
+    res.status(201).json(data);
+  } catch (err: any) {
+    console.error('Create Product Error:', err);
+    res.status(400).json({ error: err.message });
+  }
 };
 
 export const updateProduct = async (req: Request, res: Response) => {

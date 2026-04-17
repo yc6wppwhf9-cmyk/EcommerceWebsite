@@ -127,30 +127,46 @@ export const AdminDashboard = () => {
     setVariants((v: ColorVariant[]) => v.map((item: ColorVariant, idx: number) => idx === i ? { ...item, [key]: val } : item));
   const removeVariant = (i: number) => setVariants((v: ColorVariant[]) => v.filter((_: ColorVariant, idx: number) => idx !== i));
 
-  const handleSaveProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const payload = { 
-        ...formData, 
-        category: formData.subcategory || formData.category,
-        sub_category: formData.subcategory || '',
-        colors: variants.map(v => ({ name: v.color, code: v.colorCode, image: v.image }))
-      };
-      if (editingProduct) {
-        await api.updateProduct(editingProduct.id, payload);
-        alert('Items updated!');
-        setEditingProduct(null);
-      } else {
-        await api.createProduct(payload);
-        alert('Item added successfully!');
-        setIsAddingProduct(false);
-      }
-      fetchData();
-      setFormData(BLANK_FORM());
-      setVariants([]);
-      setDiscountPercent(0);
-    } catch { alert('Error saving! Check required fields'); }
-  };
+    const handleSaveProduct = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            // Validate basic required fields manually for clear UI feedback
+            if (!formData.name || !formData.originalPrice || !formData.price || !formData.category) {
+                alert('Please fill all mandatory fields marked with *');
+                return;
+            }
+
+            const payload = { 
+                ...formData,
+                // Slug / URL part
+                slug: (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7),
+                category_id: '', // TO BE RESOLVED BY BACKEND OR FETCHED
+                features: formData.features || [],
+                images: formData.images || [],
+                colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.image ? [v.image] : [] })) : []
+            };
+
+            // Remove UI-only fields that crash the backend insert
+            delete (payload as any).category;
+            delete (payload as any).subcategory;
+
+            if (editingProduct) {
+                await api.updateProduct(editingProduct.id, payload);
+                alert('Success: Product Updated!');
+            } else {
+                await api.createProduct(payload);
+                alert('Success: New Product Registered!');
+            }
+            fetchData();
+            setIsAddingProduct(false);
+            setEditingProduct(null);
+            setFormData(BLANK_FORM());
+            setVariants([]);
+        } catch (err: any) { 
+            console.error('Save Error:', err);
+            alert(`Error: ${err.message || 'Check required fields'}`); 
+        }
+    };
 
   const updateStatus = async (orderId: string, status: string, invoiceUrl?: string) => {
     try {
@@ -284,7 +300,7 @@ export const AdminDashboard = () => {
                             {/* --- BASIC INFO --- */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Full Product Name</label>
+                                    <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Full Product Name <span className="text-red-500">*</span></label>
                                     <input required type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="e.g. VIP MUSTARD LUXE" className={inputCls} />
                                 </div>
                                 <div className="space-y-2">
@@ -314,7 +330,7 @@ export const AdminDashboard = () => {
                             {/* --- CATEGORIES --- */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Category (Main Section)</label>
+                                    <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Category (Main Section) <span className="text-red-500">*</span></label>
                                     <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value, subcategory: ''})} className={inputCls}>
                                         {MAIN_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                                     </select>
@@ -340,7 +356,7 @@ export const AdminDashboard = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Key Features (Tags)</label>
+                                    <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Key Features (Optional)</label>
                                     <input 
                                         type="text" 
                                         placeholder="e.g. Waterproof, TSA Lock, Expandable"
@@ -357,7 +373,7 @@ export const AdminDashboard = () => {
                                 <p className="text-[10px] font-black text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2"><Percent size={14}/> Pricing Strategy</p>
                                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-600 uppercase">Original MRP (₹)</label>
+                                        <label className="text-[10px] font-black text-gray-600 uppercase">Original MRP (₹) <span className="text-red-500">*</span></label>
                                         <input required type="number" value={formData.originalPrice} onChange={(e) => setFormData({...formData, originalPrice: parseInt(e.target.value)||0})} className={inputCls} />
                                     </div>
                                     <div className="space-y-2">
@@ -365,11 +381,11 @@ export const AdminDashboard = () => {
                                         <input type="number" min="0" max="99" value={discountPercent} onChange={(e) => setDiscountPercent(parseInt(e.target.value)||0)} className={`${inputCls} border-priority-blue/30 text-priority-blue`} />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-900 uppercase">Sale Price (Calculated)</label>
+                                        <label className="text-[10px] font-black text-gray-900 uppercase">Sale Price <span className="text-red-500">*</span></label>
                                         <input required type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: parseInt(e.target.value)||0})} className={`${inputCls} bg-gray-100`} />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-600 uppercase">Initial Stock</label>
+                                        <label className="text-[10px] font-black text-gray-600 uppercase">Initial Stock <span className="text-red-500">*</span></label>
                                         <input required type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: parseInt(e.target.value)||0})} className={inputCls} />
                                     </div>
                                 </div>
@@ -406,7 +422,7 @@ export const AdminDashboard = () => {
                             <div className="pt-6 border-t border-gray-100">
                                 <div className="flex items-center justify-between mb-6">
                                     <div>
-                                        <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos</label>
+                                        <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos (Optional)</label>
                                         <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Add specific photos for different bag colours</p>
                                     </div>
                                     <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all">

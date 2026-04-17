@@ -72,6 +72,7 @@ CREATE TABLE products (
   category_id     UUID NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
   image           VARCHAR(500) NOT NULL,
   images          JSONB DEFAULT '[]',
+  colors          JSONB DEFAULT '[]',
   features        JSONB DEFAULT '[]',
   specifications  JSONB DEFAULT '{}',
   rating          DECIMAL(2,1) DEFAULT 0.0,
