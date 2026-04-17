@@ -103,7 +103,10 @@ export const LoginPage = () => {
           </div>
 
           <div className="pt-2">
-            <Link to="/forgot-password" className="text-[13px] text-gray-600 underline underline-offset-4 hover:text-black transition-colors">
+            <Link 
+              to={email ? `/forgot-password?email=${encodeURIComponent(email)}` : "/forgot-password"} 
+              className="text-[13px] text-gray-600 underline underline-offset-4 hover:text-black transition-colors"
+            >
               Forgot your password?
             </Link>
           </div>

@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
-import { Mail, ArrowLeft, Loader2, Send } from 'lucide-react';
+import { Mail, ArrowLeft, Loader2, Send, RefreshCcw } from 'lucide-react';
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const location = useLocation();
+  const queryEmail = new URLSearchParams(location.search).get('email');
+
+  const [email, setEmail] = useState(queryEmail || '');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [hasAutoSent, setHasAutoSent] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const triggerReset = async (targetEmail: string) => {
     setLoading(true);
     setMessage(null);
-
     try {
-      const res = await api.forgotPassword(email);
+      const res = await api.forgotPassword(targetEmail);
       setMessage({ type: 'success', text: res.message });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Something went wrong.' });
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (queryEmail && !hasAutoSent) {
+      setHasAutoSent(true);
+      triggerReset(queryEmail);
+    }
+  }, [queryEmail, hasAutoSent]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    triggerReset(email);
   };
 
   return (
@@ -31,8 +45,11 @@ const ForgotPassword = () => {
             <Mail className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-stone-900 mb-3">Forgot Password?</h1>
-          <p className="text-stone-500 leading-relaxed px-4">
-            Enter your email address and we'll send you a link to reset your password.
+          <p className="text-stone-500 leading-relaxed px-4 text-sm">
+            {queryEmail 
+              ? `We're sending a recovery link to ${queryEmail}`
+              : "Enter your email address and we'll send you a link to reset your password."
+            }
           </p>
         </div>
 
@@ -43,34 +60,61 @@ const ForgotPassword = () => {
             <span className="text-lg leading-none mt-1">
               {message.type === 'success' ? '✓' : '⚠'}
             </span>
-            <p className="text-sm font-medium">{message.text}</p>
+            <p className="text-xs font-semibold uppercase tracking-tight leading-normal">{message.text}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-stone-700 ml-1 uppercase tracking-wider">Email Address</label>
-            <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-stone-900 transition-colors" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="hello@example.com"
-                className="w-full pl-12 pr-4 py-4 bg-stone-50 border-2 border-transparent rounded-2xl focus:border-stone-900 focus:bg-white outline-none transition-all text-stone-900 placeholder:text-stone-300"
-              />
-            </div>
+        {/* If we have an email from query, don't show the form, just the status */}
+        {queryEmail ? (
+          <div className="space-y-6">
+            {loading ? (
+              <div className="flex flex-col items-center py-8 gap-4">
+                <Loader2 className="w-10 h-10 text-stone-900 animate-spin" />
+                <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">Processing request...</p>
+              </div>
+            ) : (
+              <button
+                onClick={() => triggerReset(queryEmail)}
+                className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-[0.98]"
+              >
+                <RefreshCcw className="w-5 h-5" /> Resend Link
+              </button>
+            )}
+            
+            {message?.type === 'error' && (
+              <p className="text-center">
+                <button onClick={() => window.location.href = '/forgot-password'} className="text-[11px] font-bold text-stone-400 underline underline-offset-4 uppercase tracking-widest hover:text-stone-900 transition-colors">
+                  Try with another email
+                </button>
+              </p>
+            )}
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-stone-700 ml-1 uppercase tracking-wider">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-stone-900 transition-colors" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="hello@example.com"
+                  className="w-full pl-12 pr-4 py-4 bg-stone-50 border-2 border-transparent rounded-2xl focus:border-stone-900 focus:bg-white outline-none transition-all text-stone-900 placeholder:text-stone-300"
+                />
+              </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 disabled:opacity-50 transition-all shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 active:scale-[0.98]"
-          >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-5 h-5" /> Send Reset Link</>}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 disabled:opacity-50 transition-all shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 active:scale-[0.98]"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-5 h-5" /> Send Reset Link</>}
+            </button>
+          </form>
+        )}
 
         <div className="mt-10 pt-8 border-t border-stone-100 text-center">
           <Link to="/login" className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 font-bold transition-colors">
