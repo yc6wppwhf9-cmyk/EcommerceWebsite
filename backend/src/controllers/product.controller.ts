@@ -60,7 +60,7 @@ export const getProductBySlug = async (req: Request, res: Response) => {
     .from('products')
     .select('*, categories!inner(slug)')
     .eq('is_active', true)
-    .eq('slug', req.params.slug)
+    .or(`slug.eq."${req.params.slug}",id.eq."${req.params.slug}"`)
     .single();
 
   if (error || !data) return res.status(404).json({ error: 'Product not found' });

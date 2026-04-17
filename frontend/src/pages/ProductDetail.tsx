@@ -26,7 +26,7 @@ import { ProductCard } from '../components/ProductCard';
 import { AIPredictions } from '../components/AIPredictions';
 
 export const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
@@ -40,11 +40,11 @@ export const ProductDetail = () => {
   const isWishlisted = product ? isInWishlist(product.id) : false;
 
   useEffect(() => {
-    if (!id) return;
-    api.getProduct(id).then(data => {
+    if (!slug) return;
+    api.getProduct(slug).then(data => {
       setProduct(data);
     }).catch(() => {});
-  }, [id]);
+  }, [slug]);
 
   if (!product) {
     return (

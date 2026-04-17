@@ -48,7 +48,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
     <div className={`group flex flex-col font-outfit ${props.theme === 'premium' ? 'items-center' : ''}`}>
       {/* Product Image Container */}
       <div className={`relative ${props.theme === 'premium' ? 'w-full aspect-[199/298]' : 'aspect-[379/411]'} bg-white overflow-hidden transition-all duration-500`}>
-        <Link to={`/product/${product.id}${props.theme === 'premium' ? '?theme=premium' : ''}`} className="block h-full w-full">
+        <Link to={`/product/${product.slug || product.id}${props.theme === 'premium' ? '?theme=premium' : ''}`} className="block h-full w-full">
           <div className="h-full w-full flex justify-center items-center p-4">
             <img
               alt={product.name}
@@ -87,7 +87,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
       {/* Product Info */}
       <div className={`mt-2 space-y-1 text-center ${props.theme === 'premium' ? 'w-full' : ''}`}>
-        <Link to={`/product/${product.id}${props.theme === 'premium' ? '?theme=premium' : ''}`}>
+        <Link to={`/product/${product.slug || product.id}${props.theme === 'premium' ? '?theme=premium' : ''}`}>
           <h3 className={`${props.theme === 'premium' ? 'text-[14px] font-light text-[#111]' : 'text-[10px] md:text-[11px] font-black text-[#111] uppercase tracking-[0.1em]'} hover:text-gray-600 transition-colors`}>
             {product.name}
           </h3>
