@@ -8,11 +8,18 @@ export const getProducts = async (req: Request, res: Response) => {
     try {
       let query = supabase
         .from('products')
-        .select(`*, categories${category ? '!inner' : ''}(name, slug)`)
+        .select('*, categories(name, slug)')
         .eq('is_active', true);
 
       if (category && category !== 'premium') {
-        query = query.eq('categories.slug', category);
+        // Resolve category slug to ID to avoid complex join issues in PostgREST
+        const { data: cat } = await supabase.from('categories').select('id').eq('slug', category).maybeSingle();
+        if (cat) {
+          query = query.eq('category_id', cat.id);
+        } else {
+          // If category not found, return empty list
+          return res.json({ products: [], page: 1, limit: Number(limit), total: 0 });
+        }
       }
       
       if (sub_category) {
