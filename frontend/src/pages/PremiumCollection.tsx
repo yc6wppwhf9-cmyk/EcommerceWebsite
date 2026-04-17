@@ -69,14 +69,10 @@ export const PremiumCollection = () => {
       <div className="bg-white">
         {/* Categories */}
         <section className="pb-0">
-          <div className="max-w-6xl mx-auto px-6 -mt-14 relative z-10">
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+          <div className="max-w-6xl mx-auto px-3 sm:px-6 -mt-10 sm:-mt-14 relative z-10">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
               {seriesHighlights.map((series, idx) => (
-                <Link
-                  key={series.title}
-                  to={series.slug}
-                  className="w-full sm:w-[calc(50%-1.5rem)] lg:w-[calc(25%-2rem)] xl:w-[320px]"
-                >
+                <Link key={series.title} to={series.slug}>
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -89,8 +85,8 @@ export const PremiumCollection = () => {
                       alt={series.title}
                       className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 h-[40px] flex items-center justify-center bg-[#111] group-hover:bg-[#b80000] transition-colors duration-300">
-                      <h3 className="text-white text-[20px] font-medium font-outfit tracking-[0.2em] uppercase leading-none">
+                    <div className="absolute bottom-0 left-0 right-0 h-[28px] sm:h-[36px] md:h-[40px] flex items-center justify-center bg-[#111] group-hover:bg-[#b80000] transition-colors duration-300">
+                      <h3 className="text-white font-medium font-outfit tracking-[0.15em] md:tracking-[0.2em] uppercase leading-none" style={{ fontSize: 'clamp(9px, 2.5vw, 20px)' }}>
                         {series.title}
                       </h3>
                     </div>

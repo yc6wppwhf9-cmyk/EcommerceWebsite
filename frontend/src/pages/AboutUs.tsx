@@ -4,7 +4,7 @@ export const AboutUs = () => {
   return (
     <main className="container mx-auto px-4 py-20">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-outfit font-black uppercase tracking-tighter mb-8 bg-gradient-to-r from-priority-blue to-priority-dark bg-clip-text text-transparent">
+        <h1 className="text-3xl md:text-5xl font-outfit font-black uppercase tracking-tighter mb-8 bg-gradient-to-r from-priority-blue to-priority-dark bg-clip-text text-transparent">
           Legacy of Priority
         </h1>
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">

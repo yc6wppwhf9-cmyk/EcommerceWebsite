@@ -12,7 +12,7 @@ export const OurTeam = () => {
     <main className="container mx-auto px-4 py-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-outfit font-black uppercase tracking-tighter mb-4">The Minds Behind Priority</h1>
+          <h1 className="text-3xl md:text-5xl font-outfit font-black uppercase tracking-tighter mb-4">The Minds Behind Priority</h1>
           <p className="text-gray-500 max-w-xl mx-auto uppercase text-[10px] font-bold tracking-[0.3em]">Our Leadership Team</p>
         </div>
 

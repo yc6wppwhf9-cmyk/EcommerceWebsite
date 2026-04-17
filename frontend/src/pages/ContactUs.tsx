@@ -6,7 +6,7 @@ export const ContactUs = () => {
     <main className="container mx-auto px-4 py-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-outfit font-black uppercase tracking-tighter mb-4 text-priority-dark">Get in Touch</h1>
+          <h1 className="text-3xl md:text-5xl font-outfit font-black uppercase tracking-tighter mb-4 text-priority-dark">Get in Touch</h1>
           <p className="text-gray-500 max-w-xl mx-auto">Have questions about our products or your order? Our concierge team is here to help you.</p>
         </div>
 
