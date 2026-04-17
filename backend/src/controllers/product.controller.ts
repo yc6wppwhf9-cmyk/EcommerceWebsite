@@ -8,10 +8,10 @@ export const getProducts = async (req: Request, res: Response) => {
   try {
     let query = supabase
       .from('products')
-      .select('*, categories!inner(slug)')
+      .select('*, categories(slug)')
       .eq('is_active', true);
 
-    if (category)  query = query.eq('categories.slug', category);
+    if (category) query = query.eq('categories.slug', category);
     if (min_price) query = query.gte('price', Number(min_price));
     if (max_price) query = query.lte('price', Number(max_price));
     if (search) {
@@ -35,11 +35,23 @@ export const getProducts = async (req: Request, res: Response) => {
     query = query.range(offset, offset + limitNum - 1);
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Supabase View Error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      throw error;
+    }
     res.json({ products: data, page: pageNum, limit: limitNum });
-  } catch (err) {
-    console.error('products list error', err);
-    res.status(500).json({ error: 'Database error' });
+  } catch (err: any) {
+    console.error('❌ Products List Controller Exception:', err);
+    res.status(500).json({ 
+      error: 'Database error', 
+      message: err.message,
+      ...(process.env.NODE_ENV === 'development' && { details: err })
+    });
   }
 };
 
