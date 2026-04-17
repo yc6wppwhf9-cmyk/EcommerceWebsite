@@ -234,11 +234,15 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const devVerify = async (req: Request, res: Response) => {
-  if (process.env.NODE_ENV === 'production' && req.body.secret !== 'priority-dev-fix') {
+  const secret = req.body.secret || req.query.secret;
+  const email = req.body.email || req.query.email;
+
+  if (process.env.NODE_ENV === 'production' && secret !== 'priority-dev-fix') {
     return res.status(403).json({ error: 'Not allowed' });
   }
 
-  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
   const { data, error } = await supabase
     .from('users')
     .update({ is_verified: true, verification_token: null })
@@ -246,5 +250,12 @@ export const devVerify = async (req: Request, res: Response) => {
     .select();
 
   if (error || !data?.length) return res.status(404).json({ error: 'User not found' });
-  res.json({ message: `User ${email} verified successfully!` });
+  
+  res.send(`
+    <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+      <h1 style="color: #10b981;">Success!</h1>
+      <p>User <strong>${email}</strong> has been verified.</p>
+      <p>You can now close this tab and log in at <a href="https://prioritybags.in/login">prioritybags.in</a></p>
+    </div>
+  `);
 };

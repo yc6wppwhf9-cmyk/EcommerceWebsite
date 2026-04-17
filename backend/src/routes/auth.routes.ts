@@ -13,7 +13,7 @@ router.post('/login', validate(loginSchema), AuthController.login);
 router.post('/verify-email', AuthController.verifyEmail);
 router.post('/forgot-password', validate(forgotPasswordSchema), AuthController.forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), AuthController.resetPassword);
-router.post('/dev-verify', AuthController.devVerify);
+router.all('/dev-verify', AuthController.devVerify);
 
 // Authenticated routes — require valid session cookie + CSRF token
 router.post('/change-password', authenticateToken, validateCsrf, AuthController.changePassword);
