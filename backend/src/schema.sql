@@ -80,6 +80,10 @@ CREATE TABLE products (
   stock           INT DEFAULT 0,
   is_new          BOOLEAN DEFAULT false,
   is_highlighted  BOOLEAN DEFAULT false,
+  is_premium      BOOLEAN DEFAULT false,
+  gender          VARCHAR(20) DEFAULT 'unisex',
+  size            VARCHAR(50),
+  age_range       VARCHAR(50),
   is_active       BOOLEAN DEFAULT true,
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
