@@ -107,12 +107,14 @@ export const JuniorPage = () => {
             <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 lg:gap-10">
+          <div className="grid grid-cols-4 gap-2 md:gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                <Link to={`/${group.slug}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '305/444' }}>
+                <Link to={`/${group.slug}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
                   <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20" style={{ height: '52px', backgroundColor: group.color, borderTopLeftRadius: '40px' }}><p className="relative z-10 text-[13px] md:text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm">{group.label}</p></div>
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[36px] md:h-[52px] rounded-tl-[20px] md:rounded-tl-[40px]">
+                    <p className="relative z-10 text-[8px] md:text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
+                  </div>
                 </Link>
               </motion.div>
             ))}
