@@ -20,12 +20,23 @@ export const productSchema = z.object({
   body: z.object({
     name: z.string().min(2),
     price: z.number().positive(),
-    original_price: z.number().positive(),
+    originalPrice: z.number().positive().optional(),
+    original_price: z.number().positive().optional(),
     stock: z.number().int().nonnegative(),
     category_id: z.string().uuid().optional(),
     description: z.string().optional(),
-    sku: z.string().min(3),
-  }),
+    sku: z.string().min(3).optional(),
+    slug: z.string().optional(),
+    images: z.array(z.string()).optional(),
+    colors: z.array(z.any()).optional(),
+    features: z.array(z.string()).optional(),
+    isNew: z.boolean().optional(),
+    highlighted: z.boolean().optional(),
+    isPremium: z.boolean().optional(),
+    gender: z.string().optional(),
+    ageRange: z.string().optional(),
+    size: z.string().optional(),
+  }).passthrough(),
 });
 
 export const orderSchema = z.object({
