@@ -176,13 +176,19 @@ export const resetPassword = async (req: Request, res: Response) => {
       .eq('reset_token', tokenHash)
       .gt('reset_token_expires', new Date().toISOString())
       .select()
-      .single();
+      .maybeSingle(); // switch to maybeSingle to avoid 406 error on no match
 
-    if (error || !user) return res.status(400).json({ error: 'Invalid or expired reset token' });
+    if (error) {
+      console.error('❌ Reset Password DB Error:', error);
+      throw error;
+    }
+    
+    if (!user) return res.status(400).json({ error: 'Invalid or expired reset token' });
 
     res.json({ message: 'Password reset successful. You can now login with your new password.' });
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+  } catch (err: any) {
+    console.error('❌ Reset Password Exception:', err);
+    res.status(500).json({ error: 'Server error', message: err.message });
   }
 };
 
