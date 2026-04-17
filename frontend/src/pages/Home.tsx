@@ -173,10 +173,10 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-24 pb-40">
-        <div className="grid grid-cols-3 gap-10">
+      <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-20 lg:pt-24 lg:pb-40">
+        <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="group relative h-[560px] rounded-[3rem] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
+            <Link key={cat.label} to={cat.to} className="group relative h-[380px] lg:h-[560px] rounded-[2rem] lg:rounded-[3rem] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
               <img src={cat.img} alt={cat.label} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
               <div className="absolute bottom-10 right-10 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
@@ -224,7 +224,6 @@ export const Home = () => {
       {/* Product Tabs Section */}
       <section className="pt-10 md:pt-24 pb-12 bg-white">
         <div className="container mx-auto px-4 md:px-8">
-          <h2 className="md:hidden text-base font-black uppercase tracking-[0.2em] text-[#14052b] mb-5 px-1">Browse Backpacks</h2>
           <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center mb-6 md:mb-16 border-b border-gray-100 pb-1">
             {BACKPACK_TABS.map((tab) => (
               <button
@@ -238,25 +237,25 @@ export const Home = () => {
             ))}
           </div>
 
-          <div className="flex flex-col md:flex-row items-start gap-5 lg:gap-8">
+          <div className="flex items-start gap-6 lg:gap-8">
             {tabCategory && (
-              <div className="w-full md:w-[220px] lg:w-[379px] shrink-0 h-[180px] md:h-[440px] lg:h-[506px] overflow-hidden relative group rounded-xl md:rounded-none">
-                <div className="w-full h-[60px] md:h-[80px] lg:h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
-                  <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: 'clamp(14px, 2.5vw, 32.4px)' }}>
+              <div className="hidden md:block md:w-[220px] lg:w-[379px] shrink-0 md:h-[440px] lg:h-[506px] overflow-hidden relative group rounded-none">
+                <div className="w-full h-[80px] lg:h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
+                  <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: 'clamp(18px, 2.5vw, 32.4px)' }}>
                     Trendy {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(0, -1).join(' ')}
                   </p>
-                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[20px] lg:translate-x-[32px]" style={{ fontSize: 'clamp(20px, 3.5vw, 47.4px)' }}>
+                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[20px] lg:translate-x-[32px]" style={{ fontSize: 'clamp(26px, 3.5vw, 47.4px)' }}>
                     {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
-                <div className="w-full overflow-hidden relative h-[120px] md:h-[360px] lg:h-[411px]">
+                <div className="w-full flex-1 overflow-hidden relative" style={{ height: 'calc(100% - 80px)' }}>
                   <img src={IMG.refPoster} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
                 {tabProducts.map(p => (
                   <ProductCard key={p.id} product={p} />
                 ))}

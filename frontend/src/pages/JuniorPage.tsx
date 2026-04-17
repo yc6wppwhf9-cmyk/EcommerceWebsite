@@ -104,7 +104,7 @@ export const JuniorPage = () => {
         <div className="max-w-[1280px] mx-auto px-6 md:px-14 relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
-            <h2 className="font-protest" style={{ fontSize: '36px', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
+            <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 lg:gap-10">
@@ -120,25 +120,24 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      <section className="relative mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
-        <div className="relative w-full max-w-[1402px] rounded-[5px] py-10 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: '380px' }}>
+      <section className="relative mt-16 md:mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
+        <div className="relative w-full max-w-[1402px] rounded-[5px] py-8 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: 'clamp(260px, 45vw, 500px)' }}>
 
-          {/* Group 36 side Doodles - Restored and High Opacity */}
-          <div className="absolute left-4 md:left-24 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
-          <div className="absolute right-4 md:right-24 top-1/2 -translate-y-1/2 w-[220px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
+          <div className="absolute left-2 md:left-24 top-1/2 -translate-y-1/2 w-[120px] sm:w-[180px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
+          <div className="absolute right-2 md:right-24 top-1/2 -translate-y-1/2 w-[120px] sm:w-[180px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
 
-          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-100px] md:mt-[-120px] mb-4 overflow-visible">
-            <div className="relative w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
+          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-70px] sm:mt-[-100px] md:mt-[-120px] mb-4 overflow-visible">
+            <div className="relative w-[220px] sm:w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
               <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 md:pt-6">
-                <span className="font-outfit uppercase tracking-[0.2em] mb-2" style={{ fontSize: '28.36px', fontWeight: 400, color: '#966512' }}>New Arrival</span>
-                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto" style={{ fontSize: '50.82px', color: '#3E92E6', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
+                <span className="font-outfit uppercase tracking-[0.2em] mb-1 md:mb-2" style={{ fontSize: 'clamp(14px, 4vw, 28.36px)', fontWeight: 400, color: '#966512' }}>New Arrival</span>
+                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto" style={{ fontSize: 'clamp(20px, 6.5vw, 50.82px)', color: '#3E92E6', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
               </div>
             </div>
           </div>
-          <div className="flex gap-10 md:gap-32 mt-4 md:mt-6 relative z-10">
-            <Link to="/school-backpacks" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: '16px' }}>Dreamy Styles</Link>
-            <Link to="/school-backpacks" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: '16px' }}>Power Styles</Link>
+          <div className="flex gap-8 md:gap-32 mt-4 md:mt-6 relative z-10">
+            <Link to="/school-backpacks" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Dreamy Styles</Link>
+            <Link to="/school-backpacks" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Power Styles</Link>
           </div>
         </div>
       </section>
@@ -156,9 +155,9 @@ export const JuniorPage = () => {
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
-              <div className="relative flex flex-col items-center pt-8 w-full max-w-[334px] mx-auto lg:mx-0" style={{ height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}>
-                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: '400px', borderRadius: '5px' }}><img src="/junior/Drift Sky Blue_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
-                <h3 className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
+              <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
+                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}><img src="/junior/Drift Sky Blue_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
+                <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
               </div>
             </div>
             <div className="flex-1">
