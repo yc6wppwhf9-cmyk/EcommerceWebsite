@@ -102,34 +102,49 @@ export const createProduct = async (req: Request, res: Response) => {
       price: body.price,
       original_price: body.originalPrice || body.original_price || body.price,
       category_id: catData?.id || body.category_id,
-      image: Array.isArray(body.images) ? body.images[0] : (body.image || ''),
+      image: (Array.isArray(body.images) && body.images[0]) ? body.images[0] : (body.image || ''),
       images: body.images || [],
       colors: body.colors || [],
       features: body.features || [],
       stock: body.stock || 0,
       is_new: body.isNew || body.is_new || false,
       is_highlighted: body.highlighted || body.is_highlighted || false,
+      is_premium: body.isPremium || body.is_premium || false,
+      gender: body.gender || 'unisex',
+      size: body.size || '',
+      age_range: body.ageRange || body.age_range || '',
+      sub_category: body.sub_category || ''
     };
 
     if (!productData.category_id) {
-       // fallback to a default if not found
-       const { data: defaultCat } = await supabase.from('categories').select('id').limit(1).single();
-       productData.category_id = defaultCat?.id;
+       const { data: fallback } = await supabase.from('categories').select('id').limit(1).single();
+       if (fallback) productData.category_id = fallback.id;
     }
 
     const { data, error } = await supabase.from('products').insert(productData).select().single();
     if (error) throw error;
     res.status(201).json(data);
   } catch (err: any) {
-    console.error('Create Product Error:', err);
+    console.error('❌ Create Error:', err);
     res.status(400).json({ error: err.message });
   }
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
-  const allowed = ['name', 'description', 'price', 'original_price', 'stock', 'is_active', 'is_new', 'is_highlighted'];
+  const allowed = [
+    'name', 'description', 'price', 'original_price', 'stock', 
+    'is_active', 'is_new', 'is_highlighted', 'image', 'images', 
+    'colors', 'features', 'category_id', 'is_premium', 'gender', 
+    'size', 'age_range', 'sub_category'
+  ];
   const updates: any = {};
-  allowed.forEach((f) => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
+  allowed.forEach((f) => { 
+    if (req.body[f] !== undefined) updates[f] = req.body[f];
+    // Also handle camelCase mappings
+    if (f === 'original_price' && req.body.originalPrice !== undefined) updates[f] = req.body.originalPrice;
+    if (f === 'is_premium' && req.body.isPremium !== undefined) updates[f] = req.body.isPremium;
+    if (f === 'age_range' && req.body.ageRange !== undefined) updates[f] = req.body.ageRange;
+  });
 
   if (!Object.keys(updates).length) return res.status(400).json({ error: 'No fields to update' });
 
