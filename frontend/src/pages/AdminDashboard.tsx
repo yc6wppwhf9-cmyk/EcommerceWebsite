@@ -306,7 +306,7 @@ export const AdminDashboard = () => {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Gender / Style</label>
                                     <select value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value as any, ageRange: e.target.value === 'kids' ? formData.ageRange : ''})} className={inputCls}>
-                                        <option value="unisex">Unisex / All</option>
+                                        <option value="unisex">All</option>
                                         <option value="men">Men</option>
                                         <option value="women">Women</option>
                                         <option value="kids">Kids</option>
