@@ -521,12 +521,32 @@ export const AdminDashboard = () => {
                           <img src={p.image} className="w-20 h-20 object-contain p-2 bg-gray-50 rounded-xl" />
                           <div className="flex-1 flex flex-col justify-between overflow-hidden">
                             <div>
-                              <p className="text-[8px] font-black text-priority-blue uppercase tracking-widest truncate">{p.category} • {p.gender}</p>
-                              <h4 className="text-[11px] font-black text-gray-900 truncate leading-tight mt-1 mb-0.5">{p.name}</h4>
-                              <p className="text-[10px] font-bold text-gray-400 tracking-tight">₹ {p.price.toLocaleString()} <span className="line-through text-[8px] ml-1 opacity-50 font-normal">₹{p.originalPrice.toLocaleString()}</span></p>
+                              <p className="text-[8px] font-black text-priority-blue uppercase tracking-widest truncate">
+                                {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
+                              </p>
+                              <h4 className="text-[11px] font-black text-gray-900 truncate leading-tight mt-1 mb-0.5">{p.name || 'Unnamed Product'}</h4>
+                              <p className="text-[10px] font-bold text-gray-400 tracking-tight">
+                                ₹ {(p.price || 0).toLocaleString()} 
+                                <span className="line-through text-[8px] ml-1 opacity-50 font-normal">
+                                  ₹ {(p.originalPrice || p.original_price || p.price || 0).toLocaleString()}
+                                </span>
+                              </p>
                             </div>
                             <div className="flex gap-4 mt-3">
-                              <button onClick={() => { setEditingProduct(p); setFormData(p); setVariants((p.variants || []).map((v: any) => ({ color: v.color || '', colorCode: v.colorCode || '#000', image: v.images?.[0] || '' }))); setIsAddingProduct(true); }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
+                              <button onClick={() => { 
+                                setEditingProduct(p); 
+                                setFormData({
+                                  ...p,
+                                  originalPrice: p.original_price || p.originalPrice || 0,
+                                  category: p.categories?.slug || p.category || ''
+                                }); 
+                                setVariants((p.colors || p.variants || []).map((v: any) => ({ 
+                                  color: v.name || v.color || '', 
+                                  colorCode: v.code || v.colorCode || '#000', 
+                                  image: v.image || (v.images?.[0]) || '' 
+                                }))); 
+                                setIsAddingProduct(true); 
+                              }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
                               <button onClick={() => { if (window.confirm('Delete?')) api.deleteProduct(p.id).then(() => fetchData()) }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
                             </div>
                           </div>
