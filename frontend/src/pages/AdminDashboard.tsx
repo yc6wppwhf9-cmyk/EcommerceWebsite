@@ -52,7 +52,7 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   ],
 };
 
-type ColorVariant = { color: string; colorCode: string; image: string };
+type ColorVariant = { color: string; colorCode: string; images: string[] };
 
 const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
@@ -122,8 +122,8 @@ export const AdminDashboard = () => {
     { id: 'customers', label: 'Users', icon: Users },
   ];
 
-  const addVariant = () => setVariants((v: ColorVariant[]) => [...v, { color: '', colorCode: '#000000', image: '' }]);
-  const updateVariant = (i: number, key: keyof ColorVariant, val: string) =>
+  const addVariant = () => setVariants((v: ColorVariant[]) => [...v, { color: '', colorCode: '#000000', images: [''] }]);
+  const updateVariant = (i: number, key: string, val: any) =>
     setVariants((v: ColorVariant[]) => v.map((item: ColorVariant, idx: number) => idx === i ? { ...item, [key]: val } : item));
   const removeVariant = (i: number) => setVariants((v: ColorVariant[]) => v.filter((_: ColorVariant, idx: number) => idx !== i));
 
@@ -144,7 +144,7 @@ export const AdminDashboard = () => {
         sub_category: formData.subcategory || '',
         features: formData.features || [],
         images: formData.images || [],
-        colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.image ? [v.image] : [] })) : []
+        colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.images || [] })) : []
       };
 
       // Remove UI-only fields that crash the backend insert
@@ -494,7 +494,50 @@ export const AdminDashboard = () => {
                                     </div>
                                   </div>
                                 </div>
-                                <CloudinaryUpload label={`Upload Photo for ${v.color || 'this colour'}`} value={v.image} onChange={(url) => updateVariant(i, 'image', url)} />
+                                <div className="space-y-4">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-[9px] font-black text-gray-500 uppercase">Colour Gallery</label>
+                                    <button 
+                                      type="button" 
+                                      onClick={() => {
+                                        const newImgs = [...(v.images || [])];
+                                        newImgs.push('');
+                                        updateVariant(i, 'images', newImgs);
+                                      }}
+                                      className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline"
+                                    >
+                                      + Add Photo
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {(v.images || ['']).map((vImg, vIdx) => (
+                                      <div key={vIdx} className="relative group/vi bg-white p-2 rounded-xl border border-gray-100">
+                                         {vIdx > 0 && (
+                                           <button 
+                                             type="button" 
+                                             onClick={() => {
+                                               const newImgs = [...(v.images || [])];
+                                               newImgs.splice(vIdx, 1);
+                                               updateVariant(i, 'images', newImgs);
+                                             }}
+                                             className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md z-10"
+                                           >
+                                             <X size={12} />
+                                           </button>
+                                         )}
+                                         <CloudinaryUpload 
+                                           label="" 
+                                           value={vImg} 
+                                           onChange={(url) => {
+                                             const newImgs = [...(v.images || [])];
+                                             newImgs[vIdx] = url;
+                                             updateVariant(i, 'images', newImgs);
+                                           }} 
+                                         />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               </div>
                             ))}
                           </div>
