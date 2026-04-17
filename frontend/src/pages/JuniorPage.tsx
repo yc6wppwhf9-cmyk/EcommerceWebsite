@@ -14,11 +14,11 @@ const AGE_GROUPS = [
 ];
 
 const CATEGORIES = [
-  { label: 'School Backpacks', filter: 'school-backpacks' },
-  { label: 'Combo Set', filter: 'combo-set' },
-  { label: 'Pouches', filter: 'pouches' },
-  { label: 'Lunch Bags', filter: 'lunch-bags' },
-  { label: 'Trolley Backpacks', filter: 'trolley-backpacks' },
+  { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/Drift Sky Blue_ Hero 1.png' },
+  { label: 'Combo Set', filter: 'combo-set', image: '/junior/Rectangle 28.png' },
+  { label: 'Pouches', filter: 'pouches', image: '/junior/Rectangle 29.png' },
+  { label: 'Lunch Bags', filter: 'lunch-bags', image: '/junior/Beautiful_ Hero 1.png' },
+  { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Speedo_ Hero 1.png' },
 ];
 
 // Standard card for Showcase (with Move to Cart)
@@ -158,7 +158,13 @@ export const JuniorPage = () => {
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
               <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
-                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}><img src="/junior/Drift Sky Blue_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
+                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
+                  <img 
+                    src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"} 
+                    alt={activeTab} 
+                    className="w-full h-full object-cover object-top transition-all duration-500" 
+                  />
+                </div>
                 <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
               </div>
             </div>
