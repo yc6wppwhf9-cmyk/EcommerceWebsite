@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase';
 import * as xlsx from 'xlsx';
 
 export const getProducts = async (req: Request, res: Response) => {
-    const { category, gender, isPremium, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
+    const { category, sub_category, gender, isPremium, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
     try {
       let query = supabase
@@ -13,6 +13,10 @@ export const getProducts = async (req: Request, res: Response) => {
 
       if (category && category !== 'premium') {
         query = query.eq('categories.slug', category);
+      }
+      
+      if (sub_category) {
+        query = query.eq('sub_category', sub_category);
       }
       
       if (gender) {

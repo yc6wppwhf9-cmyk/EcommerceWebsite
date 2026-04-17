@@ -141,6 +141,7 @@ export const AdminDashboard = () => {
         // Slug / URL part
         slug: (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7),
         category_id: '', // TO BE RESOLVED BY BACKEND OR FETCHED
+        sub_category: formData.subcategory || '',
         features: formData.features || [],
         images: formData.images || [],
         colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.image ? [v.image] : [] })) : []

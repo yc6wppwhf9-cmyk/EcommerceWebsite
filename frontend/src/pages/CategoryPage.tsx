@@ -43,7 +43,7 @@ export const CategoryPage = () => {
   const filteredProducts = useMemo(() => {
     let result = allProducts.filter(product => {
       const matchesPrice = product.price <= priceRange;
-      const matchesSub = selectedSubcategories.length === 0 || selectedSubcategories.includes(product.category);
+      const matchesSub = selectedSubcategories.length === 0 || selectedSubcategories.includes(product.sub_category);
       const matchesSize = selectedSizes.length === 0 || (product.size && selectedSizes.includes(product.size));
       const matchesFeatures = selectedFeatures.length === 0 || (product.features && selectedFeatures.some(f => product.features.includes(f)));
       

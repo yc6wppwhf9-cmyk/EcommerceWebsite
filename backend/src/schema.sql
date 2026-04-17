@@ -84,6 +84,7 @@ CREATE TABLE products (
   gender          VARCHAR(20) DEFAULT 'unisex',
   size            VARCHAR(50),
   age_range       VARCHAR(50),
+  sub_category    VARCHAR(100),
   is_active       BOOLEAN DEFAULT true,
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
