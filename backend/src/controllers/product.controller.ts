@@ -8,7 +8,7 @@ export const getProducts = async (req: Request, res: Response) => {
     try {
       let query = supabase
         .from('products')
-        .select('*, categories!inner(name, slug)')
+        .select(`*, categories${category ? '!inner' : ''}(name, slug)`)
         .eq('is_active', true);
 
       if (category && category !== 'premium') {
