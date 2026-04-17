@@ -137,7 +137,6 @@ export const Home = () => {
     document.documentElement.classList.remove('dark');
   }, []);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
   const bestSellersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -152,8 +151,6 @@ export const Home = () => {
     }).catch(() => { });
   }, []);
 
-  const scrollRight = () => scrollRef.current?.scrollBy({ left: 320, behavior: 'smooth' });
-  const scrollLeft = () => scrollRef.current?.scrollBy({ left: -320, behavior: 'smooth' });
 
   return (
     <main className="font-outfit">
@@ -163,13 +160,13 @@ export const Home = () => {
       {/* Categories */}
       <section className="md:hidden py-6 px-4 text-center">
         <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-gray-400 mb-4">Shop By Category</h2>
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '16/7' }}>
+            <Link key={cat.label} to={cat.to} className="group relative rounded-xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '3/4' }}>
               <img src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-active:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <span className="block text-white text-[14px] font-black uppercase tracking-widest leading-none">{cat.label}</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-2">
+                <span className="block text-white text-[10px] font-black uppercase tracking-wide leading-tight">{cat.label}</span>
               </div>
             </Link>
           ))}
@@ -228,7 +225,7 @@ export const Home = () => {
       <section className="pt-10 md:pt-24 pb-12 bg-white">
         <div className="container mx-auto px-4 md:px-8">
           <h2 className="md:hidden text-base font-black uppercase tracking-[0.2em] text-[#14052b] mb-5 px-1">Browse Backpacks</h2>
-          <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center md:flex-wrap mb-6 md:mb-16 border-b border-gray-100 pb-1">
+          <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center mb-6 md:mb-16 border-b border-gray-100 pb-1">
             {BACKPACK_TABS.map((tab) => (
               <button
                 key={tab.id}
@@ -241,40 +238,27 @@ export const Home = () => {
             ))}
           </div>
 
-          <div className="flex items-start gap-8">
+          <div className="flex flex-col md:flex-row items-start gap-5 lg:gap-8">
             {tabCategory && (
-              <div className="hidden lg:block w-[379px] shrink-0 h-[506px] overflow-hidden relative group rounded-none">
-                {/* Yellow Recommendation Tag */}
-                <div className="w-[379px] h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
-                  <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: '32.4px' }}>
+              <div className="w-full md:w-[220px] lg:w-[379px] shrink-0 h-[180px] md:h-[440px] lg:h-[506px] overflow-hidden relative group rounded-xl md:rounded-none">
+                <div className="w-full h-[60px] md:h-[80px] lg:h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
+                  <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: 'clamp(14px, 2.5vw, 32.4px)' }}>
                     Trendy {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(0, -1).join(' ')}
                   </p>
-                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[32px]" style={{ fontSize: '47.4px' }}>
+                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[20px] lg:translate-x-[32px]" style={{ fontSize: 'clamp(20px, 3.5vw, 47.4px)' }}>
                     {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
-
-                {/* Image below rectangle */}
-                <div className="w-[379px] h-[411px] overflow-hidden relative">
+                <div className="w-full overflow-hidden relative h-[120px] md:h-[360px] lg:h-[411px]">
                   <img src={IMG.refPoster} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
               </div>
             )}
-            <div className="flex-1 relative min-w-0 w-full">
-              <div className="absolute top-1/2 -translate-y-1/2 w-full hidden lg:flex justify-between pointer-events-none z-10">
-                <button onClick={scrollLeft} className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-gray-900 border border-gray-200 shadow-xl pointer-events-auto transition-all -translate-x-6 active:scale-95 hover:bg-gray-50">
-                  <ChevronLeft size={24} />
-                </button>
-                <button onClick={scrollRight} className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-gray-900 border border-gray-200 shadow-xl pointer-events-auto transition-all translate-x-6 active:scale-95 hover:bg-gray-50">
-                  <ChevronRight size={24} />
-                </button>
-              </div>
-              <div ref={scrollRef} className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-auto no-scrollbar snap-x snap-proximity pb-6 px-1">
+            <div className="flex-1 min-w-0">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
                 {tabProducts.map(p => (
-                  <div key={p.id} className="min-w-[47vw] sm:min-w-[220px] md:min-w-[240px] lg:min-w-[280px] snap-start shrink-0">
-                    <ProductCard product={p} />
-                  </div>
+                  <ProductCard key={p.id} product={p} />
                 ))}
               </div>
             </div>
