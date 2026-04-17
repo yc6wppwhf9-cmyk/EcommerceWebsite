@@ -118,6 +118,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const shouldBeBlackNav = isPremiumTheme;
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${shouldBeBlackNav
           ? 'premium-bg-black border-b border-white/10'
@@ -217,13 +218,15 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         </button>
       </div>
 
+    </header>
+
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-[60] bg-white text-black flex flex-col font-outfit"
+            className="fixed inset-0 z-[9999] bg-white text-black flex flex-col font-outfit"
             style={{ overscrollBehavior: 'contain' }}
           >
             {/* Header */}
@@ -296,12 +299,12 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block">Logout</button>
                 </>
               ) : (
-                <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Member Login</Link>
+                <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Login</Link>
               )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 };

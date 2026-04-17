@@ -161,15 +161,15 @@ export const Home = () => {
       <HeroSlider />
 
       {/* Categories */}
-      <section className="md:hidden py-5 px-4 text-center">
-        <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-gray-400 mb-3">Shop By Category</h2>
-        <div className="grid grid-cols-3 gap-2.5">
+      <section className="md:hidden py-6 px-4 text-center">
+        <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-gray-400 mb-4">Shop By Category</h2>
+        <div className="flex flex-col gap-3">
           {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '3/4' }}>
+            <Link key={cat.label} to={cat.to} className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '16/7' }}>
               <img src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-active:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                <span className="block text-white text-[9px] font-black uppercase tracking-widest leading-none">{cat.label}</span>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <span className="block text-white text-[14px] font-black uppercase tracking-widest leading-none">{cat.label}</span>
               </div>
             </Link>
           ))}
