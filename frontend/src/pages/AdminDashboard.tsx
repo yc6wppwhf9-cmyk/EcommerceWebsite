@@ -287,14 +287,14 @@ export const AdminDashboard = () => {
 
                   {isAddingProduct ? (
                     <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-2xl max-w-3xl mx-auto overflow-hidden">
-                      <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-5">
-                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">{editingProduct ? 'Edit Product File' : 'Register New Item'}</h3>
-                        <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); setVariants([]); setDiscountPercent(0); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                          <X size={20} />
-                        </button>
-                      </div>
-
-                      <form onSubmit={handleSaveProduct} className="space-y-10">
+                        <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-5">
+                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">{editingProduct ? 'Edit Product File' : 'Register New Item'}</h3>
+                            <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); setVariants([]); setDiscountPercent(0); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        
+                        <form onSubmit={handleSaveProduct} className="space-y-10">
 
                         {/* --- BASIC INFO --- */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
