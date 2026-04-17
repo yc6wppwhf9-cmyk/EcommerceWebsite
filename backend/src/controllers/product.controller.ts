@@ -8,8 +8,12 @@ export const getProducts = async (req: Request, res: Response) => {
     try {
       let query = supabase
         .from('products')
-        .select('*, categories(name, slug)')
-        .eq('is_active', true);
+        .select('*, categories(name, slug)');
+
+      // Storefront usually filters by is_active, but Admin should see everything
+      if (category || isPremium || gender || sub_category) {
+        query = query.eq('is_active', true);
+      }
 
       if (category && category !== 'premium') {
         // 1. Try resolving as a main Category Slug
