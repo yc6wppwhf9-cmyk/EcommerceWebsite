@@ -33,7 +33,7 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
       const compressedFile = await compressImage(file);
       
       const form = new FormData();
-      form.append('file', compressedFile);
+      form.append('file', compressedFile, 'image.webp');
       form.append('upload_preset', uploadPreset);
       form.append('folder', 'priority-bags/products');
 

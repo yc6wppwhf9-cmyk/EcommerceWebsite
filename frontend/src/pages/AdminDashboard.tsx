@@ -416,7 +416,53 @@ export const AdminDashboard = () => {
                                 </label>
                             </div>
 
-                            <CloudinaryUpload label="Primary Showcase Photo (Main)" value={formData.images?.[0] || ''} onChange={(url) => setFormData({ ...formData, images: [url] })} />
+                            {/* --- MULTI-IMAGE GALLERY --- */}
+                            <div className="pt-8 border-t border-gray-100">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div>
+                                        <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Showcase Photo Gallery <span className="text-red-500">*</span></label>
+                                        <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">First photo is the primary cover image</p>
+                                    </div>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setFormData(prev => ({ ...prev, images: [...(prev.images || []), ''] }))} 
+                                        className="flex items-center gap-2 text-[10px] font-black text-orange-600 uppercase border-2 border-orange-100 px-4 py-2 rounded-xl bg-orange-50 hover:bg-orange-600 hover:text-white transition-all"
+                                    >
+                                        + Add Gallery Slot
+                                    </button>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {(formData.images || ['']).map((img, idx) => (
+                                        <div key={idx} className="relative group/g bg-stone-50 rounded-2xl border border-stone-100 p-4 transition-all hover:shadow-lg">
+                                            {idx > 0 && (
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => {
+                                                        const newImgs = [...(formData.images || [])];
+                                                        newImgs.splice(idx, 1);
+                                                        setFormData(prev => ({ ...prev, images: newImgs }));
+                                                    }}
+                                                    className="absolute -top-3 -right-3 w-8 h-8 bg-white border border-red-100 text-red-500 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/g:opacity-100 transition-all z-10 hover:bg-red-500 hover:text-white"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            )}
+                                            <CloudinaryUpload 
+                                                label={idx === 0 ? "Main Cover Image" : `Gallery Photo #${idx + 1}`} 
+                                                value={img} 
+                                                onChange={(url) => {
+                                                    const newImgs = [...(formData.images || [])];
+                                                    // Ensure array is long enough if we were at default
+                                                    if (newImgs.length === 0) newImgs.push('');
+                                                    newImgs[idx] = url;
+                                                    setFormData(prev => ({ ...prev, images: newImgs }));
+                                                }} 
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                             
                             {/* --- COLOUR VARIANTS --- */}
                             <div className="pt-6 border-t border-gray-100">
