@@ -20,6 +20,30 @@ function getCsrfToken(): string {
 
 const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
+function getFriendlyErrorMessage(error: string): string {
+  if (!error) return 'Something went wrong. Please try again.';
+  
+  const lower = error.toLowerCase();
+  
+  // Database / Technical Errors
+  if (lower.includes('null value') && lower.includes('column "image"')) return 'Image Required: Please upload at least one product photo before saving.';
+  if (lower.includes('null value')) return 'Missing Information: Please fill in all required fields (marked with *).';
+  if (lower.includes('unique constraint') || lower.includes('already exists')) return 'Duplicate Entry: This SKU or name is already in use. Please try a different one.';
+  if (lower.includes('foreign key constraint')) return 'Link Error: We couldn\'t find the category or related data you selected.';
+  
+  // Auth Errors
+  if (lower.includes('invalid login') || lower.includes('incorrect password')) return 'Login Failed: The email or password you entered is incorrect.';
+  if (lower.includes('user not found')) return 'Account Not Found: We couldn\'t find an account with that email.';
+  if (lower.includes('too short')) return 'Security Notice: Your password is too short. Please use at least 8 characters.';
+  if (lower.includes('token expired') || lower.includes('unauthorized')) return 'Session Expired: Please log in again to continue.';
+
+  // Network / Generic
+  if (lower.includes('failed to fetch')) return 'Connection Error: We can\'t reach the server. Please check your internet.';
+  if (lower.includes('server error') || lower.includes('500')) return 'Server Hiccup: Something went wrong on our end. We\'re looking into it!';
+
+  return error; // Return original if not matched, but it might still be a user-friendly message from backend
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const method = (options.method || 'GET').toUpperCase();
   const isFormData = options.body instanceof FormData;
@@ -34,24 +58,34 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     if (csrf) headers['X-CSRF-Token'] = csrf;
   }
 
-  const res = await fetch(`${BASE}${path}`, {
-    ...options,
-    headers,
-    credentials: 'include', // send httpOnly JWT cookie automatically
-  });
+  try {
+    const res = await fetch(`${BASE}${path}`, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
 
-  const text = await res.text();
-  let data: any = {};
-  if (text) {
-    try {
-      data = JSON.parse(text);
-    } catch {
-      if (!res.ok) throw new Error(`Server error (${res.status}). Please try again.`);
+    const text = await res.text();
+    let data: any = {};
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        if (!res.ok) throw new Error(`Server encountered an error (${res.status}).`);
+      }
     }
-  }
 
-  if (!res.ok) throw new Error(data.error || data.message || `Something went wrong (${res.status}). Please try again.`);
-  return data as T;
+    if (!res.ok) {
+      const rawMsg = data.error || data.message || `Request failed (${res.status})`;
+      throw new Error(getFriendlyErrorMessage(rawMsg));
+    }
+    return data as T;
+  } catch (err: any) {
+    if (err.message === 'Failed to fetch') {
+      throw new Error(getFriendlyErrorMessage('failed to fetch'));
+    }
+    throw err;
+  }
 }
 
 export const api = {
