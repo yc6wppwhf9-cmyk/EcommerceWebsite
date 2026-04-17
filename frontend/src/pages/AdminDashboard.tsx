@@ -418,19 +418,18 @@ export const AdminDashboard = () => {
 
                         {/* --- MULTI-IMAGE GALLERY --- */}
                         <div className="pt-8 border-t border-gray-100">
-                          <div className="flex items-center justify-between mb-6">
-                            <div>
-                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Showcase Photo Gallery <span className="text-red-500">*</span></label>
-                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">First photo is the primary cover image</p>
+                            <div className="flex items-center gap-6">
+                              <div className="flex-1">
+                                <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Showcase Photo Gallery <span className="text-red-500">*</span></label>
+                                <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">First photo is the primary cover image</p>
+                              </div>
+                              <CloudinaryUpload
+                                label=""
+                                value=""
+                                multiple={true}
+                                onBulkChange={(urls) => setFormData(prev => ({ ...prev, images: [...(prev.images || []), ...urls] }))}
+                              />
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => setFormData(prev => ({ ...prev, images: [...(prev.images || []), ''] }))}
-                              className="flex items-center gap-2 text-[10px] font-black text-orange-600 uppercase border-2 border-orange-100 px-4 py-2 rounded-xl bg-orange-50 hover:bg-orange-600 hover:text-white transition-all"
-                            >
-                              + Add Gallery Slot
-                            </button>
-                          </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {(formData.images || ['']).map((img, idx) => (
@@ -466,15 +465,17 @@ export const AdminDashboard = () => {
 
                         {/* --- COLOUR VARIANTS --- */}
                         <div className="pt-6 border-t border-gray-100">
-                          <div className="flex items-center justify-between mb-6">
-                            <div>
-                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos (Optional)</label>
-                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Add specific photos for different bag colours</p>
+                            <div className="flex items-center gap-6">
+                              <div className="flex-1">
+                                <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos (Optional)</label>
+                                <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Add specific photos for different bag colours</p>
+                              </div>
+                              <div className="flex gap-4">
+                                <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all">
+                                  + Create Colour Group
+                                </button>
+                              </div>
                             </div>
-                            <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all">
-                              + Add Colour Case
-                            </button>
-                          </div>
 
                           <div className="space-y-6">
                             {variants.map((v, i) => (
@@ -495,24 +496,20 @@ export const AdminDashboard = () => {
                                   </div>
                                 </div>
                                 <div className="space-y-4">
-                                  <div className="flex items-center justify-between">
-                                    <label className="text-[9px] font-black text-gray-500 uppercase">Colour Gallery</label>
-                                    <button 
-                                      type="button" 
-                                      onClick={() => {
-                                        const newImgs = [...(v.images || [])];
-                                        newImgs.push('');
+                                    <CloudinaryUpload 
+                                      label="" 
+                                      value="" 
+                                      multiple={true}
+                                      onBulkChange={(urls) => {
+                                        const newImgs = [...(v.images || []), ...urls];
                                         updateVariant(i, 'images', newImgs);
                                       }}
-                                      className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline"
-                                    >
-                                      + Add Photo
-                                    </button>
+                                    />
                                   </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {(v.images || ['']).map((vImg, vIdx) => (
                                       <div key={vIdx} className="relative group/vi bg-white p-2 rounded-xl border border-gray-100">
-                                         {vIdx > 0 && (
+                                         {vIdx >= 0 && (
                                            <button 
                                              type="button" 
                                              onClick={() => {

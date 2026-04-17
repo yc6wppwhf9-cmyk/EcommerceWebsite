@@ -4,47 +4,58 @@ import { Upload, X, Loader2, ImageIcon } from 'lucide-react';
 interface CloudinaryUploadProps {
   value: string;
   onChange: (url: string) => void;
+  onBulkChange?: (urls: string[]) => void;
   label?: string;
+  multiple?: boolean;
 }
 
-export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: CloudinaryUploadProps) => {
+export const CloudinaryUpload = ({ value, onChange, onBulkChange, label = 'Product Image', multiple = false }: CloudinaryUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
 
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-  const handleFile = async (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file (PNG, JPG, WEBP)');
-      return;
-    }
-    if (file.size > 50 * 1024 * 1024) {
-      setError('File too large — max 50MB');
-      return;
-    }
+  const handleFiles = async (files: FileList) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
 
     setUploading(true);
     setError('');
+    setProgress({ current: 0, total: fileArray.length });
 
     try {
-      // Auto-compress and resize image before upload
-      const compressedFile = await compressImage(file);
-      
-      const form = new FormData();
-      form.append('file', compressedFile, 'image.webp');
-      form.append('upload_preset', uploadPreset);
-      form.append('folder', 'priority-bags/products');
+      const uploadPromises = fileArray.map(async (file, idx) => {
+        if (!file.type.startsWith('image/')) return null;
+        
+        // Auto-compress and resize image before upload
+        const compressedFile = await compressImage(file);
+        
+        const form = new FormData();
+        form.append('file', compressedFile, 'image.webp');
+        form.append('upload_preset', uploadPreset);
+        form.append('folder', 'priority-bags/products');
 
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        { method: 'POST', body: form }
-      );
-      const data = await res.json();
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          { method: 'POST', body: form }
+        );
+        const data = await res.json();
+        
+        setProgress(prev => ({ ...prev, current: prev.current + 1 }));
+        return data.secure_url;
+      });
 
-      if (data.secure_url) {
-        onChange(data.secure_url);
+      const urls = (await Promise.all(uploadPromises)).filter(u => u !== null) as string[];
+
+      if (urls.length > 0) {
+        if (multiple && onBulkChange) {
+          onBulkChange(urls);
+        } else {
+          onChange(urls[0]);
+        }
       } else {
         setError('Upload failed — check Cloudinary env vars');
       }
@@ -52,7 +63,15 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
       setError(err.message || 'Upload failed — check your internet connection');
     } finally {
       setUploading(false);
+      setProgress({ current: 0, total: 0 });
     }
+  };
+
+  const handleFile = async (file: File) => {
+    // Legacy support for single file
+    const list = new DataTransfer();
+    list.items.add(file);
+    handleFiles(list.files);
   };
 
   // Helper function to compress image using Canvas
@@ -105,8 +124,8 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) handleFiles(files);
   };
 
   return (
@@ -122,7 +141,7 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
       >
-        {value ? (
+        {value && !uploading ? (
           /* Preview */
           <div className="relative group p-2">
             <img
@@ -165,7 +184,7 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
             )}
             <div className="text-center space-y-1">
               <p className="text-[11px] font-black uppercase tracking-widest">
-                {uploading ? 'Uploading to Cloudinary…' : 'Click or drag & drop'}
+                {uploading ? `Uploading ${progress.current} of ${progress.total}...` : multiple ? 'Click to Bulk Upload (Ctrl+A)' : 'Click or drag & drop'}
               </p>
               <p className="text-[10px] text-gray-300 font-medium">PNG · JPG · WEBP · Max 50MB</p>
             </div>
@@ -173,37 +192,13 @@ export const CloudinaryUpload = ({ value, onChange, label = 'Product Image' }: C
         )}
       </div>
 
-      {/* URL fallback input */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1 h-px bg-gray-100" />
-        <span className="text-[9px] font-bold uppercase tracking-widest text-gray-300">or paste URL</span>
-        <div className="flex-1 h-px bg-gray-100" />
-      </div>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <ImageIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="https://res.cloudinary.com/..."
-            className="w-full pl-8 pr-4 py-2.5 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-xl text-[11px] font-medium text-[var(--color-text-main)] focus:border-priority-blue outline-none transition-all"
-          />
-        </div>
-      </div>
-
-      {error && (
-        <p className="text-[10px] text-red-500 font-bold flex items-center gap-1">
-          <X size={12} /> {error}
-        </p>
-      )}
-
       <input
         ref={inputRef}
         type="file"
         accept="image/*"
+        multiple={multiple}
         className="hidden"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
+        onChange={(e) => { if (e.target.files) handleFiles(e.target.files); e.target.value = ''; }}
       />
     </div>
   );
