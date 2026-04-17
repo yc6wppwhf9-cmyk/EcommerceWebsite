@@ -8,10 +8,10 @@ import type { Product } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
 
 const BACKPACK_TABS = [
-  { id: 'college-backpacks', label: 'College Backpack' },
-  { id: 'school-backpacks', label: 'School Backpack' },
-  { id: 'laptop-backpacks', label: 'Laptop Backpack' },
-  { id: 'trekking-backpacks', label: 'Trekking Backpack' },
+  { id: 'college-backpacks', label: 'College Backpack', image: '/Category/ref.png' },
+  { id: 'school-backpacks', label: 'School Backpack', image: '/junior/Rectangle 28.png' },
+  { id: 'laptop-backpacks', label: 'Laptop Backpack', image: '/junior/Drift Sky Blue_ Hero 1.png' },
+  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/Category/Travelling Bag.jpg' },
 ] as const;
 
 const HERO_SLIDES = [
@@ -249,7 +249,10 @@ export const Home = () => {
                   </p>
                 </div>
                 <div className="w-full flex-1 overflow-hidden relative" style={{ height: 'calc(100% - 80px)' }}>
-                  <img src={IMG.refPoster} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" />
+                  <img 
+                    src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster} 
+                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" 
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
               </div>
