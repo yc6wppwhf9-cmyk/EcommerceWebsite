@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 const FooterSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,9 +32,12 @@ const FooterSection = ({ title, children }: { title: string; children: React.Rea
 
 export const Footer = () => {
   const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const isPremium = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
 
   return (
-    <footer className="bg-priority-dark text-gray-300 py-10 md:py-12 pb-24 lg:pb-12 text-sm font-outfit">
+    <footer className={`${isPremium ? 'premium-bg-black border-t border-white/5' : 'bg-priority-dark'} text-gray-300 py-10 md:py-12 pb-24 lg:pb-12 text-sm font-outfit transition-colors duration-500`}>
       <div className="container mx-auto px-5 md:px-10">
         {/* Brand — always visible */}
         <div className="mb-8 md:mb-0 md:hidden">

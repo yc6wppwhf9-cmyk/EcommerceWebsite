@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, User, ShoppingCart, ChevronDown, Menu, X, LogOut, LayoutDashboard, Heart, Sun, Moon } from 'lucide-react';
+import { Search, User, ShoppingCart, ChevronDown, Menu, X, LogOut, LayoutDashboard, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -14,11 +14,16 @@ interface NavItemProps {
 
 const NavItem = ({ title, to, items }: NavItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const isPremiumTheme = location.pathname === '/premium' || new URLSearchParams(location.search).get('theme') === 'premium';
+
+  const getThemeTo = (path: string) => isPremiumTheme ? `${path}?theme=premium` : path;
+
   return (
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <Link
-        className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-semibold font-outfit tracking-[0.15em] hover:opacity-70 transition-all duration-300 relative border-b-4 border-transparent hover:border-current uppercase"
-        to={to}
+        className="h-16 flex items-center gap-1.5 px-4 text-[16px] font-semibold font-outfit tracking-[0.15em] hover:opacity-70 transition-all duration-300 relative border-b-4 border-transparent hover:border-current uppercase"
+        to={getThemeTo(to)}
       >
         {title}
         {items && <ChevronDown size={12} className={`opacity-40 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
@@ -35,8 +40,8 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
             {items.map((item) => (
               <Link
                 key={item.slug}
-                to={`/${item.slug}`}
-                className="block px-5 py-3 text-[11px] font-semibold font-outfit tracking-widest text-priority-blue dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-all uppercase"
+                to={getThemeTo(`/${item.slug}`)}
+                className="block px-5 py-3 text-[16px] font-semibold font-outfit tracking-widest text-priority-blue dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-all uppercase"
               >
                 {item.label}
               </Link>
@@ -53,7 +58,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { itemCount, toggleCart } = useCart();
   const { isAuthenticated, user, logout } = useAuth();
-  const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
   const location = useLocation();
 
   useEffect(() => {
@@ -61,12 +65,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const toggleDarkMode = () => {
-    const dark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-    setIsDarkMode(dark);
-  };
 
   const navData = [
     {
@@ -102,26 +100,33 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     { title: 'PREMIUM', to: '/premium' },
   ];
 
-  const isJunior = location.pathname === '/junior';
-  const logoSrc = isJunior ? '/junior/junior logo.png' : '/nav bar.png';
+  const isJunior = location.pathname.includes('/junior');
+  const queryParams = new URLSearchParams(location.search);
+  const isPremiumTheme = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
+  const isDarkMode = isPremiumTheme;
+
+  const logoSrc = isJunior
+    ? '/junior/junior logo.png'
+    : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/logo.png');
+
+  const shouldBeBlackNav = isPremiumTheme;
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${
-        isScrolled 
-          ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' 
-          : 'bg-transparent'
-      }`}
-      style={{ color: isScrolled ? 'white' : (isDarkMode ? 'white' : '#111') }}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${shouldBeBlackNav
+          ? 'premium-bg-black border-b border-white/10'
+          : (isScrolled ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' : 'bg-transparent')
+        }`}
+      style={{ color: (isScrolled || shouldBeBlackNav) ? 'white' : (isDarkMode ? 'white' : '#111') }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
-        <div className="flex-1 flex items-center">
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center lg:static lg:translate-x-0 lg:flex-1">
           <Link to="/" className="flex items-center">
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300 ${(!isScrolled && !isDarkMode && !isJunior) ? 'brightness-0' : ''}`}
+              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300 ${(isPremiumTheme) ? '' : (!isScrolled && !isDarkMode && !isJunior ? 'brightness-0' : '')}`}
             />
           </Link>
         </div>
@@ -164,11 +169,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                     <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
                       <LayoutDashboard size={16} /> {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
                     </Link>
-                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
-                      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                    </button>
                     <div className="my-1 border-t border-gray-100 dark:border-white/5" />
-                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all">
+                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[16px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all">
                       <LogOut size={16} /> Logout
                     </button>
                   </div>
@@ -181,12 +183,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 </Link>
                 <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <div className="bg-white dark:bg-[#111] shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 p-2">
-                    <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
+                    <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[16px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
                       <User size={16} /> Login
                     </Link>
-                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
-                      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                    </button>
                   </div>
                 </div>
               </div>
@@ -226,7 +225,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   {nav.items && (
                     <div className="pl-4 py-2 flex flex-col gap-1">
                       {nav.items.map(item => (
-                        <Link key={item.slug} to={`/${item.slug}`} className="py-2 text-xs font-semibold uppercase text-[var(--color-text-muted)] tracking-widest" onClick={() => setIsMenuOpen(false)}>
+                        <Link key={item.slug} to={`/${item.slug}`} className="py-2 text-[16px] font-semibold uppercase text-[var(--color-text-muted)] tracking-widest" onClick={() => setIsMenuOpen(false)}>
                           {item.label}
                         </Link>
                       ))}
@@ -236,18 +235,15 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               ))}
             </nav>
             <div className="px-5 pt-4 pb-8 border-t border-[var(--color-border-main)] space-y-3">
-              <button onClick={toggleDarkMode} className="w-full flex items-center justify-center gap-2 border border-[var(--color-border-main)] text-[var(--color-text-muted)] py-3.5 rounded-2xl text-[11px] font-semibold uppercase tracking-widest">
-                {isDarkMode ? <Sun size={16} /> : <Moon size={16} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-              </button>
               {isAuthenticated ? (
                 <>
-                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
+                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[16px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
                     {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
                   </Link>
-                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-center block">Logout</button>
+                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[16px] font-semibold uppercase tracking-widest text-center block">Logout</button>
                 </>
               ) : (
-                <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Member Login</Link>
+                <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[16px] font-semibold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Member Login</Link>
               )}
             </div>
           </motion.div>

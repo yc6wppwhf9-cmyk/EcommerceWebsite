@@ -58,7 +58,7 @@ const HeroSlider = () => {
 
   return (
     <section
-      className="relative w-full bg-black overflow-hidden aspect-[16/9]"
+      className="relative w-full bg-black overflow-hidden aspect-[4/3] sm:aspect-[16/9]"
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = true; }}
       onPointerLeave={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = false; }}
     >
@@ -73,7 +73,7 @@ const HeroSlider = () => {
         >
           <img
             alt="Priority Premium Collection"
-            className="w-full h-full object-contain md:object-cover"
+            className="w-full h-full object-cover"
             src={HERO_SLIDES[current].src}
             loading="eager"
           />
@@ -132,6 +132,10 @@ export const Home = () => {
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
+
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+  }, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const bestSellersRef = useRef<HTMLDivElement>(null);
@@ -306,7 +310,7 @@ export const Home = () => {
       <section className="pt-12 pb-10 md:pt-20 md:pb-32 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
         <div className="container mx-auto px-5 md:px-8">
           <div className="flex flex-col items-center mb-8 md:mb-20">
-            <p className="text-base md:text-base font-semibold text-[#14052b] uppercase tracking-[0.2em]">Why Shop With Us</p>
+            <p className="text-[16px] font-semibold text-[#14052b] uppercase tracking-[0.2em] font-outfit">Why Shop With Us</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-16">
             {[
@@ -319,8 +323,8 @@ export const Home = () => {
                 <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 text-[#8750DA]">
                   <f.Icon size={26} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-semibold uppercase tracking-[0.12em]">{f.label}</h3>
-                <p className="text-base font-semibold text-gray-400 leading-snug">{f.desc}</p>
+                <h3 className="text-[16px] font-semibold uppercase tracking-[0.12em] font-outfit">{f.label}</h3>
+                <p className="text-[14px] font-medium text-gray-400 leading-snug font-outfit">{f.desc}</p>
               </div>
             ))}
           </div>

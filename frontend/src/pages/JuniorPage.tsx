@@ -75,6 +75,7 @@ export const JuniorPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.documentElement.classList.remove('dark');
     Promise.all([
       api.getProducts({ category: 'school-backpacks', limit: '8' }),
       api.getProducts({ sort: 'popular', limit: '8' }),
@@ -155,8 +156,8 @@ export const JuniorPage = () => {
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
-              <div className="relative flex flex-col items-center pt-8" style={{ width: '334px', height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}>
-                <div className="overflow-hidden shadow-2xl mb-4" style={{ width: '285px', height: '400px', borderRadius: '5px' }}><img src="/junior/Drift Sky Blue_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
+              <div className="relative flex flex-col items-center pt-8 w-full max-w-[334px] mx-auto lg:mx-0" style={{ height: '486px', backgroundColor: '#FAC05C', borderRadius: '5px' }}>
+                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: '400px', borderRadius: '5px' }}><img src="/junior/Drift Sky Blue_ Hero 1.png" alt="Featured School Backpack" className="w-full h-full object-cover object-top" /></div>
                 <h3 className="font-protest text-white leading-none text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
               </div>
             </div>

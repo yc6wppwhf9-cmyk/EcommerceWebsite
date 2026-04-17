@@ -97,8 +97,7 @@ html.dark {
 .dark .text-\[\#14052b\]       { color: #ffffff !important; }
 .dark .text-black           { color: #ffffff !important; }
 .dark .text-\[\#111\]         { color: #ffffff !important; }
-.dark .bg-black             { background-color: #ffffff !important; }
-.dark .bg-priority-blue     { background-color: #4b48b5 !important; } /* Keep blue blue but maybe a bit brighter? No, keep it. */
+.dark .bg-priority-blue     { background-color: #4b48b5 !important; }
 .dark .border-black         { border-color: #ffffff !important; }
 
 
@@ -133,6 +132,11 @@ html.dark {
 .dark input[type='range']::-webkit-slider-thumb {
   background: #ffffff;
   border-color: #0a0a0a;
+}
+
+/* Premium Utilities */
+.premium-bg-black {
+  background-color: #000000 !important;
 }
 
 /* ─── Utilities ──────────────────────────────────────────────── */
