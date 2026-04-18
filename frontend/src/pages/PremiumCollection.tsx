@@ -1,10 +1,59 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
 import type { Product } from '../types';
-import { ChevronRight, Shield, Zap, Award, Star } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+
+const collectionLinks = [
+  { label: 'LUGGAGES', slug: '/luggage?theme=premium' },
+  { label: 'BACKPACKS', slug: '/backpacks?theme=premium' },
+  { label: 'DUFFELS', slug: '/duffle?theme=premium' },
+  { label: 'ACCESSORIES', slug: '/accessories?theme=premium' },
+];
+
+const PremiumNav = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center justify-between px-6 md:px-12">
+      <Link to="/premium" className="flex items-center gap-2">
+        <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
+      </Link>
+      <div className="flex items-center gap-8">
+        <Link to="/" className="text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
+          HOME
+        </Link>
+        <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+          <button className="flex items-center gap-1.5 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
+            COLLECTION <ChevronDown size={11} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+          </button>
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.18 }}
+                className="absolute top-full right-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
+              >
+                {collectionLinks.map(item => (
+                  <Link
+                    key={item.slug}
+                    to={item.slug}
+                    className="block px-5 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 export const PremiumCollection = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,25 +75,24 @@ export const PremiumCollection = () => {
 
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
+      <PremiumNav />
+
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[60vh] sm:min-h-screen flex items-center justify-center overflow-hidden bg-black">
+      <section className="relative min-h-[60vh] sm:min-h-screen flex items-end overflow-hidden bg-black pt-14">
         <img
           src="/Traworld/hero.png"
           alt="Traworld Premium Collection"
           className="w-full h-full object-cover object-center absolute inset-0"
         />
-        <div className="relative z-10 text-center px-6">
+        <div className="relative z-10 w-full px-6 md:px-12 pb-8 md:pb-14">
           <motion.img
             src="/Traworld/_Layer_.png"
             alt="Luxury that Travels with you"
-            className="mx-auto h-auto max-w-[90%] sm:max-w-[80%] md:max-w-2xl brightness-0 invert"
-            initial={{ opacity: 0, y: 30 }}
+            className="h-auto w-full max-w-[85%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
           />
-        </div>
-        <div className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
-          <div className="w-px h-10 sm:h-16 bg-gradient-to-b from-white to-transparent" />
         </div>
       </section>
 

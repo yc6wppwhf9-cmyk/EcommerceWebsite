@@ -45,7 +45,7 @@ function AppContent() {
     <>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen relative bg-[var(--color-bg-main)] text-[var(--color-text-main)] transition-colors duration-300">
-        {!isAdmin && <Header onSearchOpen={() => setSearchOpen(true)} />}
+        {!isAdmin && !isPremium && <Header onSearchOpen={() => setSearchOpen(true)} />}
         <div className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
