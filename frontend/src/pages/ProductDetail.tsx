@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Star,
   Heart,
@@ -24,8 +24,41 @@ import { ProductCard } from '../components/ProductCard';
 import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 
+const THEMES = {
+  junior: {
+    btn: 'bg-[#755FF1] hover:bg-[#6147d3] text-white tracking-[0.15em] font-bold',
+    price: 'text-[#755FF1]',
+    badge: 'bg-[#FDB913] text-black',
+    wishlistActive: 'border-[#755FF1] bg-[#755FF1]/10 text-[#755FF1]',
+    wishlistHover: 'hover:border-[#755FF1]',
+    accordionActive: 'text-[#755FF1]',
+    shadow: 'shadow-[0_20px_40px_-10px_rgba(117,95,241,0.3)]',
+  },
+  premium: {
+    btn: 'bg-[#b80000] hover:bg-[#960000] text-white tracking-[0.2em] font-medium',
+    price: 'text-black',
+    badge: 'bg-[#b80000] text-white',
+    wishlistActive: 'border-red-700 bg-red-50 text-red-700',
+    wishlistHover: 'hover:border-red-700',
+    accordionActive: 'text-[#b80000]',
+    shadow: 'shadow-[0_20px_40px_-10px_rgba(184,0,0,0.3)]',
+  },
+  default: {
+    btn: 'bg-[#14052b] hover:bg-[#2a0f50] text-white tracking-[0.3em] font-black',
+    price: 'text-[#14052b]',
+    badge: 'bg-[#755FF1] text-white',
+    wishlistActive: 'border-red-500 bg-red-50 text-red-500',
+    wishlistHover: 'hover:border-red-500',
+    accordionActive: 'text-[#ae9efd]',
+    shadow: 'shadow-[0_20px_40px_-10px_rgba(20,5,43,0.3)]',
+  },
+} as const;
+
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
+  const themeKey = (searchParams.get('theme') ?? 'default') as keyof typeof THEMES;
+  const theme = THEMES[themeKey] ?? THEMES.default;
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -94,6 +127,9 @@ export const ProductDetail = () => {
   const activeVariant = product.variants?.[selectedVariantIndex];
   const displayImages = activeVariant ? activeVariant.images : product.images;
   const inStock = product.stock > 0;
+  const discount = product.originalPrice > product.price
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0;
 
   const handleAddToCart = () => {
     const productWithSelectedImage = { ...product, image: displayImages[selectedImage] || product.image };
@@ -128,8 +164,8 @@ export const ProductDetail = () => {
           onClick={() => setOpenAccordion(isOpen ? null : id)}
           className="w-full py-6 flex justify-between items-center group"
         >
-          <span className="text-[13px] font-black uppercase tracking-[0.2em] text-[#14052b] group-hover:text-[#ae9efd] transition-colors">{title}</span>
-          <ChevronDown size={16} className={`text-gray-300 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#ae9efd]' : ''}`} />
+          <span className={`text-[13px] font-black uppercase tracking-[0.2em] text-[#14052b] group-hover:${theme.accordionActive} transition-colors`}>{title}</span>
+          <ChevronDown size={16} className={`text-gray-300 transition-transform duration-300 ${isOpen ? `rotate-180 ${theme.accordionActive}` : ''}`} />
         </button>
         <AnimatePresence>
           {isOpen && (
@@ -229,9 +265,14 @@ export const ProductDetail = () => {
                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-gray-400">{product.reviews} verified reviews</span>
               </div>
 
-              <div className="flex items-baseline justify-center lg:justify-start gap-4 md:gap-6 border-t border-gray-50 pt-6 md:pt-8">
-                <span className="text-3xl md:text-5xl font-black text-[#14052b] tracking-tighter">{formatPrice(product.price)}</span>
-                <span className="text-base md:text-xl text-gray-300 line-through font-black tracking-tighter">{formatPrice(product.originalPrice)}</span>
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4 border-t border-gray-50 pt-6 md:pt-8">
+                <span className={`text-3xl md:text-5xl font-black tracking-tighter ${theme.price}`}>{formatPrice(product.price)}</span>
+                {discount > 0 && (
+                  <>
+                    <span className="text-base md:text-xl text-gray-300 line-through font-black tracking-tighter">{formatPrice(product.originalPrice)}</span>
+                    <span className={`text-[12px] md:text-[13px] font-black uppercase px-3 py-1 rounded-full ${theme.badge}`}>{discount}% off</span>
+                  </>
+                )}
               </div>
 
               {/* Variant Selector */}
@@ -271,14 +312,14 @@ export const ProductDetail = () => {
                 <button
                   onClick={handleBuyNow}
                   disabled={!inStock}
-                  className="flex-1 h-14 md:h-16 bg-[#14052b] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] rounded-xl md:rounded-2xl shadow-[0_20px_40px_-10px_rgba(20,5,43,0.3)] hover:scale-[1.02] transition-all disabled:grayscale disabled:opacity-50"
+                  className={`flex-1 h-14 md:h-16 text-[10px] md:text-[11px] uppercase rounded-xl md:rounded-2xl ${theme.btn} ${theme.shadow} hover:scale-[1.02] transition-all disabled:grayscale disabled:opacity-50`}
                 >
                   Buy Now
                 </button>
 
                 <button
                   onClick={handleToggleWishlist}
-                  className={`h-14 w-14 md:h-16 md:w-16 rounded-xl md:rounded-2xl border-2 flex items-center justify-center transition-all shrink-0 ${isWishlisted ? 'border-red-500 bg-red-50 text-red-500' : 'border-gray-100 text-gray-400 hover:border-red-500'}`}
+                  className={`h-14 w-14 md:h-16 md:w-16 rounded-xl md:rounded-2xl border-2 flex items-center justify-center transition-all shrink-0 ${isWishlisted ? theme.wishlistActive : `border-gray-100 text-gray-400 ${theme.wishlistHover}`}`}
                 >
                   <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
                 </button>

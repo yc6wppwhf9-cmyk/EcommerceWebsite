@@ -39,7 +39,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
     <div className="flex flex-col font-outfit bg-white">
       {/* Image container with blue border */}
       <Link
-        to={`/product/${product.slug || product.id}`}
+        to={`/product/${product.slug || product.id}?theme=junior`}
         className="relative block rounded-2xl border-2 border-[#5B8DEF] overflow-hidden bg-white"
         style={{ aspectRatio: '300 / 307' }}
       >
@@ -62,7 +62,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
       {/* Info */}
       <div className="pt-3 space-y-1.5">
-        <Link to={`/product/${product.slug || product.id}`}>
+        <Link to={`/product/${product.slug || product.id}?theme=junior`}>
           <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
             {product.name}
           </h3>
@@ -112,11 +112,11 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 // Simplified Best Seller card matching user image precisely
 const BestSellerCard = ({ product }: { product: Product }) => (
   <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-    <Link to={`/product/${product.slug || product.id}`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
+    <Link to={`/product/${product.slug || product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
       <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
     </Link>
     <div className="px-1">
-      <Link to={`/product/${product.id}`}>
+      <Link to={`/product/${product.id}?theme=junior`}>
         <h3 className="font-outfit font-bold text-[14px] text-black leading-snug mb-2 line-clamp-2">{product.name}</h3>
       </Link>
       <div className="flex items-baseline gap-2">

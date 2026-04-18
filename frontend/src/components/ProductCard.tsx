@@ -18,6 +18,8 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const product = props.product || (props.id ? getProductById(props.id) : undefined);
+  const productPath = (slug: string) =>
+    props.theme ? `/product/${slug}?theme=${props.theme}` : `/product/${slug}`;
 
   if (!product) return null;
 
@@ -39,7 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
     <div className="flex flex-col font-outfit w-full">
       {/* Image container — 300×307 ratio, #F9F9F9, radius 5 */}
       <Link
-        to={`/product/${product.slug || product.id}`}
+        to={productPath(product.slug || product.id)}
         className="relative block rounded-[5px] overflow-hidden bg-[#F9F9F9]"
         style={{ aspectRatio: '300 / 307' }}
       >
@@ -75,7 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         )}
 
         {/* Name — Outfit SemiBold 16px #000000 */}
-        <Link to={`/product/${product.slug || product.id}`}>
+        <Link to={productPath(product.slug || product.id)}>
           <h3 className="text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
             {product.name}
           </h3>
