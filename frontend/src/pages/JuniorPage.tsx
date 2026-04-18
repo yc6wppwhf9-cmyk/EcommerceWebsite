@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
 import { Product } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
@@ -21,38 +21,99 @@ const CATEGORIES = [
   { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Speedo_ Hero 1.png' },
 ];
 
-// Standard card for Showcase (with Move to Cart)
-const JuniorProductCard = ({ product }: { product: Product }) => (
-  <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl relative border border-gray-100/50">
-    <div className="absolute top-2 right-2 z-10 bg-[#FFB347] text-white text-[9px] font-black px-2 py-0.5 rounded-sm uppercase tracking-tighter">New</div>
-    <Link to={`/product/${product.id}`} className="aspect-[4/5] overflow-hidden bg-[#F9F9F9] flex items-center justify-center p-6">
-      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
-    </Link>
-    <div className="p-4 flex flex-col flex-1">
-      <Link to={`/product/${product.id}`}>
-        <h3 className="font-outfit font-semibold leading-tight mb-2 line-clamp-2" style={{ fontSize: '16px', color: '#030014' }}>{product.name}</h3>
-      </Link>
-      <div className="flex items-center gap-1 mb-3">
-        <div className="flex">{[1, 2, 3, 4, 5].map(i => <Star key={i} size={11} fill="#FFD700" color="#FFD700" />)}</div>
-        <span className="text-[10px] text-gray-400 font-outfit font-medium">10 reviews</span>
-      </div>
-      <div className="mt-auto flex flex-col gap-3">
-        <div className="flex items-baseline gap-2">
-          <span className="text-[15px] font-outfit font-bold text-[#7C3AED]">₹ {product.price}</span>
-          <span className="text-[11px] text-gray-400 line-through">₹ {Math.round(product.price * 1.5)}</span>
-          <span className="text-[11px] font-bold text-[#FF6B6B]">50% off</span>
+// Standard card for Junior Showcase
+const JuniorProductCard = ({ product }: { product: Product }) => {
+  const { addItem } = useCart();
+  const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
+  const discount = originalPrice > product.price
+    ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
+    : 0;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(product);
+  };
+
+  return (
+    <div className="flex flex-col font-outfit bg-white">
+      {/* Image container with blue border */}
+      <Link
+        to={`/product/${product.slug || product.id}`}
+        className="relative block rounded-2xl border-2 border-[#5B8DEF] overflow-hidden bg-white"
+        style={{ aspectRatio: '300 / 307' }}
+      >
+        <div className="w-full h-full flex items-center justify-center p-4">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
-        <button className="w-full bg-[#8750DA] hover:bg-[#723ac9] text-white text-[10px] font-outfit font-black uppercase tracking-widest py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">+ Move to Cart</button>
+        {/* Orange NEW badge */}
+        {product.isNew && (
+          <span className="absolute top-2.5 right-2.5 bg-[#FFB347] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm">
+            NEW
+          </span>
+        )}
+      </Link>
+
+      {/* Info */}
+      <div className="pt-3 space-y-1.5">
+        <Link to={`/product/${product.slug || product.id}`}>
+          <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
+            {product.name}
+          </h3>
+        </Link>
+
+        {/* Stars using Star 1.png */}
+        <div className="flex items-center gap-1.5">
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />
+            ))}
+          </div>
+          <span className="text-[11px] text-gray-400 font-medium">
+            {(product as any).reviews ?? 10} reviews
+          </span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="text-[16px] font-semibold text-[#755FF1]">
+            ₹ {product.price.toLocaleString('en-IN')}.00
+          </span>
+          {discount > 0 && (
+            <>
+              <span className="text-[14px] text-gray-400 line-through">
+                ₹ {originalPrice.toLocaleString('en-IN')}.00
+              </span>
+              <span className="text-[13px] font-semibold text-black">
+                {discount}% off
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Move to Cart */}
+        <button
+          onClick={handleAddToCart}
+          className="w-full py-2.5 bg-[#755FF1] hover:bg-[#6147d3] text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
+        >
+          + MOVE TO CART
+        </button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Simplified Best Seller card matching user image precisely
 const BestSellerCard = ({ product }: { product: Product }) => (
   <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-    <Link to={`/product/${product.id}`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
-      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain" />
+    <Link to={`/product/${product.slug || product.id}`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
+      <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
     </Link>
     <div className="px-1">
       <Link to={`/product/${product.id}`}>
