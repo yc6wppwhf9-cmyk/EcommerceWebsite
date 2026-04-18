@@ -6,6 +6,7 @@ import { api } from '../lib/api';
 import type { Product } from '../types';
 import { ChevronDown, Search, ShoppingBag, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { SearchModal } from '../components/SearchModal';
 
 const collectionLinks = [
   { label: 'LUGGAGES', slug: '/luggage?theme=premium' },
@@ -13,7 +14,7 @@ const collectionLinks = [
   { label: 'DUFFELS', slug: '/duffle?theme=premium' },
 ];
 
-const PremiumNav = () => {
+const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [open, setOpen] = useState(false);
   const { items } = useCart();
   return (
@@ -60,9 +61,12 @@ const PremiumNav = () => {
 
       {/* Right: Icons */}
       <div className="flex items-center gap-5 flex-1 justify-end">
-        <Link to="/search" className="text-white hover:opacity-70 transition-opacity">
+        <button
+          onClick={onSearchOpen}
+          className="text-white hover:opacity-70 transition-opacity"
+        >
           <Search size={18} strokeWidth={1.5} />
-        </Link>
+        </button>
         <Link to="/cart" className="text-white hover:opacity-70 transition-opacity relative">
           <ShoppingBag size={18} strokeWidth={1.5} />
           {items.length > 0 && (
@@ -80,6 +84,7 @@ const PremiumNav = () => {
 export const PremiumCollection = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -97,7 +102,8 @@ export const PremiumCollection = () => {
 
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
-      <PremiumNav />
+      <PremiumNav onSearchOpen={() => setIsSearchOpen(true)} />
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {/* 1. CINEMATIC HERO SECTION */}
       <section className="relative min-h-[60vh] sm:min-h-screen flex items-end overflow-hidden bg-black pt-14">
@@ -228,12 +234,41 @@ export const PremiumCollection = () => {
           )}
         </div>
       </section>
-
       {/* Footer */}
-      <footer>
-        <img src="/Traworld/Footer.png" alt="Footer" className="w-full block" />
-      </footer>
+      <footer className="relative bg-black overflow-hidden leading-[0]">
+        {/* Mobile */}
+        <div className="md:hidden relative w-full">
+          <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-[300px] object-cover object-left block" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6 pb-8 flex flex-col items-start gap-2">
+            <p className="font-outfit text-white text-[18px] font-light italic">Luxury that Travels with you ↗</p>
+            <p className="font-outfit text-white text-[18px]">
+              <span className="font-normal">Travel, </span><span style={{ fontWeight: 200 }}>But Make It Premium.</span>
+            </p>
+          </div>
+        </div>
 
+        {/* Desktop */}
+        <div className="hidden md:flex" style={{ height: '220px' }}>
+          {/* Left: Photo */}
+          <div className="w-[55%] flex-shrink-0 overflow-hidden">
+            <img
+              src="/Traworld/Footer.png"
+              alt="Premium Travel"
+              className="w-full h-full object-cover object-top block"
+            />
+          </div>
+          {/* Right: Text */}
+          <div className="w-[45%] bg-black flex flex-col items-start justify-center pl-0 pr-6 gap-3 -ml-40">
+            <p className="font-outfit text-white font-light italic" style={{ fontSize: '28px', lineHeight: '1.2' }}>
+              Luxury that Travels with you
+            </p>
+            <p className="font-outfit text-white" style={{ fontSize: '28px', lineHeight: '1.2' }}>
+              <span className="font-normal">Travel, </span><span style={{ fontWeight: 200 }}>But Make It Premium.</span>
+            </p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 };
