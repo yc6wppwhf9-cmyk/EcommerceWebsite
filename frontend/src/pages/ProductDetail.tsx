@@ -41,8 +41,17 @@ export const ProductDetail = () => {
 
   useEffect(() => {
     if (!slug) return;
-    api.getProduct(slug).then(data => {
-      setProduct(data);
+    api.getProduct(slug).then((raw: any) => {
+      setProduct({
+        ...raw,
+        originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price,
+        reviews: raw.reviews ?? 0,
+        specifications: raw.specifications ?? {},
+        category: raw.categories?.slug ?? raw.sub_category ?? '',
+        images: Array.isArray(raw.images) && raw.images.length > 0
+          ? raw.images
+          : raw.image ? [raw.image] : [],
+      });
     }).catch(() => {});
   }, [slug]);
 
