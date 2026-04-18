@@ -27,26 +27,38 @@ export const PremiumCollection = () => {
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[75vh] sm:h-screen flex items-end sm:items-center justify-center overflow-hidden bg-black">
+      <section className="relative min-h-[60vh] sm:min-h-screen flex items-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0">
           <img
             src="/Traworld/hero.png"
             alt="Traworld Premium Collection"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-left"
           />
         </div>
 
-        <div className="container mx-auto px-6 relative z-10 text-center pb-20 sm:pb-0 sm:mt-145">
+        {/* Right-side text block */}
+        <div className="relative z-10 ml-auto w-full sm:w-1/2 px-8 sm:px-12 md:px-16 pb-16 sm:pb-0 pt-16 sm:pt-0">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
+            className="flex flex-col items-start"
           >
             <img
               src="/Traworld/_Layer_.png"
               alt="Luxury that Travels with you"
-              className="mx-auto h-auto max-w-[90%] sm:max-w-[80%] md:max-w-2xl brightness-0 invert"
+              className="h-auto w-full max-w-[520px] brightness-0 invert"
             />
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
+              className="mt-3 font-outfit text-white text-left"
+              style={{ fontSize: 'clamp(22px, 3vw, 40px)', lineHeight: 1.2 }}
+            >
+              <span className="font-bold">Travel,</span>{' '}
+              <span className="font-normal">But Make It Premium.</span>
+            </motion.p>
           </motion.div>
         </div>
 
@@ -166,6 +178,11 @@ export const PremiumCollection = () => {
         </div>
       </section>
 
-    </main >
+      {/* Footer */}
+      <footer>
+        <img src="/Traworld/Footer.png" alt="Footer" className="w-full block" />
+      </footer>
+
+    </main>
   );
 };

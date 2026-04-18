@@ -233,12 +233,12 @@ export const AdminDashboard = () => {
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-main)] font-outfit pt-10 pb-20 transition-colors duration-300">
-      <div className="max-w-[1400px] mx-auto px-6">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
 
         {/* Simple Header */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-6 sm:mb-10">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Shop Admin</h1>
+            <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight">Shop Admin</h1>
             <p className="text-[10px] font-black text-priority-blue uppercase tracking-widest mt-1">Manage Store Inventory</p>
           </div>
           <button onClick={logout} className="px-5 py-3 bg-white border border-gray-200 rounded-xl text-red-500 font-bold text-xs flex items-center gap-2 hover:bg-red-50 transition-all">
@@ -250,7 +250,25 @@ export const AdminDashboard = () => {
 
           {/* Navigation Sidebar */}
           <aside className="lg:w-56 shrink-0">
-            <nav className="space-y-1.5 sticky top-24">
+            {/* Mobile: horizontal scrollable tabs */}
+            <div className="flex overflow-x-auto gap-2 pb-1 lg:hidden -mx-4 px-4 sm:-mx-6 sm:px-6">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => { setActiveTab(tab.id); setIsAddingProduct(false); setEditingProduct(null); setSelectedOrder(null); }}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shrink-0 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'bg-priority-blue text-white shadow-md'
+                      : 'text-gray-500 bg-white border border-gray-100'
+                  }`}
+                >
+                  <tab.icon size={13} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {/* Desktop: vertical sticky nav */}
+            <nav className="hidden lg:flex lg:flex-col space-y-1.5 sticky top-24">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -287,7 +305,7 @@ export const AdminDashboard = () => {
                   </div>
 
                   {isAddingProduct ? (
-                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-2xl max-w-3xl mx-auto overflow-hidden">
+                    <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-2xl max-w-3xl mx-auto overflow-hidden">
                         <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-5">
                             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">{editingProduct ? 'Edit Product File' : 'Register New Item'}</h3>
                             <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); setVariants([]); setDiscountPercent(0); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
@@ -371,7 +389,7 @@ export const AdminDashboard = () => {
                         {/* --- PRICING & DISCOUNTS --- */}
                         <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                           <p className="text-[10px] font-black text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2"><Percent size={14} /> Pricing Strategy</p>
-                          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                             <div className="space-y-2">
                               <label className="text-[10px] font-black text-gray-600 uppercase">Original MRP (₹) <span className="text-red-500">*</span></label>
                               <input required type="number" value={formData.originalPrice} onChange={(e) => setFormData({ ...formData, originalPrice: parseInt(e.target.value) || 0 })} className={inputCls} />
@@ -665,7 +683,7 @@ export const AdminDashboard = () => {
                   {/* Shipping Modal */}
                   {selectedOrder && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                      <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
+                      <div className="bg-white rounded-3xl p-4 sm:p-8 max-w-lg w-full shadow-2xl">
                         <h2 className="text-xl font-black text-gray-900 mb-2 uppercase italic tracking-tighter">Prepare Shipping</h2>
                         <p className="text-xs font-bold text-gray-500 mb-8 uppercase tracking-widest underline decoration-priority-blue decoration-2">Order #ORD-{selectedOrder.id.slice(0, 8).toUpperCase()}</p>
 
