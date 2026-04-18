@@ -46,7 +46,7 @@ export const PremiumCollection = () => {
           />
         </div>
 
-        <div className="container mx-auto px-6 relative z-10 text-center mt-50 md:mt-140">
+        <div className="container mx-auto px-6 relative z-10 text-center mt-45 md:mt-135">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
