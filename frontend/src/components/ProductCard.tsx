@@ -43,8 +43,8 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         className="relative block rounded-[5px] overflow-hidden bg-[#F9F9F9]"
         style={{ aspectRatio: '300 / 307' }}
       >
-        {/* Image centered with reduced padding for larger display */}
-        <div className="absolute inset-0 flex items-center justify-center px-[12%] py-[10%]">
+        {/* Image centered with minimal padding for larger display */}
+        <div className="absolute inset-0 flex items-center justify-center p-3">
           <LazyImage
             alt={product.name}
             className="w-full h-full object-contain"
