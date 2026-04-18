@@ -157,12 +157,20 @@ export const JuniorPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
+    const juniorCategories = ['school-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'trolley-backpacks'];
     Promise.all([
       api.getProducts({ category: 'school-backpacks', limit: '8' }),
-      api.getProducts({ sort: 'popular', limit: '8' }),
-    ]).then(([school, popular]) => {
+      ...juniorCategories.map(cat => api.getProducts({ category: cat, sort: 'popular', limit: '8' })),
+    ]).then(([school, ...popularResults]) => {
       setProducts(school.products as unknown as Product[]);
-      setBestSellers(popular.products as unknown as Product[]);
+      const seen = new Set<string>();
+      const merged: Product[] = [];
+      for (const res of popularResults) {
+        for (const p of res.products as unknown as Product[]) {
+          if (!seen.has(p.id)) { seen.add(p.id); merged.push(p); }
+        }
+      }
+      setBestSellers(merged);
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
   }, []);
