@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -134,6 +134,26 @@ export const JuniorPage = () => {
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Age group flip-card state
+  const [ageFlipIndex, setAgeFlipIndex] = useState(0);
+  const [ageFlipDir, setAgeFlipDir] = useState(1);
+  const ageTouchRef = useRef<number | null>(null);
+
+  const goNextAge = (total: number) => {
+    if (ageFlipIndex < total - 1) { setAgeFlipDir(1); setAgeFlipIndex(i => i + 1); }
+  };
+  const goPrevAge = () => {
+    if (ageFlipIndex > 0) { setAgeFlipDir(-1); setAgeFlipIndex(i => i - 1); }
+  };
+  const handleAgeTouchStart = (e: React.TouchEvent) => { ageTouchRef.current = e.touches[0].clientX; };
+  const handleAgeTouchEnd = (e: React.TouchEvent, total: number) => {
+    if (ageTouchRef.current === null) return;
+    const diff = ageTouchRef.current - e.changedTouches[0].clientX;
+    if (diff > 40) goNextAge(total);
+    else if (diff < -40) goPrevAge();
+    ageTouchRef.current = null;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
@@ -168,17 +188,102 @@ export const JuniorPage = () => {
             <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
-          <div className="grid grid-cols-4 gap-2 md:gap-8 lg:gap-10">
+
+          {/* Desktop: 4-column grid */}
+          <div className="hidden md:grid md:grid-cols-4 gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                <Link to={`/${group.slug}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
-                  <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[36px] md:h-[52px] rounded-tl-[20px] md:rounded-tl-[40px]">
-                    <p className="relative z-10 text-[8px] md:text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
+                <Link to={`/${group.slug}`} className="group relative block rounded-2xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[52px] rounded-tl-[40px]">
+                    <p className="relative z-10 text-[14px] font-outfit font-black uppercase tracking-widest text-white drop-shadow-sm text-center px-1">{group.label}</p>
                   </div>
                 </Link>
               </motion.div>
             ))}
+          </div>
+
+          {/* Mobile: Book-page flip stack */}
+          <div className="md:hidden px-2">
+            {(() => {
+              const total = AGE_GROUPS.length;
+              return (
+                <div
+                  className="relative select-none max-w-sm mx-auto"
+                  style={{ perspective: '1200px' }}
+                  onTouchStart={handleAgeTouchStart}
+                  onTouchEnd={(e) => handleAgeTouchEnd(e, total)}
+                >
+                  {/* Stacked cards behind (depth effect) */}
+                  {[2, 1].map((offset) => {
+                    const idx = ageFlipIndex + offset;
+                    if (idx >= total) return null;
+                    return (
+                      <div
+                        key={`stack-${offset}`}
+                        className="absolute inset-x-0 bottom-0 rounded-2xl overflow-hidden pointer-events-none"
+                        style={{
+                          top: `${offset * 8}px`,
+                          transform: `scale(${1 - offset * 0.05}) translateY(${offset * 4}px)`,
+                          filter: `brightness(${0.55 - offset * 0.1})`,
+                          zIndex: 10 - offset,
+                          transformOrigin: 'bottom center',
+                        }}
+                      >
+                        <div className="relative w-full" style={{ paddingBottom: '140%' }}>
+                          <img
+                            src={AGE_GROUPS[idx]?.img || ''}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover object-top"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Active card */}
+                  <div style={{ position: 'relative', zIndex: 20 }}>
+                    <AnimatePresence mode="wait" custom={ageFlipDir}>
+                      <motion.div
+                        key={ageFlipIndex}
+                        custom={ageFlipDir}
+                        initial={{ x: ageFlipDir * 150, opacity: 0, scale: 0.95 }}
+                        animate={{ x: 0, opacity: 1, scale: 1 }}
+                        exit={{ x: ageFlipDir * -150, opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.25 }}
+                        className="w-full rounded-2xl overflow-hidden shadow-xl"
+                      >
+                        <Link to={`/${AGE_GROUPS[ageFlipIndex].slug}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
+                          <img
+                            src={AGE_GROUPS[ageFlipIndex].img}
+                            alt={AGE_GROUPS[ageFlipIndex].label}
+                            className="absolute inset-0 w-full h-full object-cover object-top"
+                          />
+                          <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 bg-[#FFBB5A] h-[52px] rounded-tl-[24px]">
+                            <p className="text-[16px] font-outfit font-black uppercase tracking-widest text-white drop-shadow-sm text-center px-2">{AGE_GROUPS[ageFlipIndex].label}</p>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Navigation controls */}
+                  <div className="flex justify-between items-center mt-6 px-1">
+                    <button onClick={goPrevAge} disabled={ageFlipIndex === 0} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div className="flex gap-2">
+                      {AGE_GROUPS.map((_, i) => (
+                        <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === ageFlipIndex ? 'w-6 bg-[#A368FB]' : 'w-1.5 bg-gray-200'}`} />
+                      ))}
+                    </div>
+                    <button onClick={() => goNextAge(total)} disabled={ageFlipIndex === total - 1} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </section>
@@ -226,7 +331,7 @@ export const JuniorPage = () => {
                     className="w-full h-full object-cover object-top transition-all duration-500" 
                   />
                 </div>
-                <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
+                <h3 className="font-protest text-white leading-none text-center pb-5" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
               </div>
             </div>
             <div className="flex-1">
