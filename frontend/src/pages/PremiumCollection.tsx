@@ -13,20 +13,10 @@ export const PremiumCollection = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     api.getProducts({ isPremium: 'true' }).then(res => {
-      setProducts(res.products as unknown as Product[]);
+      setProducts(res.products as Product[]);
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
   }, []);
-
-  const categorizedProducts = useMemo(() => {
-    const groups: Record<string, Product[]> = {};
-    products.forEach(p => {
-      const cat = p.category || 'Platinum Edition';
-      if (!groups[cat]) groups[cat] = [];
-      groups[cat].push(p);
-    });
-    return groups;
-  }, [products]);
 
   const seriesHighlights = [
     { title: 'LUGGAGES', image: '/Traworld/luggage.png', slug: '/luggage?theme=premium' },
@@ -37,7 +27,7 @@ export const PremiumCollection = () => {
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative h-[60vw] sm:h-screen flex items-center justify-center overflow-hidden bg-black">
+      <section className="relative min-h-[75vh] sm:h-screen flex items-end sm:items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0">
           <img
             src="/Traworld/hero.png"
@@ -46,7 +36,7 @@ export const PremiumCollection = () => {
           />
         </div>
 
-        <div className="container mx-auto px-6 relative z-10 text-center mt-45 md:mt-135">
+        <div className="container mx-auto px-6 relative z-10 text-center pb-20 sm:pb-0 sm:mt-145">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -55,13 +45,13 @@ export const PremiumCollection = () => {
             <img
               src="/Traworld/_Layer_.png"
               alt="Luxury that Travels with you"
-              className="mx-auto h-auto max-w-[80%] md:max-w-2xl brightness-0 invert"
+              className="mx-auto h-auto max-w-[90%] sm:max-w-[80%] md:max-w-2xl brightness-0 invert"
             />
           </motion.div>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
-          <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
+        <div className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
+          <div className="w-px h-10 sm:h-16 bg-gradient-to-b from-white to-transparent" />
         </div>
       </section>
 
@@ -160,7 +150,7 @@ export const PremiumCollection = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-24">
-              {Object.values(categorizedProducts).flat().slice(0, 8).map((product, pIdx) => (
+              {products.slice(0, 8).map((product, pIdx) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 30 }}
