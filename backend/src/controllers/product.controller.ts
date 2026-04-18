@@ -8,7 +8,7 @@ export const getProducts = async (req: Request, res: Response) => {
     try {
       let query = supabase
         .from('products')
-        .select('*, categories(name, slug)');
+        .select('*, categories(slug, title)');
 
       // Storefront filters active products; Admin passes no filters and sees everything
       if (category || isPremium || gender || sub_category || search) {
