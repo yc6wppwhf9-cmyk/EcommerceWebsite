@@ -45,7 +45,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
       >
         <LazyImage
           alt={product.name}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] object-contain"
           src={displayImage}
           width={400}
         />
