@@ -283,7 +283,7 @@ export const Home = () => {
             </button>
             <div ref={bestSellersRef} className="flex gap-4 sm:gap-6 md:gap-10 overflow-x-auto no-scrollbar pb-10 px-1 sm:px-4">
               {bestSellers.map(p => (
-                <div key={p.id} className="min-w-[230px] md:min-w-[280px] lg:min-w-[320px] shrink-0">
+                <div key={p.id} className="w-[200px] sm:w-[230px] md:w-[260px] lg:w-[290px] shrink-0">
                   <BestSellerCard product={p} />
                 </div>
               ))}

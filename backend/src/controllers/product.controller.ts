@@ -81,12 +81,18 @@ export const getProducts = async (req: Request, res: Response) => {
 };
 
 export const getProductBySlug = async (req: Request, res: Response) => {
-  const { data, error } = await supabase
+  const slug = req.params.slug;
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+  const base = supabase
     .from('products')
     .select('*, categories!inner(slug)')
-    .eq('is_active', true)
-    .or(`slug.eq."${req.params.slug}",id.eq."${req.params.slug}"`)
-    .single();
+    .eq('is_active', true);
+
+  const { data, error } = await (isUuid
+    ? base.or(`slug.eq.${slug},id.eq.${slug}`)
+    : base.eq('slug', slug)
+  ).single();
 
   if (error || !data) return res.status(404).json({ error: 'Product not found' });
   res.json(data);
