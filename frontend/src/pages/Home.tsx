@@ -60,7 +60,7 @@ const HeroSlider = () => {
 
   return (
     <section
-      className="relative w-full bg-black overflow-hidden aspect-[4/3] sm:aspect-[16/9]"
+      className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]"
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = true; }}
       onPointerLeave={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = false; }}
     >
@@ -164,6 +164,26 @@ export const Home = () => {
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
 
+  // Category flip-card state
+  const [catFlipIndex, setCatFlipIndex] = useState(0);
+  const [catFlipDir, setCatFlipDir] = useState(1);
+  const catTouchRef = useRef<number | null>(null);
+
+  const goNextCat = (total: number) => {
+    if (catFlipIndex < total - 1) { setCatFlipDir(1); setCatFlipIndex(i => i + 1); }
+  };
+  const goPrevCat = () => {
+    if (catFlipIndex > 0) { setCatFlipDir(-1); setCatFlipIndex(i => i - 1); }
+  };
+  const handleCatTouchStart = (e: React.TouchEvent) => { catTouchRef.current = e.touches[0].clientX; };
+  const handleCatTouchEnd = (e: React.TouchEvent, total: number) => {
+    if (catTouchRef.current === null) return;
+    const diff = catTouchRef.current - e.changedTouches[0].clientX;
+    if (diff > 40) goNextCat(total);
+    else if (diff < -40) goPrevCat();
+    catTouchRef.current = null;
+  };
+
   useEffect(() => {
     document.documentElement.classList.remove('dark');
   }, []);
@@ -193,23 +213,94 @@ export const Home = () => {
       <h1 className="sr-only">Priority Bags — Quality Backpacks & Premium Luggage Online</h1>
       <HeroSlider />
 
-      {/* Categories */}
-      <section className="md:hidden py-6 px-0 text-center">
+      {/* Categories — Mobile: Book-page flip stack */}
+      <section className="md:hidden py-8 px-4 text-center">
         <h2 className="text-[12px] font-black uppercase tracking-[0.35em] text-gray-400 mb-6">Shop By Category</h2>
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 px-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="min-w-[70%] shrink-0 snap-center group relative rounded-2xl overflow-hidden shadow-lg bg-gray-100" style={{ aspectRatio: '3/4' }}>
-              <LazyImage src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-active:scale-105" width={400} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 text-left">
-                <span className="block text-white text-[20px] font-black uppercase tracking-widest leading-tight">{cat.label}</span>
+        {(() => {
+          const total = CATS.length;
+          return (
+            <div
+              className="relative select-none max-w-sm mx-auto"
+              style={{ perspective: '1200px' }}
+              onTouchStart={handleCatTouchStart}
+              onTouchEnd={(e) => handleCatTouchEnd(e, total)}
+            >
+              {/* Stacked cards behind (depth effect) */}
+              {[2, 1].map((offset) => {
+                const idx = catFlipIndex + offset;
+                if (idx >= total) return null;
+                return (
+                  <div
+                    key={`stack-${offset}`}
+                    className="absolute inset-x-0 bottom-0 rounded-2xl overflow-hidden pointer-events-none"
+                    style={{
+                      top: `${offset * 8}px`,
+                      transform: `scale(${1 - offset * 0.05}) translateY(${offset * 4}px)`,
+                      filter: `brightness(${0.55 - offset * 0.1})`,
+                      zIndex: 10 - offset,
+                      transformOrigin: 'bottom center',
+                    }}
+                  >
+                    <div className="relative w-full" style={{ paddingBottom: '133%' }}>
+                      <LazyImage
+                        src={CATS[idx]?.img || ''}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover"
+                        width={400}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Active card */}
+              <div style={{ position: 'relative', zIndex: 20 }}>
+                <AnimatePresence mode="wait" custom={catFlipDir}>
+                  <motion.div
+                    key={catFlipIndex}
+                    custom={catFlipDir}
+                    initial={{ x: catFlipDir * 150, opacity: 0, scale: 0.95 }}
+                    animate={{ x: 0, opacity: 1, scale: 1 }}
+                    exit={{ x: catFlipDir * -150, opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.25 }}
+                    className="w-full rounded-2xl overflow-hidden shadow-xl"
+                  >
+                    <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '133%' }}>
+                      <LazyImage
+                        src={CATS[catFlipIndex].img}
+                        alt={CATS[catFlipIndex].label}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        width={400}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
+                        <span className="block text-white text-[22px] font-black uppercase tracking-widest leading-tight drop-shadow-lg">{CATS[catFlipIndex].label}</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            </Link>
-          ))}
-        </div>
+
+              {/* Navigation controls */}
+              <div className="flex justify-between items-center mt-6 px-1">
+                <button onClick={goPrevCat} disabled={catFlipIndex === 0} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <div className="flex gap-2">
+                  {CATS.map((_, i) => (
+                    <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#8750DA]' : 'w-1.5 bg-gray-200'}`} />
+                  ))}
+                </div>
+                <button onClick={() => goNextCat(total)} disabled={catFlipIndex === total - 1} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          );
+        })()}
       </section>
 
-      <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-20 lg:pt-24 lg:pb-40">
+      <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-10 lg:pt-16 lg:pb-16">
         <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative h-[380px] lg:h-[560px] rounded-[2rem] lg:rounded-[3rem] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
@@ -226,15 +317,15 @@ export const Home = () => {
       {/* Editorial Banner (Keeping same as previous per customer screenshot) */}
       <section className="relative bg-banner-blue">
         {/* Mobile version */}
-        <div className="md:hidden relative w-full h-[88vh] bg-[#F8F9FA] overflow-hidden" style={{ aspectRatio: '4/5' }}>
-          <img src={IMG.banner} alt="New Arrival" className="absolute inset-0 w-full h-full object-contain object-center" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="md:hidden relative w-full overflow-hidden">
+          <img src={IMG.banner} alt="New Arrival" className="w-full h-auto object-cover block" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60 mb-2">New Arrival</p>
-            <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 mb-6 select-none">Ready For Your Journey</p>
-            <div className="flex gap-5">
-              <Link to="/women" className="text-[11px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Women</Link>
-              <Link to="/men" className="text-[11px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Men</Link>
+            <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">New Arrival</h2>
+            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 mb-6 select-none">Ready For Your Journey</p>
+            <div className="flex gap-6">
+              <Link to="/women" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Women</Link>
+              <Link to="/men" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Men</Link>
             </div>
           </div>
         </div>
