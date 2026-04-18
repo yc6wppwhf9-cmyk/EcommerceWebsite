@@ -109,25 +109,54 @@ const HeroSlider = () => {
   );
 };
 
-const BestSellerCard = ({ product }: { product: Product }) => (
-  <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-    <Link to={`/product/${product.slug || product.id}`} className="aspect-[379/411] bg-[#F9F9F9] overflow-hidden flex items-center justify-center p-6 md:p-10 mb-3">
-      <LazyImage src={product.image} alt={product.name} className="w-full h-full object-contain" width={400} />
-    </Link>
-    <div className="px-1">
-      <Link to={`/product/${product.id}`}>
-        <h3 className="font-outfit font-semibold text-[13px] md:text-[14px] text-black leading-[1.4] mb-1.5 line-clamp-2">
-          {product.name}
-        </h3>
+const BestSellerCard = ({ product }: { product: Product }) => {
+  const originalPrice = (product as any).original_price ?? product.originalPrice ?? product.price;
+  const discount = originalPrice > product.price
+    ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
+    : 0;
+
+  return (
+    <div className="flex flex-col bg-white">
+      {/* Large image, minimal padding so bag fills the card */}
+      <Link
+        to={`/product/${product.slug || product.id}`}
+        className="block overflow-hidden"
+        style={{ aspectRatio: '379 / 411' }}
+      >
+        <LazyImage
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-contain p-3"
+          width={400}
+        />
       </Link>
-      <div className="flex items-center gap-2.5">
-        <span className="text-[13px] md:text-[14px] font-outfit font-bold text-[#8750DA]">₹ {product.price}.00</span>
-        <span className="text-[11px] md:text-[12px] text-[#A0A0A0] line-through">₹ {Math.round(product.price * 1.5)}.00</span>
-        <span className="text-[11px] md:text-[12px] font-bold text-black opacity-90">50% off</span>
+
+      <div className="pt-2 space-y-1">
+        <Link to={`/product/${product.slug || product.id}`}>
+          <h3 className="font-outfit font-bold text-[15px] text-black leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
+            {product.name}
+          </h3>
+        </Link>
+
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="font-outfit font-semibold text-[16px] text-[#755FF1]">
+            ₹ {product.price.toLocaleString('en-IN')}.00
+          </span>
+          {discount > 0 && (
+            <>
+              <span className="font-outfit text-[14px] text-[#A0A0A0] line-through">
+                ₹ {originalPrice.toLocaleString('en-IN')}.00
+              </span>
+              <span className="font-outfit font-semibold text-[13px] text-black">
+                {discount}% off
+              </span>
+            </>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const Home = () => {
   const [activeTab, setActiveTab] = useState<string>('college-backpacks');
