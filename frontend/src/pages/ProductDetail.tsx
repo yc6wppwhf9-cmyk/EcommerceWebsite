@@ -23,7 +23,6 @@ import { api } from '../lib/api';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { ProductCard } from '../components/ProductCard';
-import { AIPredictions } from '../components/AIPredictions';
 import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 
@@ -397,11 +396,6 @@ export const ProductDetail = () => {
               </AccordionItem>
             </div>
           </div>
-        </div>
-
-        {/* AI Insight Section */}
-        <div className="mt-20 md:mt-40">
-           <AIPredictions productName={product.name} category={product.category} />
         </div>
 
         {/* Related Products */}
