@@ -1,10 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Star,
-  ShoppingCart,
   Heart,
-  ChevronRight,
   ChevronDown,
   Minus,
   Plus,
@@ -28,6 +26,7 @@ import { SEO } from '../components/SEO';
 
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
@@ -38,23 +37,28 @@ export const ProductDetail = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const isWishlisted = product ? isInWishlist(product.id) : false;
 
   useEffect(() => {
     if (!slug) return;
+    setLoading(true);
+    setProduct(null);
+    window.scrollTo(0, 0);
     api.getProduct(slug).then((raw: any) => {
       setProduct({
         ...raw,
         originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price,
         reviews: raw.reviews ?? 0,
+        rating: raw.rating ?? 4,
         specifications: raw.specifications ?? {},
         category: raw.categories?.slug ?? raw.sub_category ?? '',
         images: Array.isArray(raw.images) && raw.images.length > 0
           ? raw.images
           : raw.image ? [raw.image] : [],
       });
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => setLoading(false));
   }, [slug]);
 
   useEffect(() => {
@@ -63,6 +67,17 @@ export const ProductDetail = () => {
       setRelatedProducts(res.products.filter((p: any) => p.id !== product.id).slice(0, 4));
     }).catch(() => {});
   }, [product?.category, product?.id]);
+
+  if (loading) {
+    return (
+      <main className="container mx-auto px-4 py-32 text-center font-outfit">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-[#14052b] border-t-transparent animate-spin" />
+          <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Loading Product...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!product) {
     return (
@@ -81,10 +96,14 @@ export const ProductDetail = () => {
   const inStock = product.stock > 0;
 
   const handleAddToCart = () => {
-    // If there's a variant, we might want to pass it to the cart, but for now we just pass the product
-    // The image in the cart should ideally match the variant
     const productWithSelectedImage = { ...product, image: displayImages[selectedImage] || product.image };
     addItem(productWithSelectedImage, quantity);
+  };
+
+  const handleBuyNow = () => {
+    const productWithSelectedImage = { ...product, image: displayImages[selectedImage] || product.image };
+    addItem(productWithSelectedImage, quantity);
+    navigate('/checkout');
   };
 
   const handleToggleWishlist = () => {
@@ -197,14 +216,14 @@ export const ProductDetail = () => {
           </div>
 
           {/* Right Column: Info */}
-          <div className="lg:col-span-12 xl:col-span-5 space-y-8 md:space-y-12">
+          <div className="lg:col-span-5 space-y-8 md:space-y-12">
             <div className="space-y-4 md:space-y-6 text-center lg:text-left">
               <h1 className="text-2xl md:text-5xl font-black text-[#14052b] leading-[1.1] tracking-tighter uppercase">{product.name}</h1>
 
               <div className="flex items-center justify-center lg:justify-start gap-4">
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className={i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
+                    <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
                   ))}
                 </div>
                 <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-gray-400">{product.reviews} verified reviews</span>
@@ -250,7 +269,7 @@ export const ProductDetail = () => {
 
               <div className="flex items-center gap-3 w-full sm:flex-1">
                 <button
-                  onClick={handleAddToCart}
+                  onClick={handleBuyNow}
                   disabled={!inStock}
                   className="flex-1 h-14 md:h-16 bg-[#14052b] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] rounded-xl md:rounded-2xl shadow-[0_20px_40px_-10px_rgba(20,5,43,0.3)] hover:scale-[1.02] transition-all disabled:grayscale disabled:opacity-50"
                 >
@@ -293,7 +312,7 @@ export const ProductDetail = () => {
                   {/* Stats & Call to Action */}
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-gray-50 pb-8">
                     <div className="text-center sm:text-left">
-                      <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">4.8 / 5.0</h4>
+                      <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">{product.rating?.toFixed(1) ?? '—'} / 5.0</h4>
                       <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1">Join {product.reviews} verified owners</p>
                     </div>
                     <button 
@@ -302,21 +321,6 @@ export const ProductDetail = () => {
                     >
                       {showReviewForm ? "Cancel Review" : "Write a Review"}
                     </button>
-                  </div>
-
-                  {/* Customer Photo Gallery */}
-                  <div className="space-y-4">
-                    <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 font-outfit">Customer Moments</h5>
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                       {[...Array(4)].map((_, i) => (
-                         <div key={i} className="min-w-[140px] h-[140px] rounded-[2rem] bg-gray-50 overflow-hidden border border-gray-100 flex-shrink-0 group cursor-pointer relative shadow-sm">
-                            <LazyImage src={displayImages[0] || product.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Customer Photo" width={200} />
-                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Maximize size={20} className="text-white" />
-                            </div>
-                         </div>
-                       ))}
-                    </div>
                   </div>
 
                   {showReviewForm && (
@@ -367,20 +371,9 @@ export const ProductDetail = () => {
                     </motion.div>
                   )}
 
-                  {/* Mock Review */}
-                  <div className="space-y-6 pt-4">
-                    <div className="flex gap-1 mb-2">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={12} className="fill-yellow-400 text-yellow-400" />)}
-                    </div>
-                    <div>
-                    <p className="text-sm font-black text-[#14052b] uppercase tracking-wide tracking-tighter">"Exceeded all expectations"</p>
-                    <p className="text-[13px] text-gray-500 leading-relaxed mt-2">This bag is a traveler's dream. The laptop protection is top-notch and it looks very premium in person. Worth every rupee!</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black">HT</div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Himanshu T. <span className="text-green-500 ml-2">Verified Buyer</span></p>
-                    </div>
-                  </div>
+                  {product.reviews === 0 && (
+                    <p className="text-[12px] text-gray-400 font-medium text-center py-6">No reviews yet. Be the first to review this product!</p>
+                  )}
                 </div>
               </AccordionItem>
 
