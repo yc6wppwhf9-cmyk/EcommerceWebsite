@@ -216,88 +216,88 @@ export const Home = () => {
       {/* Categories — Mobile: Book-page flip stack */}
       <section className="md:hidden py-8 px-4 text-center">
         <h2 className="text-[12px] font-black uppercase tracking-[0.35em] text-gray-400 mb-6">Shop By Category</h2>
-        {(() => {
-          const total = CATS.length;
-          return (
-            <div
-              className="relative select-none max-w-sm mx-auto"
-              style={{ perspective: '1200px' }}
-              onTouchStart={handleCatTouchStart}
-              onTouchEnd={(e) => handleCatTouchEnd(e, total)}
-            >
-              {/* Stacked cards behind (depth effect) */}
-              {[2, 1].map((offset) => {
-                const idx = catFlipIndex + offset;
-                if (idx >= total) return null;
-                return (
-                  <div
-                    key={`stack-${offset}`}
-                    className="absolute inset-x-0 bottom-0 rounded-2xl overflow-hidden pointer-events-none"
-                    style={{
-                      top: `${offset * 8}px`,
-                      transform: `scale(${1 - offset * 0.05}) translateY(${offset * 4}px)`,
-                      filter: `brightness(${0.55 - offset * 0.1})`,
-                      zIndex: 10 - offset,
-                      transformOrigin: 'bottom center',
-                    }}
-                  >
-                    <div className="relative w-full" style={{ paddingBottom: '133%' }}>
-                      <LazyImage
-                        src={CATS[idx]?.img || ''}
-                        alt=""
-                        className="absolute inset-0 w-full h-full object-cover"
-                        width={400}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Active card */}
-              <div style={{ position: 'relative', zIndex: 20 }}>
-                <AnimatePresence mode="wait" custom={catFlipDir}>
-                  <motion.div
-                    key={catFlipIndex}
-                    custom={catFlipDir}
-                    initial={{ x: catFlipDir * 150, opacity: 0, scale: 0.95 }}
-                    animate={{ x: 0, opacity: 1, scale: 1 }}
-                    exit={{ x: catFlipDir * -150, opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.25 }}
-                    className="w-full rounded-2xl overflow-hidden shadow-xl"
-                  >
-                    <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '133%' }}>
-                      <LazyImage
-                        src={CATS[catFlipIndex].img}
-                        alt={CATS[catFlipIndex].label}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        width={400}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
-                        <span className="block text-white text-[22px] font-black uppercase tracking-widest leading-tight drop-shadow-lg">{CATS[catFlipIndex].label}</span>
+        <div className="md:hidden px-2">
+          {(() => {
+            const total = CATS.length;
+            return (
+              <div
+                className="relative select-none max-w-sm mx-auto"
+                style={{ perspective: '1200px' }}
+                onTouchStart={handleCatTouchStart}
+                onTouchEnd={(e) => handleCatTouchEnd(e, total)}
+              >
+                {/* Stacked cards behind (depth effect) */}
+                {[2, 1].map((offset) => {
+                  const idx = catFlipIndex + offset;
+                  if (idx >= total) return null;
+                  return (
+                    <div
+                      key={`stack-${offset}`}
+                      className="absolute inset-x-0 bottom-0 rounded-2xl overflow-hidden pointer-events-none"
+                      style={{
+                        top: `${offset * 8}px`,
+                        transform: `scale(${1 - offset * 0.05}) translateY(${offset * 4}px)`,
+                        filter: `brightness(${0.55 - offset * 0.1})`,
+                        zIndex: 10 - offset,
+                        transformOrigin: 'bottom center',
+                      }}
+                    >
+                      <div className="relative w-full" style={{ paddingBottom: '140%' }}>
+                        <img
+                          src={CATS[idx]?.img || ''}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover object-top"
+                        />
                       </div>
-                    </Link>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    </div>
+                  );
+                })}
 
-              {/* Navigation controls */}
-              <div className="flex justify-between items-center mt-6 px-1">
-                <button onClick={goPrevCat} disabled={catFlipIndex === 0} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <div className="flex gap-2">
-                  {CATS.map((_, i) => (
-                    <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#8750DA]' : 'w-1.5 bg-gray-200'}`} />
-                  ))}
+                {/* Active card */}
+                <div style={{ position: 'relative', zIndex: 20 }}>
+                  <AnimatePresence mode="wait" custom={catFlipDir}>
+                    <motion.div
+                      key={catFlipIndex}
+                      custom={catFlipDir}
+                      initial={{ x: catFlipDir * 150, opacity: 0, scale: 0.95 }}
+                      animate={{ x: 0, opacity: 1, scale: 1 }}
+                      exit={{ x: catFlipDir * -150, opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.25 }}
+                      className="w-full rounded-2xl overflow-hidden shadow-xl"
+                    >
+                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '140%' }}>
+                        <img
+                          src={CATS[catFlipIndex].img}
+                          alt={CATS[catFlipIndex].label}
+                          className="absolute inset-0 w-full h-full object-cover object-top"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
+                          <span className="block text-white text-[22px] font-black uppercase tracking-widest leading-tight drop-shadow-lg">{CATS[catFlipIndex].label}</span>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
-                <button onClick={() => goNextCat(total)} disabled={catFlipIndex === total - 1} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
-                  <ChevronRight className="w-5 h-5" />
-                </button>
+
+                {/* Navigation controls */}
+                <div className="flex justify-between items-center mt-6 px-1">
+                  <button onClick={goPrevCat} disabled={catFlipIndex === 0} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <div className="flex gap-2">
+                    {CATS.map((_, i) => (
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#8750DA]' : 'w-1.5 bg-gray-200'}`} />
+                    ))}
+                  </div>
+                  <button onClick={() => goNextCat(total)} disabled={catFlipIndex === total - 1} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
+        </div>
       </section>
 
       <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-10 lg:pt-16 lg:pb-16">
