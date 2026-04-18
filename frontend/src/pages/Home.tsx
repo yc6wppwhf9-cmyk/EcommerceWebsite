@@ -7,6 +7,7 @@ import { api } from '../lib/api';
 import type { Product } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
 import { LazyImage } from '../components/LazyImage';
+import { SEO } from '../components/SEO';
 
 const BACKPACK_TABS = [
   { id: 'college-backpacks', label: 'College Backpack', image: '/Category/ref.png' },
@@ -155,6 +156,11 @@ export const Home = () => {
 
   return (
     <main className="font-outfit">
+      <SEO
+        title="Priority Bags — Premium Backpacks, Luggage & Travel Accessories"
+        description="Shop Priority Bags for premium backpacks, travel luggage, and accessories. Free shipping across India. Trusted by thousands of travellers."
+        url="https://prioritybags.in"
+      />
       <h1 className="sr-only">Priority Bags — Quality Backpacks & Premium Luggage Online</h1>
       <HeroSlider />
 

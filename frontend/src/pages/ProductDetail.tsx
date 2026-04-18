@@ -25,6 +25,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { ProductCard } from '../components/ProductCard';
 import { AIPredictions } from '../components/AIPredictions';
 import { LazyImage } from '../components/LazyImage';
+import { SEO } from '../components/SEO';
 
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -141,8 +142,20 @@ export const ProductDetail = () => {
     { Icon: Zap, title: 'Quick Shipping', desc: 'Delivered to your doorstep within 3-5 business days.' }
   ];
 
+  const productImage = product.images?.[0] || product.image;
+  const productDesc = product.description
+    ? product.description.slice(0, 155)
+    : `Buy ${product.name} at Priority Bags. Premium quality, fast shipping across India.`;
+
   return (
     <main className="bg-white min-h-screen font-outfit pt-4 md:pt-8 overflow-x-hidden relative">
+      <SEO
+        title={product.name}
+        description={productDesc}
+        image={productImage}
+        url={`https://prioritybags.in/product/${product.slug || product.id}`}
+        type="product"
+      />
       <div className="container mx-auto px-4 md:px-8 py-6 md:py-16 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16">
 

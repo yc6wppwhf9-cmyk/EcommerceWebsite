@@ -6,6 +6,7 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Filter, ChevronRight, X, SlidersHorizontal, ArrowLeft } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 export const CategoryPage = () => {
   const { category } = useParams<{ category: string }>();
@@ -93,8 +94,16 @@ export const CategoryPage = () => {
     );
   };
 
+  const categoryTitle = currentCategory?.title || slug.replace(/-/g, ' ');
+  const categoryDesc = `Shop ${categoryTitle} at Priority Bags. Browse our premium collection of ${categoryTitle.toLowerCase()} with fast delivery across India.`;
+
   return (
     <main className="bg-white min-h-screen font-outfit pt-10 md:pt-16 selection:bg-black selection:text-white">
+      <SEO
+        title={categoryTitle}
+        description={categoryDesc}
+        url={`https://prioritybags.in/${slug}`}
+      />
       {/* Centered Minimal Title */}
       <div className="container mx-auto px-6 mb-12 md:mb-20">
         <motion.h1 

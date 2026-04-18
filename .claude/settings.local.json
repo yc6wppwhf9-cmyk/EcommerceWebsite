@@ -1,8 +1,10 @@
-{
+ "Bash(git push origin master)"
+ {
   "permissions": {
     "allow": [
       "Bash(git commit -m ':*)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(git push origin master)"
     ]
   }
 }
