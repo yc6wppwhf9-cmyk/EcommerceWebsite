@@ -6,6 +6,7 @@ import { CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
 import type { Product } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
+import { LazyImage } from '../components/LazyImage';
 
 const BACKPACK_TABS = [
   { id: 'college-backpacks', label: 'College Backpack', image: '/Category/ref.png' },
@@ -110,7 +111,7 @@ const HeroSlider = () => {
 const BestSellerCard = ({ product }: { product: Product }) => (
   <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
     <Link to={`/product/${product.slug || product.id}`} className="aspect-[379/411] bg-[#F9F9F9] overflow-hidden flex items-center justify-center p-6 md:p-10 mb-3">
-      <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+      <LazyImage src={product.image} alt={product.name} className="w-full h-full object-contain" width={400} />
     </Link>
     <div className="px-1">
       <Link to={`/product/${product.id}`}>
@@ -163,7 +164,7 @@ export const Home = () => {
         <div className="grid grid-cols-3 gap-3">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative rounded-xl overflow-hidden shadow-md bg-gray-100" style={{ aspectRatio: '3/4' }}>
-              <img src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-active:scale-105" />
+              <LazyImage src={cat.img} alt={cat.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-active:scale-105" width={400} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-2">
                 <span className="block text-white text-[10px] font-black uppercase tracking-wide leading-tight">{cat.label}</span>
@@ -177,7 +178,7 @@ export const Home = () => {
         <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative h-[380px] lg:h-[560px] rounded-[2rem] lg:rounded-[3rem] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
-              <img src={cat.img} alt={cat.label} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
+              <LazyImage src={cat.img} alt={cat.label} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" width={600} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
               <div className="absolute bottom-10 right-10 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                 <ArrowRight size={24} className="text-gray-900" />
@@ -249,9 +250,11 @@ export const Home = () => {
                   </p>
                 </div>
                 <div className="w-full flex-1 overflow-hidden relative" style={{ height: 'calc(100% - 80px)' }}>
-                  <img 
-                    src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster} 
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" 
+                  <LazyImage
+                    src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster}
+                    alt={activeTab}
+                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
+                    width={500}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>

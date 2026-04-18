@@ -24,6 +24,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { ProductCard } from '../components/ProductCard';
 import { AIPredictions } from '../components/AIPredictions';
+import { LazyImage } from '../components/LazyImage';
 
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -154,11 +155,12 @@ export const ProductDetail = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="aspect-square bg-white border border-gray-50 rounded-2xl md:rounded-[3rem] p-6 md:p-12 flex items-center justify-center relative shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] md:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)]"
               >
-                <img
+                <LazyImage
                   src={displayImages[selectedImage] || product.image}
                   alt={product.name}
                   className="w-full h-full object-contain"
-                  referrerPolicy="no-referrer"
+                  width={800}
+                  priority
                 />
                 <button
                   onClick={handleToggleWishlist}
@@ -175,7 +177,7 @@ export const ProductDetail = () => {
                     onClick={() => setSelectedImage(idx)}
                     className={`w-16 h-16 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 transition-all p-2 md:p-3 shrink-0 bg-white ${selectedImage === idx ? 'border-priority-blue shadow-lg' : 'border-gray-50 hover:border-gray-200'}`}
                   >
-                    <img src={img} alt="Thumb" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                    <LazyImage src={img} alt="Thumb" className="w-full h-full object-contain" width={150} />
                   </button>
                 ))}
               </div>
@@ -296,7 +298,7 @@ export const ProductDetail = () => {
                     <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
                        {[...Array(4)].map((_, i) => (
                          <div key={i} className="min-w-[140px] h-[140px] rounded-[2rem] bg-gray-50 overflow-hidden border border-gray-100 flex-shrink-0 group cursor-pointer relative shadow-sm">
-                            <img src={displayImages[0] || product.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Customer Photo" />
+                            <LazyImage src={displayImages[0] || product.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Customer Photo" width={200} />
                             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                               <Maximize size={20} className="text-white" />
                             </div>

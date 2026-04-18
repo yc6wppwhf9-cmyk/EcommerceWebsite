@@ -6,6 +6,7 @@ import { getProductById, formatPrice } from '../constants/products';
 import { Star, Plus, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { Product } from '../types';
+import { LazyImage } from './LazyImage';
 
 interface ProductCardProps {
   product?: Product;
@@ -50,12 +51,11 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
       <div className={`relative ${props.theme === 'premium' ? 'w-full aspect-[199/298]' : 'aspect-[379/411]'} bg-white overflow-hidden transition-all duration-500`}>
         <Link to={`/product/${product.slug || product.id}${props.theme === 'premium' ? '?theme=premium' : ''}`} className="block h-full w-full">
           <div className="h-full w-full flex justify-center items-center p-4">
-            <img
+            <LazyImage
               alt={product.name}
               className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               src={displayImage}
-              referrerPolicy="no-referrer"
-              loading="lazy"
+              width={400}
             />
           </div>
         </Link>
