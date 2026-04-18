@@ -42,16 +42,6 @@ export const PremiumCollection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
           />
-          <motion.p
-            className="mt-3 font-outfit text-white text-center"
-            style={{ fontSize: 'clamp(22px, 3vw, 40px)', lineHeight: 1.2 }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.4, ease: 'easeOut' }}
-          >
-            <span className="font-bold">Travel,</span>{' '}
-            <span className="font-normal">But Make It Premium.</span>
-          </motion.p>
         </div>
         <div className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
           <div className="w-px h-10 sm:h-16 bg-gradient-to-b from-white to-transparent" />
