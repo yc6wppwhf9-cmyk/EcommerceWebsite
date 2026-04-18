@@ -17,7 +17,11 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
   const location = useLocation();
   const isPremiumTheme = location.pathname === '/premium' || new URLSearchParams(location.search).get('theme') === 'premium';
 
-  const getThemeTo = (path: string) => isPremiumTheme ? `${path}?theme=premium` : path;
+  const getThemeTo = (path: string) => {
+    if (!isPremiumTheme) return path;
+    if (path === '/junior' || path === '/premium' || path === '/') return path;
+    return `${path}?theme=premium`;
+  };
 
   return (
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
@@ -106,9 +110,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     { title: 'PREMIUM', to: '/premium' },
   ];
 
-  const isJunior = location.pathname.includes('/junior');
+  const isJunior = location.pathname.startsWith('/junior');
   const queryParams = new URLSearchParams(location.search);
-  const isPremiumTheme = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
+  const isPremiumTheme = !isJunior && (location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium');
   const isDarkMode = isPremiumTheme;
 
   const logoSrc = isJunior

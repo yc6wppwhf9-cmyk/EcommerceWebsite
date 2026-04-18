@@ -39,6 +39,7 @@ function AppContent() {
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isPremium = location.pathname.startsWith('/premium');
 
   return (
     <>
@@ -71,7 +72,7 @@ function AppContent() {
             <Route path="/:category" element={<CategoryPage />} />
           </Routes>
         </div>
-        {!isAdmin && <Footer />}
+        {!isAdmin && !isPremium && <Footer />}
       </div>
       <CartDrawer />
       <AuthModal />
