@@ -219,7 +219,7 @@ export const JuniorPage = () => {
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
               <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
-                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
+                <div className="overflow-hidden mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
                   <img 
                     src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"} 
                     alt={activeTab} 
