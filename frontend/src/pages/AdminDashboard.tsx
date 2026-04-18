@@ -27,6 +27,7 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   backpacks: [
     { value: 'college-backpacks', label: 'College Backpacks' },
     { value: 'school-backpacks', label: 'School Backpacks' },
+    { value: 'laptop-backpacks', label: 'Laptop Backpacks' },
     { value: 'office-backpacks', label: 'Office Backpacks' },
     { value: 'trekking-backpacks', label: 'Trekking Backpacks' },
   ],
@@ -147,8 +148,7 @@ export const AdminDashboard = () => {
         colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.images || [] })) : []
       };
 
-      // Remove UI-only fields that crash the backend insert
-      delete (payload as any).category;
+      // Remove UI-only field (sub_category already mapped above)
       delete (payload as any).subcategory;
 
       if (editingProduct) {

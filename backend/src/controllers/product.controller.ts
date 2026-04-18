@@ -98,12 +98,15 @@ export const createProduct = async (req: Request, res: Response) => {
     const body = { ...req.body };
     const catName = body.category || 'backpacks';
 
-    // 1. Resolve Category ID
-    const { data: catData } = await supabase
-      .from('categories')
-      .select('id')
-      .or(`name.ilike.${catName},slug.eq.${catName}`)
-      .maybeSingle();
+    // 1. Resolve Category ID — try slug first (exact), then name (case-insensitive)
+    let catData: { id: string } | null = null;
+    const bySlug = await supabase.from('categories').select('id').eq('slug', catName).maybeSingle();
+    if (bySlug.data) {
+      catData = bySlug.data;
+    } else {
+      const byName = await supabase.from('categories').select('id').ilike('name', catName).maybeSingle();
+      catData = byName.data;
+    }
     
     // 2. Clean up & Map
     const productData = {
