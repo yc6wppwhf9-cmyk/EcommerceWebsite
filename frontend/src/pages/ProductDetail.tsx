@@ -37,6 +37,7 @@ export const ProductDetail = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const [product, setProduct] = useState<any>(null);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const isWishlisted = product ? isInWishlist(product.id) : false;
 
   useEffect(() => {
@@ -55,6 +56,13 @@ export const ProductDetail = () => {
     }).catch(() => {});
   }, [slug]);
 
+  useEffect(() => {
+    if (!product?.category) return;
+    api.getProducts({ category: product.category }).then(res => {
+      setRelatedProducts(res.products.filter((p: any) => p.id !== product.id).slice(0, 4));
+    }).catch(() => {});
+  }, [product?.category, product?.id]);
+
   if (!product) {
     return (
       <main className="container mx-auto px-4 py-32 text-center font-outfit">
@@ -69,13 +77,6 @@ export const ProductDetail = () => {
 
   const activeVariant = product.variants?.[selectedVariantIndex];
   const displayImages = activeVariant ? activeVariant.images : product.images;
-  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
-  useEffect(() => {
-    if (!product?.category) return;
-    api.getProducts({ category: product.category }).then(res => {
-      setRelatedProducts(res.products.filter((p: any) => p.id !== product.id).slice(0, 4));
-    }).catch(() => {});
-  }, [product?.category, product?.id]);
   const inStock = product.stock > 0;
 
   const handleAddToCart = () => {
