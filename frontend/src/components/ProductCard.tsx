@@ -43,15 +43,12 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         className="relative block rounded-[5px] overflow-hidden bg-[#F9F9F9]"
         style={{ aspectRatio: '300 / 307' }}
       >
-        {/* Image centered with minimal padding for larger display */}
-        <div className="absolute inset-0 flex items-center justify-center p-3">
-          <LazyImage
-            alt={product.name}
-            className="w-full h-full object-contain"
-            src={displayImage}
-            width={400}
-          />
-        </div>
+        <LazyImage
+          alt={product.name}
+          className="absolute inset-0 w-full h-full object-cover"
+          src={displayImage}
+          width={400}
+        />
 
         {/* NEW badge */}
         {product.isNew && (
