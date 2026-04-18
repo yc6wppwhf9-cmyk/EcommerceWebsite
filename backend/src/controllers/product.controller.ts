@@ -16,13 +16,12 @@ export const getProducts = async (req: Request, res: Response) => {
       }
 
       if (category && category !== 'premium') {
-        // 1. Try resolving as a main Category Slug
         const { data: cat } = await supabase.from('categories').select('id').eq('slug', category).maybeSingle();
         if (cat) {
-          query = query.eq('category_id', cat.id);
+          // Match by direct category_id OR by sub_category (handles subcategory tab pages
+          // where products are stored under the parent category_id but tagged via sub_category)
+          query = query.or(`category_id.eq.${cat.id},sub_category.eq.${category}`);
         } else {
-          // 2. If not a main category, try filtering by sub_category field directly
-          // This supports the Home.tsx tabs which use subcategory slugs
           query = query.eq('sub_category', category);
         }
       }
