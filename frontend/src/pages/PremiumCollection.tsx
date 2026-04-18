@@ -27,12 +27,32 @@ export const PremiumCollection = () => {
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[60vh] sm:min-h-screen overflow-hidden bg-black">
+      <section className="relative min-h-[60vh] sm:min-h-screen flex items-center justify-center overflow-hidden bg-black">
         <img
           src="/Traworld/hero.png"
           alt="Traworld Premium Collection"
           className="w-full h-full object-cover object-center absolute inset-0"
         />
+        <div className="relative z-10 text-center px-6">
+          <motion.img
+            src="/Traworld/_Layer_.png"
+            alt="Luxury that Travels with you"
+            className="mx-auto h-auto max-w-[90%] sm:max-w-[80%] md:max-w-2xl brightness-0 invert"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+          />
+          <motion.p
+            className="mt-3 font-outfit text-white text-center"
+            style={{ fontSize: 'clamp(22px, 3vw, 40px)', lineHeight: 1.2 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.4, ease: 'easeOut' }}
+          >
+            <span className="font-bold">Travel,</span>{' '}
+            <span className="font-normal">But Make It Premium.</span>
+          </motion.p>
+        </div>
         <div className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
           <div className="w-px h-10 sm:h-16 bg-gradient-to-b from-white to-transparent" />
         </div>
@@ -149,30 +169,8 @@ export const PremiumCollection = () => {
         </div>
       </section>
 
-      {/* Footer text + image */}
-      <footer className="bg-black">
-        <div className="py-16 md:py-24 px-8 md:px-16 text-left max-w-4xl">
-          <motion.img
-            src="/Traworld/_Layer_.png"
-            alt="Luxury that Travels with you"
-            className="h-auto w-full max-w-[520px] brightness-0 invert mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          />
-          <motion.p
-            className="font-outfit text-white text-left"
-            style={{ fontSize: 'clamp(22px, 3vw, 40px)', lineHeight: 1.2 }}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.3 }}
-          >
-            <span className="font-bold">Travel,</span>{' '}
-            <span className="font-normal">But Make It Premium.</span>
-          </motion.p>
-        </div>
+      {/* Footer */}
+      <footer>
         <img src="/Traworld/Footer.png" alt="Footer" className="w-full block" />
       </footer>
 
