@@ -4,23 +4,22 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
 import type { Product } from '../types';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Search, ShoppingBag, User } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const collectionLinks = [
   { label: 'LUGGAGES', slug: '/luggage?theme=premium' },
   { label: 'BACKPACKS', slug: '/backpacks?theme=premium' },
   { label: 'DUFFELS', slug: '/duffle?theme=premium' },
-  { label: 'ACCESSORIES', slug: '/accessories?theme=premium' },
 ];
 
 const PremiumNav = () => {
   const [open, setOpen] = useState(false);
+  const { items } = useCart();
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center justify-between px-6 md:px-12">
-      <Link to="/premium" className="flex items-center gap-2">
-        <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
-      </Link>
-      <div className="flex items-center gap-8">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center px-6 md:px-12">
+      {/* Left: nav links */}
+      <div className="hidden md:flex items-center gap-8 flex-1">
         <Link to="/" className="text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
           HOME
         </Link>
@@ -35,7 +34,7 @@ const PremiumNav = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.18 }}
-                className="absolute top-full right-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
+                className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
               >
                 {collectionLinks.map(item => (
                   <Link
@@ -50,6 +49,29 @@ const PremiumNav = () => {
             )}
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* Center: Logo */}
+      <div className="flex-1 flex justify-center md:flex-none md:absolute md:left-1/2 md:-translate-x-1/2">
+        <Link to="/premium">
+          <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
+        </Link>
+      </div>
+
+      {/* Right: Icons */}
+      <div className="flex items-center gap-5 flex-1 justify-end">
+        <Link to="/search" className="text-white hover:opacity-70 transition-opacity">
+          <Search size={18} strokeWidth={1.5} />
+        </Link>
+        <Link to="/cart" className="text-white hover:opacity-70 transition-opacity relative">
+          <ShoppingBag size={18} strokeWidth={1.5} />
+          {items.length > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{items.length}</span>
+          )}
+        </Link>
+        <Link to="/account" className="text-white hover:opacity-70 transition-opacity">
+          <User size={18} strokeWidth={1.5} />
+        </Link>
       </div>
     </nav>
   );
@@ -84,11 +106,11 @@ export const PremiumCollection = () => {
           alt="Traworld Premium Collection"
           className="w-full h-full object-cover object-center absolute inset-0"
         />
-        <div className="relative z-10 w-full px-6 md:px-12 pb-8 md:pb-14">
+        <div className="relative z-10 w-full px-6 md:px-12 pb-8 md:pb-14 flex justify-center">
           <motion.img
             src="/Traworld/_Layer_.png"
             alt="Luxury that Travels with you"
-            className="h-auto w-full max-w-[85%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert"
+            className="h-auto w-full max-w-[85%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
