@@ -16,68 +16,121 @@ const collectionLinks = [
 
 const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [open, setOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { items } = useCart();
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center px-6 md:px-12">
-      {/* Left: nav links */}
-      <div className="hidden md:flex items-center gap-8 flex-1">
-        <Link to="/" className="text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
-          HOME
-        </Link>
-        <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-          <button className="flex items-center gap-1.5 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
-            COLLECTION <ChevronDown size={11} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
-          </button>
-          <AnimatePresence>
-            {open && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 8 }}
-                transition={{ duration: 0.18 }}
-                className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
-              >
-                {collectionLinks.map(item => (
-                  <Link
-                    key={item.slug}
-                    to={item.slug}
-                    className="block px-5 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+      {/* Left: desktop nav links only */}
+      <div className="flex-1 flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-8">
+          <Link to="/" className="text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
+            HOME
+          </Link>
+          <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+            <button className="flex items-center gap-1.5 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
+              COLLECTION <ChevronDown size={11} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {open && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
+                >
+                  {collectionLinks.map(item => (
+                    <Link
+                      key={item.slug}
+                      to={item.slug}
+                      className="block px-5 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
       {/* Center: Logo */}
-      <div className="flex-1 flex justify-center md:flex-none md:absolute md:left-1/2 md:-translate-x-1/2">
+      <div className="absolute left-1/2 -translate-x-1/2">
         <Link to="/premium">
           <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
         </Link>
       </div>
 
-      {/* Right: Icons */}
+      {/* Right: desktop icons + mobile hamburger */}
       <div className="flex items-center gap-5 flex-1 justify-end">
         <button
           onClick={onSearchOpen}
-          className="text-white hover:opacity-70 transition-opacity"
+          className="hidden md:block text-white hover:opacity-70 transition-opacity"
         >
           <Search size={18} strokeWidth={1.5} />
         </button>
-        <Link to="/cart" className="text-white hover:opacity-70 transition-opacity relative">
+        <Link to="/cart" className="hidden md:block text-white hover:opacity-70 transition-opacity relative">
           <ShoppingBag size={18} strokeWidth={1.5} />
           {items.length > 0 && (
             <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{items.length}</span>
           )}
         </Link>
-        <Link to="/account" className="text-white hover:opacity-70 transition-opacity">
+        <Link to="/account" className="hidden md:block text-white hover:opacity-70 transition-opacity">
           <User size={18} strokeWidth={1.5} />
         </Link>
+        {/* Mobile hamburger — right side */}
+        <button
+          className="md:hidden text-white hover:opacity-70 transition-opacity"
+          onClick={() => setMobileMenuOpen(v => !v)}
+          aria-label="Menu"
+        >
+          <div className="flex flex-col gap-[5px]">
+            <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+            <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+          </div>
+        </button>
       </div>
     </nav>
+
+    {/* Mobile menu drawer */}
+    <AnimatePresence>
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="fixed top-14 left-0 right-0 z-40 bg-black border-t border-white/10 md:hidden"
+        >
+          <div className="flex flex-col py-2">
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-6 py-4 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white/5 transition-colors"
+            >
+              HOME
+            </Link>
+            <div className="px-6 py-3">
+              <p className="text-white/40 text-[10px] font-semibold tracking-[0.2em] uppercase mb-2">COLLECTION</p>
+              {collectionLinks.map(item => (
+                <Link
+                  key={item.slug}
+                  to={item.slug}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-2.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 };
 
@@ -103,20 +156,22 @@ export const PremiumCollection = () => {
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
       <PremiumNav onSearchOpen={() => setIsSearchOpen(true)} />
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} theme="premium" />
 
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[60vh] sm:min-h-screen flex items-end overflow-hidden bg-black pt-14">
+      <section className="relative min-h-[70vh] sm:min-h-screen flex items-end overflow-hidden bg-black pt-14">
         <img
           src="/Traworld/hero.png"
           alt="Traworld Premium Collection"
           className="w-full h-full object-cover object-center absolute inset-0"
         />
-        <div className="relative z-10 w-full px-6 md:px-12 pb-8 md:pb-14 flex justify-center">
+        {/* dark gradient behind text */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
+        <div className="relative z-10 w-full px-4 md:px-12 pb-14 md:pb-20 flex justify-center">
           <motion.img
             src="/Traworld/_Layer_.png"
             alt="Luxury that Travels with you"
-            className="h-auto w-full max-w-[85%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert mx-auto"
+            className="h-auto w-full max-w-[90%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert mx-auto drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -128,7 +183,7 @@ export const PremiumCollection = () => {
       <div className="bg-white">
         {/* Categories */}
         <section className="pb-0">
-          <div className="max-w-6xl mx-auto px-3 sm:px-6 -mt-10 sm:-mt-14 relative z-10">
+          <div className="max-w-6xl mx-auto px-3 sm:px-6 sm:-mt-14 relative z-10 pt-4 sm:pt-0">
             <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
               {seriesHighlights.map((series, idx) => (
                 <Link key={series.title} to={series.slug}>
@@ -205,20 +260,20 @@ export const PremiumCollection = () => {
       </div>
 
       {/* 4. BEST SELLERS GRID */}
-      <section className="bg-white text-black py-24 min-h-screen">
-        <div className="container mx-auto px-6 md:px-12 max-w-[1400px]">
-          <div className="text-center mb-20 whitespace-normal">
-            <h2 className="font-outfit font-medium uppercase tracking-[0.6em] pb-4" style={{ fontSize: '18px', color: '#111111' }}>
-              BEST SELLERS
+      <section className="bg-white text-black py-12 md:py-24">
+        <div className="container mx-auto px-4 md:px-12 max-w-[1400px]">
+          <div className="text-center mb-10 md:mb-20 whitespace-normal">
+            <h2 className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.6em] pb-4" style={{ fontSize: '18px', color: '#111111' }}>
+             Our Collection
             </h2>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
               {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse" />)}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-24">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-12 md:gap-y-24">
               {products.slice(0, 8).map((product, pIdx) => (
                 <motion.div
                   key={product.id}
@@ -238,11 +293,11 @@ export const PremiumCollection = () => {
       <footer className="relative bg-black overflow-hidden leading-[0]">
         {/* Mobile */}
         <div className="md:hidden relative w-full">
-          <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-[300px] object-cover object-left block" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 pb-8 flex flex-col items-start gap-2">
-            <p className="font-outfit text-white text-[18px] font-light italic">Luxury that Travels with you ↗</p>
-            <p className="font-outfit text-white text-[18px]">
+          <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-[380px] object-cover object-top block" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 flex flex-col items-start gap-4">
+            <p className="font-outfit text-white text-[16px] font-light italic leading-snug">Luxury that Travels with you ↗</p>
+            <p className="font-outfit text-white text-[20px] leading-snug">
               <span className="font-normal">Travel, </span><span style={{ fontWeight: 200 }}>But Make It Premium.</span>
             </p>
           </div>

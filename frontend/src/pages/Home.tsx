@@ -168,24 +168,39 @@ export const Home = () => {
   const [catFlipIndex, setCatFlipIndex] = useState(0);
   const [catFlipDir, setCatFlipDir] = useState(1);
   const catTouchRef = useRef<number | null>(null);
+  const catAutoRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startCatAuto = (total: number) => {
+    if (catAutoRef.current) clearInterval(catAutoRef.current);
+    catAutoRef.current = setInterval(() => {
+      setCatFlipDir(1);
+      setCatFlipIndex(i => (i + 1) % total);
+    }, 2500);
+  };
 
   const goNextCat = (total: number) => {
-    if (catFlipIndex < total - 1) { setCatFlipDir(1); setCatFlipIndex(i => i + 1); }
+    setCatFlipDir(1);
+    setCatFlipIndex(i => (i + 1) % total);
+    startCatAuto(total);
   };
-  const goPrevCat = () => {
-    if (catFlipIndex > 0) { setCatFlipDir(-1); setCatFlipIndex(i => i - 1); }
+  const goPrevCat = (total: number) => {
+    setCatFlipDir(-1);
+    setCatFlipIndex(i => (i - 1 + total) % total);
+    startCatAuto(total);
   };
   const handleCatTouchStart = (e: React.TouchEvent) => { catTouchRef.current = e.touches[0].clientX; };
   const handleCatTouchEnd = (e: React.TouchEvent, total: number) => {
     if (catTouchRef.current === null) return;
     const diff = catTouchRef.current - e.changedTouches[0].clientX;
     if (diff > 40) goNextCat(total);
-    else if (diff < -40) goPrevCat();
+    else if (diff < -40) goPrevCat(total);
     catTouchRef.current = null;
   };
 
   useEffect(() => {
     document.documentElement.classList.remove('dark');
+    startCatAuto(CATS.length);
+    return () => { if (catAutoRef.current) clearInterval(catAutoRef.current); };
   }, []);
 
   const bestSellersRef = useRef<HTMLDivElement>(null);
@@ -242,7 +257,7 @@ export const Home = () => {
                         transformOrigin: 'bottom center',
                       }}
                     >
-                      <div className="relative w-full" style={{ paddingBottom: '140%' }}>
+                      <div className="relative w-full" style={{ paddingBottom: '120%' }}>
                         <img
                           src={CATS[idx]?.img || ''}
                           alt=""
@@ -259,13 +274,13 @@ export const Home = () => {
                     <motion.div
                       key={catFlipIndex}
                       custom={catFlipDir}
-                      initial={{ x: catFlipDir * 150, opacity: 0, scale: 0.95 }}
-                      animate={{ x: 0, opacity: 1, scale: 1 }}
-                      exit={{ x: catFlipDir * -150, opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.25 }}
+                      initial={{ opacity: 0, scale: 0.97 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.5, ease: 'easeInOut' }}
                       className="w-full rounded-2xl overflow-hidden shadow-xl"
                     >
-                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '140%' }}>
+                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '120%' }}>
                         <img
                           src={CATS[catFlipIndex].img}
                           alt={CATS[catFlipIndex].label}
@@ -282,7 +297,7 @@ export const Home = () => {
 
                 {/* Navigation controls */}
                 <div className="flex justify-between items-center mt-6 px-1">
-                  <button onClick={goPrevCat} disabled={catFlipIndex === 0} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                  <button onClick={() => goPrevCat(total)} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <div className="flex gap-2">
@@ -290,7 +305,7 @@ export const Home = () => {
                       <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#8750DA]' : 'w-1.5 bg-gray-200'}`} />
                     ))}
                   </div>
-                  <button onClick={() => goNextCat(total)} disabled={catFlipIndex === total - 1} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                  <button onClick={() => goNextCat(total)} className="p-2 text-gray-400 transition-opacity">
                     <ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -303,7 +318,7 @@ export const Home = () => {
       <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-10 lg:pt-16 lg:pb-16">
         <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="group relative h-[380px] lg:h-[560px] rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
+            <Link key={cat.label} to={cat.to} className="group relative h-[320px] lg:h-[480px] rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
               <LazyImage src={cat.img} alt={cat.label} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" width={600} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
               <div className="absolute bottom-10 right-10 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">

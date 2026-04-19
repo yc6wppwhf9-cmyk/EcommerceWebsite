@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import { getCategoryBySlug, CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
@@ -18,6 +18,9 @@ export const CategoryPage = () => {
   const [openFilters, setOpenFilters] = useState<string[]>(['categories', 'price', 'colors', 'sizes', 'features']);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [searchParams] = useSearchParams();
+  const themeParam = searchParams.get('theme') ?? undefined;
 
   const slug = category || 'backpacks';
   const currentCategory = getCategoryBySlug(slug);
@@ -44,7 +47,7 @@ export const CategoryPage = () => {
   const filteredProducts = useMemo(() => {
     let result = allProducts.filter(product => {
       const matchesPrice = product.price <= priceRange;
-      const matchesSub = selectedSubcategories.length === 0 || selectedSubcategories.includes(product.sub_category);
+      const matchesSub = selectedSubcategories.length === 0 || (product.subcategory != null && selectedSubcategories.includes(product.subcategory));
       const matchesSize = selectedSizes.length === 0 || (product.size && selectedSizes.includes(product.size));
       const matchesFeatures = selectedFeatures.length === 0 || (product.features && selectedFeatures.some(f => product.features.includes(f)));
       return matchesPrice && matchesSub && matchesSize && matchesFeatures;
@@ -109,7 +112,7 @@ export const CategoryPage = () => {
                 />
                 <div className={`w-3 h-3 border transition-colors ${selectedSubcategories.includes(sub.slug) ? 'bg-black border-black' : 'border-gray-200 group-hover:border-black'}`} />
                 <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${selectedSubcategories.includes(sub.slug) ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
-                  {sub.name}
+                  {sub.title}
                 </span>
               </label>
             ))}
@@ -275,7 +278,7 @@ export const CategoryPage = () => {
                       transition={{ delay: idx * 0.05 }}
                       className="text-center"
                     >
-                      <ProductCard product={product} />
+                      <ProductCard product={product} theme={themeParam} />
                     </motion.div>
                   ))}
                 </motion.div>

@@ -138,21 +138,39 @@ export const JuniorPage = () => {
   const [ageFlipIndex, setAgeFlipIndex] = useState(0);
   const [ageFlipDir, setAgeFlipDir] = useState(1);
   const ageTouchRef = useRef<number | null>(null);
+  const ageAutoRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startAgeAuto = (total: number) => {
+    if (ageAutoRef.current) clearInterval(ageAutoRef.current);
+    ageAutoRef.current = setInterval(() => {
+      setAgeFlipDir(1);
+      setAgeFlipIndex(i => (i + 1) % total);
+    }, 2500);
+  };
 
   const goNextAge = (total: number) => {
-    if (ageFlipIndex < total - 1) { setAgeFlipDir(1); setAgeFlipIndex(i => i + 1); }
+    setAgeFlipDir(1);
+    setAgeFlipIndex(i => (i + 1) % total);
+    startAgeAuto(total);
   };
-  const goPrevAge = () => {
-    if (ageFlipIndex > 0) { setAgeFlipDir(-1); setAgeFlipIndex(i => i - 1); }
+  const goPrevAge = (total: number) => {
+    setAgeFlipDir(-1);
+    setAgeFlipIndex(i => (i - 1 + total) % total);
+    startAgeAuto(total);
   };
   const handleAgeTouchStart = (e: React.TouchEvent) => { ageTouchRef.current = e.touches[0].clientX; };
   const handleAgeTouchEnd = (e: React.TouchEvent, total: number) => {
     if (ageTouchRef.current === null) return;
     const diff = ageTouchRef.current - e.changedTouches[0].clientX;
     if (diff > 40) goNextAge(total);
-    else if (diff < -40) goPrevAge();
+    else if (diff < -40) goPrevAge(total);
     ageTouchRef.current = null;
   };
+
+  useEffect(() => {
+    startAgeAuto(AGE_GROUPS.length);
+    return () => { if (ageAutoRef.current) clearInterval(ageAutoRef.current); };
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -255,10 +273,10 @@ export const JuniorPage = () => {
                       <motion.div
                         key={ageFlipIndex}
                         custom={ageFlipDir}
-                        initial={{ x: ageFlipDir * 150, opacity: 0, scale: 0.95 }}
-                        animate={{ x: 0, opacity: 1, scale: 1 }}
-                        exit={{ x: ageFlipDir * -150, opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.25 }}
+                        initial={{ opacity: 0, scale: 0.97 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.97 }}
+                        transition={{ duration: 0.5, ease: 'easeInOut' }}
                         className="w-full rounded-2xl overflow-hidden shadow-xl"
                       >
                         <Link to={`/${AGE_GROUPS[ageFlipIndex].slug}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
@@ -277,7 +295,7 @@ export const JuniorPage = () => {
 
                   {/* Navigation controls */}
                   <div className="flex justify-between items-center mt-6 px-1">
-                    <button onClick={goPrevAge} disabled={ageFlipIndex === 0} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                    <button onClick={() => goPrevAge(total)} className="p-2 text-gray-400 transition-opacity">
                       <ChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="flex gap-2">
@@ -285,7 +303,7 @@ export const JuniorPage = () => {
                         <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === ageFlipIndex ? 'w-6 bg-[#A368FB]' : 'w-1.5 bg-gray-200'}`} />
                       ))}
                     </div>
-                    <button onClick={() => goNextAge(total)} disabled={ageFlipIndex === total - 1} className="p-2 text-gray-400 disabled:opacity-30 transition-opacity">
+                    <button onClick={() => goNextAge(total)} className="p-2 text-gray-400 transition-opacity">
                       <ChevronRight className="w-5 h-5" />
                     </button>
                   </div>

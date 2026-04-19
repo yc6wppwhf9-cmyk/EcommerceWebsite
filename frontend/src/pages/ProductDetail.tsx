@@ -436,11 +436,18 @@ export const ProductDetail = () => {
         {relatedProducts.length > 0 && (
           <div className="mt-16 md:mt-40 pt-10 md:pt-20 border-t border-gray-100 pb-20 md:pb-0">
             <div className="flex justify-between items-end mb-8 md:mb-16">
-              <h2 className="text-xl md:text-4xl font-black uppercase tracking-tighter text-[#14052b]">You May Also Like</h2>
-              <Link to={`/${product.category}`} className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-[#14052b] border-b-2 border-[#14052b] pb-1 hover:text-[#ae9efd] hover:border-[#ae9efd] transition-all whitespace-nowrap ml-4">View All</Link>
+              <h2 className={`text-xl md:text-4xl font-black uppercase tracking-tighter ${themeKey === 'premium' ? 'text-black' : themeKey === 'junior' ? 'text-[#755FF1]' : 'text-[#14052b]'}`}>
+                You May Also Like
+              </h2>
+              <Link
+                to={`/${product.category}${themeKey !== 'default' ? `?theme=${themeKey}` : ''}`}
+                className={`text-[10px] md:text-[11px] font-black uppercase tracking-widest pb-1 border-b-2 transition-all whitespace-nowrap ml-4 ${themeKey === 'premium' ? 'text-black border-black hover:text-[#b80000] hover:border-[#b80000]' : themeKey === 'junior' ? 'text-[#755FF1] border-[#755FF1]' : 'text-[#14052b] border-[#14052b] hover:text-[#ae9efd] hover:border-[#ae9efd]'}`}
+              >
+                View All
+              </Link>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
-              {relatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
+              {relatedProducts.map(p => <ProductCard key={p.id} product={p} theme={themeKey !== 'default' ? themeKey : undefined} />)}
             </div>
           </div>
         )}
