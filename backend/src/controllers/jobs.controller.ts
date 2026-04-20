@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 import { AuthRequest } from '../middleware/auth';
+import { sendEmail, getJobApplicationTemplate } from '../lib/mail';
 
 export const getJobs = async (req: Request, res: Response) => {
   const { status, page = '1', limit = '20' } = req.query;
@@ -131,22 +132,71 @@ export const submitApplication = async (req: AuthRequest, res: Response) => {
   const { jobId } = req.params;
   const { name, email, phone, cover_letter, resume_url } = req.body;
   try {
+    let actualJobId = jobId;
+
+    if (jobId === 'general') {
+      // Find or create "General Application" job
+      let { data: generalJob } = await supabase
+        .from('jobs')
+        .select('id')
+        .eq('title', 'General Application')
+        .maybeSingle();
+
+      if (!generalJob) {
+        const { data: newJob, error: createError } = await supabase
+          .from('jobs')
+          .insert({
+            title: 'General Application',
+            description: 'General inquiry for future openings',
+            location: 'Remote / Office',
+            status: 'draft'
+          })
+          .select()
+          .single();
+        if (createError) throw createError;
+        generalJob = newJob;
+      }
+      actualJobId = generalJob!.id;
+    }
+
     const { data: existing } = await supabase
       .from('applications')
       .select('id')
-      .eq('job_id', jobId)
+      .eq('job_id', actualJobId)
       .eq('applicant_email', email)
       .maybeSingle();
 
-    if (existing) return res.status(400).json({ error: 'You have already applied for this job' });
+    if (existing) return res.status(400).json({ error: 'You have already applied for this position' });
 
     const { data, error } = await supabase
       .from('applications')
-      .insert({ job_id: jobId, applicant_name: name, applicant_email: email, applicant_phone: phone, cover_letter: cover_letter || null, resume_url: resume_url || null, status: 'pending' })
+      .insert({ job_id: actualJobId, applicant_name: name, applicant_email: email, applicant_phone: phone, cover_letter: cover_letter || null, resume_url: resume_url || null, status: 'pending' })
       .select()
       .single();
 
     if (error) throw error;
+    // Send Email Notification to HR
+    try {
+      // Fetch job title
+      const { data: job } = await supabase.from('jobs').select('title').eq('id', actualJobId).single();
+      const jobTitle = job?.title || 'General Application';
+
+      await sendEmail(
+        'Hr@hscvpl.com',
+        `New Job Application: ${name} - ${jobTitle}`,
+        getJobApplicationTemplate({
+          applicantName: name,
+          applicantEmail: email,
+          applicantPhone: phone,
+          position: jobTitle,
+          coverLetter: cover_letter,
+          resumeUrl: resume_url,
+        })
+      );
+    } catch (mailErr) {
+      console.error('Failed to send application email:', mailErr);
+    }
+
     res.status(201).json(data);
   } catch (err: any) {
     res.status(400).json({ error: err.message });

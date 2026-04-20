@@ -70,3 +70,33 @@ export const getOrderShippedTemplate = (name: string, orderId: string, invoiceUr
     <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags. All rights reserved.</p>
   </div>
 `;
+
+export const getJobApplicationTemplate = (data: {
+  applicantName: string;
+  applicantEmail: string;
+  applicantPhone: string;
+  position: string;
+  coverLetter: string;
+  resumeUrl?: string;
+}) => `
+  <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #eee;">
+    <h2 style="font-weight: 700; font-size: 24px; color: ${PRIMARY_COLOR}; margin-bottom: 24px;">New Job Application Received</h2>
+    <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
+      <p style="margin: 8px 0;"><strong>Position:</strong> ${data.position}</p>
+      <p style="margin: 8px 0;"><strong>Applicant:</strong> ${data.applicantName}</p>
+      <p style="margin: 8px 0;"><strong>Email:</strong> ${data.applicantEmail}</p>
+      <p style="margin: 8px 0;"><strong>Phone:</strong> ${data.applicantPhone}</p>
+    </div>
+    <div style="margin-bottom: 24px;">
+      <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Cover Letter / Why Priority?</h3>
+      <p style="font-size: 14px; line-height: 1.6; color: #333; white-space: pre-line;">${data.coverLetter}</p>
+    </div>
+    ${data.resumeUrl ? `
+    <div style="margin: 32px 0;">
+      <a href="${data.resumeUrl}" style="background: ${PRIMARY_COLOR}; color: white; padding: 14px 28px; text-decoration: none; font-weight: 600; border-radius: 4px; display: inline-block;">View Resume</a>
+    </div>
+    ` : '<p style="color: #666; font-style: italic;">No resume attached.</p>'}
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 32px 0;">
+    <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags Recruitment. Confidential.</p>
+  </div>
+`;

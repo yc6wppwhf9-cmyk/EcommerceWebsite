@@ -78,8 +78,14 @@ export const Careers = () => {
           resume_url: form.resume ? form.resume.name : undefined,
         });
       } else {
-        // General application — simulate since no job_id
-        await new Promise(r => setTimeout(r, 900));
+        // General application
+        await api.submitApplication('general', {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          cover_letter: form.cover_letter,
+          resume_url: form.resume ? form.resume.name : undefined,
+        });
       }
       setForm(EMPTY_FORM);
       if (fileInputRef.current) fileInputRef.current.value = '';
