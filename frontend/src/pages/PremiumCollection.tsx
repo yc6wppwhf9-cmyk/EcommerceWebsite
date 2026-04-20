@@ -228,9 +228,6 @@ export const PremiumCollection = () => {
               viewport={{ once: true }}
               className="flex flex-col items-center"
             >
-              <p className="text-white font-outfit uppercase tracking-[0.2em] md:tracking-[0.3em] mb-3 md:mb-6 text-center px-4" style={{ fontSize: 'clamp(10px, 3vw, 31.98px)', fontWeight: 200 }}>
-                "Power doesn't need spotlight."
-              </p>
 
               <Link
                 to="/luggage?theme=premium"
@@ -275,39 +272,8 @@ export const PremiumCollection = () => {
         </div>
       </section>
       {/* Footer */}
-      <footer className="relative bg-black overflow-hidden leading-[0]">
-        {/* Mobile */}
-        <div className="md:hidden relative w-full">
-          <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-[260px] object-cover object-top block" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 flex flex-col items-start gap-4">
-            <p className="font-outfit text-white text-[16px] font-light italic leading-snug">Luxury that Travels with you ↗</p>
-            <p className="font-outfit text-white text-[20px] leading-snug">
-              <span className="font-normal">Travel, </span><span style={{ fontWeight: 200 }}>But Make It Premium.</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Desktop */}
-        <div className="hidden md:flex" style={{ height: '220px' }}>
-          {/* Left: Photo */}
-          <div className="w-[55%] flex-shrink-0 overflow-hidden">
-            <img
-              src="/Traworld/Footer.png"
-              alt="Premium Travel"
-              className="w-full h-full object-cover object-top block"
-            />
-          </div>
-          {/* Right: Text */}
-          <div className="w-[45%] bg-black flex flex-col items-start justify-center pl-0 pr-6 gap-3 -ml-40">
-            <p className="font-outfit text-white font-light italic" style={{ fontSize: '28px', lineHeight: '1.2' }}>
-              Luxury that Travels with you
-            </p>
-            <p className="font-outfit text-white" style={{ fontSize: '28px', lineHeight: '1.2' }}>
-              <span className="font-normal">Travel, </span><span style={{ fontWeight: 200 }}>But Make It Premium.</span>
-            </p>
-          </div>
-        </div>
+      <footer className="w-full leading-[0]">
+        <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-auto block" />
       </footer>
     </main>
   );
