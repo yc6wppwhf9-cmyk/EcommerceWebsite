@@ -320,9 +320,14 @@ export const AdminDashboard = () => {
             <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight">Shop Admin</h1>
             <p className="text-[10px] font-black text-priority-blue uppercase tracking-widest mt-1">Manage Store Inventory</p>
           </div>
-          <button onClick={logout} className="px-5 py-3 bg-white border border-gray-200 rounded-xl text-red-500 font-bold text-xs flex items-center gap-2 hover:bg-red-50 transition-all">
-            <LogOut size={16} /> Logout
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate('/')} className="px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 font-bold text-xs flex items-center gap-2 hover:bg-gray-50 transition-all">
+              🏠 Home
+            </button>
+            <button onClick={logout} className="px-5 py-3 bg-white border border-gray-200 rounded-xl text-red-500 font-bold text-xs flex items-center gap-2 hover:bg-red-50 transition-all">
+              <LogOut size={16} /> Logout
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">

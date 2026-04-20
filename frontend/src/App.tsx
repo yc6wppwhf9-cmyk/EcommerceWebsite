@@ -31,11 +31,12 @@ import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
-const ProtectedRoute = ({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) => {
+const ProtectedRoute = ({ children, adminOnly = false, userOnly = false }: { children: React.ReactNode; adminOnly?: boolean; userOnly?: boolean }) => {
   const { isAuthenticated, user, isLoading } = useAuth();
   if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (adminOnly && user?.role !== 'admin') return <Navigate to="/" replace />;
+  if (userOnly && user?.role === 'admin') return <Navigate to="/admin" replace />;
   return <>{children}</>;
 };
 
@@ -68,7 +69,7 @@ function AppContent() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/account" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+            <Route path="/account" element={<ProtectedRoute userOnly><UserDashboard /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<ContactUs />} />
