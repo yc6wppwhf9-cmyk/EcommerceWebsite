@@ -323,110 +323,121 @@ export const ProductDetail = () => {
           </div>
 
           {/* Right Column: Info */}
-          <div className="lg:col-span-7 space-y-8 md:space-y-12">
-            <div className="space-y-4 md:space-y-6 text-center lg:text-left">
-              <h1 className="text-2xl md:text-5xl font-black text-[#14052b] leading-[1.1] tracking-tighter uppercase">{product.name}</h1>
+          <div className="lg:col-span-7 space-y-6">
+            {/* Product Name */}
+            <h1 className="font-outfit font-medium text-[28.58px] leading-snug tracking-normal text-[#190101] uppercase">{product.name}</h1>
 
-              <div className="flex items-center justify-center lg:justify-start gap-4">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
-                  ))}
-                </div>
-                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-gray-400">{product.reviews} verified reviews</span>
+            {/* Stars */}
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
+                ))}
               </div>
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">{product.reviews} verified reviews</span>
+            </div>
 
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4 border-t border-gray-50 pt-6 md:pt-8">
-                <span className={`text-3xl md:text-5xl font-black tracking-tighter ${theme.price}`}>{formatPrice(product.price)}</span>
-                {discount > 0 && (
-                  <>
-                    <span className="text-base md:text-xl text-gray-300 line-through font-black tracking-tighter">{formatPrice(product.originalPrice)}</span>
-                    <span className={`text-[12px] md:text-[13px] font-black uppercase px-3 py-1 rounded-full ${theme.badge}`}>{discount}% off</span>
-                  </>
-                )}
-              </div>
-
-              {/* Low stock warning */}
-              {inStock && product.stock <= 5 && (
-                <p className="text-[11px] font-black uppercase tracking-widest text-orange-500">
-                  Only {product.stock} left in stock!
-                </p>
-              )}
-              {!inStock && (
-                <p className="text-[11px] font-black uppercase tracking-widest text-red-500">Out of Stock</p>
-              )}
-
-              {/* Variant Selector */}
-              {product.variants && product.variants.length > 0 && (
-                <div className="space-y-4 pt-4">
-                  <div className="flex items-center justify-center lg:justify-start gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Color:</span>
-                    <span className="text-[11px] font-black uppercase tracking-widest text-[#14052b]">{activeVariant?.color}</span>
-                  </div>
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-                    {product.variants.map((variant: any, idx: number) => (
-                      <button
-                        key={idx}
-                        onClick={() => { setSelectedVariantIndex(idx); setSelectedImage(0); }}
-                        className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all p-0.5 flex items-center justify-center ${selectedVariantIndex === idx ? 'border-priority-blue shadow-lg scale-110' : 'border-gray-100 hover:border-gray-300'}`}
-                      >
-                        <div className="w-full h-full rounded-full" style={{ backgroundColor: variant.colorCode }} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            {/* Price */}
+            <div className="flex items-baseline gap-3 flex-wrap border-t border-gray-100 pt-5">
+              <span className="font-outfit font-semibold text-[26.26px] text-[#190101]">{formatPrice(product.price)}</span>
+              {discount > 0 && (
+                <>
+                  <span className="font-outfit text-[16px] text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
+                  <span className="font-outfit text-[14px] text-gray-500">{discount}% off</span>
+                </>
               )}
             </div>
 
-            {/* Actions */}
-            <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4">
-                {/* Quantity stepper */}
-                <div className="h-14 md:h-16 w-full sm:w-auto bg-gray-50 rounded-xl md:rounded-2xl flex items-center border border-gray-100 overflow-hidden px-2">
-                  <button
-                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-12 h-full flex items-center justify-center hover:bg-gray-100 transition-colors text-gray-400"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <span className="w-12 text-center font-black text-lg">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                    disabled={quantity >= product.stock}
-                    className="w-12 h-full flex items-center justify-center hover:bg-gray-100 transition-colors text-gray-400 disabled:opacity-30"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
+            {/* Low stock / out of stock */}
+            {inStock && product.stock <= 5 && (
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-orange-500">Only {product.stock} left in stock!</p>
+            )}
+            {!inStock && (
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-red-500">Out of Stock</p>
+            )}
 
-                {/* Add to Cart + Wishlist */}
-                <div className="flex items-center gap-3 w-full sm:flex-1">
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={!inStock}
-                    className={`flex-1 h-14 md:h-16 text-[10px] md:text-[11px] uppercase rounded-xl md:rounded-2xl ${theme.btnOutline} transition-all disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-2`}
-                  >
-                    <ShoppingCart size={16} />
-                    Add to Cart
-                  </button>
+            {/* Quantity */}
+            <div className="flex items-center gap-5">
+              <span className="font-outfit font-medium text-[15px] text-[#190101]">Quantity : {quantity}</span>
+              <div className="flex items-center border border-gray-200 rounded-md overflow-hidden">
+                <button
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors"
+                >
+                  <Minus size={14} />
+                </button>
+                <span className="w-10 text-center font-outfit font-semibold text-[15px] text-[#190101]">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                  disabled={quantity >= product.stock}
+                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-30"
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+            </div>
 
-                  <button
-                    onClick={handleToggleWishlist}
-                    className={`h-14 w-14 md:h-16 md:w-16 rounded-xl md:rounded-2xl border-2 flex items-center justify-center transition-all shrink-0 ${isWishlisted ? theme.wishlistActive : `border-gray-100 text-gray-400 ${theme.wishlistHover}`}`}
-                  >
-                    <Heart size={20} fill={isWishlisted ? 'currentColor' : 'none'} />
-                  </button>
+            {/* Color / Variant Selector */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="space-y-3">
+                <span className="font-outfit font-medium text-[15px] text-[#190101] uppercase tracking-wide">
+                  COLOR : <span className="font-semibold">{activeVariant?.color}</span>
+                </span>
+                <div className="flex flex-wrap gap-3">
+                  {product.variants.map((variant: any, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setSelectedVariantIndex(idx); setSelectedImage(0); }}
+                      className={`w-10 h-10 rounded-full border-2 transition-all p-0.5 flex items-center justify-center ${selectedVariantIndex === idx ? 'border-black scale-110' : 'border-gray-200 hover:border-gray-400'}`}
+                    >
+                      <div className="w-full h-full rounded-full" style={{ backgroundColor: variant.colorCode }} />
+                    </button>
+                  ))}
                 </div>
               </div>
+            )}
 
-              {/* Buy Now — full width */}
+            {/* Actions */}
+            <div className="space-y-3 pt-2">
+              {/* Move to Cart */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!inStock}
+                className="w-full bg-black text-white font-outfit font-semibold text-[20.11px] py-4 rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
+              >
+                + MOVE TO CART
+              </button>
+
+              {/* Buy Now */}
               <button
                 onClick={handleBuyNow}
                 disabled={!inStock}
-                className={`w-full h-14 md:h-16 text-[10px] md:text-[11px] uppercase rounded-xl md:rounded-2xl ${theme.btn} ${theme.shadow} hover:scale-[1.01] transition-all disabled:grayscale disabled:opacity-50`}
+                className="w-full border-2 border-black text-black font-outfit font-semibold text-[20.11px] py-4 rounded-md hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
               >
-                Buy Now
+                BUY NOW
               </button>
+            </div>
+
+            {/* Trust badges */}
+            <div className="flex items-start justify-between gap-4 border-t border-gray-100 pt-6">
+              <div className="flex flex-col items-center gap-2 text-center flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                </svg>
+                <span className="font-outfit text-[11px] font-medium text-gray-600 leading-snug">Free delivery<br/>in 2 - 6 days</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 text-center flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+                <span className="font-outfit text-[11px] font-medium text-gray-600 leading-snug">30-day risk<br/>free trial</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 text-center flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>
+                <span className="font-outfit text-[11px] font-medium text-gray-600 leading-snug">5 year<br/>warranty</span>
+              </div>
             </div>
 
             {/* Accordions */}
