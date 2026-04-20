@@ -24,12 +24,12 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       {/* Left: desktop nav links only */}
       <div className="flex-1 flex items-center gap-8">
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
+          <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
             HOME
           </Link>
           <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-            <button className="flex items-center gap-1.5 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:opacity-70 transition-opacity">
-              COLLECTION <ChevronDown size={11} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+            <button className="flex items-center gap-1.5 text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
+              COLLECTION <ChevronDown size={13} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
             </button>
             <AnimatePresence>
               {open && (
@@ -44,7 +44,7 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                     <Link
                       key={item.slug}
                       to={item.slug}
-                      className="block px-5 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                      className="block px-5 py-3 text-[13px] font-semibold tracking-[0.12em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       {item.label}
                     </Link>
