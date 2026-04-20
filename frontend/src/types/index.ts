@@ -128,6 +128,37 @@ export interface SearchFilters {
   query?: string;
 }
 
+// ─── Jobs & Applications ──────────────────────────────────────
+export interface Job {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  department?: string;
+  job_type: 'full-time' | 'part-time' | 'contract' | 'internship';
+  salary_min?: number;
+  salary_max?: number;
+  requirements?: string;
+  status: 'open' | 'closed' | 'draft';
+  posted_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Application {
+  id: string;
+  job_id: string;
+  applicant_name: string;
+  applicant_email: string;
+  applicant_phone?: string;
+  cover_letter?: string;
+  resume_url?: string;
+  status: 'pending' | 'shortlisted' | 'rejected' | 'hired';
+  applied_at: string;
+  updated_at: string;
+  jobs?: { id: string; title: string; location: string; job_type: string };
+}
+
 // ─── Toast / Notification Types ───────────────────────────────
 export interface Toast {
   id: string;

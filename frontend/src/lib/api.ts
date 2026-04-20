@@ -183,6 +183,29 @@ export const api = {
     request<any>('/api/reviews', { method: 'POST', body: JSON.stringify(data) }),
   deleteReview: (id: string) => request<any>(`/api/reviews/${id}`, { method: 'DELETE' }),
 
+  // Jobs
+  getJobs: (params?: { status?: string; page?: number; limit?: number }) => {
+    const qs = params ? '?' + new URLSearchParams(params as any).toString() : '';
+    return request<{ jobs: any[]; pagination: any }>(`/api/jobs${qs}`);
+  },
+  getJob: (id: string) => request<any>(`/api/jobs/${id}`),
+  createJob: (data: any) =>
+    request<any>('/api/jobs', { method: 'POST', body: JSON.stringify(data) }),
+  updateJob: (id: string, data: any) =>
+    request<any>(`/api/jobs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteJob: (id: string) =>
+    request<any>(`/api/jobs/${id}`, { method: 'DELETE' }),
+  submitApplication: (jobId: string, data: { name: string; email: string; phone: string; cover_letter?: string; resume_url?: string }) =>
+    request<any>(`/api/jobs/${jobId}/apply`, { method: 'POST', body: JSON.stringify(data) }),
+  getAllApplications: (params?: { status?: string; page?: number; limit?: number }) => {
+    const qs = params ? '?' + new URLSearchParams(params as any).toString() : '';
+    return request<{ applications: any[]; pagination: any }>(`/api/jobs/applications${qs}`);
+  },
+  getJobApplications: (jobId: string) =>
+    request<{ applications: any[]; pagination: any }>(`/api/jobs/${jobId}/applications`),
+  updateApplicationStatus: (appId: string, status: string) =>
+    request<any>(`/api/jobs/applications/${appId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+
   // Payments (Razorpay)
   createPaymentOrder: (amount: number, receipt: string) =>
     request<any>('/api/payments/create-order', {

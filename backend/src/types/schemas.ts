@@ -82,3 +82,27 @@ export const resetPasswordSchema = z.object({
     password: z.string().min(8, 'Password must be at least 8 characters'),
   }),
 });
+
+export const jobSchema = z.object({
+  body: z.object({
+    title: z.string().min(3, 'Title is required'),
+    description: z.string().min(10, 'Description is required'),
+    location: z.string().min(2, 'Location is required'),
+    department: z.string().optional(),
+    job_type: z.enum(['full-time', 'part-time', 'contract', 'internship']),
+    salary_min: z.number().nonnegative().optional(),
+    salary_max: z.number().nonnegative().optional(),
+    requirements: z.string().optional(),
+    status: z.enum(['open', 'closed', 'draft']).optional(),
+  }).passthrough(),
+});
+
+export const applicationSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, 'Name is required'),
+    email: z.string().email('Valid email is required'),
+    phone: z.string().min(7, 'Phone is required'),
+    cover_letter: z.string().optional(),
+    resume_url: z.string().optional(),
+  }),
+});

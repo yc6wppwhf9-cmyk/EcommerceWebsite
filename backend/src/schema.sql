@@ -273,3 +273,43 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_users_updated    BEFORE UPDATE ON users    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 CREATE TRIGGER trg_products_updated BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 CREATE TRIGGER trg_orders_updated   BEFORE UPDATE ON orders   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- ─── Jobs ────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS jobs (
+  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title        VARCHAR(255) NOT NULL,
+  description  TEXT NOT NULL,
+  location     VARCHAR(100) NOT NULL,
+  department   VARCHAR(100),
+  job_type     VARCHAR(50) CHECK (job_type IN ('full-time', 'part-time', 'contract', 'internship')),
+  salary_min   DECIMAL(10,2),
+  salary_max   DECIMAL(10,2),
+  requirements TEXT,
+  status       VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('open', 'closed', 'draft')),
+  posted_by    UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
+
+-- ─── Applications ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS applications (
+  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  job_id           UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+  applicant_name   VARCHAR(255) NOT NULL,
+  applicant_email  VARCHAR(255) NOT NULL,
+  applicant_phone  VARCHAR(30),
+  cover_letter     TEXT,
+  resume_url       VARCHAR(500),
+  status           VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'shortlisted', 'rejected', 'hired')),
+  applied_at       TIMESTAMPTZ DEFAULT NOW(),
+  updated_at       TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_applications_job    ON applications(job_id);
+CREATE INDEX IF NOT EXISTS idx_applications_email  ON applications(applicant_email);
+CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
+
+CREATE TRIGGER trg_jobs_updated         BEFORE UPDATE ON jobs         FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE TRIGGER trg_applications_updated BEFORE UPDATE ON applications FOR EACH ROW EXECUTE FUNCTION set_updated_at();

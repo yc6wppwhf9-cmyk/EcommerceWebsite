@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Mail, ArrowLeft, Loader2, Send, RefreshCcw } from 'lucide-react';
 
-const ForgotPassword = () => {
+export const ForgotPassword = () => {
   const location = useLocation();
-  const queryEmail = new URLSearchParams(location.search).get('email');
+  const navigate = useNavigate();
+  const queryEmail = new URLSearchParams(location.search).get('email') || '';
 
-  const [email, setEmail] = useState(queryEmail || '');
+  const [email, setEmail] = useState(queryEmail);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  const [hasAutoSent, setHasAutoSent] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [sent, setSent] = useState(false);
 
   const triggerReset = async (targetEmail: string) => {
     setLoading(true);
@@ -18,6 +19,7 @@ const ForgotPassword = () => {
     try {
       const res = await api.forgotPassword(targetEmail);
       setMessage({ type: 'success', text: res.message });
+      setSent(true);
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Something went wrong.' });
     } finally {
@@ -25,14 +27,7 @@ const ForgotPassword = () => {
     }
   };
 
-  useEffect(() => {
-    if (queryEmail && !hasAutoSent) {
-      setHasAutoSent(true);
-      triggerReset(queryEmail);
-    }
-  }, [queryEmail, hasAutoSent]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     triggerReset(email);
   };
@@ -46,48 +41,38 @@ const ForgotPassword = () => {
           </div>
           <h1 className="text-3xl font-bold text-stone-900 mb-3">Forgot Password?</h1>
           <p className="text-stone-500 leading-relaxed px-4 text-sm">
-            {queryEmail 
-              ? `We're sending a recovery link to ${queryEmail}`
-              : "Enter your email address and we'll send you a link to reset your password."
-            }
+            {sent
+              ? `A reset link was sent to ${email}`
+              : "Enter your email address and we'll send you a link to reset your password."}
           </p>
         </div>
 
         {message && (
           <div className={`p-5 rounded-2xl mb-8 flex items-start gap-4 ${
-            message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+            message.type === 'success'
+              ? 'bg-green-50 text-green-700 border border-green-100'
+              : 'bg-red-50 text-red-700 border border-red-100'
           }`}>
-            <span className="text-lg leading-none mt-1">
-              {message.type === 'success' ? '✓' : '⚠'}
-            </span>
+            <span className="text-lg leading-none mt-1">{message.type === 'success' ? '✓' : '⚠'}</span>
             <p className="text-xs font-semibold uppercase tracking-tight leading-normal">{message.text}</p>
           </div>
         )}
 
-        {/* If we have an email from query, don't show the form, just the status */}
-        {queryEmail ? (
-          <div className="space-y-6">
-            {loading ? (
-              <div className="flex flex-col items-center py-8 gap-4">
-                <Loader2 className="w-10 h-10 text-stone-900 animate-spin" />
-                <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">Processing request...</p>
-              </div>
-            ) : (
-              <button
-                onClick={() => triggerReset(queryEmail)}
-                className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-[0.98]"
-              >
-                <RefreshCcw className="w-5 h-5" /> Resend Link
-              </button>
-            )}
-            
-            {message?.type === 'error' && (
-              <p className="text-center">
-                <button onClick={() => window.location.href = '/forgot-password'} className="text-[11px] font-bold text-stone-400 underline underline-offset-4 uppercase tracking-widest hover:text-stone-900 transition-colors">
-                  Try with another email
-                </button>
-              </p>
-            )}
+        {sent ? (
+          <div className="space-y-4">
+            <button
+              onClick={() => triggerReset(email)}
+              disabled={loading}
+              className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 disabled:opacity-50 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-[0.98]"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><RefreshCcw className="w-5 h-5" /> Resend Link</>}
+            </button>
+            <button
+              onClick={() => navigate('/forgot-password')}
+              className="w-full text-[11px] font-bold text-stone-400 underline underline-offset-4 uppercase tracking-widest hover:text-stone-900 transition-colors"
+            >
+              Try with another email
+            </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">

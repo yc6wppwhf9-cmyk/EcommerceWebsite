@@ -110,23 +110,33 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 };
 
 // Simplified Best Seller card matching user image precisely
-const BestSellerCard = ({ product }: { product: Product }) => (
-  <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-    <Link to={`/product/${product.slug || product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
-      <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
-    </Link>
-    <div className="px-1">
-      <Link to={`/product/${product.id}?theme=junior`}>
-        <h3 className="font-outfit font-bold text-[14px] text-black leading-snug mb-2 line-clamp-2">{product.name}</h3>
+const BestSellerCard = ({ product }: { product: Product }) => {
+  const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
+  const discount = originalPrice > product.price
+    ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
+    : 0;
+  return (
+    <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
+      <Link to={`/product/${product.slug || product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
+        <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
       </Link>
-      <div className="flex items-baseline gap-2">
-        <span className="text-[14px] font-outfit font-bold text-[#8750DA]">₹ {product.price}.00</span>
-        <span className="text-[11px] text-gray-400 line-through">₹ {Math.round(product.price * 1.5)}.00</span>
-        <span className="text-[11px] font-bold text-black opacity-80">50% off</span>
+      <div className="px-1">
+        <Link to={`/product/${product.slug || product.id}?theme=junior`}>
+          <h3 className="font-outfit font-bold text-[14px] text-black leading-snug mb-2 line-clamp-2">{product.name}</h3>
+        </Link>
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="text-[14px] font-outfit font-bold text-[#8750DA]">₹ {product.price.toLocaleString('en-IN')}.00</span>
+          {discount > 0 && (
+            <>
+              <span className="text-[11px] text-gray-400 line-through">₹ {originalPrice.toLocaleString('en-IN')}.00</span>
+              <span className="text-[11px] font-bold text-black opacity-80">{discount}% off</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const JuniorPage = () => {
   const [activeTab, setActiveTab] = useState('School Backpacks');
@@ -176,22 +186,30 @@ export const JuniorPage = () => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
     const juniorCategories = ['school-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'trolley-backpacks'];
-    Promise.all([
-      api.getProducts({ category: 'school-backpacks', limit: '8' }),
-      ...juniorCategories.map(cat => api.getProducts({ category: cat, sort: 'popular', limit: '8' })),
-    ]).then(([school, ...popularResults]) => {
-      setProducts(school.products as unknown as Product[]);
+    Promise.all(
+      juniorCategories.map(cat => api.getProducts({ category: cat, limit: '8' }))
+    ).then((results) => {
       const seen = new Set<string>();
       const merged: Product[] = [];
-      for (const res of popularResults) {
+      for (const res of results) {
         for (const p of res.products as unknown as Product[]) {
           if (!seen.has(p.id)) { seen.add(p.id); merged.push(p); }
         }
       }
       setBestSellers(merged);
-      setIsLoading(false);
-    }).catch(() => setIsLoading(false));
+    }).catch(() => {});
   }, []);
+
+  // Re-fetch products whenever the active category tab changes
+  useEffect(() => {
+    const cat = CATEGORIES.find(c => c.label === activeTab);
+    if (!cat) return;
+    setIsLoading(true);
+    api.getProducts({ category: cat.filter, limit: '8' })
+      .then(res => setProducts(res.products as unknown as Product[]))
+      .catch(() => setProducts([]))
+      .finally(() => setIsLoading(false));
+  }, [activeTab]);
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden">

@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../lib/api';
-import { Lock, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
+import { Lock, Loader2, CheckCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
-const ResetPassword = () => {
+export const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const token = searchParams.get('token');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (password.length < 8) {
+      setStatus('error');
+      setMessage('Password must be at least 8 characters.');
+      return;
+    }
     if (password !== confirmPassword) {
       setStatus('error');
       setMessage('Passwords do not match.');
       return;
     }
-
     if (!token) {
       setStatus('error');
       setMessage('Invalid or missing reset token.');
@@ -54,7 +60,7 @@ const ResetPassword = () => {
           <p className="text-stone-600 mb-10 leading-relaxed font-medium">
             Your password has been successfully updated. We're taking you back to the login page now.
           </p>
-          <Link 
+          <Link
             to="/login"
             className="inline-flex items-center gap-2 text-stone-900 font-bold hover:gap-4 transition-all"
           >
@@ -65,6 +71,8 @@ const ResetPassword = () => {
     );
   }
 
+  const passwordFieldClass = 'w-full pl-12 pr-12 py-4 bg-stone-50 border-2 border-transparent rounded-2xl focus:border-stone-900 focus:bg-white outline-none transition-all text-stone-900 placeholder:text-stone-300';
+
   return (
     <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center bg-stone-50 px-4">
       <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-2xl border border-stone-100">
@@ -74,14 +82,14 @@ const ResetPassword = () => {
           </div>
           <h1 className="text-3xl font-bold text-stone-900 mb-3">Set New Password</h1>
           <p className="text-stone-500 leading-relaxed">
-            Please choose a strong password that you haven't used before.
+            Please choose a strong password of at least 8 characters.
           </p>
         </div>
 
         {status === 'error' && (
           <div className="p-5 rounded-2xl mb-8 bg-red-50 text-red-700 border border-red-100 flex items-center gap-4">
-             <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
-             <p className="text-sm font-bold">{message}</p>
+            <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+            <p className="text-sm font-bold">{message}</p>
           </div>
         )}
 
@@ -91,14 +99,22 @@ const ResetPassword = () => {
             <div className="relative group">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-stone-900 transition-colors" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
-                minLength={6}
+                minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-12 pr-4 py-4 bg-stone-50 border-2 border-transparent rounded-2xl focus:border-stone-900 focus:bg-white outline-none transition-all text-stone-900 placeholder:text-stone-300"
+                className={passwordFieldClass}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 transition-colors"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
@@ -107,13 +123,21 @@ const ResetPassword = () => {
             <div className="relative group">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-stone-900 transition-colors" />
               <input
-                type="password"
+                type={showConfirm ? 'text' : 'password'}
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-12 pr-4 py-4 bg-stone-50 border-2 border-transparent rounded-2xl focus:border-stone-900 focus:bg-white outline-none transition-all text-stone-900 placeholder:text-stone-300"
+                className={passwordFieldClass}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(v => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 transition-colors"
+                aria-label={showConfirm ? 'Hide password' : 'Show password'}
+              >
+                {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
