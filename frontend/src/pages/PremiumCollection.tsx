@@ -17,7 +17,7 @@ const collectionLinks = [
 const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { items } = useCart();
+  const { items, toggleCart } = useCart();
   return (
     <>
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center px-6 md:px-12">
@@ -71,12 +71,12 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         >
           <Search size={18} strokeWidth={1.5} />
         </button>
-        <Link to="/cart" className="hidden md:block text-white hover:opacity-70 transition-opacity relative">
+        <button onClick={() => toggleCart()} className="hidden md:block text-white hover:opacity-70 transition-opacity relative">
           <ShoppingBag size={18} strokeWidth={1.5} />
           {items.length > 0 && (
             <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{items.length}</span>
           )}
-        </Link>
+        </button>
         <Link to="/account" className="hidden md:block text-white hover:opacity-70 transition-opacity">
           <User size={18} strokeWidth={1.5} />
         </Link>
