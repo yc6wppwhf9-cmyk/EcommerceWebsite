@@ -216,23 +216,9 @@ export const PremiumCollection = () => {
         <section className="relative w-full overflow-hidden" style={{ minHeight: 'clamp(320px, 56vw, 700px)' }}>
           <img
             src="/Traworld/section 2.png"
+            alt="Sleek Strong Seamless"
             className="w-full h-full object-cover block absolute inset-0"
           />
-
-          {/* Top overlay text image */}
-          <div className="absolute top-0 left-0 right-0 z-10 pt-6 md:pt-10 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <img
-                src="/Traworld/"
-                alt="Sleek Strong Seamless"
-                className="mx-auto h-auto max-w-[60%] sm:max-w-[70%] md:max-w-2xl brightness-0 invert"
-              />
-            </motion.div>
-          </div>
 
           {/* Bottom overlay text + button */}
           <div className="absolute bottom-0 left-0 right-0 z-10 pb-6 md:pb-10">
@@ -243,7 +229,7 @@ export const PremiumCollection = () => {
               className="flex flex-col items-center"
             >
               <p className="text-white font-outfit uppercase tracking-[0.2em] md:tracking-[0.3em] mb-3 md:mb-6 text-center px-4" style={{ fontSize: 'clamp(10px, 3vw, 31.98px)', fontWeight: 200 }}>
-               
+                "Power doesn't need spotlight."
               </p>
 
               <Link
