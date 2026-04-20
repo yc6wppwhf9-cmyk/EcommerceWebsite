@@ -216,7 +216,6 @@ export const PremiumCollection = () => {
         <section className="relative w-full overflow-hidden" style={{ minHeight: 'clamp(320px, 56vw, 700px)' }}>
           <img
             src="/Traworld/section 2.png"
-            alt="Sleek Strong Seamless"
             className="w-full h-full object-cover block absolute inset-0"
           />
 
