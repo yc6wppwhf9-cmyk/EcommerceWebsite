@@ -35,19 +35,26 @@ const IMG = {
   refPoster: '/Category/ref.png',
 };
 
+const heroVariants = {
+  enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%' }),
+  center: { x: 0 },
+  exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%' }),
+};
+
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
+  const [dir, setDir] = useState(1);
   const isPausedRef = useRef(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!isPausedRef.current) setCurrent((p) => (p + 1) % HERO_SLIDES.length);
+      if (!isPausedRef.current) { setDir(1); setCurrent((p) => (p + 1) % HERO_SLIDES.length); }
     }, 5000);
     return () => clearInterval(timer);
   }, []);
 
-  const next = () => setCurrent((p) => (p + 1) % HERO_SLIDES.length);
-  const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  const next = () => { setDir(1); setCurrent((p) => (p + 1) % HERO_SLIDES.length); };
+  const prev = () => { setDir(-1); setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length); };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -64,13 +71,15 @@ const HeroSlider = () => {
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = true; }}
       onPointerLeave={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = false; }}
     >
-      <AnimatePresence>
+      <AnimatePresence custom={dir} initial={false}>
         <motion.div
           key={current}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          custom={dir}
+          variants={heroVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="absolute inset-0"
         >
           <img
@@ -272,15 +281,20 @@ export const Home = () => {
                 })}
 
                 {/* Active card */}
-                <div style={{ position: 'relative', zIndex: 20 }}>
+                <div style={{ position: 'relative', zIndex: 20, overflow: 'hidden', borderRadius: '1rem' }}>
                   <AnimatePresence mode="wait" custom={catFlipDir}>
                     <motion.div
                       key={catFlipIndex}
                       custom={catFlipDir}
-                      initial={{ opacity: 0, scale: 0.97 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.97 }}
-                      transition={{ duration: 0.5, ease: 'easeInOut' }}
+                      variants={{
+                        enter: (d: number) => ({ x: d > 0 ? '100%' : '-100%' }),
+                        center: { x: 0 },
+                        exit: (d: number) => ({ x: d > 0 ? '-100%' : '100%' }),
+                      }}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
                       className="w-full rounded-2xl overflow-hidden shadow-xl"
                     >
                       <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '120%' }}>
