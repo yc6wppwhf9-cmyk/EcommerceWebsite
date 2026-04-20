@@ -7,7 +7,7 @@ import {
   TrendingUp, ShoppingBag, CreditCard,
   FileSpreadsheet, Image as ImageIcon,
   Zap, Award, Percent, Crown,
-  Briefcase, FileText, ChevronDown
+  Briefcase, FileText, ChevronDown, Loader2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -78,6 +78,13 @@ export const AdminDashboard = () => {
   const [variants, setVariants] = useState<ColorVariant[]>([]);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [fetchLoading, setFetchLoading] = useState(true);
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   // Jobs & Applications state
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -101,20 +108,22 @@ export const AdminDashboard = () => {
   }, [isAuthenticated, isLoading, navigate, user]);
 
   const fetchData = async () => {
-    try {
-      const [prodRes, orderRes, jobRes, appRes] = await Promise.all([
-        api.getProducts(),
-        api.getOrders(),
-        api.getJobs({ status: 'all' }),
-        api.getAllApplications(),
-      ]);
-      setProducts(prodRes.products.map((p: any) => ({ ...p, id: String(p.id) })));
-      setOrders(orderRes.data);
-      setJobs(jobRes.jobs);
-      setApplications(appRes.applications);
-    } catch (err) {
-      console.error('Fetch error:', err);
-    }
+    setFetchLoading(true);
+    const [prodRes, orderRes, jobRes, appRes] = await Promise.allSettled([
+      api.getProducts({ limit: '999' }),
+      api.getOrders({ limit: 500 }),
+      api.getJobs({ status: 'all' }),
+      api.getAllApplications(),
+    ]);
+    if (prodRes.status === 'fulfilled') setProducts(prodRes.value.products.map((p: any) => ({ ...p, id: String(p.id) })));
+    else console.error('Products fetch error:', prodRes.reason);
+    if (orderRes.status === 'fulfilled') setOrders(orderRes.value.data);
+    else console.error('Orders fetch error:', orderRes.reason);
+    if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs);
+    else console.error('Jobs fetch error:', jobRes.reason);
+    if (appRes.status === 'fulfilled') setApplications(appRes.value.applications);
+    else console.error('Applications fetch error:', appRes.reason);
+    setFetchLoading(false);
   };
 
   useEffect(() => {
@@ -152,17 +161,17 @@ export const AdminDashboard = () => {
       setJobForm(BLANK_JOB());
       fetchData();
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      showToast(err.message || 'Failed to save job', 'error');
     }
   };
 
   const handleDeleteJob = async (jobId: string) => {
-    if (!confirm('Delete this job posting? All applications will be removed.')) return;
+    if (!window.confirm('Delete this job posting? All applications will be removed.')) return;
     try {
       await api.deleteJob(jobId);
       fetchData();
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      showToast(err.message || 'Failed to delete job', 'error');
     }
   };
 
@@ -171,7 +180,7 @@ export const AdminDashboard = () => {
       await api.updateApplicationStatus(appId, status);
       fetchData();
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      showToast(err.message || 'Failed to update status', 'error');
     }
   };
 
@@ -185,7 +194,7 @@ export const AdminDashboard = () => {
     try {
       // Validate basic required fields manually for clear UI feedback
       if (!formData.name || !formData.originalPrice || !formData.price || !formData.category) {
-        alert('Please fill all mandatory fields marked with *');
+        showToast('Please fill all mandatory fields marked with *', 'error');
         return;
       }
 
@@ -205,10 +214,10 @@ export const AdminDashboard = () => {
 
       if (editingProduct) {
         await api.updateProduct(editingProduct.id, payload);
-        alert('Success: Product Updated!');
+        showToast('Product Updated!');
       } else {
         await api.createProduct(payload);
-        alert('Success: New Product Registered!');
+        showToast('New Product Registered!');
       }
       fetchData();
       setIsAddingProduct(false);
@@ -217,7 +226,7 @@ export const AdminDashboard = () => {
       setVariants([]);
     } catch (err: any) {
       console.error('Save Error:', err);
-      alert(`Error: ${err.message || 'Check required fields'}`);
+      showToast(err.message || 'Check required fields', 'error');
     }
   };
 
@@ -226,9 +235,9 @@ export const AdminDashboard = () => {
       await api.updateOrderStatus(orderId, status, invoiceUrl);
       setSelectedOrder(null);
       fetchData();
-      alert(`Order updated to ${status}!`);
+      showToast(`Order updated to ${status}!`);
     } catch {
-      alert('Failed to update order status');
+      showToast('Failed to update order status', 'error');
     }
   };
 
@@ -281,10 +290,28 @@ export const AdminDashboard = () => {
     printWindow.document.close();
   };
 
-  if (isLoading || !user) return null;
+  if (isLoading || !user) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="w-8 h-8 text-priority-blue animate-spin" />
+    </div>
+  );
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-main)] font-outfit pt-10 pb-20 transition-colors duration-300">
+      {/* Toast notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`fixed top-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl text-white text-sm font-black ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}
+          >
+            {toast.msg}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
 
         {/* Simple Header */}
@@ -624,11 +651,32 @@ export const AdminDashboard = () => {
                         </div>
                       </form>
                     </div>
+                  ) : fetchLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {[1,2,3,4,5,6].map(n => (
+                        <div key={n} className="bg-white p-5 rounded-2xl border border-gray-100 flex gap-4">
+                          <div className="w-20 h-20 bg-gray-100 animate-pulse rounded-xl shrink-0" />
+                          <div className="flex-1 space-y-2 pt-1">
+                            <div className="h-2 bg-gray-100 animate-pulse rounded w-1/3" />
+                            <div className="h-3 bg-gray-100 animate-pulse rounded w-2/3" />
+                            <div className="h-2 bg-gray-100 animate-pulse rounded w-1/4" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : products.length === 0 ? (
+                    <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-16 text-center">
+                      <Box size={32} className="mx-auto text-gray-200 mb-3" />
+                      <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">No products in inventory</p>
+                      <button onClick={() => setIsAddingProduct(true)} className="mt-4 px-5 py-2 bg-priority-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
+                        Add First Product
+                      </button>
+                    </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                       {products.map(p => (
                         <div key={p.id} className="bg-white p-5 rounded-2xl border border-gray-100 flex gap-4 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden">
-                          <img src={p.image} className="w-20 h-20 object-contain p-2 bg-gray-50 rounded-xl" />
+                          <img src={p.images?.[0] || (p as any).image || ''} className="w-20 h-20 object-contain p-2 bg-gray-50 rounded-xl" />
                           <div className="flex-1 flex flex-col justify-between overflow-hidden">
                             <div>
                               <p className="text-[8px] font-black text-priority-blue uppercase tracking-widest truncate">
@@ -657,7 +705,7 @@ export const AdminDashboard = () => {
                                 }))); 
                                 setIsAddingProduct(true); 
                               }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
-                              <button onClick={() => { if (window.confirm('Delete?')) api.deleteProduct(p.id).then(() => fetchData()) }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
+                              <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
                             </div>
                           </div>
                           {p.isNew && <div className="absolute top-0 right-0 w-8 h-8"><div className="absolute top-0 right-0 w-[150%] h-4 bg-priority-blue text-[7px] font-black text-white flex items-center justify-center rotate-45 translate-x-[30%] translate-y-[20%] uppercase">New</div></div>}
@@ -964,6 +1012,20 @@ export const AdminDashboard = () => {
               )}
 
               {activeTab === 'bulk' && <motion.div key="blk" initial={{ opacity: 0 }} animate={{ opacity: 1 }}><BulkUpload /></motion.div>}
+
+              {activeTab === 'customers' && (
+                <motion.div key="cust" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                  <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 mb-4">
+                      <Users size={32} />
+                    </div>
+                    <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Customer Management</h2>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 max-w-xs leading-relaxed">
+                      Customer user management is handled via Supabase Auth. Use the Supabase dashboard to view and manage user accounts.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
 
             </AnimatePresence>
           </div>

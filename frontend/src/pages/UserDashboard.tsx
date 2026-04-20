@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Package, Heart, MapPin, User, LogOut, ChevronRight, Lock, Mail, Phone, Loader2, X, ShoppingBag
+  Package, Heart, MapPin, User, LogOut, ChevronRight, Lock, Mail, Phone, Loader2, X, ShoppingBag, Plus, Trash2, Edit3, Check, Star
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -29,6 +29,21 @@ export const UserDashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
 
+  // Addresses
+  const BLANK_ADDRESS = { name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', is_default: false };
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [addressForm, setAddressForm] = useState(BLANK_ADDRESS);
+  const [addressSaving, setAddressSaving] = useState(false);
+  const [addressMsg, setAddressMsg] = useState<{ type: 'success' | 'err'; text: string } | null>(null);
+
+  // Profile edit
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', phone: '' });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileMsg, setProfileMsg] = useState<{ type: 'success' | 'err'; text: string } | null>(null);
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate('/login');
   }, [isAuthenticated, isLoading, navigate]);
@@ -41,6 +56,60 @@ export const UserDashboard = () => {
       .catch(() => setOrders([]))
       .finally(() => setOrdersLoading(false));
   }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'settings') return;
+    setAddressesLoading(true);
+    api.getAddresses()
+      .then((data) => setAddresses(Array.isArray(data) ? data : []))
+      .catch(() => setAddresses([]))
+      .finally(() => setAddressesLoading(false));
+  }, [activeTab]);
+
+  const handleAddAddress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddressSaving(true);
+    setAddressMsg(null);
+    try {
+      await api.addAddress(addressForm);
+      const data = await api.getAddresses();
+      setAddresses(Array.isArray(data) ? data : []);
+      setAddressForm(BLANK_ADDRESS);
+      setShowAddressForm(false);
+      setAddressMsg({ type: 'success', text: 'Address saved!' });
+      setTimeout(() => setAddressMsg(null), 3000);
+    } catch (err: any) {
+      setAddressMsg({ type: 'err', text: err.message || 'Failed to save address' });
+    } finally {
+      setAddressSaving(false);
+    }
+  };
+
+  const handleDeleteAddress = async (id: string) => {
+    if (!window.confirm('Remove this address?')) return;
+    try {
+      await api.deleteAddress(id);
+      setAddresses((prev) => prev.filter((a) => a.id !== id));
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete address');
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileSaving(true);
+    setProfileMsg(null);
+    try {
+      await api.updateMe({ name: profileForm.name, phone: profileForm.phone });
+      setProfileMsg({ type: 'success', text: 'Profile updated!' });
+      setEditingProfile(false);
+      setTimeout(() => setProfileMsg(null), 3000);
+    } catch (err: any) {
+      setProfileMsg({ type: 'err', text: err.message || 'Update failed' });
+    } finally {
+      setProfileSaving(false);
+    }
+  };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -280,41 +349,87 @@ export const UserDashboard = () => {
                 >
                   {/* Profile */}
                   <div className="bg-[var(--color-bg-card)] p-5 sm:p-8 md:p-10 rounded-2xl md:rounded-[2.5rem] border border-[var(--color-border-main)]">
-                    <div className="flex items-center gap-3 mb-6 md:mb-8">
-                      <div className="w-10 h-10 bg-priority-blue text-white rounded-xl flex items-center justify-center shrink-0">
-                        <User size={20} />
+                    <div className="flex items-center justify-between gap-3 mb-6 md:mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-priority-blue text-white rounded-xl flex items-center justify-center shrink-0">
+                          <User size={20} />
+                        </div>
+                        <h3 className="text-lg md:text-xl font-black font-outfit text-[var(--color-text-main)] uppercase tracking-tight">Profile Details</h3>
                       </div>
-                      <h3 className="text-lg md:text-xl font-black font-outfit text-[var(--color-text-main)] uppercase tracking-tight">Profile Details</h3>
+                      {!editingProfile && (
+                        <button
+                          onClick={() => { setProfileForm({ name: user.name || '', phone: (user as any).phone || '' }); setEditingProfile(true); setProfileMsg(null); }}
+                          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-priority-blue border border-priority-blue/30 px-4 py-2 rounded-xl hover:bg-priority-blue hover:text-white transition-all"
+                        >
+                          <Edit3 size={12} /> Edit
+                        </button>
+                      )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Full Name</label>
-                        <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)]">
-                          <User size={16} className="text-[var(--color-text-muted)]" />
-                          <input type="text" readOnly value={user.name} className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
+
+                    {profileMsg && (
+                      <p className={`text-[10px] font-bold uppercase tracking-widest mb-4 ${profileMsg.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>{profileMsg.text}</p>
+                    )}
+
+                    {editingProfile ? (
+                      <form onSubmit={handleSaveProfile} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Full Name</label>
+                            <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-priority-blue/40">
+                              <User size={16} className="text-[var(--color-text-muted)] shrink-0" />
+                              <input required type="text" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
+                            </div>
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Mobile Number</label>
+                            <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-priority-blue/40">
+                              <Phone size={16} className="text-[var(--color-text-muted)] shrink-0" />
+                              <input type="tel" maxLength={10} value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, '') })} placeholder="10-digit mobile" className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Email Address</label>
+                          <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)] opacity-60">
+                            <Mail size={16} className="text-[var(--color-text-muted)] shrink-0" />
+                            <input type="email" readOnly value={user.email} className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
+                          </div>
+                          <p className="text-[9px] text-[var(--color-text-muted)] ml-1 uppercase tracking-widest">Email cannot be changed</p>
+                        </div>
+                        <div className="flex gap-3 pt-2">
+                          <button type="submit" disabled={profileSaving} className="flex-1 py-3.5 bg-priority-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2">
+                            {profileSaving ? <><Loader2 size={14} className="animate-spin" /> Saving…</> : <><Check size={14} /> Save Changes</>}
+                          </button>
+                          <button type="button" onClick={() => { setEditingProfile(false); setProfileMsg(null); }} className="px-6 py-3.5 bg-gray-100 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Full Name</label>
+                          <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)]">
+                            <User size={16} className="text-[var(--color-text-muted)]" />
+                            <span className="text-sm font-black font-outfit text-[var(--color-text-main)]">{user.name}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Email Address</label>
+                          <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)]">
+                            <Mail size={16} className="text-[var(--color-text-muted)]" />
+                            <span className="text-sm font-black font-outfit text-[var(--color-text-main)]">{user.email}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Mobile Number</label>
+                          <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)]">
+                            <Phone size={16} className="text-[var(--color-text-muted)]" />
+                            <span className="text-sm font-black font-outfit text-[var(--color-text-main)]">{(user as any).phone || <span className="text-[var(--color-text-muted)] font-medium">Not provided</span>}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Email Address</label>
-                        <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)]">
-                          <Mail size={16} className="text-[var(--color-text-muted)]" />
-                          <input type="email" readOnly value={user.email} className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
-                        </div>
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Mobile Number</label>
-                        <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)]">
-                          <Phone size={16} className="text-[var(--color-text-muted)]" />
-                          <input
-                            type="text"
-                            readOnly
-                            value={(user as any).phone || ''}
-                            placeholder="Not provided"
-                            className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Addresses */}
@@ -326,10 +441,119 @@ export const UserDashboard = () => {
                         </div>
                         <h3 className="text-lg md:text-xl font-black font-outfit text-[var(--color-text-main)] uppercase tracking-tight">Saved Addresses</h3>
                       </div>
+                      {!showAddressForm && (
+                        <button
+                          onClick={() => { setShowAddressForm(true); setAddressMsg(null); }}
+                          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-priority-blue border border-priority-blue/30 px-4 py-2 rounded-xl hover:bg-priority-blue hover:text-white transition-all shrink-0"
+                        >
+                          <Plus size={12} /> Add New
+                        </button>
+                      )}
                     </div>
-                    <div className="flex items-center gap-4 p-4 sm:p-6 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)] text-[var(--color-text-muted)] text-sm">
-                      <p>Addresses are saved automatically during checkout for faster future orders.</p>
-                    </div>
+
+                    {addressMsg && (
+                      <p className={`text-[10px] font-bold uppercase tracking-widest mb-4 ${addressMsg.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>{addressMsg.text}</p>
+                    )}
+
+                    {/* Add Address Form */}
+                    <AnimatePresence>
+                      {showAddressForm && (
+                        <motion.form
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          onSubmit={handleAddAddress}
+                          className="mb-6 p-5 sm:p-6 bg-[var(--color-bg-main)] rounded-2xl border border-priority-blue/20 space-y-4"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-priority-blue">New Address</p>
+                            <button type="button" onClick={() => { setShowAddressForm(false); setAddressForm(BLANK_ADDRESS); setAddressMsg(null); }} className="text-gray-400 hover:text-red-500 transition-colors">
+                              <X size={16} />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Full Name *</label>
+                              <input required type="text" value={addressForm.name} onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })} placeholder="Recipient name" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Phone *</label>
+                              <input required type="tel" maxLength={10} value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, '') })} placeholder="10-digit mobile" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Address Line 1 *</label>
+                              <input required type="text" value={addressForm.line1} onChange={(e) => setAddressForm({ ...addressForm, line1: e.target.value })} placeholder="House / Flat no., Street" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Address Line 2 <span className="opacity-50">(optional)</span></label>
+                              <input type="text" value={addressForm.line2} onChange={(e) => setAddressForm({ ...addressForm, line2: e.target.value })} placeholder="Landmark, Area" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">City *</label>
+                              <input required type="text" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} placeholder="City" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">State *</label>
+                              <input required type="text" value={addressForm.state} onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })} placeholder="State" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Pincode *</label>
+                              <input required type="text" maxLength={6} pattern="[0-9]{6}" value={addressForm.pincode} onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, '') })} placeholder="6-digit pincode" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                            </div>
+                            <div className="flex items-center gap-3 sm:col-span-1 pt-1">
+                              <input type="checkbox" id="is_default" checked={addressForm.is_default} onChange={(e) => setAddressForm({ ...addressForm, is_default: e.target.checked })} className="w-4 h-4 accent-priority-blue rounded" />
+                              <label htmlFor="is_default" className="text-[10px] font-black uppercase text-[var(--color-text-muted)] tracking-widest cursor-pointer">Set as Default</label>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3 pt-2">
+                            <button type="submit" disabled={addressSaving} className="flex-1 py-3.5 bg-priority-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2">
+                              {addressSaving ? <><Loader2 size={14} className="animate-spin" /> Saving…</> : <><Check size={14} /> Save Address</>}
+                            </button>
+                            <button type="button" onClick={() => { setShowAddressForm(false); setAddressForm(BLANK_ADDRESS); setAddressMsg(null); }} className="px-6 py-3.5 bg-gray-100 text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                              Cancel
+                            </button>
+                          </div>
+                        </motion.form>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Address List */}
+                    {addressesLoading ? (
+                      <div className="flex justify-center py-10">
+                        <Loader2 className="w-6 h-6 text-priority-blue animate-spin" />
+                      </div>
+                    ) : addresses.length === 0 && !showAddressForm ? (
+                      <div className="flex flex-col items-center py-10 gap-3 text-[var(--color-text-muted)]">
+                        <MapPin size={32} className="opacity-20" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">No addresses saved yet</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {addresses.map((addr) => (
+                          <div key={addr.id} className={`relative p-4 sm:p-5 rounded-2xl border transition-all ${addr.is_default ? 'border-priority-blue/40 bg-priority-blue/5' : 'border-[var(--color-border-main)] bg-[var(--color-bg-main)]'}`}>
+                            {addr.is_default && (
+                              <span className="absolute top-3 right-3 flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-priority-blue bg-priority-blue/10 px-2 py-1 rounded-full">
+                                <Star size={8} fill="currentColor" /> Default
+                              </span>
+                            )}
+                            <p className="text-sm font-black font-outfit text-[var(--color-text-main)] mb-0.5">{addr.name}</p>
+                            <p className="text-[11px] font-bold text-[var(--color-text-muted)]">
+                              {addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}<br />
+                              {addr.city}, {addr.state} — {addr.pincode}
+                            </p>
+                            <p className="text-[11px] font-bold text-[var(--color-text-muted)] mt-0.5">{addr.phone}</p>
+                            <button
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              className="mt-3 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-red-400 hover:text-red-600 transition-colors"
+                            >
+                              <Trash2 size={10} /> Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Security */}
