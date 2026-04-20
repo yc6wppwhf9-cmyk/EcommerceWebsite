@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -39,7 +39,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
     <div className="flex flex-col font-outfit bg-white">
       {/* Image container with blue border */}
       <Link
-        to={`/product/${product.slug || product.id}?theme=junior`}
+        to={`/product/${product.slug || product.id}`}
         className="relative block rounded-2xl border-2 border-[#5B8DEF] overflow-hidden bg-white"
         style={{ aspectRatio: '300 / 307' }}
       >
@@ -62,7 +62,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
       {/* Info */}
       <div className="pt-3 space-y-1.5">
-        <Link to={`/product/${product.slug || product.id}?theme=junior`}>
+        <Link to={`/product/${product.slug || product.id}`}>
           <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
             {product.name}
           </h3>
@@ -110,33 +110,23 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 };
 
 // Simplified Best Seller card matching user image precisely
-const BestSellerCard = ({ product }: { product: Product }) => {
-  const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
-  const discount = originalPrice > product.price
-    ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
-    : 0;
-  return (
-    <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-      <Link to={`/product/${product.slug || product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
-        <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+const BestSellerCard = ({ product }: { product: Product }) => (
+  <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
+    <Link to={`/product/${product.id}`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
+      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain" />
+    </Link>
+    <div className="px-1">
+      <Link to={`/product/${product.id}`}>
+        <h3 className="font-outfit font-bold text-[14px] text-black leading-snug mb-2 line-clamp-2">{product.name}</h3>
       </Link>
-      <div className="px-1">
-        <Link to={`/product/${product.slug || product.id}?theme=junior`}>
-          <h3 className="font-outfit font-bold text-[14px] text-black leading-snug mb-2 line-clamp-2">{product.name}</h3>
-        </Link>
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[14px] font-outfit font-bold text-[#8750DA]">₹ {product.price.toLocaleString('en-IN')}.00</span>
-          {discount > 0 && (
-            <>
-              <span className="text-[11px] text-gray-400 line-through">₹ {originalPrice.toLocaleString('en-IN')}.00</span>
-              <span className="text-[11px] font-bold text-black opacity-80">{discount}% off</span>
-            </>
-          )}
-        </div>
+      <div className="flex items-baseline gap-2">
+        <span className="text-[14px] font-outfit font-bold text-[#8750DA]">₹ {product.price}.00</span>
+        <span className="text-[11px] text-gray-400 line-through">₹ {Math.round(product.price * 1.5)}.00</span>
+        <span className="text-[11px] font-bold text-black opacity-80">50% off</span>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export const JuniorPage = () => {
   const [activeTab, setActiveTab] = useState('School Backpacks');
@@ -144,72 +134,18 @@ export const JuniorPage = () => {
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Age group flip-card state
-  const [ageFlipIndex, setAgeFlipIndex] = useState(0);
-  const [ageFlipDir, setAgeFlipDir] = useState(1);
-  const ageTouchRef = useRef<number | null>(null);
-  const ageAutoRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const startAgeAuto = (total: number) => {
-    if (ageAutoRef.current) clearInterval(ageAutoRef.current);
-    ageAutoRef.current = setInterval(() => {
-      setAgeFlipDir(1);
-      setAgeFlipIndex(i => (i + 1) % total);
-    }, 2500);
-  };
-
-  const goNextAge = (total: number) => {
-    setAgeFlipDir(1);
-    setAgeFlipIndex(i => (i + 1) % total);
-    startAgeAuto(total);
-  };
-  const goPrevAge = (total: number) => {
-    setAgeFlipDir(-1);
-    setAgeFlipIndex(i => (i - 1 + total) % total);
-    startAgeAuto(total);
-  };
-  const handleAgeTouchStart = (e: React.TouchEvent) => { ageTouchRef.current = e.touches[0].clientX; };
-  const handleAgeTouchEnd = (e: React.TouchEvent, total: number) => {
-    if (ageTouchRef.current === null) return;
-    const diff = ageTouchRef.current - e.changedTouches[0].clientX;
-    if (diff > 40) goNextAge(total);
-    else if (diff < -40) goPrevAge(total);
-    ageTouchRef.current = null;
-  };
-
-  useEffect(() => {
-    startAgeAuto(AGE_GROUPS.length);
-    return () => { if (ageAutoRef.current) clearInterval(ageAutoRef.current); };
-  }, []);
-
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
-    const juniorCategories = ['school-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'trolley-backpacks'];
-    Promise.all(
-      juniorCategories.map(cat => api.getProducts({ category: cat, limit: '8' }))
-    ).then((results) => {
-      const seen = new Set<string>();
-      const merged: Product[] = [];
-      for (const res of results) {
-        for (const p of res.products as unknown as Product[]) {
-          if (!seen.has(p.id)) { seen.add(p.id); merged.push(p); }
-        }
-      }
-      setBestSellers(merged);
-    }).catch(() => {});
+    Promise.all([
+      api.getProducts({ category: 'school-backpacks', limit: '8' }),
+      api.getProducts({ sort: 'popular', limit: '8' }),
+    ]).then(([school, popular]) => {
+      setProducts(school.products as unknown as Product[]);
+      setBestSellers(popular.products as unknown as Product[]);
+      setIsLoading(false);
+    }).catch(() => setIsLoading(false));
   }, []);
-
-  // Re-fetch products whenever the active category tab changes
-  useEffect(() => {
-    const cat = CATEGORIES.find(c => c.label === activeTab);
-    if (!cat) return;
-    setIsLoading(true);
-    api.getProducts({ category: cat.filter, limit: '8' })
-      .then(res => setProducts(res.products as unknown as Product[]))
-      .catch(() => setProducts([]))
-      .finally(() => setIsLoading(false));
-  }, [activeTab]);
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden">
@@ -225,115 +161,31 @@ export const JuniorPage = () => {
         />
       </section>
 
-      <section className="py-12 md:py-16 bg-white relative overflow-hidden">
+      <section className="pt-12 md:pt-16 pb-16 md:pb-24 bg-white relative overflow-hidden">
+        <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none select-none" />
         <div className="max-w-[1280px] mx-auto px-6 md:px-14 relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
             <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
-
-          {/* Desktop: 4-column grid */}
-          <div className="hidden md:grid md:grid-cols-4 gap-8 lg:gap-10">
+          <div className="grid grid-cols-4 gap-2 md:gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                <Link to={`/${group.slug}`} className="group relative block rounded-2xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
-                  <div className="absolute inset-0 rounded-2xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[52px] rounded-tl-[40px]">
-                    <p className="relative z-10 text-[14px] font-outfit font-black uppercase tracking-widest text-white drop-shadow-sm text-center px-1">{group.label}</p>
+                <Link to={`/${group.slug}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
+                  <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[36px] md:h-[52px] rounded-tl-[20px] md:rounded-tl-[40px]">
+                    <p className="relative z-10 text-[8px] md:text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
                   </div>
                 </Link>
               </motion.div>
             ))}
           </div>
-
-          {/* Mobile: Book-page flip stack */}
-          <div className="md:hidden px-2">
-            {(() => {
-              const total = AGE_GROUPS.length;
-              return (
-                <div
-                  className="relative select-none max-w-sm mx-auto"
-                  style={{ perspective: '1200px' }}
-                  onTouchStart={handleAgeTouchStart}
-                  onTouchEnd={(e) => handleAgeTouchEnd(e, total)}
-                >
-                  {/* Stacked cards behind (depth effect) */}
-                  {[2, 1].map((offset) => {
-                    const idx = ageFlipIndex + offset;
-                    if (idx >= total) return null;
-                    return (
-                      <div
-                        key={`stack-${offset}`}
-                        className="absolute inset-x-0 bottom-0 rounded-2xl overflow-hidden pointer-events-none"
-                        style={{
-                          top: `${offset * 8}px`,
-                          transform: `scale(${1 - offset * 0.05}) translateY(${offset * 4}px)`,
-                          filter: `brightness(${0.55 - offset * 0.1})`,
-                          zIndex: 10 - offset,
-                          transformOrigin: 'bottom center',
-                        }}
-                      >
-                        <div className="relative w-full" style={{ paddingBottom: '140%' }}>
-                          <img
-                            src={AGE_GROUPS[idx]?.img || ''}
-                            alt=""
-                            className="absolute inset-0 w-full h-full object-cover object-top"
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Active card */}
-                  <div style={{ position: 'relative', zIndex: 20 }}>
-                    <AnimatePresence mode="wait" custom={ageFlipDir}>
-                      <motion.div
-                        key={ageFlipIndex}
-                        custom={ageFlipDir}
-                        initial={{ opacity: 0, scale: 0.97 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.97 }}
-                        transition={{ duration: 0.5, ease: 'easeInOut' }}
-                        className="w-full rounded-2xl overflow-hidden shadow-xl"
-                      >
-                        <Link to={`/${AGE_GROUPS[ageFlipIndex].slug}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
-                          <img
-                            src={AGE_GROUPS[ageFlipIndex].img}
-                            alt={AGE_GROUPS[ageFlipIndex].label}
-                            className="absolute inset-0 w-full h-full object-cover object-top"
-                          />
-                          <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 bg-[#FFBB5A] h-[52px] rounded-tl-[24px]">
-                            <p className="text-[16px] font-outfit font-black uppercase tracking-widest text-white drop-shadow-sm text-center px-2">{AGE_GROUPS[ageFlipIndex].label}</p>
-                          </div>
-                        </Link>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Navigation controls */}
-                  <div className="flex justify-between items-center mt-6 px-1">
-                    <button onClick={() => goPrevAge(total)} className="p-2 text-gray-400 transition-opacity">
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <div className="flex gap-2">
-                      {AGE_GROUPS.map((_, i) => (
-                        <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === ageFlipIndex ? 'w-6 bg-[#A368FB]' : 'w-1.5 bg-gray-200'}`} />
-                      ))}
-                    </div>
-                    <button onClick={() => goNextAge(total)} className="p-2 text-gray-400 transition-opacity">
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
         </div>
       </section>
 
-      <section className="relative mt-16 md:mt-24 mb-6 overflow-visible px-4 md:px-0 flex justify-center">
-        <div className="relative w-full max-w-[1402px] rounded-[5px] py-8 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: 'clamp(260px, 45vw, 500px)' }}>
+      <section className="relative mb-6 overflow-visible px-4 md:px-0 flex justify-center">
+        <div className="relative w-full max-w-[1600px] rounded-[5px] py-8 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: 'clamp(260px, 45vw, 500px)' }}>
 
           <div className="absolute left-2 md:left-24 top-1/2 -translate-y-1/2 w-[120px] sm:w-[180px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
           <div className="absolute right-2 md:right-24 top-1/2 -translate-y-1/2 w-[120px] sm:w-[180px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
@@ -354,8 +206,9 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 bg-white overflow-hidden">
-        <div className="max-w-[1402px] mx-auto px-6 md:px-14">
+      <section className="py-12 md:py-16 bg-white overflow-hidden relative">
+        <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none select-none" />
+        <div className="max-w-[1402px] mx-auto px-6 md:px-18 relative z-10">
           <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 mb-6 relative">
             {CATEGORIES.map((cat) => (
               <button key={cat.label} onClick={() => setActiveTab(cat.label)} className={`relative pb-3 text-[11px] md:text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 ${activeTab === cat.label ? 'scale-105' : 'hover:text-gray-600'}`} style={{ color: activeTab === cat.label ? '#030014' : '#AEADB4' }}>
@@ -365,38 +218,26 @@ export const JuniorPage = () => {
             ))}
             <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-100 -z-10" />
           </div>
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-14">
-            {/* Mobile: full-width horizontal strip */}
-            <div className="lg:hidden w-full flex items-center gap-4 p-4 rounded-xl" style={{ backgroundColor: '#FAC05C' }}>
-              <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden">
-                <img
-                  src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"}
-                  alt={activeTab}
-                  className="w-full h-full object-cover object-top transition-all duration-500"
-                />
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
+            <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
+              <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
+                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
+                  <img 
+                    src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"} 
+                    alt={activeTab} 
+                    className="w-full h-full object-cover object-top transition-all duration-500" 
+                  />
+                </div>
+                <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
               </div>
-              <h3 className="font-protest text-white leading-tight" style={{ fontSize: 'clamp(22px, 7vw, 32px)' }}>{activeTab}</h3>
             </div>
-
-            {/* Desktop: vertical card */}
-            <div className="hidden lg:flex flex-col items-center pt-8 shrink-0 w-[334px]" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
-              <div className="overflow-hidden mb-4 w-[85%]" style={{ height: '400px', borderRadius: '5px' }}>
-                <img
-                  src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"}
-                  alt={activeTab}
-                  className="w-full h-full object-cover object-top transition-all duration-500"
-                />
-              </div>
-              <h3 className="font-protest text-white leading-none text-center pb-5" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
-            </div>
-
             <div className="flex-1">
               {isLoading ? (
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
-                  {[1, 2, 3, 4].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+                  {[1, 2, 3].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
                 </div>
               ) : products.length > 0 ? (
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
                   {products.map((product, idx) => (
                     <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}
