@@ -283,7 +283,7 @@ export const ProductDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16">
 
           {/* Left Column: Gallery */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-32 space-y-4 md:space-y-8">
               <motion.div
                 key={`${selectedVariantIndex}-${selectedImage}`}
@@ -323,7 +323,7 @@ export const ProductDetail = () => {
           </div>
 
           {/* Right Column: Info */}
-          <div className="lg:col-span-5 space-y-8 md:space-y-12">
+          <div className="lg:col-span-7 space-y-8 md:space-y-12">
             <div className="space-y-4 md:space-y-6 text-center lg:text-left">
               <h1 className="text-2xl md:text-5xl font-black text-[#14052b] leading-[1.1] tracking-tighter uppercase">{product.name}</h1>
 
