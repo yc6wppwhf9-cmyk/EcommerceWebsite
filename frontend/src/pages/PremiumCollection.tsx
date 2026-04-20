@@ -228,7 +228,7 @@ export const PremiumCollection = () => {
               viewport={{ once: true }}
             >
               <img
-                src="/Traworld/_Layer_ 2.png"
+                src="/Traworld/"
                 alt="Sleek Strong Seamless"
                 className="mx-auto h-auto max-w-[60%] sm:max-w-[70%] md:max-w-2xl brightness-0 invert"
               />
