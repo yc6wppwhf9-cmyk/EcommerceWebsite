@@ -161,6 +161,7 @@ const BestSellerCard = ({ product }: { product: Product }) => {
 export const Home = () => {
   const [activeTab, setActiveTab] = useState<string>('college-backpacks');
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
+  const [tabLoading, setTabLoading] = useState(true);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
 
@@ -206,9 +207,11 @@ export const Home = () => {
   const bestSellersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setTabLoading(true);
+    setTabProducts([]);
     api.getProducts({ category: activeTab }).then(res => {
       setTabProducts(res.products as unknown as Product[]);
-    }).catch(() => { });
+    }).catch(() => { }).finally(() => setTabLoading(false));
   }, [activeTab]);
 
   useEffect(() => {
@@ -379,6 +382,26 @@ export const Home = () => {
             ))}
           </div>
 
+          {/* Mobile: full-width category strip */}
+          {tabCategory && (
+            <div className="md:hidden flex items-center gap-4 p-4 mb-6 rounded-xl overflow-hidden" style={{ backgroundColor: '#F8BE57' }}>
+              <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden">
+                <LazyImage
+                  src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster}
+                  alt={activeTab}
+                  className="w-full h-full object-cover"
+                  width={64}
+                />
+              </div>
+              <div className="text-white font-outfit">
+                <p className="font-semibold uppercase text-[10px] tracking-widest opacity-80">Trendy</p>
+                <p className="font-bold uppercase text-xl leading-tight">
+                  {BACKPACK_TABS.find(t => t.id === activeTab)?.label}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-start gap-6 lg:gap-8">
             {tabCategory && (
               <div className="hidden md:block md:w-[220px] lg:w-[379px] shrink-0 md:h-[440px] lg:h-[506px] overflow-hidden relative group rounded-none">
@@ -403,9 +426,15 @@ export const Home = () => {
             )}
             <div className="flex-1 min-w-0">
               <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
-                {tabProducts.map(p => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
+                {tabLoading ? (
+                  [1, 2, 3, 4, 5, 6].map(n => (
+                    <div key={n} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
+                  ))
+                ) : (
+                  tabProducts.map(p => (
+                    <ProductCard key={p.id} product={p} />
+                  ))
+                )}
               </div>
             </div>
           </div>

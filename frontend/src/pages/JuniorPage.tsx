@@ -365,26 +365,38 @@ export const JuniorPage = () => {
             ))}
             <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-100 -z-10" />
           </div>
-          <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
-            <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
-              <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
-                <div className="overflow-hidden mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
-                  <img 
-                    src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"} 
-                    alt={activeTab} 
-                    className="w-full h-full object-cover object-top transition-all duration-500" 
-                  />
-                </div>
-                <h3 className="font-protest text-white leading-none text-center pb-5" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-14">
+            {/* Mobile: full-width horizontal strip */}
+            <div className="lg:hidden w-full flex items-center gap-4 p-4 rounded-xl" style={{ backgroundColor: '#FAC05C' }}>
+              <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden">
+                <img
+                  src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"}
+                  alt={activeTab}
+                  className="w-full h-full object-cover object-top transition-all duration-500"
+                />
               </div>
+              <h3 className="font-protest text-white leading-tight" style={{ fontSize: 'clamp(22px, 7vw, 32px)' }}>{activeTab}</h3>
             </div>
+
+            {/* Desktop: vertical card */}
+            <div className="hidden lg:flex flex-col items-center pt-8 shrink-0 w-[334px]" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
+              <div className="overflow-hidden mb-4 w-[85%]" style={{ height: '400px', borderRadius: '5px' }}>
+                <img
+                  src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"}
+                  alt={activeTab}
+                  className="w-full h-full object-cover object-top transition-all duration-500"
+                />
+              </div>
+              <h3 className="font-protest text-white leading-none text-center pb-5" style={{ fontSize: '39.88px' }}>{activeTab}</h3>
+            </div>
+
             <div className="flex-1">
               {isLoading ? (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-                  {[1, 2, 3].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
+                  {[1, 2, 3, 4].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
                 </div>
               ) : products.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
                   {products.map((product, idx) => (
                     <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}
