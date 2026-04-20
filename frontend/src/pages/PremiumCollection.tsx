@@ -244,7 +244,7 @@ export const PremiumCollection = () => {
               className="flex flex-col items-center"
             >
               <p className="text-white font-outfit uppercase tracking-[0.2em] md:tracking-[0.3em] mb-3 md:mb-6 text-center px-4" style={{ fontSize: 'clamp(10px, 3vw, 31.98px)', fontWeight: 200 }}>
-                Luggage That Moves With Your Style.
+               
               </p>
 
               <Link
