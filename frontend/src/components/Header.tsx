@@ -39,7 +39,7 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-[90%] left-0 w-max min-w-[240px] bg-white dark:bg-[#111] shadow-2xl z-50 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 p-2"
+            className="absolute top-[90%] left-0 w-max min-w-[240px] max-w-[90vw] bg-white dark:bg-[#111] shadow-2xl z-50 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 p-2"
           >
             {items.map((item) => (
               <Link

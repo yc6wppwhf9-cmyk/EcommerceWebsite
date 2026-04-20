@@ -69,7 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
               <button
                 key={idx}
                 onClick={() => setActiveVariantIndex(idx)}
-                className={`w-3.5 h-3.5 rounded-full border-2 transition-all ${activeVariantIndex === idx ? 'border-[#755FF1] scale-110' : 'border-gray-200'}`}
+                className={`w-6 h-6 rounded-full border-2 transition-all ${activeVariantIndex === idx ? 'border-[#755FF1] scale-110' : 'border-gray-200'}`}
                 style={{ backgroundColor: variant.colorCode || variant.color }}
               />
             ))}

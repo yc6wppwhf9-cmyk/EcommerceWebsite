@@ -184,7 +184,7 @@ export const PremiumCollection = () => {
         {/* Categories */}
         <section className="pb-0">
           <div className="max-w-6xl mx-auto px-3 sm:px-6 sm:-mt-14 relative z-10 pt-4 sm:pt-0">
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
               {seriesHighlights.map((series, idx) => (
                 <Link key={series.title} to={series.slug}>
                   <motion.div
@@ -293,7 +293,7 @@ export const PremiumCollection = () => {
       <footer className="relative bg-black overflow-hidden leading-[0]">
         {/* Mobile */}
         <div className="md:hidden relative w-full">
-          <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-[380px] object-cover object-top block" />
+          <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-[260px] object-cover object-top block" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 flex flex-col items-start gap-4">
             <p className="font-outfit text-white text-[16px] font-light italic leading-snug">Luxury that Travels with you ↗</p>

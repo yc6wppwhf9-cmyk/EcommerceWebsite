@@ -43,7 +43,7 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
                   </span>
                 )}
               </div>
-              <span className={`text-[9px] font-semibold tracking-wide transition-colors duration-200 ${isActive ? 'text-priority-blue' : 'text-gray-400 dark:text-gray-500'}`}>
+              <span className={`text-[10px] font-semibold tracking-wide transition-colors duration-200 ${isActive ? 'text-priority-blue' : 'text-gray-400 dark:text-gray-500'}`}>
                 {item.label}
               </span>
               {isActive && (
@@ -57,14 +57,14 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
 
           if (item.onClick) {
             return (
-              <button key={index} onClick={item.onClick} className="relative py-1.5 px-2 outline-none">
+              <button key={index} onClick={item.onClick} className="relative py-1.5 px-3 min-h-[48px] outline-none">
                 {content}
               </button>
             );
           }
 
           return (
-            <Link key={index} to={item.path!} className="relative py-1.5 px-2">
+            <Link key={index} to={item.path!} className="relative py-1.5 px-3 min-h-[48px] flex items-center">
               {content}
             </Link>
           );
