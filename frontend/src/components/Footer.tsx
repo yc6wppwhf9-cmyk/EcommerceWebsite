@@ -36,9 +36,10 @@ export const Footer = () => {
   const queryParams = new URLSearchParams(location.search);
   const isPremium = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
   const isJunior = location.pathname.startsWith('/junior');
+  const isHome = location.pathname === '/';
 
-  const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : isJunior ? '' : 'bg-priority-dark';
-  const footerStyle = isJunior ? { backgroundColor: '#5652bc', color: '#FFFFFF' } : {};
+  const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-dark';
+  const footerStyle = isJunior ? { backgroundColor: '#5652bc', color: '#FFFFFF' } : isHome ? { backgroundColor: '#26B3FF', color: '#FFFFFF' } : {};
 
   return (
     <footer className={`${footerBg} ${isJunior ? '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white' : 'text-gray-300'} py-10 md:py-12 pb-24 lg:pb-12 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
