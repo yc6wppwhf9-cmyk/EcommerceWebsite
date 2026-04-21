@@ -66,7 +66,7 @@ const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
   gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
-  size: 'Medium', // Default size
+  size: '',
   isNew: false, highlighted: false, // highlighted used for best seller
 });
 
@@ -236,7 +236,6 @@ export const AdminDashboard = () => {
         ...formData,
         // Slug / URL part
         slug: (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7),
-        category_id: '', // TO BE RESOLVED BY BACKEND OR FETCHED
         sub_category: formData.subcategory || '',
         features: formData.features || [],
         images: formData.images || [],
@@ -486,6 +485,7 @@ export const AdminDashboard = () => {
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
                             <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} className={inputCls}>
+                              <option value="">-- None --</option>
                               <option value="Small">Small / Cabin</option>
                               <option value="Medium">Medium / Check-in</option>
                               <option value="Large">Large / XL</option>

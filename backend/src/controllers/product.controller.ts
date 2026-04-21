@@ -174,7 +174,8 @@ export const updateProduct = async (req: Request, res: Response) => {
   if (!Object.keys(updates).length) return res.status(400).json({ error: 'No fields to update' });
 
   const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select().single();
-  if (error || !data) return res.status(404).json({ error: 'Product not found' });
+  if (error) return res.status(400).json({ error: error.message });
+  if (!data) return res.status(404).json({ error: 'Product not found' });
   res.json(data);
 };
 
