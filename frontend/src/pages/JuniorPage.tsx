@@ -270,6 +270,7 @@ export const JuniorPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const tabScrollRef = useRef<HTMLDivElement>(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
   const [drawColor, setDrawColor] = useState('#F69245');
@@ -381,7 +382,8 @@ export const JuniorPage = () => {
     if (!cat) return;
     setIsLoading(true);
     setProducts([]);
-    api.getProducts({ sub_category: cat.filter, limit: '8' })
+    if (tabScrollRef.current) tabScrollRef.current.scrollLeft = 0;
+    api.getProducts({ sub_category: cat.filter, limit: '4' })
       .then(res => { setProducts(res.products as unknown as Product[]); setIsLoading(false); })
       .catch(() => setIsLoading(false));
   }, [activeTab]);
@@ -531,15 +533,27 @@ export const JuniorPage = () => {
                 <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
               </div>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0 relative">
+              <button
+                onClick={() => tabScrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' })}
+                className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg"
+              >
+                <ChevronLeft size={20} className="text-gray-600" />
+              </button>
+              <button
+                onClick={() => tabScrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' })}
+                className="absolute right-[-15px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg"
+              >
+                <ChevronRight size={20} className="text-gray-600" />
+              </button>
               {isLoading ? (
-                <div className="flex flex-row gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
-                  {[1, 2, 3].map(n => <div key={n} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                <div className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-2 no-scrollbar">
+                  {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
                 </div>
               ) : products.length > 0 ? (
-                <div className="flex flex-row justify-center gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
-                  {products.slice(0, 5).map((product, idx) => (
-                    <motion.div key={product.id} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                <div ref={tabScrollRef} className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar px-1">
+                  {products.slice(0, 4).map((product, idx) => (
+                    <motion.div key={product.id} className="shrink-0 w-[160px] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}
                 </div>
               ) : (
