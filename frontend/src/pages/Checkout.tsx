@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ShieldCheck, Truck, CreditCard, ArrowRight, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,7 +9,17 @@ import { api } from '../lib/api';
 
 declare const Razorpay: any;
 
+const THEME_ACCENT: Record<string, string> = {
+  premium: '#000000',
+  junior: '#F69245',
+  default: '#26B3FF',
+};
+
 export const Checkout = () => {
+  const [searchParams] = useSearchParams();
+  const themeKey = searchParams.get('theme') || sessionStorage.getItem('siteTheme') || 'default';
+  const accent = THEME_ACCENT[themeKey] ?? THEME_ACCENT.default;
+
   const { items, total, clearCart, showToast } = useCart();
   const { isAuthenticated, setShowAuthModal, setAuthMode, user } = useAuth();
   const [form, setForm] = useState({
@@ -187,10 +197,10 @@ export const Checkout = () => {
   ];
 
   return (
-    <main className="bg-white min-h-screen font-outfit selection:bg-priority-blue selection:text-white pb-32">
+    <main className="bg-white min-h-screen font-outfit pb-32">
       <nav className="border-b border-gray-100 bg-gray-50/30">
         <div className="container mx-auto px-4 md:px-8 py-3 md:py-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-          <Link to="/" className="hover:text-priority-blue transition-colors">Home</Link>
+          <Link to="/" className="hover:opacity-70 transition-opacity">Home</Link>
           <ChevronRight size={10} />
           <span className="text-gray-900">Checkout</span>
         </div>
@@ -200,14 +210,14 @@ export const Checkout = () => {
         <div className="flex flex-col lg:flex-row gap-10 md:gap-20">
           <div className="lg:w-[60%] space-y-8 md:space-y-16">
             <div className="space-y-2 md:space-y-4">
-              <span className="text-priority-blue text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em]">Final Step</span>
+              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em]" style={{ color: accent }}>Final Step</span>
               <h1 className="text-3xl md:text-6xl font-black tracking-tighter uppercase text-gray-900">Checkout</h1>
             </div>
 
             <section className="space-y-6 md:space-y-10">
               <div className="flex items-center gap-3 md:gap-4 border-b border-gray-100 pb-4 md:pb-6">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-priority-blue/5 rounded-xl md:rounded-2xl flex items-center justify-center">
-                  <Truck className="w-5 h-5 md:w-6 md:h-6 text-priority-blue" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center" style={{ backgroundColor: accent + '15' }}>
+                  <Truck className="w-5 h-5 md:w-6 md:h-6" style={{ color: accent }} />
                 </div>
                 <h2 className="text-lg md:text-2xl font-black uppercase tracking-tight">Delivery Information</h2>
               </div>
@@ -215,7 +225,7 @@ export const Checkout = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                 {fields.map((f) => (
                   <div key={f.field} className={f.span ? 'sm:col-span-2' : ''}>
-                    <label className="block text-[9px] md:text-[10px] font-black text-priority-blue uppercase tracking-widest mb-2 md:mb-3 ml-1">
+                    <label className="block text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3 ml-1" style={{ color: accent }}>
                       {f.label}{f.optional && <span className="text-gray-400 normal-case tracking-normal ml-1">(optional)</span>}
                     </label>
                     <input
@@ -226,7 +236,7 @@ export const Checkout = () => {
                       placeholder={f.placeholder}
                       maxLength={f.maxLength}
                       pattern={f.pattern}
-                      className="w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 border border-gray-100 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:ring-priority-blue/5 focus:border-priority-blue focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300"
+                      className="w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 border border-gray-100 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300"
                     />
                   </div>
                 ))}
@@ -235,11 +245,11 @@ export const Checkout = () => {
 
             <section className="bg-gray-50 rounded-2xl md:rounded-[3rem] p-6 md:p-12 border border-gray-100 space-y-6 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-[2s]">
-                <CreditCard size={120} className="text-priority-blue" />
+                <CreditCard size={120} style={{ color: accent }} />
               </div>
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                  <ShieldCheck className="w-6 h-6 text-priority-blue" />
+                  <ShieldCheck className="w-6 h-6" style={{ color: accent }} />
                 </div>
                 <h3 className="text-xl font-black uppercase tracking-tight">Verified Digital Payment</h3>
               </div>
@@ -279,7 +289,7 @@ export const Checkout = () => {
                 </div>
                 <div className="flex justify-between items-end pt-6 md:pt-8 mt-4 border-t border-gray-100">
                   <div className="flex flex-col">
-                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] text-priority-blue mb-1">Total Payable</span>
+                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] mb-1" style={{ color: accent }}>Total Payable</span>
                     <span className="text-2xl md:text-4xl font-black tracking-tighter uppercase">{formatPrice(grandTotal)}</span>
                   </div>
                 </div>
@@ -288,7 +298,8 @@ export const Checkout = () => {
               <button
                 onClick={handlePlaceOrder}
                 disabled={!isFormValid || isProcessing}
-                className="w-full bg-priority-blue text-white font-black text-[10px] md:text-xs py-4 md:py-5 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 md:gap-4 hover:scale-[1.02] active:scale-98 transition-all shadow-2xl shadow-priority-blue/30 uppercase tracking-[0.15em] md:tracking-[0.2em] disabled:opacity-30 disabled:grayscale h-14 md:h-16 group"
+                className="w-full text-white font-black text-[10px] md:text-xs py-4 md:py-5 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 md:gap-4 hover:scale-[1.02] active:scale-98 transition-all shadow-2xl uppercase tracking-[0.15em] md:tracking-[0.2em] disabled:opacity-30 disabled:grayscale h-14 md:h-16 group"
+                style={{ backgroundColor: accent }}
               >
                 {isProcessing ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

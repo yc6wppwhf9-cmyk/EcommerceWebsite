@@ -234,7 +234,7 @@ export const ProductDetail = () => {
   const handleBuyNow = () => {
     const p = { ...product, image: displayImages[selectedImage] || product.image };
     addItem(p, quantity);
-    navigate('/checkout');
+    navigate(themeKey !== 'default' ? `/checkout?theme=${themeKey}` : '/checkout');
   };
 
   const handleToggleWishlist = () => {

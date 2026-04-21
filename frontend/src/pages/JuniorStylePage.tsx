@@ -33,7 +33,7 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
   return (
     <div className="flex flex-col font-outfit bg-white">
       <Link
-        to={`/product/${product.slug || product.id}`}
+        to={`/product/${product.slug || product.id}?theme=junior`}
         className="relative block rounded-2xl border-2 overflow-hidden bg-white"
         style={{ aspectRatio: '300 / 307', borderColor: accent }}
       >
@@ -81,6 +81,7 @@ export const JuniorStylePage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    sessionStorage.setItem('siteTheme', 'junior');
     api.getProducts({ junior_style: style } as any).then(res => {
       setProducts(res.products as unknown as Product[]);
       setIsLoading(false);

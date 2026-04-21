@@ -151,6 +151,7 @@ export const PremiumCollection = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    sessionStorage.setItem('siteTheme', 'premium');
     Promise.all([
       api.getProducts({ isPremium: 'true', limit: '100' }),
       api.getSetting('premium_editorial_banner').catch(() => null),

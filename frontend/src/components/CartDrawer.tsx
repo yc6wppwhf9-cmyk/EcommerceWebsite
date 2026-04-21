@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
@@ -7,6 +7,10 @@ import { formatPrice } from '../constants/products';
 
 export const CartDrawer = () => {
   const { items, isOpen, toggleCart, total, itemCount, removeItem, updateQuantity } = useCart();
+  const location = useLocation();
+  const urlTheme = new URLSearchParams(location.search).get('theme');
+  const siteTheme = urlTheme || sessionStorage.getItem('siteTheme') || '';
+  const checkoutPath = siteTheme ? `/checkout?theme=${siteTheme}` : '/checkout';
 
   return (
     <AnimatePresence>
@@ -132,7 +136,7 @@ export const CartDrawer = () => {
                 </div>
                 <p className="text-xs text-gray-400">Shipping and taxes calculated at checkout</p>
                 <Link
-                  to="/checkout"
+                  to={checkoutPath}
                   onClick={() => toggleCart(false)}
                   className="block w-full bg-priority-blue text-white font-bold text-sm py-4 rounded-xl text-center hover:bg-priority-dark transition-colors"
                 >
