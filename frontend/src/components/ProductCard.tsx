@@ -83,21 +83,23 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           </h3>
         </Link>
 
-        {/* Stars + reviews */}
-        <div className="flex items-center gap-2">
-          <div className="flex gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={13}
-                className={i < Math.round(product.rating ?? 4) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
-              />
-            ))}
+        {/* Stars + reviews — only shown when real review data exists */}
+        {(product as any).reviews > 0 && (
+          <div className="flex items-center gap-2">
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={13}
+                  className={i < Math.round(product.rating ?? 4) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
+                />
+              ))}
+            </div>
+            <span className="text-[11px] text-gray-400 font-medium">
+              {(product as any).reviews} reviews
+            </span>
           </div>
-          <span className="text-[11px] text-gray-400 font-medium">
-            {(product as any).reviews ?? 0} reviews
-          </span>
-        </div>
+        )}
 
         {/* Price row — Outfit SemiBold 16px #755FF1 */}
         <div className="flex items-baseline gap-2 flex-wrap">

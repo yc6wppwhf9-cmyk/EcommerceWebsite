@@ -454,7 +454,7 @@ export const AdminDashboard = () => {
                               <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Age Range (for Kids)</label>
                               <select value={formData.ageRange} onChange={(e) => setFormData({ ...formData, ageRange: e.target.value })} className={inputCls}>
                                 <option value="">-- Pick Age Group --</option>
-                                <option value="0-2">Infants (0-2 Yrs)</option>
+                                <option value="0-2">Infants (below 3 Yrs)</option>
                                 <option value="3-5">Toddlers (3-5 Yrs)</option>
                                 <option value="6-10">Elementary (6-10 Yrs)</option>
                                 <option value="11-14">Junior / Teen (11-14 Yrs)</option>
@@ -482,6 +482,7 @@ export const AdminDashboard = () => {
 
                         {/* --- ATTRIBUTES (Size & Features) --- */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-priority-blue/5 rounded-2xl border border-priority-blue/10">
+                          {formData.category !== 'backpacks' && formData.subcategory !== 'duffle' && (
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
                             <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} className={inputCls}>
@@ -491,6 +492,7 @@ export const AdminDashboard = () => {
                               <option value="One Size">One Size (Accessories)</option>
                             </select>
                           </div>
+                          )}
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Key Features (Optional)</label>
                             <input
@@ -510,19 +512,19 @@ export const AdminDashboard = () => {
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                             <div className="space-y-2">
                               <label className="text-[10px] font-black text-gray-600 uppercase">Original MRP (₹) <span className="text-red-500">*</span></label>
-                              <input required type="number" value={formData.originalPrice} onChange={(e) => setFormData({ ...formData, originalPrice: parseInt(e.target.value) || 0 })} className={inputCls} />
+                              <input required type="number" placeholder="0" value={formData.originalPrice || ''} onChange={(e) => setFormData({ ...formData, originalPrice: parseInt(e.target.value) || 0 })} className={inputCls} />
                             </div>
                             <div className="space-y-2">
                               <label className="text-[10px] font-black text-priority-blue uppercase">Discount %</label>
-                              <input type="number" min="0" max="99" value={discountPercent} onChange={(e) => setDiscountPercent(parseInt(e.target.value) || 0)} className={`${inputCls} border-priority-blue/30 text-priority-blue`} />
+                              <input type="number" min="0" max="99" placeholder="0" value={discountPercent || ''} onChange={(e) => setDiscountPercent(parseInt(e.target.value) || 0)} className={`${inputCls} border-priority-blue/30 text-priority-blue`} />
                             </div>
                             <div className="space-y-2">
                               <label className="text-[10px] font-black text-gray-900 uppercase">Sale Price <span className="text-red-500">*</span></label>
-                              <input required type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })} className={`${inputCls} bg-gray-100`} />
+                              <input required type="number" placeholder="0" value={formData.price || ''} onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })} className={`${inputCls} bg-gray-100`} />
                             </div>
                             <div className="space-y-2">
                               <label className="text-[10px] font-black text-gray-600 uppercase">Initial Stock <span className="text-red-500">*</span></label>
-                              <input required type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })} className={inputCls} />
+                              <input required type="number" placeholder="0" value={formData.stock || ''} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })} className={inputCls} />
                             </div>
                           </div>
                         </div>
