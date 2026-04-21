@@ -45,6 +45,12 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   ],
   junior: [
     { value: 'school-backpacks', label: 'School Backpacks' },
+    { value: 'trolley-backpacks', label: 'Trolley Backpacks' },
+    { value: 'combo-set', label: 'Combo Set' },
+    { value: 'pouches', label: 'Pouches' },
+    { value: 'lunch-bags', label: 'Lunch Bags' },
+    { value: 'dreamy', label: 'Dreamy Style' },
+    { value: 'power', label: 'Power Style' },
     { value: 'kids-accessories', label: 'Kids Accessories' },
   ],
   premium: [
