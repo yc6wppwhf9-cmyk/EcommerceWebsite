@@ -203,11 +203,101 @@ const BestSellerCard = ({ product }: { product: Product }) => (
   </div>
 );
 
+const DRAW_COLORS = ['#F69245', '#8750DA', '#FFBB5A', '#FF6B6B', '#4ECDC4', '#000000'];
+
 export const JuniorPage = () => {
   const [activeTab, setActiveTab] = useState('School Backpacks');
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [drawColor, setDrawColor] = useState('#F69245');
+  const [brushSize, setBrushSize] = useState(5);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDrawingRef = useRef(false);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
+  const drawSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const section = drawSectionRef.current;
+    if (!canvas || !section) return;
+    const syncSize = () => {
+      const { width, height } = section.getBoundingClientRect();
+      if (canvas.width !== Math.round(width) || canvas.height !== Math.round(height)) {
+        canvas.width = Math.round(width);
+        canvas.height = Math.round(height);
+      }
+    };
+    syncSize();
+    const ro = new ResizeObserver(syncSize);
+    ro.observe(section);
+    return () => ro.disconnect();
+  }, []);
+
+  const getPos = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if ('touches' in e) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY,
+      };
+    }
+    return {
+      x: ((e as React.MouseEvent).clientX - rect.left) * scaleX,
+      y: ((e as React.MouseEvent).clientY - rect.top) * scaleY,
+    };
+  };
+
+  const startDraw = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    isDrawingRef.current = true;
+    const pos = getPos(e);
+    lastPosRef.current = pos;
+    if (pos) {
+      const ctx = canvasRef.current?.getContext('2d');
+      if (ctx) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, brushSize / 2, 0, Math.PI * 2);
+        ctx.fillStyle = drawColor;
+        ctx.fill();
+      }
+    }
+  };
+
+  const onDraw = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    if (!isDrawingRef.current) return;
+    const ctx = canvasRef.current?.getContext('2d');
+    const pos = getPos(e);
+    if (!ctx || !pos || !lastPosRef.current) return;
+    {
+      ctx.beginPath();
+      ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.strokeStyle = drawColor;
+      ctx.lineWidth = brushSize;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+    lastPosRef.current = pos;
+  };
+
+  const endDraw = () => {
+    isDrawingRef.current = false;
+    lastPosRef.current = null;
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (canvas) canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -242,8 +332,55 @@ export const JuniorPage = () => {
         />
       </section>
 
-      <section className="pt-12 md:pt-16 pb-16 md:pb-24 bg-white relative overflow-hidden">
+      <section ref={drawSectionRef} className="pt-12 md:pt-16 pb-16 md:pb-24 bg-white relative overflow-hidden">
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none select-none" />
+
+        {/* Drawing canvas */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 z-50"
+          style={{ width: '100%', height: '100%', pointerEvents: drawingMode ? 'auto' : 'none', cursor: drawingMode ? 'crosshair' : 'inherit', touchAction: 'none' }}
+          onMouseDown={startDraw}
+          onMouseMove={onDraw}
+          onMouseUp={endDraw}
+          onMouseLeave={endDraw}
+          onTouchStart={startDraw}
+          onTouchMove={onDraw}
+          onTouchEnd={endDraw}
+        />
+
+        {/* Draw / Erase buttons */}
+        <div className="absolute top-4 right-4 z-[60] flex items-center gap-2">
+          <button
+            onClick={clearCanvas}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+            style={{ background: '#fff', color: '#e53e3e', border: '2px solid #e53e3e' }}
+          >
+            Erase
+          </button>
+          <button
+            onClick={() => setDrawingMode(d => !d)}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+            style={{ background: drawingMode ? '#8750DA' : '#fff', color: drawingMode ? '#fff' : '#8750DA', border: '2px solid #8750DA' }}
+          >
+            ✏️ {drawingMode ? 'Done' : 'Draw'}
+          </button>
+        </div>
+
+        {/* Toolbar (visible when drawing) */}
+        {drawingMode && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+            {DRAW_COLORS.map(c => (
+              <button key={c} onClick={() => setDrawColor(c)}
+                className="w-6 h-6 rounded-full transition-transform hover:scale-110"
+                style={{ backgroundColor: c, outline: drawColor === c ? '2px solid #000' : '2px solid transparent', outlineOffset: '2px' }}
+              />
+            ))}
+            <div className="w-px h-5 bg-gray-200 mx-1" />
+            <input type="range" min={2} max={20} value={brushSize} onChange={e => setBrushSize(+e.target.value)} className="w-16 accent-[#8750DA]" />
+          </div>
+        )}
+
         <div className="max-w-[1280px] mx-auto px-6 md:px-14 relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
@@ -280,8 +417,7 @@ export const JuniorPage = () => {
             <div className="relative w-[220px] sm:w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
               <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 md:pt-6">
-                <span className="font-outfit uppercase tracking-[0.2em] mb-1 md:mb-2" style={{ fontSize: 'clamp(14px, 4vw, 28.36px)', fontWeight: 400, color: '#966512' }}>New Arrival</span>
-                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto" style={{ fontSize: 'clamp(20px, 6.5vw, 50.82px)', color: '#FFFFFF', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
+                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto text-center" style={{ fontSize: 'clamp(20px, 6.5vw, 50.82px)', color: '#FFFFFF', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
               </div>
             </div>
           </div>
