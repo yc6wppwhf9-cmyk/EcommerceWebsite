@@ -29,7 +29,6 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
     { value: 'college-backpacks', label: 'College Backpacks' },
     { value: 'school-backpacks', label: 'School Backpacks' },
     { value: 'laptop-backpacks', label: 'Laptop Backpacks' },
-    { value: 'office-backpacks', label: 'Office Backpacks' },
     { value: 'trekking-backpacks', label: 'Trekking Backpacks' },
   ],
   travel: [
@@ -94,9 +93,9 @@ export const AdminDashboard = () => {
 
   // Banner settings state
   const BANNER_OPTIONS = [
-    { value: 'luggage',   label: 'Luggage',   url: '/luggage?theme=premium' },
-    { value: 'backpacks', label: 'Backpacks',  url: '/backpacks?theme=premium' },
-    { value: 'duffle',    label: 'Duffels',    url: '/duffle?theme=premium' },
+    { value: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' },
+    { value: 'backpacks', label: 'Backpacks', url: '/backpacks?theme=premium' },
+    { value: 'duffle', label: 'Duffels', url: '/duffle?theme=premium' },
   ];
   const [editorialBanner, setEditorialBanner] = useState({ category: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' });
   const [bannerSaving, setBannerSaving] = useState(false);
@@ -104,7 +103,7 @@ export const AdminDashboard = () => {
   useEffect(() => {
     api.getSetting('premium_editorial_banner')
       .then(val => { if (val?.category) setEditorialBanner(val); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const saveEditorialBanner = async () => {
@@ -238,7 +237,7 @@ export const AdminDashboard = () => {
         slug: (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7),
         sub_category: formData.subcategory || '',
         features: formData.features || [],
-        images: formData.images || [],
+        images: (formData.images || []).filter(Boolean),
         colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.images || [] })) : []
       };
 
@@ -373,11 +372,10 @@ export const AdminDashboard = () => {
                 <button
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setIsAddingProduct(false); setEditingProduct(null); setSelectedOrder(null); }}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shrink-0 whitespace-nowrap ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shrink-0 whitespace-nowrap ${activeTab === tab.id
                       ? 'bg-priority-blue text-white shadow-md'
                       : 'text-gray-500 bg-white border border-gray-100'
-                  }`}
+                    }`}
                 >
                   <tab.icon size={13} />
                   {tab.label}
@@ -391,8 +389,8 @@ export const AdminDashboard = () => {
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setIsAddingProduct(false); setEditingProduct(null); setSelectedOrder(null); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all ${activeTab === tab.id
-                      ? 'bg-priority-blue text-white shadow-md'
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-[var(--color-bg-card)] border border-transparent'
+                    ? 'bg-priority-blue text-white shadow-md'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-[var(--color-bg-card)] border border-transparent'
                     }`}
                 >
                   <tab.icon size={16} />
@@ -423,14 +421,14 @@ export const AdminDashboard = () => {
 
                   {isAddingProduct ? (
                     <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-2xl max-w-3xl mx-auto overflow-hidden">
-                        <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-5">
-                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">{editingProduct ? 'Edit Product File' : 'Register New Item'}</h3>
-                            <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); setVariants([]); setDiscountPercent(0); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                                <X size={20} />
-                            </button>
-                        </div>
-                        
-                        <form onSubmit={handleSaveProduct} className="space-y-10">
+                      <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-5">
+                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">{editingProduct ? 'Edit Product File' : 'Register New Item'}</h3>
+                        <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); setVariants([]); setDiscountPercent(0); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                          <X size={20} />
+                        </button>
+                      </div>
+
+                      <form onSubmit={handleSaveProduct} className="space-y-10">
 
                         {/* --- BASIC INFO --- */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -482,16 +480,16 @@ export const AdminDashboard = () => {
                         {/* --- ATTRIBUTES (Size & Features) --- */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-priority-blue/5 rounded-2xl border border-priority-blue/10">
                           {formData.category !== 'backpacks' && formData.subcategory !== 'duffle' && (
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
-                            <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} className={inputCls}>
-                              <option value="">-- None --</option>
-                              <option value="Small">Small / Cabin</option>
-                              <option value="Medium">Medium / Check-in</option>
-                              <option value="Large">Large / XL</option>
-                              <option value="One Size">One Size (Accessories)</option>
-                            </select>
-                          </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
+                              <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} className={inputCls}>
+                                <option value="">-- None --</option>
+                                <option value="Small">Small / Cabin</option>
+                                <option value="Medium">Medium / Check-in</option>
+                                <option value="Large">Large / XL</option>
+                                <option value="One Size">One Size (Accessories)</option>
+                              </select>
+                            </div>
                           )}
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Key Features (Optional)</label>
@@ -556,18 +554,19 @@ export const AdminDashboard = () => {
 
                         {/* --- MULTI-IMAGE GALLERY --- */}
                         <div className="pt-8 border-t border-gray-100">
-                            <div className="flex items-center gap-6">
-                              <div className="flex-1">
-                                <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Showcase Photo Gallery <span className="text-red-500">*</span></label>
-                                <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">First photo is the primary cover image</p>
-                              </div>
-                              <CloudinaryUpload
-                                label=""
-                                value=""
-                                multiple={true}
-                                onBulkChange={(urls) => setFormData(prev => ({ ...prev, images: [...(prev.images || []), ...urls] }))}
-                              />
+                          <div className="flex items-center gap-6">
+                            <div className="flex-1">
+                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Showcase Photo Gallery <span className="text-red-500">*</span></label>
+                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">First photo is the primary cover image</p>
                             </div>
+                            <CloudinaryUpload
+                              label=""
+                              value=""
+                              multiple={true}
+                              onChange={() => { }}
+                              onBulkChange={(urls) => setFormData(prev => ({ ...prev, images: [...(prev.images || []).filter(Boolean), ...urls] }))}
+                            />
+                          </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {(formData.images || ['']).map((img, idx) => (
@@ -576,9 +575,11 @@ export const AdminDashboard = () => {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      const newImgs = [...(formData.images || [])];
-                                      newImgs.splice(idx, 1);
-                                      setFormData(prev => ({ ...prev, images: newImgs }));
+                                      setFormData(prev => {
+                                        const newImgs = [...(prev.images || [])];
+                                        newImgs.splice(idx, 1);
+                                        return { ...prev, images: newImgs };
+                                      });
                                     }}
                                     className="absolute -top-3 -right-3 w-8 h-8 bg-white border border-red-100 text-red-500 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/g:opacity-100 transition-all z-10 hover:bg-red-500 hover:text-white"
                                   >
@@ -589,11 +590,12 @@ export const AdminDashboard = () => {
                                   label={idx === 0 ? "Main Cover Image" : `Gallery Photo #${idx + 1}`}
                                   value={img}
                                   onChange={(url) => {
-                                    const newImgs = [...(formData.images || [])];
-                                    // Ensure array is long enough if we were at default
-                                    if (newImgs.length === 0) newImgs.push('');
-                                    newImgs[idx] = url;
-                                    setFormData(prev => ({ ...prev, images: newImgs }));
+                                    setFormData(prev => {
+                                      const newImgs = [...(prev.images || [])];
+                                      while (newImgs.length <= idx) newImgs.push('');
+                                      newImgs[idx] = url;
+                                      return { ...prev, images: newImgs };
+                                    });
                                   }}
                                 />
                               </div>
@@ -603,17 +605,17 @@ export const AdminDashboard = () => {
 
                         {/* --- COLOUR VARIANTS --- */}
                         <div className="pt-6 border-t border-gray-100">
-                            <div className="flex items-center gap-6">
-                              <div className="flex-1">
-                                <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos (Optional)</label>
-                                <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Add specific photos for different bag colours</p>
-                              </div>
-                              <div className="flex gap-4">
-                                <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all">
-                                  + Create Colour Group
-                                </button>
-                              </div>
+                          <div className="flex items-center gap-6">
+                            <div className="flex-1">
+                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos (Optional)</label>
+                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Add specific photos for different bag colours</p>
                             </div>
+                            <div className="flex gap-4">
+                              <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all">
+                                + Create Colour Group
+                              </button>
+                            </div>
+                          </div>
 
                           <div className="space-y-6">
                             {variants.map((v, i) => (
@@ -634,44 +636,44 @@ export const AdminDashboard = () => {
                                   </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <CloudinaryUpload 
-                                      label="" 
-                                      value="" 
-                                      multiple={true}
-                                      onBulkChange={(urls) => {
-                                        const newImgs = [...(v.images || []), ...urls];
-                                        updateVariant(i, 'images', newImgs);
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {(v.images || ['']).map((vImg, vIdx) => (
-                                      <div key={vIdx} className="relative group/vi bg-white p-2 rounded-xl border border-gray-100">
-                                         {vIdx >= 0 && (
-                                           <button 
-                                             type="button" 
-                                             onClick={() => {
-                                               const newImgs = [...(v.images || [])];
-                                               newImgs.splice(vIdx, 1);
-                                               updateVariant(i, 'images', newImgs);
-                                             }}
-                                             className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md z-10"
-                                           >
-                                             <X size={12} />
-                                           </button>
-                                         )}
-                                         <CloudinaryUpload 
-                                           label="" 
-                                           value={vImg} 
-                                           onChange={(url) => {
-                                             const newImgs = [...(v.images || [])];
-                                             newImgs[vIdx] = url;
-                                             updateVariant(i, 'images', newImgs);
-                                           }} 
-                                         />
-                                      </div>
-                                    ))}
-                                  </div>
+                                  <CloudinaryUpload
+                                    label=""
+                                    value=""
+                                    multiple={true}
+                                    onBulkChange={(urls) => {
+                                      const newImgs = [...(v.images || []), ...urls];
+                                      updateVariant(i, 'images', newImgs);
+                                    }}
+                                  />
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {(v.images || ['']).map((vImg, vIdx) => (
+                                    <div key={vIdx} className="relative group/vi bg-white p-2 rounded-xl border border-gray-100">
+                                      {vIdx >= 0 && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const newImgs = [...(v.images || [])];
+                                            newImgs.splice(vIdx, 1);
+                                            updateVariant(i, 'images', newImgs);
+                                          }}
+                                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md z-10"
+                                        >
+                                          <X size={12} />
+                                        </button>
+                                      )}
+                                      <CloudinaryUpload
+                                        label=""
+                                        value={vImg}
+                                        onChange={(url) => {
+                                          const newImgs = [...(v.images || [])];
+                                          newImgs[vIdx] = url;
+                                          updateVariant(i, 'images', newImgs);
+                                        }}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -694,7 +696,7 @@ export const AdminDashboard = () => {
                     </div>
                   ) : fetchLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                      {[1,2,3,4,5,6].map(n => (
+                      {[1, 2, 3, 4, 5, 6].map(n => (
                         <div key={n} className="bg-white p-5 rounded-2xl border border-gray-100 flex gap-4">
                           <div className="w-20 h-20 bg-gray-100 animate-pulse rounded-xl shrink-0" />
                           <div className="flex-1 space-y-2 pt-1">
@@ -725,26 +727,26 @@ export const AdminDashboard = () => {
                               </p>
                               <h4 className="text-[11px] font-black text-gray-900 truncate leading-tight mt-1 mb-0.5">{p.name || 'Unnamed Product'}</h4>
                               <p className="text-[10px] font-bold text-gray-400 tracking-tight">
-                                ₹ {(p.price || 0).toLocaleString()} 
+                                ₹ {(p.price || 0).toLocaleString()}
                                 <span className="line-through text-[8px] ml-1 opacity-50 font-normal">
                                   ₹ {(p.originalPrice || p.original_price || p.price || 0).toLocaleString()}
                                 </span>
                               </p>
                             </div>
                             <div className="flex gap-4 mt-3">
-                              <button onClick={() => { 
-                                setEditingProduct(p); 
+                              <button onClick={() => {
+                                setEditingProduct(p);
                                 setFormData({
                                   ...p,
                                   originalPrice: p.original_price || p.originalPrice || 0,
                                   category: p.categories?.slug || p.category || ''
-                                }); 
-                                setVariants((p.colors || p.variants || []).map((v: any) => ({ 
-                                  color: v.name || v.color || '', 
-                                  colorCode: v.code || v.colorCode || '#000', 
-                                  image: v.image || (v.images?.[0]) || '' 
-                                }))); 
-                                setIsAddingProduct(true); 
+                                });
+                                setVariants((p.colors || p.variants || []).map((v: any) => ({
+                                  color: v.name || v.color || '',
+                                  colorCode: v.code || v.colorCode || '#000',
+                                  image: v.image || (v.images?.[0]) || ''
+                                })));
+                                setIsAddingProduct(true);
                               }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
                               <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
                             </div>
@@ -774,8 +776,8 @@ export const AdminDashboard = () => {
                             <div className="flex items-center gap-3 mb-2">
                               <span className="text-[11px] font-black text-gray-900">#ORD-{order.id.slice(0, 8).toUpperCase()}</span>
                               <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${order.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                  order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                                    order.status === 'delivered' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
+                                order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                  order.status === 'delivered' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
                                 }`}>
                                 {order.status}
                               </span>
@@ -964,7 +966,7 @@ export const AdminDashboard = () => {
                                   {job.status}
                                 </span>
                               </div>
-                              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{job.location} &bull; {job.job_type}{job.salary_min ? ` · ₹${(job.salary_min/100000).toFixed(1)}L` : ''}{job.salary_max ? `–${(job.salary_max/100000).toFixed(1)}L` : ''}</p>
+                              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{job.location} &bull; {job.job_type}{job.salary_min ? ` · ₹${(job.salary_min / 100000).toFixed(1)}L` : ''}{job.salary_max ? `–${(job.salary_max / 100000).toFixed(1)}L` : ''}</p>
                             </div>
                             <div className="flex gap-2 shrink-0">
                               <button onClick={() => { setEditingJob(job); setJobForm({ title: job.title, description: job.description, location: job.location, department: job.department || '', job_type: job.job_type, salary_min: job.salary_min, salary_max: job.salary_max, requirements: job.requirements || '', status: job.status }); setIsAddingJob(true); }}

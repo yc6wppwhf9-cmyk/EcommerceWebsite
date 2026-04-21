@@ -6,6 +6,64 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
+type Spark = { id: number; angle: number; dist: number; size: number };
+
+const burst = (count: number) =>
+  Array.from({ length: count }, (_, i) => ({
+    id: Date.now() + i,
+    angle: (i / count) * 360 + Math.random() * 22,
+    dist: 40 + Math.random() * 50,
+    size: 24 + Math.random() * 20,
+  }));
+
+const SparkleLink = ({ to, children, sparkImg, delay = 0 }: { to: string; children: React.ReactNode; sparkImg: string; delay?: number }) => {
+  const [sparks, setSparks] = useState<Spark[]>([]);
+
+  useEffect(() => {
+    const fire = () => {
+      setSparks(burst(16));
+      setTimeout(() => setSparks([]), 700);
+    };
+    const t1 = setTimeout(fire, delay);
+    // repeat every 3 seconds
+    const t2 = setInterval(fire, 3000 + delay);
+    return () => { clearTimeout(t1); clearInterval(t2); };
+  }, [delay]);
+
+  return (
+    <div className="relative inline-block overflow-visible">
+      <Link
+        to={to}
+        className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+        style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}
+      >
+        {children}
+      </Link>
+      <AnimatePresence>
+        {sparks.map(s => (
+          <motion.img
+            key={s.id}
+            src={sparkImg}
+            alt=""
+            aria-hidden
+            className="absolute pointer-events-none select-none"
+            style={{ width: s.size, height: s.size, top: '50%', left: '50%', zIndex: 9999, objectFit: 'contain' }}
+            initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+            animate={{
+              x: Math.cos((s.angle * Math.PI) / 180) * s.dist,
+              y: Math.sin((s.angle * Math.PI) / 180) * s.dist,
+              scale: 0,
+              opacity: 0,
+              rotate: 180,
+            }}
+            transition={{ duration: 0.65, ease: [0.2, 0.8, 0.4, 1] }}
+          />
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
   { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', color: '#A368FB' },
@@ -137,7 +195,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
       {/* Info */}
       <div className="pt-3 space-y-1.5">
-        <Link to={`/product/${product.slug || product.id}`}>
+        <Link to={`/product/${product.slug || product.id}?theme=junior`}>
           <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors">
             {product.name}
           </h3>
@@ -306,20 +364,26 @@ export const JuniorPage = () => {
     document.documentElement.classList.remove('dark');
     sessionStorage.setItem('siteTheme', 'junior');
     const juniorCategories = ['school-backpacks', 'trolley-backpacks', 'lunch-bags', 'combo-set', 'pouches'];
-    Promise.all([
-      api.getProducts({ category: 'school-backpacks', limit: '8' }),
-      Promise.all(juniorCategories.map(cat => api.getProducts({ category: cat, sort: 'rating', limit: '4' }))),
-    ]).then(([school, juniorResults]) => {
-      setProducts(school.products as unknown as Product[]);
-      const seen = new Set<string>();
-      const combined = juniorResults
-        .flatMap(r => r.products as unknown as Product[])
-        .filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; })
-        .slice(0, 8);
-      setBestSellers(combined);
-      setIsLoading(false);
-    }).catch(() => setIsLoading(false));
+    Promise.all(juniorCategories.map(cat => api.getProducts({ category: 'junior', sub_category: cat, sort: 'rating', limit: '4' })))
+      .then(juniorResults => {
+        const seen = new Set<string>();
+        const combined = juniorResults
+          .flatMap(r => r.products as unknown as Product[])
+          .filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; })
+          .slice(0, 8);
+        setBestSellers(combined);
+        setIsLoading(false);
+      }).catch(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    const cat = CATEGORIES.find(c => c.label === activeTab);
+    if (!cat) return;
+    setIsLoading(true);
+    api.getProducts({ category: 'junior', sub_category: cat.filter, limit: '8' })
+      .then(res => { setProducts(res.products as unknown as Product[]); setIsLoading(false); })
+      .catch(() => setIsLoading(false));
+  }, [activeTab]);
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden junior-theme">
@@ -425,8 +489,8 @@ export const JuniorPage = () => {
             </div>
           </div>
           <div className="flex gap-8 md:gap-32 mt-4 md:mt-6 relative z-10">
-            <Link to="/junior/dreamy" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Dreamy Styles</Link>
-            <Link to="/junior/power" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Power Styles</Link>
+            <SparkleLink to="/junior/dreamy" sparkImg="/junior/Dreamy.png" delay={300}>Dreamy Styles</SparkleLink>
+            <SparkleLink to="/junior/power" sparkImg="/junior/Power.png" delay={900}>Power Styles</SparkleLink>
           </div>
         </div>
       </section>
@@ -468,13 +532,13 @@ export const JuniorPage = () => {
             </div>
             <div className="flex-1">
               {isLoading ? (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-                  {[1, 2, 3].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                <div className="flex flex-row gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
+                  {[1, 2, 3].map(n => <div key={n} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
                 </div>
               ) : products.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+                <div className="flex flex-row gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
                   {products.slice(0, 5).map((product, idx) => (
-                    <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                    <motion.div key={product.id} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}
                 </div>
               ) : (

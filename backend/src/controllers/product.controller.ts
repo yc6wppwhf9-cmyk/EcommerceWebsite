@@ -3,44 +3,44 @@ import { supabase } from '../config/supabase';
 import * as xlsx from 'xlsx';
 
 export const getProducts = async (req: Request, res: Response) => {
-    const { category, sub_category, gender, isPremium, junior_style, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
+  const { category, sub_category, gender, isPremium, junior_style, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
-    try {
-      let query = supabase
-        .from('products')
-        .select('*, categories(slug, title)');
+  try {
+    let query = supabase
+      .from('products')
+      .select('*, categories(slug, title)');
 
-      // Storefront filters active products; Admin passes no filters and sees everything
-      if (category || isPremium || gender || sub_category || search) {
-        query = query.eq('is_active', true);
-      }
+    // Storefront filters active products; Admin passes no filters and sees everything
+    if (category || isPremium || gender || sub_category || search) {
+      query = query.eq('is_active', true);
+    }
 
-      if (category && category !== 'premium') {
-        const { data: cat } = await supabase.from('categories').select('id').eq('slug', category).maybeSingle();
-        if (cat) {
-          // Match by direct category_id OR by sub_category (handles subcategory tab pages
-          // where products are stored under the parent category_id but tagged via sub_category)
-          query = query.or(`category_id.eq.${cat.id},sub_category.eq.${category}`);
-        } else {
-          query = query.eq('sub_category', category);
-        }
+    if (category && category !== 'premium') {
+      const { data: cat } = await supabase.from('categories').select('id').eq('slug', category).maybeSingle();
+      if (cat) {
+        // Match by direct category_id OR by sub_category (handles subcategory tab pages
+        // where products are stored under the parent category_id but tagged via sub_category)
+        query = query.or(`category_id.eq.${cat.id},sub_category.eq.${category}`);
+      } else {
+        query = query.eq('sub_category', category);
       }
-      
-      if (sub_category) {
-        query = query.eq('sub_category', sub_category);
-      }
-      
-      if (gender) {
-        query = query.eq('gender', gender);
-      }
+    }
 
-      if (isPremium === 'true' || category === 'premium') {
-        query = query.eq('is_premium', true);
-      }
+    if (sub_category) {
+      query = query.eq('sub_category', sub_category);
+    }
 
-      if (junior_style) {
-        query = query.eq('junior_style', junior_style).eq('is_active', true);
-      }
+    if (gender) {
+      query = query.eq('gender', gender);
+    }
+
+    if (isPremium === 'true' || category === 'premium') {
+      query = query.eq('is_premium', true);
+    }
+
+    if (junior_style) {
+      query = query.eq('junior_style', junior_style).eq('is_active', true);
+    }
     if (min_price) query = query.gte('price', Number(min_price));
     if (max_price) query = query.lte('price', Number(max_price));
     if (search) {
@@ -50,10 +50,10 @@ export const getProducts = async (req: Request, res: Response) => {
     }
 
     const sortMap: Record<string, { column: string; ascending: boolean }> = {
-      'price-asc':  { column: 'price', ascending: true },
+      'price-asc': { column: 'price', ascending: true },
       'price-desc': { column: 'price', ascending: false },
-      'rating':     { column: 'rating', ascending: false },
-      'newest':     { column: 'created_at', ascending: false },
+      'rating': { column: 'rating', ascending: false },
+      'newest': { column: 'created_at', ascending: false },
     };
     const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
     query = query.order(s.column, { ascending: s.ascending });
@@ -76,8 +76,8 @@ export const getProducts = async (req: Request, res: Response) => {
     res.json({ products: data, page: pageNum, limit: limitNum });
   } catch (err: any) {
     console.error('❌ Products List Controller Exception:', err);
-    res.status(500).json({ 
-      error: 'Database error', 
+    res.status(500).json({
+      error: 'Database error',
       message: err.message,
       ...(process.env.NODE_ENV === 'development' && { details: err })
     });
@@ -116,7 +116,7 @@ export const createProduct = async (req: Request, res: Response) => {
       const byName = await supabase.from('categories').select('id').ilike('name', catName).maybeSingle();
       catData = byName.data;
     }
-    
+
     // 2. Clean up & Map
     const productData = {
       sku: body.sku || 'PB-' + Math.random().toString(36).substring(2, 7).toUpperCase(),
@@ -142,8 +142,8 @@ export const createProduct = async (req: Request, res: Response) => {
     };
 
     if (!productData.category_id) {
-       const { data: fallback } = await supabase.from('categories').select('id').limit(1).single();
-       if (fallback) productData.category_id = fallback.id;
+      const { data: fallback } = await supabase.from('categories').select('id').limit(1).single();
+      if (fallback) productData.category_id = fallback.id;
     }
 
     const { data, error } = await supabase.from('products').insert(productData).select().single();
@@ -157,13 +157,13 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   const allowed = [
-    'name', 'description', 'price', 'original_price', 'stock', 
-    'is_active', 'is_new', 'is_highlighted', 'image', 'images', 
-    'colors', 'features', 'category_id', 'is_premium', 'gender', 
+    'name', 'description', 'price', 'original_price', 'stock',
+    'is_active', 'is_new', 'is_highlighted', 'image', 'images',
+    'colors', 'features', 'category_id', 'is_premium', 'gender',
     'size', 'age_range', 'sub_category', 'junior_style'
   ];
   const updates: any = {};
-  allowed.forEach((f) => { 
+  allowed.forEach((f) => {
     if (req.body[f] !== undefined) updates[f] = req.body[f];
     // Also handle camelCase mappings
     if (f === 'original_price' && req.body.originalPrice !== undefined) updates[f] = req.body.originalPrice;

@@ -119,7 +119,7 @@ const AccordionItem = ({ id, title, children, openAccordion, setOpenAccordion, a
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
-  const themeKey = (searchParams.get('theme') ?? 'default') as keyof typeof THEMES;
+  const themeKey = (searchParams.get('theme') || sessionStorage.getItem('siteTheme') || 'default') as keyof typeof THEMES;
   const theme = THEMES[themeKey] ?? THEMES.default;
   const navigate = useNavigate();
   const { addItem, showToast } = useCart();

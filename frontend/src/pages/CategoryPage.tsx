@@ -5,7 +5,7 @@ import { getCategoryBySlug, CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, X, SlidersHorizontal, ChevronRight } from 'lucide-react';
+import { ChevronDown, X, SlidersHorizontal, ChevronRight, LayoutGrid, AlignJustify } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
 const PAGE_LIMIT = 20;
@@ -42,6 +42,7 @@ export const CategoryPage = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [openFilters, setOpenFilters] = useState<string[]>(['subcategories', 'price', 'gender', 'sizes', 'features', 'colors']);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [mobileGridCols, setMobileGridCols] = useState<1 | 2>(2);
 
   // Subcategories for this slug
   const subcategories = useMemo(() => CATEGORIES.filter(c => c.parentCategory === slug), [slug]);
@@ -423,18 +424,36 @@ export const CategoryPage = () => {
         <div className="container mx-auto px-4 md:px-12 pb-24">
           {/* Top bar: mobile filter button + sort */}
           <div className="flex items-center justify-between mb-8 md:mb-12 gap-3">
-            <button
-              className="lg:hidden flex items-center gap-2 px-3 py-2 border border-gray-200 text-[10px] font-black uppercase tracking-widest hover:border-gray-900 transition-colors"
-              onClick={() => setMobileFilterOpen(true)}
-            >
-              <SlidersHorizontal size={13} />
-              Filters
-              {activeFilterCount > 0 && (
-                <span className="ml-1 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
+            <div className="lg:hidden flex items-center gap-2">
+              <button
+                className="flex items-center gap-2 px-3 py-2 border border-gray-200 text-[10px] font-black uppercase tracking-widest hover:border-gray-900 transition-colors"
+                onClick={() => setMobileFilterOpen(true)}
+              >
+                <SlidersHorizontal size={13} />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="ml-1 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+              <div className="flex border border-gray-200">
+                <button
+                  onClick={() => setMobileGridCols(1)}
+                  className={`p-2 transition-colors ${mobileGridCols === 1 ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
+                  title="Single column"
+                >
+                  <AlignJustify size={14} />
+                </button>
+                <button
+                  onClick={() => setMobileGridCols(2)}
+                  className={`p-2 transition-colors ${mobileGridCols === 2 ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
+                  title="Two columns"
+                >
+                  <LayoutGrid size={14} />
+                </button>
+              </div>
+            </div>
 
             <div className="flex items-center gap-4 bg-white border border-gray-100 px-4 py-2 hover:border-gray-900 transition-colors ml-auto">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
@@ -553,7 +572,7 @@ export const CategoryPage = () => {
                 {isLoading ? (
                   <div
                     key="skeleton"
-                    className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-10 md:gap-y-16"
+                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} lg:grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-10 md:gap-y-16`}
                   >
                     {[...Array(6)].map((_, i) => (
                       <div key={i} className="aspect-[4/5] bg-gray-50 animate-pulse rounded" />
@@ -563,7 +582,7 @@ export const CategoryPage = () => {
                   <motion.div
                     key="grid"
                     layout
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-8 lg:gap-x-10 gap-y-10 md:gap-y-20 lg:gap-y-28"
+                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-8 lg:gap-x-10 gap-y-10 md:gap-y-20 lg:gap-y-28`}
                   >
                     {filteredProducts.map((product, idx) => (
                       <motion.div

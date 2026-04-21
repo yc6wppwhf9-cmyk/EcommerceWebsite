@@ -20,120 +20,120 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const { items, toggleCart } = useCart();
   return (
     <>
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center px-6 md:px-12">
-      <div className="flex-1 flex items-center gap-8">
-        <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
-            HOME
-          </Link>
-          <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-            <button className="flex items-center gap-1.5 text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
-              COLLECTION <ChevronDown size={13} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
-            </button>
-            <AnimatePresence>
-              {open && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
-                >
-                  {collectionLinks.map(item => (
-                    <Link
-                      key={item.slug}
-                      to={item.slug}
-                      className="block px-5 py-3 text-[13px] font-semibold tracking-[0.12em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute left-1/2 -translate-x-1/2">
-        <Link to="/premium">
-          <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
-        </Link>
-      </div>
-
-      <div className="flex items-center gap-5 flex-1 justify-end">
-        <button
-          onClick={onSearchOpen}
-          className="hidden md:block text-white hover:opacity-70 transition-opacity"
-        >
-          <Search size={18} strokeWidth={1.5} />
-        </button>
-        <button onClick={() => toggleCart()} className="hidden md:block text-white hover:opacity-70 transition-opacity relative">
-          <ShoppingBag size={18} strokeWidth={1.5} />
-          {items.length > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{items.length}</span>
-          )}
-        </button>
-        <Link to="/account" className="hidden md:block text-white hover:opacity-70 transition-opacity">
-          <User size={18} strokeWidth={1.5} />
-        </Link>
-        <button
-          className="md:hidden text-white hover:opacity-70 transition-opacity"
-          onClick={() => setMobileMenuOpen(v => !v)}
-          aria-label="Menu"
-        >
-          <div className="flex flex-col gap-[5px]">
-            <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
-            <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
-          </div>
-        </button>
-      </div>
-    </nav>
-
-    <AnimatePresence>
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="fixed top-14 left-0 right-0 z-40 bg-black border-t border-white/10 md:hidden"
-        >
-          <div className="flex flex-col py-2">
-            <Link
-              to="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-6 py-4 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white/5 transition-colors"
-            >
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center px-6 md:px-12">
+        <div className="flex-1 flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8">
+            <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
               HOME
             </Link>
-            <div className="px-6 py-3">
-              <p className="text-white/40 text-[10px] font-semibold tracking-[0.2em] uppercase mb-2">COLLECTION</p>
-              {collectionLinks.map(item => (
-                <Link
-                  key={item.slug}
-                  to={item.slug}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+              <button className="flex items-center gap-1.5 text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
+                COLLECTION <ChevronDown size={13} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {open && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
+                  >
+                    {collectionLinks.map(item => (
+                      <Link
+                        key={item.slug}
+                        to={item.slug}
+                        className="block px-5 py-3 text-[13px] font-semibold tracking-[0.12em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <Link to="/premium">
+            <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-5 flex-1 justify-end">
+          <button
+            onClick={onSearchOpen}
+            className="hidden md:block text-white hover:opacity-70 transition-opacity"
+          >
+            <Search size={18} strokeWidth={1.5} />
+          </button>
+          <button onClick={() => toggleCart()} className="hidden md:block text-white hover:opacity-70 transition-opacity relative">
+            <ShoppingBag size={18} strokeWidth={1.5} />
+            {items.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{items.length}</span>
+            )}
+          </button>
+          <Link to="/account" className="hidden md:block text-white hover:opacity-70 transition-opacity">
+            <User size={18} strokeWidth={1.5} />
+          </Link>
+          <button
+            className="md:hidden text-white hover:opacity-70 transition-opacity"
+            onClick={() => setMobileMenuOpen(v => !v)}
+            aria-label="Menu"
+          >
+            <div className="flex flex-col gap-[5px]">
+              <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+              <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+              <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+            </div>
+          </button>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-14 left-0 right-0 z-40 bg-black border-t border-white/10 md:hidden"
+          >
+            <div className="flex flex-col py-2">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-6 py-4 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white/5 transition-colors"
+              >
+                HOME
+              </Link>
+              <div className="px-6 py-3">
+                <p className="text-white/40 text-[10px] font-semibold tracking-[0.2em] uppercase mb-2">COLLECTION</p>
+                {collectionLinks.map(item => (
+                  <Link
+                    key={item.slug}
+                    to={item.slug}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-gray-300 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
 
 // Banner → category filter mapping
 const seriesHighlights = [
-  { title: 'LUGGAGES', image: '/Traworld/luggage.png', category: 'luggage',    viewAll: '/luggage?theme=premium' },
+  { title: 'LUGGAGES', image: '/Traworld/luggage.png', category: 'luggage', viewAll: '/luggage?theme=premium' },
   { title: 'BACKPACKS', image: '/Traworld/Bcakpack.png', category: 'backpacks', viewAll: '/backpacks?theme=premium' },
-  { title: 'DUFFELS',  image: '/Traworld/Duffle.png',   category: 'duffle',    viewAll: '/duffle?theme=premium' },
+  { title: 'DUFFELS', image: '/Traworld/Duffle.png', category: 'duffle', viewAll: '/duffle?theme=premium' },
 ];
 
 // Default fallback if setting hasn't been configured yet
@@ -237,11 +237,10 @@ export const PremiumCollection = () => {
                     <img
                       src={series.image}
                       alt={series.title}
-                      className={`w-full h-full object-cover transition-all duration-700 ${
-                        isActive
+                      className={`w-full h-full object-cover transition-all duration-700 ${isActive
                           ? 'grayscale-0 scale-105'
                           : 'grayscale-[0.2] group-hover:grayscale-0'
-                      }`}
+                        }`}
                     />
 
                     {/* Active glow border */}
@@ -256,9 +255,8 @@ export const PremiumCollection = () => {
 
                     {/* Label bar */}
                     <div
-                      className={`absolute bottom-0 left-0 right-0 h-[28px] sm:h-[36px] md:h-[40px] flex items-center justify-center transition-colors duration-300 ${
-                        isActive ? 'bg-[#b80000]' : 'bg-[#111] group-hover:bg-[#b80000]'
-                      }`}
+                      className={`absolute bottom-0 left-0 right-0 h-[28px] sm:h-[36px] md:h-[40px] flex items-center justify-center transition-colors duration-300 ${isActive ? 'bg-[#b80000]' : 'bg-[#111] group-hover:bg-[#b80000]'
+                        }`}
                     >
                       <h3
                         className="text-white font-medium font-outfit tracking-[0.15em] md:tracking-[0.2em] uppercase leading-none"

@@ -17,9 +17,9 @@ const BACKPACK_TABS = [
 ] as const;
 
 const HERO_SLIDES = [
+  { src: '/Creatives/hero.mp4', type: 'video' as const, cta: 'Shop Now', to: '/backpacks' },
   { src: '/Creatives/hero-main.jpg', cta: 'Shop Campus Picks', to: '/college-backpacks' },
   { src: '/Creatives/editorial-2.jpg', cta: 'Shop Junior Collection', to: '/junior' },
-  { src: '/Creatives/editorial-3.jpg', cta: 'Shop Trekking Gear', to: '/trekking-backpacks' },
   { src: '/Creatives/editorial-4.jpg', cta: 'Shop Luggage', to: '/luggage' },
   { src: '/Creatives/editorial-5.jpg', cta: 'Shop Laptop Bags', to: '/laptop-backpacks' },
 ];
@@ -82,14 +82,25 @@ const HeroSlider = () => {
           transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="absolute inset-0"
         >
-          <img
-            alt="Priority Premium Collection"
-            className="w-full h-full object-cover"
-            src={HERO_SLIDES[current].src}
-            loading="eager"
-          />
-          <div className="absolute inset-x-0 bottom-0 h-28 md:h-32 bg-gradient-to-t from-black/5
-          to-transparent" />
+          {HERO_SLIDES[current].type === 'video' ? (
+            <video
+              key={HERO_SLIDES[current].src}
+              src={HERO_SLIDES[current].src}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <img
+              alt="Priority Collection"
+              className="w-full h-full object-cover"
+              src={HERO_SLIDES[current].src}
+              loading="eager"
+            />
+          )}
+          <div className="absolute inset-x-0 bottom-0 h-28 md:h-32 bg-gradient-to-t from-black/5 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
@@ -198,14 +209,15 @@ export const Home = () => {
   useEffect(() => {
     setTabLoading(true);
     setTabProducts([]);
-    api.getProducts({ category: activeTab }).then(res => {
-      setTabProducts(res.products as unknown as Product[]);
+    api.getProducts({ category: activeTab, limit: '5' }).then(res => {
+      setTabProducts((res.products as unknown as Product[]).slice(0, 5));
     }).catch(() => { }).finally(() => setTabLoading(false));
   }, [activeTab]);
 
   useEffect(() => {
-    api.getProducts({ sort: 'popular', limit: '8' }).then(res => {
-      setBestSellers(res.products as unknown as Product[]);
+    api.getProducts({ sort: 'popular', limit: '12' }).then(res => {
+      const nonJunior = (res.products as unknown as Product[]).filter((p: any) => p.category !== 'junior' && p.categories?.slug !== 'junior');
+      setBestSellers(nonJunior.slice(0, 8));
     }).catch(() => { });
   }, []);
 
@@ -420,9 +432,9 @@ export const Home = () => {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
+              <div className="grid grid-cols-1 gap-4 md:gap-5">
                 {tabLoading ? (
-                  [1, 2, 3, 4, 5, 6].map(n => (
+                  [1, 2, 3, 4, 5].map(n => (
                     <div key={n} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
                   ))
                 ) : (
