@@ -110,8 +110,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     { title: 'PREMIUM', to: '/premium' },
   ];
 
-  const isJunior = location.pathname.startsWith('/junior');
   const queryParams = new URLSearchParams(location.search);
+  const isJunior = location.pathname.startsWith('/junior') || queryParams.get('theme') === 'junior';
   const isPremiumTheme = !isJunior && (location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium');
   const isDarkMode = isPremiumTheme;
 

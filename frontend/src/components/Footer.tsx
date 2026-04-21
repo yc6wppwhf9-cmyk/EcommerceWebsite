@@ -35,7 +35,7 @@ export const Footer = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const isPremium = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
-  const isJunior = location.pathname.startsWith('/junior');
+  const isJunior = location.pathname.startsWith('/junior') || queryParams.get('theme') === 'junior';
   const isHome = location.pathname === '/';
 
   const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-dark';

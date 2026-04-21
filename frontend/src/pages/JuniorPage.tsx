@@ -380,7 +380,8 @@ export const JuniorPage = () => {
     const cat = CATEGORIES.find(c => c.label === activeTab);
     if (!cat) return;
     setIsLoading(true);
-    api.getProducts({ category: 'junior', sub_category: cat.filter, limit: '8' })
+    setProducts([]);
+    api.getProducts({ sub_category: cat.filter, limit: '8' })
       .then(res => { setProducts(res.products as unknown as Product[]); setIsLoading(false); })
       .catch(() => setIsLoading(false));
   }, [activeTab]);
