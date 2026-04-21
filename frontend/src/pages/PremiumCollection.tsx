@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
 import type { Product } from '../types';
-import { ChevronDown, Search, ShoppingBag, User } from 'lucide-react';
+import { ChevronDown, Search, ShoppingBag, User, SlidersHorizontal, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { SearchModal } from '../components/SearchModal';
 
@@ -143,10 +143,10 @@ export const PremiumCollection = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // null = show all, otherwise filter by category
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
   const gridRef = useRef<HTMLElement>(null);
-  // Editorial banner config fetched from admin settings
   const [editorialBanner, setEditorialBanner] = useState(DEFAULT_EDITORIAL);
 
   useEffect(() => {
@@ -170,9 +170,23 @@ export const PremiumCollection = () => {
     }, 80);
   };
 
-  const displayedProducts = activeCategory
-    ? products.filter(p => p.category === activeCategory)
-    : products;
+  const subcategories = React.useMemo(() => {
+    const seen = new Set<string>();
+    products.forEach(p => {
+      const sub = (p as any).sub_category || (p as any).subcategory;
+      if (sub) seen.add(sub);
+    });
+    return Array.from(seen).sort();
+  }, [products]);
+
+  const displayedProducts = products.filter(p => {
+    if (activeCategory && p.category !== activeCategory) return false;
+    if (activeSubcategory) {
+      const sub = (p as any).sub_category || (p as any).subcategory;
+      if (sub !== activeSubcategory) return false;
+    }
+    return true;
+  });
 
   const activeLabel = seriesHighlights.find(s => s.category === activeCategory)?.title ?? null;
 
@@ -329,20 +343,77 @@ export const PremiumCollection = () => {
       {/* 3. FILTERED PRODUCT GRID */}
       <section ref={gridRef} className="bg-white text-black py-12 md:py-24 scroll-mt-16">
         <div className="container mx-auto px-4 md:px-12 max-w-[1400px]">
-          <div className="text-center mb-10 md:mb-20 whitespace-normal">
-            <AnimatePresence mode="wait">
-              <motion.h2
-                key={activeLabel ?? 'all'}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.3 }}
-                className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.6em] pb-4"
-                style={{ fontSize: '18px', color: '#111111' }}
-              >
-                {activeLabel ? `${activeLabel} COLLECTION` : 'Our Collection'}
-              </motion.h2>
-            </AnimatePresence>
+          <div className="mb-10 md:mb-20 whitespace-normal">
+            <div className="relative flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.h2
+                  key={activeLabel ?? 'all'}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.6em] pb-4 text-center"
+                  style={{ fontSize: '18px', color: '#111111' }}
+                >
+                  {activeLabel ? `${activeLabel} COLLECTION` : 'Our Collection'}
+                </motion.h2>
+              </AnimatePresence>
+
+              {/* Funnel button */}
+              <div className="absolute right-0 top-0">
+                <button
+                  onClick={() => setFilterOpen(v => !v)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-black uppercase tracking-widest transition-colors ${filterOpen || activeSubcategory ? 'bg-black text-white border-black' : 'border-gray-300 text-gray-500 hover:border-black hover:text-black'}`}
+                >
+                  <SlidersHorizontal size={12} />
+                  Filter {activeSubcategory && '·1'}
+                </button>
+
+                {/* Dropdown panel */}
+                <AnimatePresence>
+                  {filterOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 shadow-xl z-30 py-2"
+                    >
+                      <p className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">Sub-Category</p>
+                      <button
+                        onClick={() => { setActiveSubcategory(null); setFilterOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-[11px] font-semibold uppercase tracking-wider transition-colors ${!activeSubcategory ? 'text-black font-black' : 'text-gray-400 hover:text-black'}`}
+                      >
+                        All
+                      </button>
+                      {subcategories.map(sub => (
+                        <button
+                          key={sub}
+                          onClick={() => { setActiveSubcategory(sub); setFilterOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-[11px] font-semibold uppercase tracking-wider transition-colors ${activeSubcategory === sub ? 'text-black font-black' : 'text-gray-400 hover:text-black'}`}
+                        >
+                          {sub.replace(/-/g, ' ')}
+                        </button>
+                      ))}
+                      {subcategories.length === 0 && (
+                        <p className="px-4 py-2 text-[11px] text-gray-300">No sub-categories found</p>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Active sub-category badge */}
+            {activeSubcategory && (
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Filtered by:</span>
+                <span className="flex items-center gap-1.5 px-2.5 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest">
+                  {activeSubcategory.replace(/-/g, ' ')}
+                  <button onClick={() => setActiveSubcategory(null)} className="hover:opacity-70"><X size={10} /></button>
+                </span>
+              </div>
+            )}
 
             {/* Category tabs */}
             <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap mt-4">
