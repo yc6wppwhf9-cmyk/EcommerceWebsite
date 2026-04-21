@@ -143,17 +143,19 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
           </h3>
         </Link>
 
-        {/* Stars using Star 1.png */}
-        <div className="flex items-center gap-1.5">
-          <div className="flex gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />
-            ))}
+        {/* Stars using Star 1.png — only shown when real review data exists */}
+        {(product as any).reviews > 0 && (
+          <div className="flex items-center gap-1.5">
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />
+              ))}
+            </div>
+            <span className="text-[11px] text-gray-400 font-medium">
+              {(product as any).reviews} reviews
+            </span>
           </div>
-          <span className="text-[11px] text-gray-400 font-medium">
-            {(product as any).reviews ?? 10} reviews
-          </span>
-        </div>
+        )}
 
         {/* Price */}
         <div className="flex items-baseline gap-2 flex-wrap">
@@ -470,7 +472,7 @@ export const JuniorPage = () => {
                 </div>
               ) : products.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-                  {products.map((product, idx) => (
+                  {products.slice(0, 5).map((product, idx) => (
                     <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}
                 </div>
