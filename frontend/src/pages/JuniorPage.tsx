@@ -173,7 +173,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
       {/* Image container with blue border */}
       <Link
         to={`/product/${product.slug || product.id}?theme=junior`}
-        className="relative block rounded-2xl border-2 border-[#F69245] overflow-hidden bg-white"
+        className="relative block rounded-2xl overflow-hidden bg-white"
         style={{ aspectRatio: '300 / 307' }}
       >
         <div className="w-full h-full flex items-center justify-center p-4">
