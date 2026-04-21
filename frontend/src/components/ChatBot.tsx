@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, X, Send, ShoppingBag } from 'lucide-react';
+import { MessageCircle, X, Send } from 'lucide-react';
 const BASE = (import.meta as any).env.VITE_API_URL || '';
 
 interface Product {
@@ -84,8 +84,8 @@ export const ChatBot = () => {
         <div className="fixed bottom-24 right-6 z-[79] w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100" style={{ height: '520px' }}>
           {/* Header */}
           <div className="bg-black px-4 py-3 flex items-center gap-3">
-            <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-              <ShoppingBag size={16} className="text-white" />
+            <div className="w-8 h-8 rounded-full overflow-hidden">
+              <img src="/Traworld/chatbot.jpg" alt="Assistant" className="w-full h-full object-cover" />
             </div>
             <div>
               <p className="text-white font-semibold text-sm">Priority Bags Assistant</p>
