@@ -212,12 +212,18 @@ export const JuniorPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
+    const juniorCategories = ['school-backpacks', 'trolley-backpacks', 'lunch-bags', 'combo-set', 'pouches'];
     Promise.all([
       api.getProducts({ category: 'school-backpacks', limit: '8' }),
-      api.getProducts({ sort: 'popular', limit: '8' }),
-    ]).then(([school, popular]) => {
+      Promise.all(juniorCategories.map(cat => api.getProducts({ category: cat, sort: 'rating', limit: '4' }))),
+    ]).then(([school, juniorResults]) => {
       setProducts(school.products as unknown as Product[]);
-      setBestSellers(popular.products as unknown as Product[]);
+      const seen = new Set<string>();
+      const combined = juniorResults
+        .flatMap(r => r.products as unknown as Product[])
+        .filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; })
+        .slice(0, 8);
+      setBestSellers(combined);
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
   }, []);
