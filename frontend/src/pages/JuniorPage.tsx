@@ -423,14 +423,14 @@ export const JuniorPage = () => {
         <div className="absolute top-4 right-4 z-[60] flex items-center gap-2">
           <button
             onClick={clearCanvas}
-            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+            className="flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
             style={{ background: '#fff', color: '#e53e3e', border: '2px solid #e53e3e' }}
           >
             Erase
           </button>
           <button
             onClick={() => setDrawingMode(d => !d)}
-            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+            className="flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
             style={{ background: drawingMode ? '#8750DA' : '#fff', color: drawingMode ? '#fff' : '#8750DA', border: '2px solid #8750DA' }}
           >
             ✏️ {drawingMode ? 'Done' : 'Draw'}
@@ -549,12 +549,12 @@ export const JuniorPage = () => {
                 </button>
                 {isLoading ? (
                   <div className="flex gap-4 md:gap-6 overflow-x-auto pb-2 no-scrollbar px-10 md:px-14">
-                    {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[44vw] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                    {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[calc(50vw-52px)] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
                   </div>
                 ) : products.length > 0 ? (
-                  <div ref={tabScrollRef} className="flex gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar px-10 md:px-14">
+                  <div ref={tabScrollRef} className="flex gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory px-10 md:px-14">
                     {products.slice(0, 4).map((product, idx) => (
-                      <motion.div key={product.id} className="shrink-0 w-[44vw] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                      <motion.div key={product.id} className="shrink-0 w-[calc(50vw-52px)] md:w-[200px] lg:w-[220px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                     ))}
                   </div>
                 ) : (
