@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -18,6 +18,7 @@ const burst = (count: number) =>
 
 const SparkleLink = ({ to, children, sparkImg, delay = 0 }: { to: string; children: React.ReactNode; sparkImg: string; delay?: number }) => {
   const [sparks, setSparks] = useState<Spark[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fire = () => {
@@ -25,20 +26,25 @@ const SparkleLink = ({ to, children, sparkImg, delay = 0 }: { to: string; childr
       setTimeout(() => setSparks([]), 700);
     };
     const t1 = setTimeout(fire, delay);
-    // repeat every 3 seconds
     const t2 = setInterval(fire, 3000 + delay);
     return () => { clearTimeout(t1); clearInterval(t2); };
   }, [delay]);
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setSparks(burst(40));
+    setTimeout(() => { setSparks([]); navigate(to); }, 420);
+  };
+
   return (
     <div className="relative inline-block overflow-visible">
-      <Link
-        to={to}
-        className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors"
+      <button
+        onClick={handleClick}
+        className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors bg-transparent"
         style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}
       >
         {children}
-      </Link>
+      </button>
       <AnimatePresence>
         {sparks.map(s => (
           <motion.img
@@ -522,16 +528,20 @@ export const JuniorPage = () => {
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
             <div className="hidden lg:flex relative shrink-0 flex-col items-center justify-start">
-              <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
-                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
-                  <img 
-                    src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"} 
-                    alt={activeTab} 
-                    className="w-full h-full object-cover object-top transition-all duration-500" 
+              <Link
+                to={`/${CATEGORIES.find(c => c.label === activeTab)?.filter}`}
+                className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0 group"
+                style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}
+              >
+                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px] rounded-[5px]" style={{ height: 'clamp(260px, 55vw, 400px)' }}>
+                  <img
+                    src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"}
+                    alt={activeTab}
+                    className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
-              </div>
+                <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] group-hover:text-[#8750DA] transition-colors" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
+              </Link>
             </div>
             <div className="flex-1 min-w-0">
               <div className="relative">

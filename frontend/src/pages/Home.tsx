@@ -362,9 +362,9 @@ export const Home = () => {
         {/* Desktop version - Exactly as shown in screenshot */}
         <div className="hidden md:block text-white relative py-12">
           <div className="container mx-auto px-8 relative z-10 flex flex-row items-center gap-16">
-            <div className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20">
-              <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
-            </div>
+            <Link to="/backpacks" className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block group">
+              <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+            </Link>
             <div className="w-1/2 text-left">
               <h2 className="text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
               <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-10">Ready For Your Journey</p>
@@ -424,7 +424,11 @@ export const Home = () => {
                     {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
-                <div className="w-full flex-1 overflow-hidden relative" style={{ height: 'calc(100% - 80px)' }}>
+                <Link 
+                  to={`/${activeTab}`}
+                  className="w-full flex-1 overflow-hidden relative block" 
+                  style={{ height: 'calc(100% - 80px)' }}
+                >
                   <LazyImage
                     src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster}
                     alt={activeTab}
@@ -432,7 +436,7 @@ export const Home = () => {
                     width={500}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                </div>
+                </Link>
               </div>
             )}
             <div className="flex-1 min-w-0 relative">

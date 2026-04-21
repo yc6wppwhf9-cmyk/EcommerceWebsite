@@ -1,10 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft } from 'lucide-react';
+
+const BURST_COLORS = ['#F69245', '#A368FB', '#FFBB5A', '#FF6B6B', '#FFD700', '#4ECDC4', '#FF69B4', '#fff'];
+
+type Particle = { id: number; angle: number; dist: number; size: number; color: string; delay: number; ox: number; oy: number };
+
+const makeParticles = (count: number, ox: number, oy: number): Particle[] =>
+  Array.from({ length: count }, (_, i) => ({
+    id: i,
+    angle: (i / count) * 360 + Math.random() * 10,
+    dist: 60 + Math.random() * 180,
+    size: 5 + Math.random() * 12,
+    color: BURST_COLORS[Math.floor(Math.random() * BURST_COLORS.length)],
+    delay: Math.random() * 0.25,
+    ox, oy,
+  }));
+
+const BURST_POINTS = [
+  { ox: '20%', oy: '40%', count: 35, delay: 0 },
+  { ox: '50%', oy: '30%', count: 50, delay: 200 },
+  { ox: '80%', oy: '45%', count: 35, delay: 400 },
+  { ox: '35%', oy: '60%', count: 25, delay: 600 },
+  { ox: '65%', oy: '55%', count: 25, delay: 750 },
+];
+
+const FirecrackerBurst = () => {
+  const [visible, setVisible] = useState(true);
+  const [wave, setWave] = useState(0);
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    BURST_POINTS.forEach((_, i) => {
+      timers.push(setTimeout(() => setWave(i + 1), BURST_POINTS[i].delay));
+    });
+    timers.push(setTimeout(() => setVisible(false), 1800));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
+      {BURST_POINTS.slice(0, wave).map((bp, bi) => {
+        const particles = makeParticles(bp.count, 0, 0);
+        return particles.map(p => (
+          <motion.div
+            key={`b${bi}-p${p.id}`}
+            className="absolute rounded-full"
+            style={{ width: p.size, height: p.size, backgroundColor: p.color, left: bp.ox, top: bp.oy, boxShadow: `0 0 ${p.size}px ${p.color}` }}
+            initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+            animate={{ x: Math.cos((p.angle * Math.PI) / 180) * p.dist, y: Math.sin((p.angle * Math.PI) / 180) * p.dist, opacity: 0, scale: 0 }}
+            transition={{ duration: 0.7 + Math.random() * 0.5, delay: p.delay, ease: [0.2, 0.8, 0.4, 1] }}
+          />
+        ));
+      })}
+    </div>
+  );
+};
 
 const CONFIG = {
   dreamy: {
@@ -90,6 +147,7 @@ export const JuniorStylePage = () => {
 
   return (
     <main className="bg-white min-h-screen font-outfit">
+      <FirecrackerBurst />
       {/* Hero banner */}
       <section className="relative w-full flex flex-col items-center justify-center text-center py-16 md:py-24 overflow-hidden" style={{ backgroundColor: cfg.color }}>
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none" />
