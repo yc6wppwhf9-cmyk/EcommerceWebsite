@@ -451,11 +451,11 @@ export const Home = () => {
               <div ref={tabScrollRef} className="flex justify-center gap-4 md:gap-6 overflow-x-auto no-scrollbar pb-4 px-1">
                 {tabLoading ? (
                   [1, 2, 3, 4, 5].map(n => (
-                    <div key={n} className="w-[200px] sm:w-[230px] md:w-[260px] shrink-0 aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
+                    <div key={n} className="w-[44vw] sm:w-[230px] md:w-[260px] shrink-0 aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
                   ))
                 ) : (
                   tabProducts.map(p => (
-                    <div key={p.id} className="w-[200px] sm:w-[230px] md:w-[260px] shrink-0">
+                    <div key={p.id} className="w-[44vw] sm:w-[230px] md:w-[260px] shrink-0">
                       <ProductCard product={p} />
                     </div>
                   ))

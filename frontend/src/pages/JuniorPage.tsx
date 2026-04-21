@@ -553,7 +553,7 @@ export const JuniorPage = () => {
               ) : products.length > 0 ? (
                 <div ref={tabScrollRef} className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar px-1">
                   {products.slice(0, 4).map((product, idx) => (
-                    <motion.div key={product.id} className="shrink-0 w-[160px] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                    <motion.div key={product.id} className="shrink-0 w-[44vw] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}
                 </div>
               ) : (
