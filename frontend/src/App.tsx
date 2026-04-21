@@ -16,6 +16,7 @@ import { ToastContainer } from './components/ui/Toast';
 import { Home } from './pages/Home';
 import { CategoryPage } from './pages/CategoryPage';
 import { JuniorPage } from './pages/JuniorPage';
+import { JuniorStylePage } from './pages/JuniorStylePage';
 import { ProductDetail } from './pages/ProductDetail';
 import { Checkout } from './pages/Checkout';
 import { PremiumCollection } from './pages/PremiumCollection';
@@ -65,6 +66,7 @@ function AppContent() {
             <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/junior" element={<JuniorPage />} />
+            <Route path="/junior/:style" element={<JuniorStylePage />} />
             <Route path="/premium" element={<PremiumCollection />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

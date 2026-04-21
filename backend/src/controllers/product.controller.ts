@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase';
 import * as xlsx from 'xlsx';
 
 export const getProducts = async (req: Request, res: Response) => {
-    const { category, sub_category, gender, isPremium, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
+    const { category, sub_category, gender, isPremium, junior_style, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
     try {
       let query = supabase
@@ -36,6 +36,10 @@ export const getProducts = async (req: Request, res: Response) => {
 
       if (isPremium === 'true' || category === 'premium') {
         query = query.eq('is_premium', true);
+      }
+
+      if (junior_style) {
+        query = query.eq('junior_style', junior_style).eq('is_active', true);
       }
     if (min_price) query = query.gte('price', Number(min_price));
     if (max_price) query = query.lte('price', Number(max_price));
@@ -156,7 +160,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     'name', 'description', 'price', 'original_price', 'stock', 
     'is_active', 'is_new', 'is_highlighted', 'image', 'images', 
     'colors', 'features', 'category_id', 'is_premium', 'gender', 
-    'size', 'age_range', 'sub_category'
+    'size', 'age_range', 'sub_category', 'junior_style'
   ];
   const updates: any = {};
   allowed.forEach((f) => { 
