@@ -17,6 +17,7 @@ import paymentRoutes from './routes/payment.routes';
 import userRoutes from './routes/user.routes';
 import jobsRoutes from './routes/jobs.routes';
 import chatRoutes from './routes/chat.routes';
+import settingsRoutes from './routes/settings.routes';
 
 const app = express();
 
@@ -62,6 +63,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {

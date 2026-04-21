@@ -143,13 +143,13 @@ const BestSellerCard = ({ product }: { product: Product }) => {
 
       <div className="pt-2 space-y-1">
         <Link to={`/product/${product.slug || product.id}`}>
-          <h3 className="font-outfit font-bold text-[15px] text-black leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
+          <h3 className="font-outfit font-bold text-[15px] text-black leading-snug line-clamp-2 hover:text-[#26B3FF] transition-colors">
             {product.name}
           </h3>
         </Link>
 
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="font-outfit font-semibold text-[16px] text-[#755FF1]">
+          <span className="font-outfit font-semibold text-[16px] text-[#26B3FF]">
             ₹ {product.price.toLocaleString('en-IN')}.00
           </span>
           {discount > 0 && (
@@ -300,7 +300,7 @@ export const Home = () => {
                   </button>
                   <div className="flex gap-2">
                     {CATS.map((_, i) => (
-                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#8750DA]' : 'w-1.5 bg-gray-200'}`} />
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#26B3FF]' : 'w-1.5 bg-gray-200'}`} />
                     ))}
                   </div>
                   <button onClick={() => goNextCat(total)} className="p-2 text-gray-400 transition-opacity">
@@ -372,7 +372,7 @@ export const Home = () => {
                 className={`pb-3 md:pb-4 text-[16px] font-semibold uppercase tracking-[0.15em] transition-all relative whitespace-nowrap ${activeTab === tab.id ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}
               >
                 {tab.label}
-                {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#8750DA] rounded-full" />}
+                {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#26B3FF] rounded-full" />}
               </button>
             ))}
           </div>
@@ -474,7 +474,7 @@ export const Home = () => {
               { Icon: PackageCheck, label: 'Quality Unit', desc: '8-stage strength testing' }
             ].map((f, i) => (
               <div key={i} className="flex flex-col items-center text-center gap-3 md:gap-4">
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 text-[#8750DA]">
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 text-[#26B3FF]">
                   <f.Icon size={26} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-[16px] font-semibold uppercase tracking-[0.12em] font-outfit">{f.label}</h3>

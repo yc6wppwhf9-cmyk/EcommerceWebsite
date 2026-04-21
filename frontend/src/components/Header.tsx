@@ -124,11 +124,11 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   return (
     <>
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 ${shouldBeBlackNav
+      className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300 ${shouldBeBlackNav
           ? 'premium-bg-black border-b border-white/10'
-          : (isScrolled ? 'bg-priority-blue/95 dark:bg-black/95 shadow-xl backdrop-blur-xl border-b border-white/10' : 'bg-transparent')
+          : `${isJunior ? 'bg-junior-orange' : 'bg-priority-blue'} shadow-xl border-b border-white/10`
         }`}
-      style={{ color: (isScrolled || shouldBeBlackNav) ? 'white' : (isDarkMode ? 'white' : '#111') }}
+      style={{ color: 'white' }}
     >
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
@@ -137,7 +137,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300 ${(isPremiumTheme) ? '' : (!isScrolled && !isDarkMode && !isJunior ? 'brightness-0' : '')}`}
+              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300`}
             />
           </Link>
         </div>
@@ -219,7 +219,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             >
               <ShoppingCart size={20} />
               {itemCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-[var(--color-nav-bg)]">
+                <span className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
                   {itemCount}
                 </span>
               )}

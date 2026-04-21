@@ -51,7 +51,17 @@ export const Checkout = () => {
     setIsProcessing(true);
 
     try {
-      const orderData = await api.createPaymentOrder(grandTotal, `receipt_${Date.now()}`);
+      const paymentTimeout = setTimeout(() => {
+        setIsProcessing(false);
+        showToast('Payment request timed out. Please try again.', 'error');
+      }, 15000);
+
+      let orderData: any;
+      try {
+        orderData = await api.createPaymentOrder(grandTotal, `receipt_${Date.now()}`);
+      } finally {
+        clearTimeout(paymentTimeout);
+      }
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,

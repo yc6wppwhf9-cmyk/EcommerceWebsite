@@ -101,7 +101,7 @@ export const CartDrawer = () => {
                             <span className="px-3 py-1.5 text-sm font-bold min-w-[36px] text-center">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                              className="px-2.5 py-1.5 hover:bg-gray-100 transition-colors"
+                              className="px-2.5 py-1.5 hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                               aria-label="Increase quantity"
                               disabled={item.quantity >= item.product.stock}
                             >
@@ -111,7 +111,7 @@ export const CartDrawer = () => {
                           <button
                             onClick={() => removeItem(item.product.id)}
                             className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                            aria-label="Remove item"
+                            aria-label={`Remove ${item.product.name} from cart`}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

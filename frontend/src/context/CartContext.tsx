@@ -95,9 +95,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) dispatch({ type: 'HYDRATE', items: parsed });
+        if (
+          Array.isArray(parsed) &&
+          parsed.every(
+            (item) =>
+              item &&
+              typeof item === 'object' &&
+              item.product &&
+              typeof item.product.id === 'string' &&
+              typeof item.quantity === 'number' &&
+              item.quantity > 0
+          )
+        ) {
+          dispatch({ type: 'HYDRATE', items: parsed });
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
       }
-    } catch { /* ignore */ }
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+    }
   }, []);
 
   // Persist to localStorage on change
@@ -110,7 +127,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const showToast = useCallback((message: string, type: Toast['type'] = 'success') => {
     const id = crypto.randomUUID();
     dispatch({ type: 'ADD_TOAST', toast: { id, message, type } });
-    setTimeout(() => dispatch({ type: 'REMOVE_TOAST', id }), 3000);
+    const duration = type === 'error' ? 5000 : 3000;
+    setTimeout(() => dispatch({ type: 'REMOVE_TOAST', id }), duration);
   }, []);
 
   const addItem = useCallback(

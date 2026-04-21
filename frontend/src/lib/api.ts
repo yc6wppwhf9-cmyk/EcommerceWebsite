@@ -206,6 +206,11 @@ export const api = {
   updateApplicationStatus: (appId: string, status: string) =>
     request<any>(`/api/jobs/applications/${appId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
 
+  // Site Settings
+  getSetting: (key: string) => request<any>(`/api/settings/${key}`),
+  updateSetting: (key: string, value: object) =>
+    request<any>(`/api/settings/${key}`, { method: 'PUT', body: JSON.stringify(value) }),
+
   // Payments (Razorpay)
   createPaymentOrder: (amount: number, receipt: string) =>
     request<any>('/api/payments/create-order', {

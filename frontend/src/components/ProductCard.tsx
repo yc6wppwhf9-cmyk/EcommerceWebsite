@@ -54,7 +54,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
         {/* NEW badge */}
         {product.isNew && (
-          <span className="absolute top-2 right-2 bg-[#755FF1] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm">
+          <span className="absolute top-2 right-2 bg-priority-blue text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm">
             NEW
           </span>
         )}
@@ -69,7 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
               <button
                 key={idx}
                 onClick={() => setActiveVariantIndex(idx)}
-                className={`w-6 h-6 rounded-full border-2 transition-all ${activeVariantIndex === idx ? 'border-[#755FF1] scale-110' : 'border-gray-200'}`}
+                className={`w-6 h-6 rounded-full border-2 transition-all ${activeVariantIndex === idx ? 'border-priority-blue scale-110' : 'border-gray-200'}`}
                 style={{ backgroundColor: variant.colorCode || variant.color }}
               />
             ))}
@@ -78,7 +78,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
         {/* Name — Outfit SemiBold 16px #000000 */}
         <Link to={productPath(product.slug || product.id)}>
-          <h3 className={`text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 transition-colors ${props.theme === 'premium' ? 'hover:text-red-600' : 'hover:text-[#755FF1]'}`}>
+          <h3 className={`text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 transition-colors ${props.theme === 'premium' ? 'hover:text-red-600' : 'hover:text-priority-blue'}`}>
             {product.name}
           </h3>
         </Link>
@@ -101,7 +101,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
         {/* Price row — Outfit SemiBold 16px #755FF1 */}
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[16px] font-semibold text-[#755FF1]">
+          <span className="text-[16px] font-semibold text-priority-blue">
             ₹ {product.price.toLocaleString('en-IN')}.00
           </span>
           {discount > 0 && (
@@ -119,9 +119,10 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         {/* Move to Cart */}
         <button
           onClick={handleAddToCart}
-          className="w-full py-2.5 bg-[#755FF1] hover:bg-[#6147d3] text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-sm mt-1"
+          disabled={product.stock <= 0}
+          className="w-full py-2.5 bg-priority-blue hover:opacity-90 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          + MOVE TO CART
+          {product.stock <= 0 ? 'OUT OF STOCK' : '+ MOVE TO CART'}
         </button>
       </div>
     </div>

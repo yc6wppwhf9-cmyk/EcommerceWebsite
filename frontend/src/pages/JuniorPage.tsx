@@ -86,7 +86,7 @@ const AgeGroupCarousel = () => {
           <button onClick={goPrev} className="p-2 text-gray-400 transition-opacity"><ChevronLeft className="w-5 h-5" /></button>
           <div className="flex gap-2">
             {AGE_GROUPS.map((_, i) => (
-              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === idx ? 'w-6 bg-[#A368FB]' : 'w-1.5 bg-gray-200'}`} />
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === idx ? 'w-6 bg-[#F69245]' : 'w-1.5 bg-gray-200'}`} />
             ))}
           </div>
           <button onClick={goNext} className="p-2 text-gray-400 transition-opacity"><ChevronRight className="w-5 h-5" /></button>
@@ -115,7 +115,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
       {/* Image container with blue border */}
       <Link
         to={`/product/${product.slug || product.id}`}
-        className="relative block rounded-2xl border-2 border-[#5B8DEF] overflow-hidden bg-white"
+        className="relative block rounded-2xl border-2 border-[#F69245] overflow-hidden bg-white"
         style={{ aspectRatio: '300 / 307' }}
       >
         <div className="w-full h-full flex items-center justify-center p-4">
@@ -138,7 +138,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
       {/* Info */}
       <div className="pt-3 space-y-1.5">
         <Link to={`/product/${product.slug || product.id}`}>
-          <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
+          <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors">
             {product.name}
           </h3>
         </Link>
@@ -157,7 +157,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
         {/* Price */}
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[16px] font-semibold text-[#755FF1]">
+          <span className="text-[16px] font-semibold text-[#F69245]">
             ₹ {product.price.toLocaleString('en-IN')}.00
           </span>
           {discount > 0 && (
@@ -175,7 +175,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
         {/* Move to Cart */}
         <button
           onClick={handleAddToCart}
-          className="w-full py-2.5 bg-[#755FF1] hover:bg-[#6147d3] text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
+          className="w-full py-2.5 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
         >
           + MOVE TO CART
         </button>
@@ -229,7 +229,7 @@ export const JuniorPage = () => {
   }, []);
 
   return (
-    <main className="bg-white min-h-screen overflow-x-hidden">
+    <main className="bg-white min-h-screen overflow-x-hidden junior-theme">
 
       {/* ═══════════════════════════════════════════════
           RESPONSIVE HERO — scales with image's natural aspect ratio
@@ -247,7 +247,7 @@ export const JuniorPage = () => {
         <div className="max-w-[1280px] mx-auto px-6 md:px-14 relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
-            <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
+            <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#F69245', lineHeight: '125.7%' }}>Shop By Age</h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
 
@@ -260,7 +260,7 @@ export const JuniorPage = () => {
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
                 <Link to={`/${group.slug}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
                   <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[52px] rounded-tl-[40px]">
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#8750DA] h-[52px] rounded-tl-[40px]">
                     <p className="relative z-10 text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
                   </div>
                 </Link>
@@ -281,7 +281,7 @@ export const JuniorPage = () => {
               <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 md:pt-6">
                 <span className="font-outfit uppercase tracking-[0.2em] mb-1 md:mb-2" style={{ fontSize: 'clamp(14px, 4vw, 28.36px)', fontWeight: 400, color: '#966512' }}>New Arrival</span>
-                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto" style={{ fontSize: 'clamp(20px, 6.5vw, 50.82px)', color: '#3E92E6', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
+                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto" style={{ fontSize: 'clamp(20px, 6.5vw, 50.82px)', color: '#FFFFFF', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
               </div>
             </div>
           </div>
@@ -299,7 +299,7 @@ export const JuniorPage = () => {
             {CATEGORIES.map((cat) => (
               <button key={cat.label} onClick={() => setActiveTab(cat.label)} className={`relative pb-3 text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 whitespace-nowrap ${activeTab === cat.label ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}>
                 {cat.label}
-                {activeTab === cat.label && <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#FDB913] rounded-full" />}
+                {activeTab === cat.label && <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F69245] rounded-full" />}
               </button>
             ))}
           </div>

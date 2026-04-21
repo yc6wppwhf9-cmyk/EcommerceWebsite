@@ -313,3 +313,17 @@ CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
 
 CREATE TRIGGER trg_jobs_updated         BEFORE UPDATE ON jobs         FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 CREATE TRIGGER trg_applications_updated BEFORE UPDATE ON applications FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- ─── Site Settings ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS site_settings (
+  key        TEXT PRIMARY KEY,
+  value      JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Default premium editorial banner config
+INSERT INTO site_settings (key, value) VALUES
+  ('premium_editorial_banner', '{"category": "luggage", "label": "Luggage", "url": "/luggage?theme=premium"}')
+ON CONFLICT (key) DO NOTHING;
+
+CREATE TRIGGER trg_site_settings_updated BEFORE UPDATE ON site_settings FOR EACH ROW EXECUTE FUNCTION set_updated_at();
