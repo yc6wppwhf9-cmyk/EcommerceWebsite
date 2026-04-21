@@ -48,13 +48,18 @@ export const ChatBot = () => {
     setLoading(true);
 
     try {
-      const apiMessages = history.map(m => ({ role: m.role, content: m.text }));
+      const firstUserIdx = history.findIndex(m => m.role === 'user');
+      const apiMessages = history.slice(firstUserIdx).map(m => ({ role: m.role, content: m.text }));
       const res = await fetch(`${BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages }),
       });
       const data = await res.json();
+      if (!res.ok || data.error || !data.message) {
+        setMessages(prev => [...prev, { role: 'assistant', text: "Sorry, I'm having trouble connecting. Please try again!" }]);
+        return;
+      }
       setMessages(prev => [...prev, { role: 'assistant', text: data.message, products: data.products }]);
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', text: "Sorry, I'm having trouble connecting. Please try again!" }]);
