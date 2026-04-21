@@ -19,6 +19,7 @@ export const config = {
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
   FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.in',
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
   // Shipping constants (single source of truth for backend + frontend)
   SHIPPING_THRESHOLD: 1499,
   SHIPPING_FEE: 99,

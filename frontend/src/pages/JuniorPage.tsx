@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -20,6 +20,81 @@ const CATEGORIES = [
   { label: 'Lunch Bags', filter: 'lunch-bags', image: '/junior/Beautiful_ Hero 1.png' },
   { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Speedo_ Hero 1.png' },
 ];
+
+const AgeGroupCarousel = () => {
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(1);
+  const touchRef = useRef<number | null>(null);
+  const total = AGE_GROUPS.length;
+
+  const goNext = () => { setDir(1); setIdx(i => (i + 1) % total); };
+  const goPrev = () => { setDir(-1); setIdx(i => (i - 1 + total) % total); };
+
+  return (
+    <div className="md:hidden px-2 mb-2">
+      <div
+        className="relative select-none max-w-sm mx-auto"
+        style={{ perspective: '1200px' }}
+        onTouchStart={e => { touchRef.current = e.touches[0].clientX; }}
+        onTouchEnd={e => {
+          if (touchRef.current === null) return;
+          const diff = touchRef.current - e.changedTouches[0].clientX;
+          if (diff > 40) goNext(); else if (diff < -40) goPrev();
+          touchRef.current = null;
+        }}
+      >
+        {[2, 1].map(offset => {
+          const stackIdx = (idx + offset) % total;
+          return (
+            <div key={`stack-${offset}`} className="absolute inset-y-0 rounded-2xl overflow-hidden pointer-events-none"
+              style={{ left: `${offset * 10}px`, right: `-${offset * 10}px`, transform: `scale(${1 - offset * 0.04}) translateX(${offset * 8}px)`, filter: `brightness(${0.55 - offset * 0.1})`, zIndex: 10 - offset, transformOrigin: 'right center' }}>
+              <div className="relative w-full" style={{ paddingBottom: '140%' }}>
+                <img src={AGE_GROUPS[stackIdx].img} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
+              </div>
+            </div>
+          );
+        })}
+
+        <div style={{ position: 'relative', zIndex: 20, overflow: 'hidden', borderRadius: '1rem' }}>
+          <AnimatePresence mode="wait" custom={dir}>
+            <motion.div
+              key={idx}
+              custom={dir}
+              variants={{
+                enter: (d: number) => ({ x: d > 0 ? '100%' : '-100%' }),
+                center: { x: 0 },
+                exit: (d: number) => ({ x: d > 0 ? '-100%' : '100%' }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="w-full rounded-2xl overflow-hidden shadow-xl"
+            >
+              <Link to={`/${AGE_GROUPS[idx].slug}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
+                <img src={AGE_GROUPS[idx].img} alt={AGE_GROUPS[idx].label} className="absolute inset-0 w-full h-full object-cover object-top" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
+                  <span className="block text-white text-[20px] font-black uppercase tracking-widest leading-tight drop-shadow-lg">{AGE_GROUPS[idx].label}</span>
+                </div>
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="flex justify-between items-center mt-6 px-1">
+          <button onClick={goPrev} className="p-2 text-gray-400 transition-opacity"><ChevronLeft className="w-5 h-5" /></button>
+          <div className="flex gap-2">
+            {AGE_GROUPS.map((_, i) => (
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === idx ? 'w-6 bg-[#A368FB]' : 'w-1.5 bg-gray-200'}`} />
+            ))}
+          </div>
+          <button onClick={goNext} className="p-2 text-gray-400 transition-opacity"><ChevronRight className="w-5 h-5" /></button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Standard card for Junior Showcase
 const JuniorProductCard = ({ product }: { product: Product }) => {
@@ -113,7 +188,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 const BestSellerCard = ({ product }: { product: Product }) => (
   <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
     <Link to={`/product/${product.id}`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
-      <img src={product.image_url} alt={product.name} className="w-full h-full object-contain" />
+      <img src={(product as any).image_url ?? product.image} alt={product.name} className="w-full h-full object-contain" />
     </Link>
     <div className="px-1">
       <Link to={`/product/${product.id}`}>
@@ -169,13 +244,18 @@ export const JuniorPage = () => {
             <h2 className="font-protest" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: '#A368FB', lineHeight: '125.7%' }}>Shop By Age</h2>
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
           </div>
-          <div className="grid grid-cols-4 gap-2 md:gap-8 lg:gap-10">
+
+          {/* Mobile: swipe carousel */}
+          <AgeGroupCarousel />
+
+          {/* Desktop: 4-column grid */}
+          <div className="hidden md:grid grid-cols-4 gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
                 <Link to={`/${group.slug}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
                   <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[36px] md:h-[52px] rounded-tl-[20px] md:rounded-tl-[40px]">
-                    <p className="relative z-10 text-[8px] md:text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#A368FB] h-[52px] rounded-tl-[40px]">
+                    <p className="relative z-10 text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
                   </div>
                 </Link>
               </motion.div>
@@ -209,17 +289,27 @@ export const JuniorPage = () => {
       <section className="py-12 md:py-16 bg-white overflow-hidden relative">
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none select-none" />
         <div className="max-w-[1402px] mx-auto px-6 md:px-18 relative z-10">
-          <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 mb-6 relative">
+          <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center mb-6 md:mb-10 border-b border-gray-100 pb-1 relative">
             {CATEGORIES.map((cat) => (
-              <button key={cat.label} onClick={() => setActiveTab(cat.label)} className={`relative pb-3 text-[11px] md:text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 ${activeTab === cat.label ? 'scale-105' : 'hover:text-gray-600'}`} style={{ color: activeTab === cat.label ? '#030014' : '#AEADB4' }}>
+              <button key={cat.label} onClick={() => setActiveTab(cat.label)} className={`relative pb-3 text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 whitespace-nowrap ${activeTab === cat.label ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}>
                 {cat.label}
                 {activeTab === cat.label && <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#FDB913] rounded-full" />}
               </button>
             ))}
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-100 -z-10" />
+          </div>
+
+          {/* Mobile: category strip */}
+          <div className="md:hidden flex items-center gap-4 p-4 mb-6 rounded-xl overflow-hidden" style={{ backgroundColor: '#FAC05C' }}>
+            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden">
+              <img src={CATEGORIES.find(c => c.label === activeTab)?.image || ''} alt={activeTab} className="w-full h-full object-cover object-top" />
+            </div>
+            <div className="text-white font-outfit">
+              <p className="font-semibold uppercase text-[10px] tracking-widest opacity-80">Trendy</p>
+              <p className="font-bold uppercase text-xl leading-tight">{activeTab}</p>
+            </div>
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
-            <div className="relative shrink-0 flex flex-col items-center justify-center lg:justify-start">
+            <div className="hidden lg:flex relative shrink-0 flex-col items-center justify-start">
               <div className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0" style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}>
                 <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px]" style={{ height: 'clamp(260px, 55vw, 400px)', borderRadius: '5px' }}>
                   <img 

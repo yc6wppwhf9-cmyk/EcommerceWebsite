@@ -16,6 +16,7 @@ import reviewRoutes from './routes/review.routes';
 import paymentRoutes from './routes/payment.routes';
 import userRoutes from './routes/user.routes';
 import jobsRoutes from './routes/jobs.routes';
+import chatRoutes from './routes/chat.routes';
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {

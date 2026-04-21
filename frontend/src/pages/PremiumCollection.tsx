@@ -184,9 +184,9 @@ export const PremiumCollection = () => {
         {/* Categories */}
         <section className="pb-0">
           <div className="max-w-6xl mx-auto px-3 sm:px-6 sm:-mt-14 relative z-10 pt-4 sm:pt-0">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
               {seriesHighlights.map((series, idx) => (
-                <Link key={series.title} to={series.slug}>
+                <Link key={series.title} to={series.slug} className="">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}

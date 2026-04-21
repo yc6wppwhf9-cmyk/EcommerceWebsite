@@ -78,7 +78,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
         {/* Name — Outfit SemiBold 16px #000000 */}
         <Link to={productPath(product.slug || product.id)}>
-          <h3 className="text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">
+          <h3 className={`text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 transition-colors ${props.theme === 'premium' ? 'hover:text-red-600' : 'hover:text-[#755FF1]'}`}>
             {product.name}
           </h3>
         </Link>

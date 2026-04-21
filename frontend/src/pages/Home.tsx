@@ -178,26 +178,9 @@ export const Home = () => {
   const [catFlipIndex, setCatFlipIndex] = useState(0);
   const [catFlipDir, setCatFlipDir] = useState(1);
   const catTouchRef = useRef<number | null>(null);
-  const catAutoRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const startCatAuto = (total: number) => {
-    if (catAutoRef.current) clearInterval(catAutoRef.current);
-    catAutoRef.current = setInterval(() => {
-      setCatFlipDir(1);
-      setCatFlipIndex(i => (i + 1) % total);
-    }, 2500);
-  };
-
-  const goNextCat = (total: number) => {
-    setCatFlipDir(1);
-    setCatFlipIndex(i => (i + 1) % total);
-    startCatAuto(total);
-  };
-  const goPrevCat = (total: number) => {
-    setCatFlipDir(-1);
-    setCatFlipIndex(i => (i - 1 + total) % total);
-    startCatAuto(total);
-  };
+  const goNextCat = (total: number) => { setCatFlipDir(1); setCatFlipIndex(i => (i + 1) % total); };
+  const goPrevCat = (total: number) => { setCatFlipDir(-1); setCatFlipIndex(i => (i - 1 + total) % total); };
   const handleCatTouchStart = (e: React.TouchEvent) => { catTouchRef.current = e.touches[0].clientX; };
   const handleCatTouchEnd = (e: React.TouchEvent, total: number) => {
     if (catTouchRef.current === null) return;
@@ -207,11 +190,7 @@ export const Home = () => {
     catTouchRef.current = null;
   };
 
-  useEffect(() => {
-    document.documentElement.classList.remove('dark');
-    startCatAuto(CATS.length);
-    return () => { if (catAutoRef.current) clearInterval(catAutoRef.current); };
-  }, []);
+  useEffect(() => { document.documentElement.classList.remove('dark'); }, []);
 
   const bestSellersRef = useRef<HTMLDivElement>(null);
 
@@ -260,13 +239,14 @@ export const Home = () => {
                   return (
                     <div
                       key={`stack-${offset}`}
-                      className="absolute inset-x-0 bottom-0 rounded-2xl overflow-hidden pointer-events-none"
+                      className="absolute inset-y-0 rounded-2xl overflow-hidden pointer-events-none"
                       style={{
-                        top: `${offset * 8}px`,
-                        transform: `scale(${1 - offset * 0.05}) translateY(${offset * 4}px)`,
+                        left: `${offset * 10}px`,
+                        right: `-${offset * 10}px`,
+                        transform: `scale(${1 - offset * 0.04}) translateX(${offset * 8}px)`,
                         filter: `brightness(${0.55 - offset * 0.1})`,
                         zIndex: 10 - offset,
-                        transformOrigin: 'bottom center',
+                        transformOrigin: 'right center',
                       }}
                     >
                       <div className="relative w-full" style={{ paddingBottom: '120%' }}>

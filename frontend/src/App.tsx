@@ -8,6 +8,7 @@ import { WishlistProvider } from './context/WishlistContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CartDrawer } from './components/CartDrawer';
+import { ChatBot } from './components/ChatBot';
 import { AuthModal } from './components/AuthModal';
 import { SearchModal } from './components/SearchModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -89,6 +90,7 @@ function AppContent() {
       <AuthModal />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       {!isAdmin && <MobileBottomNav onSearchOpen={() => setSearchOpen(true)} />}
+      {!isAdmin && !isPremium && <ChatBot />}
       <ToastContainer />
     </>
   );

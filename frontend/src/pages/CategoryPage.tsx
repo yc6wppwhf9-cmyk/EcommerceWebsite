@@ -177,6 +177,7 @@ export const CategoryPage = () => {
   );
 
   return (
+    <>
     <main className="bg-white min-h-screen font-outfit pt-10 md:pt-16 selection:bg-black selection:text-white">
       <SEO
         title={categoryTitle}
@@ -292,5 +293,11 @@ export const CategoryPage = () => {
         </div>
       </div>
     </main>
+    {themeParam === 'premium' && (
+      <footer className="w-full leading-[0]">
+        <img src="/Traworld/Footer.png" alt="Premium Travel" className="w-full h-auto block" />
+      </footer>
+    )}
+    </>
   );
 };
