@@ -536,7 +536,7 @@ export const JuniorPage = () => {
                   {[1, 2, 3].map(n => <div key={n} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
                 </div>
               ) : products.length > 0 ? (
-                <div className="flex flex-row gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex flex-row justify-center gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
                   {products.slice(0, 5).map((product, idx) => (
                     <motion.div key={product.id} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
                   ))}

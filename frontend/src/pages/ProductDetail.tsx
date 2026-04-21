@@ -403,7 +403,7 @@ export const ProductDetail = () => {
               <button
                 onClick={handleAddToCart}
                 disabled={!inStock}
-                className="w-full bg-black text-white font-outfit font-semibold text-[20.11px] py-4 rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
+                className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${theme.btn}`}
               >
                 + MOVE TO CART
               </button>
@@ -412,7 +412,7 @@ export const ProductDetail = () => {
               <button
                 onClick={handleBuyNow}
                 disabled={!inStock}
-                className="w-full border-2 border-black text-black font-outfit font-semibold text-[20.11px] py-4 rounded-md hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
+                className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${theme.btnOutline}`}
               >
                 BUY NOW
               </button>

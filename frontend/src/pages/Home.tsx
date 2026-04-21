@@ -205,12 +205,16 @@ export const Home = () => {
   useEffect(() => { document.documentElement.classList.remove('dark'); }, []);
 
   const bestSellersRef = useRef<HTMLDivElement>(null);
+  const tabScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setTabLoading(true);
     setTabProducts([]);
-    api.getProducts({ category: activeTab, limit: '5' }).then(res => {
-      setTabProducts((res.products as unknown as Product[]).slice(0, 5));
+    if (tabScrollRef.current) tabScrollRef.current.scrollLeft = 0;
+    api.getProducts({ category: activeTab, limit: '20' }).then(res => {
+      const all = res.products as unknown as Product[];
+      const filtered = all.filter((p: any) => p.categories?.slug !== 'junior' && p.category !== 'junior');
+      setTabProducts(filtered.slice(0, 5));
     }).catch(() => { }).finally(() => setTabLoading(false));
   }, [activeTab]);
 
@@ -431,15 +435,29 @@ export const Home = () => {
                 </div>
               </div>
             )}
-            <div className="flex-1 min-w-0">
-              <div className="grid grid-cols-1 gap-4 md:gap-5">
+            <div className="flex-1 min-w-0 relative">
+              <button
+                onClick={() => tabScrollRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
+                className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg"
+              >
+                <ChevronLeft size={20} className="text-gray-600" />
+              </button>
+              <button
+                onClick={() => tabScrollRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
+                className="absolute right-[-15px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg"
+              >
+                <ChevronRight size={20} className="text-gray-600" />
+              </button>
+              <div ref={tabScrollRef} className="flex justify-center gap-4 md:gap-6 overflow-x-auto no-scrollbar pb-4 px-1">
                 {tabLoading ? (
                   [1, 2, 3, 4, 5].map(n => (
-                    <div key={n} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
+                    <div key={n} className="w-[200px] sm:w-[230px] md:w-[260px] shrink-0 aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
                   ))
                 ) : (
                   tabProducts.map(p => (
-                    <ProductCard key={p.id} product={p} />
+                    <div key={p.id} className="w-[200px] sm:w-[230px] md:w-[260px] shrink-0">
+                      <ProductCard product={p} />
+                    </div>
                   ))
                 )}
               </div>
