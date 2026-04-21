@@ -533,32 +533,34 @@ export const JuniorPage = () => {
                 <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
               </div>
             </div>
-            <div className="flex-1 min-w-0 relative">
-              <button
-                onClick={() => tabScrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' })}
-                className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg"
-              >
-                <ChevronLeft size={20} className="text-gray-600" />
-              </button>
-              <button
-                onClick={() => tabScrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' })}
-                className="absolute right-[-15px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg"
-              >
-                <ChevronRight size={20} className="text-gray-600" />
-              </button>
-              {isLoading ? (
-                <div className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-2 no-scrollbar">
-                  {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[160px] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
-                </div>
-              ) : products.length > 0 ? (
-                <div ref={tabScrollRef} className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar px-1">
-                  {products.slice(0, 4).map((product, idx) => (
-                    <motion.div key={product.id} className="shrink-0 w-[44vw] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center py-20 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-100"><p className="text-gray-400 font-outfit font-black uppercase tracking-widest">Coming Soon</p></div>
-              )}
+            <div className="flex-1 min-w-0">
+              <div className="relative">
+                <button
+                  onClick={() => tabScrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' })}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg"
+                >
+                  <ChevronLeft size={20} className="text-gray-600" />
+                </button>
+                <button
+                  onClick={() => tabScrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' })}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg"
+                >
+                  <ChevronRight size={20} className="text-gray-600" />
+                </button>
+                {isLoading ? (
+                  <div className="flex gap-4 md:gap-6 overflow-x-auto pb-2 no-scrollbar px-10 md:px-14">
+                    {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[44vw] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                  </div>
+                ) : products.length > 0 ? (
+                  <div ref={tabScrollRef} className="flex gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar px-10 md:px-14">
+                    {products.slice(0, 4).map((product, idx) => (
+                      <motion.div key={product.id} className="shrink-0 w-[44vw] md:w-[200px] lg:w-[220px]" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center py-20 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-100"><p className="text-gray-400 font-outfit font-black uppercase tracking-widest">Coming Soon</p></div>
+                )}
+              </div>
             </div>
           </div>
         </div>
