@@ -173,14 +173,12 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 <button className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-300 ${
                   location.pathname.startsWith('/account') || location.pathname.startsWith('/admin')
                     ? 'bg-white border-white'
-                    : (isScrolled || shouldBeBlackNav)
-                      ? 'bg-white/10 border-white/20 hover:bg-white/20'
-                      : 'bg-gray-100 border-gray-300 hover:bg-gray-200'
+                    : 'bg-white/20 border-white/30 hover:bg-white/30'
                 }`}>
                   <span className={`text-[11px] font-bold uppercase ${
                     location.pathname.startsWith('/account') || location.pathname.startsWith('/admin')
                       ? 'text-priority-blue'
-                      : (isScrolled || shouldBeBlackNav) ? 'text-white' : 'text-gray-800'
+                      : 'text-white'
                   }`}>
                     {user?.name?.charAt(0)}
                   </span>
