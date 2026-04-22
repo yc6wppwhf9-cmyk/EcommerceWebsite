@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -208,11 +208,22 @@ const BestSellerCard = ({ product }: { product: Product }) => (
 const DRAW_COLORS = ['#F69245', '#8750DA', '#FFBB5A', '#FF6B6B', '#4ECDC4', '#000000'];
 
 export const JuniorPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('School Backpacks');
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [clickEffect, setClickEffect] = useState<'dreamy' | 'power' | null>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
+
+  const handleStyleClick = (e: React.MouseEvent, type: 'dreamy' | 'power') => {
+    e.preventDefault();
+    setClickEffect(type);
+    setTimeout(() => {
+      setClickEffect(null);
+      navigate(`/junior/${type}`);
+    }, 750);
+  };
 
   const [drawingMode, setDrawingMode] = useState(false);
   const [drawColor, setDrawColor] = useState('#F69245');
@@ -434,8 +445,8 @@ export const JuniorPage = () => {
             </div>
           </div>
           <div className="flex gap-8 md:gap-32 mt-4 md:mt-6 relative z-10">
-            <Link to="/junior/dreamy" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Dreamy Styles</Link>
-            <Link to="/junior/power" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Power Styles</Link>
+            <a href="/junior/dreamy" onClick={e => handleStyleClick(e, 'dreamy')} className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors cursor-pointer" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Dreamy Styles</a>
+            <a href="/junior/power" onClick={e => handleStyleClick(e, 'power')} className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors cursor-pointer" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Power Styles</a>
           </div>
         </div>
       </section>
@@ -565,6 +576,30 @@ export const JuniorPage = () => {
 
         </div>
       </section>
+
+      {/* Click-burst effect overlay for Dreamy / Power */}
+      <AnimatePresence>
+        {clickEffect && (
+          <motion.div
+            key="style-effect"
+            className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.img
+              src={clickEffect === 'dreamy' ? '/junior/Dreamy.png' : '/junior/Power.png'}
+              alt=""
+              className="w-[260px] md:w-[380px] h-auto drop-shadow-2xl"
+              initial={{ scale: 0.2, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 1.15, opacity: 0 }}
+              transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </main>
   );
