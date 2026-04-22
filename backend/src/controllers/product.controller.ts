@@ -138,6 +138,7 @@ export const createProduct = async (req: Request, res: Response) => {
       size: body.size || '',
       age_range: body.ageRange || body.age_range || '',
       sub_category: body.sub_category || '',
+      junior_style: body.junior_style || null,
       is_active: body.is_active !== undefined ? body.is_active : true
     };
 

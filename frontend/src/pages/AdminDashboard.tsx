@@ -48,8 +48,6 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
     { value: 'combo-set', label: 'Combo Set' },
     { value: 'pouches', label: 'Pouches' },
     { value: 'lunch-bags', label: 'Lunch Bags' },
-    { value: 'dreamy', label: 'Dreamy Style' },
-    { value: 'power', label: 'Power Style' },
     { value: 'kids-accessories', label: 'Kids Accessories' },
   ],
   premium: [
@@ -65,7 +63,7 @@ const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
   gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
-  size: '',
+  size: '', juniorStyle: '',
   isNew: false, highlighted: false, // highlighted used for best seller
 });
 
@@ -236,13 +234,15 @@ export const AdminDashboard = () => {
         // Slug / URL part
         slug: (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7),
         sub_category: formData.subcategory || '',
+        junior_style: formData.juniorStyle || null,
         features: formData.features || [],
         images: (formData.images || []).filter(Boolean),
         colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.images || [] })) : []
       };
 
-      // Remove UI-only field (sub_category already mapped above)
+      // Remove UI-only fields
       delete (payload as any).subcategory;
+      delete (payload as any).juniorStyle;
 
       if (editingProduct) {
         await api.updateProduct(editingProduct.id, payload);
@@ -473,6 +473,18 @@ export const AdminDashboard = () => {
                             <select value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className={inputCls}>
                               <option value="">-- Pick Sub-Category --</option>
                               {(SUBCATEGORIES[formData.category || 'backpacks'] || []).map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* --- JUNIOR STYLE (Dreamy / Power — applies to any bag) --- */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Junior Style Tag <span className="text-gray-400 font-normal normal-case">(optional — any bag can be Dreamy or Power)</span></label>
+                            <select value={formData.juniorStyle || ''} onChange={(e) => setFormData({ ...formData, juniorStyle: e.target.value })} className={inputCls}>
+                              <option value="">-- None --</option>
+                              <option value="dreamy">Dreamy</option>
+                              <option value="power">Power</option>
                             </select>
                           </div>
                         </div>
@@ -739,7 +751,8 @@ export const AdminDashboard = () => {
                                 setFormData({
                                   ...p,
                                   originalPrice: p.original_price || p.originalPrice || 0,
-                                  category: p.categories?.slug || p.category || ''
+                                  category: p.categories?.slug || p.category || '',
+                                  juniorStyle: (p as any).junior_style || ''
                                 });
                                 setVariants((p.colors || p.variants || []).map((v: any) => ({
                                   color: v.name || v.color || '',

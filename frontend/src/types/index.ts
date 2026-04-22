@@ -31,6 +31,7 @@ export interface Product {
   size?: string;
   gender?: 'men' | 'women' | 'kids' | 'unisex';
   ageRange?: string;
+  juniorStyle?: string;
 }
 
 export interface CategoryInfo {

@@ -122,7 +122,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         <button
           onClick={handleAddToCart}
           disabled={product.stock <= 0}
-          className="w-full py-2.5 bg-priority-blue hover:opacity-90 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-all rounded-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
         >
           {product.stock <= 0 ? 'OUT OF STOCK' : '+ MOVE TO CART'}
         </button>

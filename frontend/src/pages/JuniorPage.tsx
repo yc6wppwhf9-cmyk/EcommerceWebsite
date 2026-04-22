@@ -1,74 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-
-type Spark = { id: number; angle: number; dist: number; size: number };
-
-const burst = (count: number) =>
-  Array.from({ length: count }, (_, i) => ({
-    id: Date.now() + i,
-    angle: (i / count) * 360 + Math.random() * 22,
-    dist: 40 + Math.random() * 50,
-    size: 24 + Math.random() * 20,
-  }));
-
-const SparkleLink = ({ to, children, sparkImg, delay = 0 }: { to: string; children: React.ReactNode; sparkImg: string; delay?: number }) => {
-  const [sparks, setSparks] = useState<Spark[]>([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fire = () => {
-      setSparks(burst(16));
-      setTimeout(() => setSparks([]), 700);
-    };
-    const t1 = setTimeout(fire, delay);
-    const t2 = setInterval(fire, 3000 + delay);
-    return () => { clearTimeout(t1); clearInterval(t2); };
-  }, [delay]);
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setSparks(burst(40));
-    setTimeout(() => { setSparks([]); navigate(to); }, 420);
-  };
-
-  return (
-    <div className="relative inline-block overflow-visible">
-      <button
-        onClick={handleClick}
-        className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors bg-transparent"
-        style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}
-      >
-        {children}
-      </button>
-      <AnimatePresence>
-        {sparks.map(s => (
-          <motion.img
-            key={s.id}
-            src={sparkImg}
-            alt=""
-            aria-hidden
-            className="absolute pointer-events-none select-none"
-            style={{ width: s.size, height: s.size, top: '50%', left: '50%', zIndex: 9999, objectFit: 'contain' }}
-            initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-            animate={{
-              x: Math.cos((s.angle * Math.PI) / 180) * s.dist,
-              y: Math.sin((s.angle * Math.PI) / 180) * s.dist,
-              scale: 0,
-              opacity: 0,
-              rotate: 180,
-            }}
-            transition={{ duration: 0.65, ease: [0.2, 0.8, 0.4, 1] }}
-          />
-        ))}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
@@ -498,8 +434,8 @@ export const JuniorPage = () => {
             </div>
           </div>
           <div className="flex gap-8 md:gap-32 mt-4 md:mt-6 relative z-10">
-            <SparkleLink to="/junior/dreamy" sparkImg="/junior/Dreamy.png" delay={300}>Dreamy Styles</SparkleLink>
-            <SparkleLink to="/junior/power" sparkImg="/junior/Power.png" delay={900}>Power Styles</SparkleLink>
+            <Link to="/junior/dreamy" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Dreamy Styles</Link>
+            <Link to="/junior/power" className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Power Styles</Link>
           </div>
         </div>
       </section>
@@ -547,26 +483,44 @@ export const JuniorPage = () => {
               <div className="relative">
                 <button
                   onClick={() => tabScrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' })}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg"
+                  className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 items-center justify-center transition-colors z-30 rounded-r-lg"
                 >
                   <ChevronLeft size={20} className="text-gray-600" />
                 </button>
                 <button
                   onClick={() => tabScrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' })}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg"
+                  className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 items-center justify-center transition-colors z-30 rounded-l-lg"
                 >
                   <ChevronRight size={20} className="text-gray-600" />
                 </button>
                 {isLoading ? (
-                  <div className="flex gap-4 md:gap-6 overflow-x-auto pb-2 no-scrollbar px-10 md:px-14">
-                    {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[calc(50vw-52px)] md:w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
-                  </div>
+                  <>
+                    {/* Mobile: 2-col grid skeleton */}
+                    <div className="md:hidden grid grid-cols-2 gap-3 px-1">
+                      {[1, 2, 3, 4].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-2xl" />)}
+                    </div>
+                    {/* Desktop: scroll skeleton */}
+                    <div className="hidden md:flex gap-6 overflow-x-auto pb-2 no-scrollbar px-14">
+                      {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                    </div>
+                  </>
                 ) : products.length > 0 ? (
-                  <div ref={tabScrollRef} className="flex gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory px-10 md:px-14">
-                    {products.slice(0, 4).map((product, idx) => (
-                      <motion.div key={product.id} className="shrink-0 w-[calc(50vw-52px)] md:w-[200px] lg:w-[220px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
-                    ))}
-                  </div>
+                  <>
+                    {/* Mobile: clean 2-column grid */}
+                    <div className="md:hidden grid grid-cols-2 gap-3 px-1">
+                      {products.slice(0, 4).map((product, idx) => (
+                        <motion.div key={product.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                          <JuniorProductCard product={product} />
+                        </motion.div>
+                      ))}
+                    </div>
+                    {/* Desktop: horizontal scroll */}
+                    <div ref={tabScrollRef} className="hidden md:flex gap-6 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory px-14">
+                      {products.slice(0, 4).map((product, idx) => (
+                        <motion.div key={product.id} className="shrink-0 w-[200px] lg:w-[220px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center py-20 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-100"><p className="text-gray-400 font-outfit font-black uppercase tracking-widest">Coming Soon</p></div>
                 )}

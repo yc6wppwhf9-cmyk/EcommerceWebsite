@@ -2,6 +2,34 @@
 // same-origin. In production set VITE_API_URL to your backend URL.
 const BASE = import.meta.env.VITE_API_URL || '';
 
+// ─── In-memory GET cache (stale-while-revalidate) ────────────────────────────
+// Caches responses for GET requests for TTL ms. On a cache hit the stored value
+// is returned immediately and a background refresh is queued so the next call
+// gets fresh data. This eliminates the cold-start penalty on revisits.
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+interface CacheEntry { data: unknown; ts: number }
+const _cache = new Map<string, CacheEntry>();
+const _inflight = new Map<string, Promise<unknown>>();
+
+function cacheGet<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  const hit = _cache.get(key);
+  const now = Date.now();
+  if (hit && now - hit.ts < CACHE_TTL) {
+    // Return stale data instantly; silently refresh in background
+    fetcher().then(data => _cache.set(key, { data, ts: Date.now() })).catch(() => {});
+    return Promise.resolve(hit.data as T);
+  }
+  // Deduplicate in-flight requests for the same key
+  if (_inflight.has(key)) return _inflight.get(key) as Promise<T>;
+  const promise = fetcher().then(data => {
+    _cache.set(key, { data, ts: Date.now() });
+    _inflight.delete(key);
+    return data;
+  }).catch(err => { _inflight.delete(key); throw err; });
+  _inflight.set(key, promise);
+  return promise;
+}
+
 /**
  * Read the CSRF token from the `csrf_token` cookie that the backend sets on
  * login/register. The backend uses the double-submit cookie pattern:
@@ -139,10 +167,11 @@ export const api = {
   // Products
   getProducts: (params?: Record<string, string>) => {
     const qs = params ? '?' + new URLSearchParams(params).toString() : '';
-    // Backend returns { products, page, limit }
-    return request<{ products: any[]; page: number; limit: number }>(`/api/products${qs}`);
+    const url = `/api/products${qs}`;
+    return cacheGet(url, () => request<{ products: any[]; page: number; limit: number }>(url));
   },
-  getProduct: (slug: string) => request<any>(`/api/products/${slug}`),
+  getProduct: (slug: string) =>
+    cacheGet(`/api/products/${slug}`, () => request<any>(`/api/products/${slug}`)),
   createProduct: (data: any) =>
     request<any>('/api/products', { method: 'POST', body: JSON.stringify(data) }),
   updateProduct: (id: string, data: any) =>

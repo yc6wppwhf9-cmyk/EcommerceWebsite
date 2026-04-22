@@ -10,11 +10,11 @@ import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 
 const BACKPACK_TABS = [
-  { id: 'college-backpacks', label: 'College Backpack', image: '/Category/ref.png' },
-  { id: 'school-backpacks', label: 'School Backpack', image: '/junior/Rectangle 28.png' },
-  { id: 'laptop-backpacks', label: 'Laptop Backpack', image: '/junior/Drift Sky Blue_ Hero 1.png' },
-  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/Category/Travelling Bag.jpg' },
-] as const;
+  { id: 'college-backpacks',  label: 'College Backpack',  image: '/Category/ref.png',                         to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
+  { id: 'school-backpacks',   label: 'School Backpack',   image: '/junior/Rectangle 28.png',                  to: '/school-backpacks',   apiParams: { category: 'backpacks', sub_category: 'school-backpacks' } },
+  { id: 'laptop-backpacks',   label: 'Laptop Backpack',   image: '/junior/Drift Sky Blue_ Hero 1.png',        to: '/laptop-backpacks',   apiParams: { category: 'laptop-backpacks' } },
+  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/Category/Travelling Bag.jpg',              to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
+];
 
 const HERO_SLIDES = [
   { src: '/Creatives/hero.mp4', type: 'video' as const, cta: 'Shop Now', to: '/backpacks' },
@@ -179,6 +179,24 @@ const BestSellerCard = ({ product }: { product: Product }) => {
   );
 };
 
+// Prefetch all tab data + best sellers in parallel so the API cache is warm
+// before the user interacts with any tab. Called once on module load.
+const prefetchHomeData = (() => {
+  let done = false;
+  return () => {
+    if (done) return;
+    done = true;
+    const fetches = [
+      ...BACKPACK_TABS.map(tab => {
+        const params = { ...(tab.apiParams || { category: tab.id }), limit: '20' };
+        return api.getProducts(params as any).catch(() => {});
+      }),
+      api.getProducts({ sort: 'popular', limit: '12' }).catch(() => {}),
+    ];
+    Promise.all(fetches).catch(() => {});
+  };
+})();
+
 export const Home = () => {
   const [activeTab, setActiveTab] = useState<string>('college-backpacks');
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
@@ -202,7 +220,10 @@ export const Home = () => {
     catTouchRef.current = null;
   };
 
-  useEffect(() => { document.documentElement.classList.remove('dark'); }, []);
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    prefetchHomeData(); // fire all API calls in parallel on first render
+  }, []);
 
   const bestSellersRef = useRef<HTMLDivElement>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
@@ -211,10 +232,11 @@ export const Home = () => {
     setTabLoading(true);
     setTabProducts([]);
     if (tabScrollRef.current) tabScrollRef.current.scrollLeft = 0;
-    api.getProducts({ category: activeTab, limit: '20' }).then(res => {
-      const all = res.products as unknown as Product[];
-      const filtered = all.filter((p: any) => p.categories?.slug !== 'junior' && p.category !== 'junior');
-      setTabProducts(filtered.slice(0, 5));
+    const tab = BACKPACK_TABS.find(t => t.id === activeTab);
+    const params = { ...(tab?.apiParams || { category: activeTab }), limit: '20' };
+    // Will resolve from cache instantly if prefetchHomeData already ran
+    api.getProducts(params as any).then(res => {
+      setTabProducts((res.products as unknown as Product[]).slice(0, 5));
     }).catch(() => { }).finally(() => setTabLoading(false));
   }, [activeTab]);
 
@@ -424,9 +446,9 @@ export const Home = () => {
                     {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
                   </p>
                 </div>
-                <Link 
-                  to={`/${activeTab}`}
-                  className="w-full flex-1 overflow-hidden relative block" 
+                <Link
+                  to={BACKPACK_TABS.find(t => t.id === activeTab)?.to || `/${activeTab}`}
+                  className="w-full flex-1 overflow-hidden relative block"
                   style={{ height: 'calc(100% - 80px)' }}
                 >
                   <LazyImage
