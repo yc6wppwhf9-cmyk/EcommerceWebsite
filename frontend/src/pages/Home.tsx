@@ -16,7 +16,6 @@ const BACKPACK_TABS = [
 ];
 
 const HERO_SLIDES = [
-  { src: '/Creatives/hero.mp4', type: 'video' as const, cta: 'Shop Now', to: '/backpacks' },
   { src: '/Creatives/hero-main.jpg', cta: 'Shop Campus Picks', to: '/college-backpacks' },
   { src: '/Creatives/editorial-2.jpg', cta: 'Shop Junior Collection', to: '/junior' },
   { src: '/Creatives/editorial-4.jpg', cta: 'Shop Luggage', to: '/luggage' },
@@ -35,70 +34,35 @@ const IMG = {
 };
 
 const heroVariants = {
-  enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%' }),
-  center: { x: 0 },
-  exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%' }),
+  enter: { opacity: 0, scale: 1.03 },
+  center: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.97 },
 };
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
-  const [dir, setDir] = useState(1);
-  const isPausedRef = useRef(false);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!isPausedRef.current) { setDir(1); setCurrent((p) => (p + 1) % HERO_SLIDES.length); }
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const next = () => { setDir(1); setCurrent((p) => (p + 1) % HERO_SLIDES.length); };
-  const prev = () => { setDir(-1); setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length); };
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') prev();
-      else if (e.key === 'ArrowRight') next();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  const next = () => setCurrent((p) => (p + 1) % HERO_SLIDES.length);
+  const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
-    <section
-      className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]"
-      onPointerEnter={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = true; }}
-      onPointerLeave={(e) => { if (e.pointerType === 'mouse') isPausedRef.current = false; }}
-    >
-      <AnimatePresence custom={dir} initial={false}>
+    <section className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]">
+      <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={current}
-          custom={dir}
           variants={heroVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.75, ease: 'easeInOut' }}
           className="absolute inset-0"
         >
-          {HERO_SLIDES[current].type === 'video' ? (
-            <video
-              key={HERO_SLIDES[current].src}
-              src={HERO_SLIDES[current].src}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <img
-              alt="Priority Collection"
-              className="w-full h-full object-cover"
-              src={HERO_SLIDES[current].src}
-              loading="eager"
-            />
-          )}
+          <img
+            alt="Priority Collection"
+            className="w-full h-full object-cover"
+            src={HERO_SLIDES[current].src}
+            loading="eager"
+          />
           <div className="absolute inset-x-0 bottom-0 h-28 md:h-32 bg-gradient-to-t from-black/5 to-transparent" />
         </motion.div>
       </AnimatePresence>
@@ -110,20 +74,11 @@ const HeroSlider = () => {
         <ChevronRight size={26} className="group-hover:translate-x-0.5 transition-transform" />
       </button>
 
-      {/* Mobile dots */}
-      <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+      {/* Dots — mobile & desktop */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
         {HERO_SLIDES.map((_, i) => (
           <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
         ))}
-      </div>
-
-      {/* Desktop slide counter + progress bar (Keeping same as previous) */}
-      <div className="hidden md:flex absolute bottom-6 inset-x-0 z-30 items-center justify-end px-8 gap-4">
-        <span className="text-[11px] font-bold tabular-nums tracking-widest text-white/40">{String(current + 1).padStart(2, '0')}</span>
-        <div className="w-32 h-[1.5px] bg-white/20 relative overflow-hidden rounded-full">
-          <motion.div key={current} className="absolute inset-y-0 left-0 bg-white rounded-full" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 5, ease: 'linear' }} />
-        </div>
-        <span className="text-[11px] font-bold tabular-nums tracking-widest text-white/40">{String(HERO_SLIDES.length).padStart(2, '0')}</span>
       </div>
     </section>
   );
@@ -205,11 +160,10 @@ export const Home = () => {
 
   // Category flip-card state
   const [catFlipIndex, setCatFlipIndex] = useState(0);
-  const [catFlipDir, setCatFlipDir] = useState(1);
   const catTouchRef = useRef<number | null>(null);
 
-  const goNextCat = (total: number) => { setCatFlipDir(1); setCatFlipIndex(i => (i + 1) % total); };
-  const goPrevCat = (total: number) => { setCatFlipDir(-1); setCatFlipIndex(i => (i - 1 + total) % total); };
+  const goNextCat = (total: number) => { setCatFlipIndex(i => (i + 1) % total); };
+  const goPrevCat = (total: number) => { setCatFlipIndex(i => (i - 1 + total) % total); };
   const handleCatTouchStart = (e: React.TouchEvent) => { catTouchRef.current = e.touches[0].clientX; };
   const handleCatTouchEnd = (e: React.TouchEvent, total: number) => {
     if (catTouchRef.current === null) return;
@@ -300,19 +254,13 @@ export const Home = () => {
 
                 {/* Active card */}
                 <div style={{ position: 'relative', zIndex: 20, overflow: 'hidden', borderRadius: '1rem' }}>
-                  <AnimatePresence mode="wait" custom={catFlipDir}>
+                  <AnimatePresence mode="wait">
                     <motion.div
                       key={catFlipIndex}
-                      custom={catFlipDir}
-                      variants={{
-                        enter: (d: number) => ({ x: d > 0 ? '100%' : '-100%' }),
-                        center: { x: 0 },
-                        exit: (d: number) => ({ x: d > 0 ? '-100%' : '100%' }),
-                      }}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      initial={{ opacity: 0, scale: 1.03 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.4, ease: 'easeInOut' }}
                       className="w-full rounded-2xl overflow-hidden shadow-xl"
                     >
                       <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '120%' }}>

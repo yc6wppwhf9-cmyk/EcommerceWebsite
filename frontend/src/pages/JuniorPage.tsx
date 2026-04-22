@@ -372,23 +372,23 @@ export const JuniorPage = () => {
           onTouchEnd={endDraw}
         />
 
-        {/* Draw / Erase buttons */}
-        <div className="absolute top-4 right-4 z-[60] flex items-center gap-2">
-          <button
-            onClick={clearCanvas}
-            className="flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
-            style={{ background: '#fff', color: '#e53e3e', border: '2px solid #e53e3e' }}
-          >
-            Erase
-          </button>
-          <button
-            onClick={() => setDrawingMode(d => !d)}
-            className="flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
-            style={{ background: drawingMode ? '#8750DA' : '#fff', color: drawingMode ? '#fff' : '#8750DA', border: '2px solid #8750DA' }}
-          >
-            ✏️ {drawingMode ? 'Done' : 'Draw'}
-          </button>
-        </div>
+        {/* Eraser — top left */}
+        <button
+          onClick={clearCanvas}
+          className="absolute top-4 left-4 z-[60] flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+          style={{ background: '#fff', color: '#e53e3e', border: '2px solid #e53e3e' }}
+        >
+          🧹 Erase
+        </button>
+
+        {/* Pencil / Draw — top right */}
+        <button
+          onClick={() => setDrawingMode(d => !d)}
+          className="absolute top-4 right-4 z-[60] flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+          style={{ background: drawingMode ? '#8750DA' : '#fff', color: drawingMode ? '#fff' : '#8750DA', border: '2px solid #8750DA' }}
+        >
+          ✏️ {drawingMode ? 'Done' : 'Draw'}
+        </button>
 
         {/* Toolbar (visible when drawing) */}
         {drawingMode && (

@@ -23,8 +23,8 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
   ];
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100]">
-      <nav className="bg-white dark:bg-[#111] border-t border-gray-100 dark:border-white/10 px-2 pb-[env(safe-area-inset-bottom,8px)] pt-2 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+    <div className="lg:hidden fixed bottom-3 left-3 right-3 z-[100] rounded-2xl overflow-hidden">
+      <nav className="bg-white dark:bg-[#111] border border-gray-100 dark:border-white/10 px-2 pb-3 pt-2 flex items-center justify-around shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
         {navItems.map((item, index) => {
           const isActive = item.path ? location.pathname === item.path : false;
           const Icon = item.icon;
