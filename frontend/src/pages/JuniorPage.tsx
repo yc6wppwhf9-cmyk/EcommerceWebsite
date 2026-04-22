@@ -591,11 +591,12 @@ export const JuniorPage = () => {
             <motion.img
               src={clickEffect === 'dreamy' ? '/junior/Dreamy.png' : '/junior/Power.png'}
               alt=""
-              className="w-[260px] md:w-[380px] h-auto drop-shadow-2xl"
-              initial={{ scale: 0.2, opacity: 0 }}
+              className="w-[320px] md:w-[480px] h-auto"
+              style={{ willChange: 'transform', imageRendering: 'crisp-edges' }}
+              initial={{ scale: 0.75, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 1.15, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+              exit={{ scale: 1.08, opacity: 0 }}
+              transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
             />
           </motion.div>
         )}
