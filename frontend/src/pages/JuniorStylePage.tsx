@@ -149,8 +149,31 @@ export const JuniorStylePage = () => {
     <main className="bg-white min-h-screen font-outfit">
       <FirecrackerBurst />
       {/* Hero banner */}
-      <section className="relative w-full flex flex-col items-center justify-center text-center py-16 md:py-24 overflow-hidden" style={{ backgroundColor: cfg.color }}>
+      <section className="relative w-full flex flex-col items-center justify-center text-center py-16 md:py-24 overflow-hidden" style={{ backgroundColor: cfg.color, minHeight: 'clamp(280px, 40vw, 420px)' }}>
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none" />
+
+        {/* Doodle — style character image on right */}
+        <motion.img
+          src={`/junior/${style === 'dreamy' ? 'Dreamy' : 'Power'}.png`}
+          alt=""
+          aria-hidden
+          className="absolute right-0 bottom-0 h-[80%] md:h-[100%] object-contain pointer-events-none select-none"
+          style={{ maxWidth: '38%' }}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        />
+
+        {/* Doodle — scattered flowers */}
+        <img src="/junior/flower.png" alt="" aria-hidden className="absolute top-5 left-6 w-8 md:w-12 opacity-70 rotate-12 pointer-events-none select-none" />
+        <img src="/junior/flower.png" alt="" aria-hidden className="absolute bottom-6 left-12 w-5 md:w-8 opacity-50 -rotate-[25deg] pointer-events-none select-none" />
+        <img src="/junior/flower.png" alt="" aria-hidden className="absolute top-1/3 left-[22%] w-4 md:w-6 opacity-40 rotate-45 pointer-events-none select-none" />
+
+        {/* Doodle — scattered stars */}
+        <img src="/junior/Star 1.png" alt="" aria-hidden className="absolute top-8 right-[42%] w-5 md:w-7 opacity-60 pointer-events-none select-none" />
+        <img src="/junior/Star 1.png" alt="" aria-hidden className="absolute bottom-10 right-[38%] w-4 md:w-6 opacity-50 pointer-events-none select-none" />
+        <img src="/junior/Star 1.png" alt="" aria-hidden className="absolute top-1/2 left-[8%] w-4 md:w-5 opacity-40 pointer-events-none select-none" />
+
         <div className="relative z-10 px-6">
           <Link to="/junior" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-[12px] font-semibold uppercase tracking-widest mb-6 transition-colors">
             <ArrowLeft size={14} /> Back to Junior

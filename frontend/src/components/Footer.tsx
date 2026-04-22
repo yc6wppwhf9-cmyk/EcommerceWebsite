@@ -38,8 +38,19 @@ export const Footer = () => {
   const isJunior = location.pathname.startsWith('/junior') || queryParams.get('theme') === 'junior';
   const isHome = location.pathname === '/';
 
+  const isDreamy = location.pathname === '/junior/dreamy';
+  const isPower = location.pathname === '/junior/power';
+
   const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-dark';
-  const footerStyle = isJunior ? { backgroundColor: '#5652bc', color: '#FFFFFF' } : isHome ? { backgroundColor: '#26B3FF', color: '#FFFFFF' } : {};
+  const footerStyle = isDreamy
+    ? { backgroundColor: '#A368FB', color: '#FFFFFF' }
+    : isPower
+    ? { backgroundColor: '#3E92E6', color: '#FFFFFF' }
+    : isJunior
+    ? { backgroundColor: '#5652bc', color: '#FFFFFF' }
+    : isHome
+    ? { backgroundColor: '#26B3FF', color: '#FFFFFF' }
+    : {};
 
   return (
     <footer className={`${footerBg} ${isJunior || isHome ? '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white' : 'text-gray-300'} py-10 md:py-12 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-12 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
