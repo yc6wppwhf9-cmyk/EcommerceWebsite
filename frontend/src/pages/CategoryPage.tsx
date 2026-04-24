@@ -73,6 +73,8 @@ export const CategoryPage = () => {
       else if (isPremiumFilter) params.isPremium = 'true';
       else params.category = slug;
 
+      if (themeParam === 'premium') params.isPremium = 'true';
+
       try {
         const res = await api.getProducts(params);
         const products = res.products as unknown as Product[];
@@ -90,7 +92,7 @@ export const CategoryPage = () => {
         setIsLoadingMore(false);
       }
     },
-    [slug, isGenderFilter, isPremiumFilter]
+    [slug, isGenderFilter, isPremiumFilter, themeParam]
   );
 
   useEffect(() => {

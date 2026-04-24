@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -27,7 +27,7 @@ import { AboutUs } from './pages/AboutUs';
 import { ContactUs } from './pages/ContactUs';
 import { Careers } from './pages/Careers';
 import { OurTeam } from './pages/OurTeam';
-import { ShippingPolicy, ReturnsRefunds, PrivacyPolicy, TermsOfService } from './pages/Policies';
+import { ShippingPolicy, ReturnsRefunds, PrivacyPolicy, TermsOfService, ClaimWarranty } from './pages/Policies';
 import { Wishlist } from './pages/Wishlist';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
@@ -51,8 +51,10 @@ const ScrollToTop = () => {
 function AppContent() {
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const isAdmin = location.pathname.startsWith('/admin');
   const isPremium = location.pathname.startsWith('/premium');
+  const isPremiumTheme = isPremium || searchParams.get('theme') === 'premium';
 
   return (
     <>
@@ -82,17 +84,18 @@ function AppContent() {
             <Route path="/returns" element={<ReturnsRefunds />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/warranty" element={<ClaimWarranty />} />
             {/* All category routes use the same component */}
             <Route path="/:category" element={<CategoryPage />} />
           </Routes>
         </div>
-        {!isAdmin && !isPremium && <Footer />}
+        {!isAdmin && !isPremiumTheme && <Footer />}
       </div>
       <CartDrawer />
       <AuthModal />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       {!isAdmin && <MobileBottomNav onSearchOpen={() => setSearchOpen(true)} />}
-      {!isAdmin && !isPremium && <ChatBot />}
+      {!isAdmin && !isPremiumTheme && <ChatBot />}
       <ToastContainer />
     </>
   );

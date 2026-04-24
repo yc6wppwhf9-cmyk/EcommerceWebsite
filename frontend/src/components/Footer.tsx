@@ -102,6 +102,7 @@ export const Footer = () => {
               <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/returns">Returns & Refunds</Link></li>
               <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/privacy">Privacy Notice</Link></li>
               <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/terms">Terms of Service</Link></li>
+              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/warranty">Claim Warranty</Link></li>
             </ul>
           </FooterSection>
 

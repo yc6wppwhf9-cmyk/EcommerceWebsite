@@ -82,7 +82,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       to: '/backpacks',
       items: [
         { label: 'College Backpacks', slug: 'college-backpacks' },
-        { label: 'School Backpacks', slug: 'school-backpacks' },
         { label: 'Office Backpacks', slug: 'office-backpacks' },
         { label: 'Trekking Backpacks', slug: 'trekking-backpacks' },
       ]
@@ -110,10 +109,24 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     { title: 'PREMIUM', to: '/premium' },
   ];
 
+  const premiumNavData = [
+    { title: 'HOME', to: '/' },
+    {
+      title: 'COLLECTION',
+      to: '/premium',
+      items: [
+        { label: 'Luggages', slug: 'luggage' },
+        { label: 'Backpacks', slug: 'backpacks' },
+        { label: 'Duffels', slug: 'duffle' },
+      ],
+    },
+  ];
+
   const queryParams = new URLSearchParams(location.search);
   const isJunior = location.pathname.startsWith('/junior') || queryParams.get('theme') === 'junior';
   const isPremiumTheme = !isJunior && (location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium');
   const isDarkMode = isPremiumTheme;
+  const activeNavData = isPremiumTheme ? premiumNavData : navData;
 
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
@@ -144,7 +157,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         <nav className="hidden lg:block">
           <ul className="flex items-center">
-            {navData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} />)}
+            {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} />)}
           </ul>
         </nav>
 
@@ -251,7 +264,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
             {/* Scrollable nav area */}
             <nav className="flex-1 overflow-y-auto px-5 py-3">
-              {navData.map((nav) => (
+              {activeNavData.map((nav) => (
                 <div key={nav.title} className="border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <Link
