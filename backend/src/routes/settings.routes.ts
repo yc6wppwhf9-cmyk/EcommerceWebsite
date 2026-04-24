@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getSetting, upsertSetting } from '../controllers/settings.controller';
-import { authenticate } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
 
@@ -8,6 +8,6 @@ const router = Router();
 router.get('/:key', getSetting);
 
 // Admin-only write
-router.put('/:key', authenticate, upsertSetting);
+router.put('/:key', authenticateToken, upsertSetting);
 
 export default router;
