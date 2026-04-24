@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  LogOut, Settings, Users,
+  LogOut, Users,
   Truck, LayoutDashboard, Box,
   Plus, Edit3, Trash2, X, Check,
-  TrendingUp, ShoppingBag, CreditCard,
+  TrendingUp, ShoppingBag,
   FileSpreadsheet, Image as ImageIcon,
   Zap, Award, Percent, Crown,
-  Briefcase, FileText, ChevronDown, Loader2
+  Briefcase, FileText, ChevronDown, Loader2,
+  Eye, EyeOff, AlertTriangle, Search,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -83,6 +84,10 @@ export const AdminDashboard = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [productSearch, setProductSearch] = useState('');
+  const [productCategoryFilter, setProductCategoryFilter] = useState('all');
+  const [editingStock, setEditingStock] = useState<{ id: string; value: number } | null>(null);
+  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -212,6 +217,64 @@ export const AdminDashboard = () => {
       fetchData();
     } catch (err: any) {
       showToast(err.message || 'Failed to update status', 'error');
+    }
+  };
+
+  // ── Overview computed values ──────────────────────────────────────────────
+  const today = new Date();
+  const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === today.toDateString());
+  const todayRevenue = todayOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+  const pendingActionCount = orders.filter(o => o.status === 'pending' || o.status === 'confirmed' || o.status === 'processing').length;
+  const lowStockProducts = products.filter(p => (p.stock ?? 0) <= 5);
+
+  // ── Filtered products ─────────────────────────────────────────────────────
+  const filteredProducts = products.filter(p => {
+    const matchSearch = !productSearch || (p.name || '').toLowerCase().includes(productSearch.toLowerCase());
+    const matchCat = productCategoryFilter === 'all' || ((p as any).categories?.slug || p.category) === productCategoryFilter;
+    return matchSearch && matchCat;
+  });
+
+  // ── Filtered orders ───────────────────────────────────────────────────────
+  const filteredOrders = orderStatusFilter === 'all' ? orders : orders.filter(o => o.status === orderStatusFilter);
+
+  // ── Order status pipeline ─────────────────────────────────────────────────
+  const ORDER_NEXT: Record<string, { label: string; status: string; needsInvoice?: boolean }> = {
+    pending:    { label: 'Confirm Order',    status: 'confirmed' },
+    confirmed:  { label: 'Mark Processing',  status: 'processing' },
+    processing: { label: 'Mark as Shipped',  status: 'shipped', needsInvoice: true },
+    shipped:    { label: 'Mark Delivered',   status: 'delivered' },
+  };
+  const ORDER_STATUS_COLOR: Record<string, string> = {
+    pending:    'bg-yellow-100 text-yellow-700',
+    confirmed:  'bg-blue-100 text-blue-700',
+    processing: 'bg-purple-100 text-purple-700',
+    shipped:    'bg-indigo-100 text-indigo-700',
+    delivered:  'bg-green-100 text-green-700',
+    cancelled:  'bg-red-100 text-red-600',
+    returned:   'bg-gray-100 text-gray-600',
+  };
+
+  // ── Quick stock update ────────────────────────────────────────────────────
+  const handleQuickStockUpdate = async (id: string, stock: number) => {
+    try {
+      await api.updateProduct(id, { stock });
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, stock } : p));
+      setEditingStock(null);
+      showToast('Stock updated!');
+    } catch {
+      showToast('Failed to update stock', 'error');
+    }
+  };
+
+  // ── Visibility toggle ─────────────────────────────────────────────────────
+  const handleToggleVisibility = async (p: Product) => {
+    const newVal = !((p as any).is_active ?? true);
+    try {
+      await api.updateProduct(p.id, { is_active: newVal });
+      setProducts(prev => prev.map(prod => prod.id === p.id ? { ...prod, is_active: newVal } as any : prod));
+      showToast(newVal ? 'Product is now visible' : 'Product hidden from store');
+    } catch {
+      showToast('Failed to update visibility', 'error');
     }
   };
 
@@ -410,7 +473,7 @@ export const AdminDashboard = () => {
                   <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                     <div>
                       <h2 className="text-sm font-black text-gray-900 uppercase">Manage Inventory</h2>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">{products.length} Items found</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">{filteredProducts.length} of {products.length} Items</p>
                     </div>
                     {!isAddingProduct && (
                       <button onClick={() => { setIsAddingProduct(true); setEditingProduct(null); }} className="px-6 py-3 bg-priority-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-priority-blue/20">
@@ -564,131 +627,135 @@ export const AdminDashboard = () => {
                           </label>
                         </div>
 
-                        {/* --- MULTI-IMAGE GALLERY --- */}
-                        <div className="pt-8 border-t border-gray-100">
-                          <div className="flex items-center gap-6">
-                            <div className="flex-1">
-                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Showcase Photo Gallery <span className="text-red-500">*</span></label>
-                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">First photo is the primary cover image</p>
+                        {/* --- PHOTOS & COLOUR OPTIONS (unified) --- */}
+                        <div className="pt-8 border-t border-gray-100 space-y-6">
+                          {/* Section header */}
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Photos & Colour Options <span className="text-red-500">*</span></label>
+                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">
+                                First photo is the main cover image. Add colour variants below if the bag comes in multiple colours.
+                              </p>
                             </div>
-                            <CloudinaryUpload
-                              label=""
-                              value=""
-                              multiple={true}
-                              onChange={() => { }}
-                              onBulkChange={(urls) => setFormData(prev => ({ ...prev, images: [...(prev.images || []).filter(Boolean), ...urls] }))}
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {(formData.images || ['']).map((img, idx) => (
-                              <div key={idx} className="relative group/g bg-stone-50 rounded-2xl border border-stone-100 p-4 transition-all hover:shadow-lg">
-                                {idx > 0 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setFormData(prev => {
-                                        const newImgs = [...(prev.images || [])];
-                                        newImgs.splice(idx, 1);
-                                        return { ...prev, images: newImgs };
-                                      });
-                                    }}
-                                    className="absolute -top-3 -right-3 w-8 h-8 bg-white border border-red-100 text-red-500 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/g:opacity-100 transition-all z-10 hover:bg-red-500 hover:text-white"
-                                  >
-                                    <X size={16} />
-                                  </button>
-                                )}
-                                <CloudinaryUpload
-                                  label={idx === 0 ? "Main Cover Image" : `Gallery Photo #${idx + 1}`}
-                                  value={img}
-                                  onChange={(url) => {
-                                    setFormData(prev => {
-                                      const newImgs = [...(prev.images || [])];
-                                      while (newImgs.length <= idx) newImgs.push('');
-                                      newImgs[idx] = url;
-                                      return { ...prev, images: newImgs };
-                                    });
-                                  }}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* --- COLOUR VARIANTS --- */}
-                        <div className="pt-6 border-t border-gray-100">
-                          <div className="flex items-center gap-6">
-                            <div className="flex-1">
-                              <label className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Colour Variants & Photos (Optional)</label>
-                              <p className="text-[9px] text-gray-400 font-bold uppercase mt-1">Add specific photos for different bag colours</p>
-                            </div>
-                            <div className="flex gap-4">
-                              <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all">
-                                + Create Colour Group
+                            <div className="flex items-center gap-3 shrink-0">
+                              <CloudinaryUpload
+                                label=""
+                                value=""
+                                multiple={true}
+                                onChange={() => { }}
+                                onBulkChange={(urls) => setFormData(prev => ({ ...prev, images: [...(prev.images || []).filter(Boolean), ...urls] }))}
+                              />
+                              <button type="button" onClick={addVariant} className="flex items-center gap-2 text-[10px] font-black text-priority-blue uppercase border-2 border-priority-blue/10 px-4 py-2 rounded-xl bg-priority-blue/5 hover:bg-priority-blue hover:text-white transition-all whitespace-nowrap">
+                                + Add Colour
                               </button>
                             </div>
                           </div>
 
-                          <div className="space-y-6">
-                            {variants.map((v, i) => (
-                              <div key={i} className="p-6 bg-gray-50 rounded-2xl border border-gray-100 relative group/v shadow-inner">
-                                <button type="button" onClick={() => removeVariant(i)} className="absolute top-4 right-4 w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover/v:opacity-100 transition-all shadow-sm"><X size={16} /></button>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                  <div className="space-y-2">
-                                    <label className="text-[9px] font-black text-gray-500 uppercase">Colour Name</label>
-                                    <input type="text" value={v.color} onChange={(e) => updateVariant(i, 'color', e.target.value)} placeholder="e.g. Electric Blue" className={inputCls} />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-[9px] font-black text-gray-500 uppercase">Hex Code (e.g. #0044FF)</label>
-                                    <div className="flex gap-2">
-                                      <input type="text" value={v.colorCode} onChange={(e) => updateVariant(i, 'colorCode', e.target.value)} placeholder="#000000" className={`${inputCls} font-mono`} />
-                                      <input type="color" value={v.colorCode} onChange={(e) => updateVariant(i, 'colorCode', e.target.value)} className="w-14 h-11 p-1 bg-white border border-gray-200 rounded-xl cursor-pointer" />
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="space-y-4">
+                          {/* Main product photos */}
+                          <div>
+                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Main Product Photos</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {(formData.images || ['']).map((img, idx) => (
+                                <div key={idx} className="relative group/g bg-stone-50 rounded-2xl border border-stone-100 p-4 transition-all hover:shadow-lg">
+                                  {idx > 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData(prev => {
+                                          const newImgs = [...(prev.images || [])];
+                                          newImgs.splice(idx, 1);
+                                          return { ...prev, images: newImgs };
+                                        });
+                                      }}
+                                      className="absolute -top-3 -right-3 w-8 h-8 bg-white border border-red-100 text-red-500 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/g:opacity-100 transition-all z-10 hover:bg-red-500 hover:text-white"
+                                    >
+                                      <X size={16} />
+                                    </button>
+                                  )}
                                   <CloudinaryUpload
-                                    label=""
-                                    value=""
-                                    multiple={true}
-                                    onBulkChange={(urls) => {
-                                      const newImgs = [...(v.images || []), ...urls];
-                                      updateVariant(i, 'images', newImgs);
+                                    label={idx === 0 ? "Main Cover Image" : `Gallery Photo #${idx + 1}`}
+                                    value={img}
+                                    onChange={(url) => {
+                                      setFormData(prev => {
+                                        const newImgs = [...(prev.images || [])];
+                                        while (newImgs.length <= idx) newImgs.push('');
+                                        newImgs[idx] = url;
+                                        return { ...prev, images: newImgs };
+                                      });
                                     }}
                                   />
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                  {(v.images || ['']).map((vImg, vIdx) => (
-                                    <div key={vIdx} className="relative group/vi bg-white p-2 rounded-xl border border-gray-100">
-                                      {vIdx >= 0 && (
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            const newImgs = [...(v.images || [])];
-                                            newImgs.splice(vIdx, 1);
-                                            updateVariant(i, 'images', newImgs);
-                                          }}
-                                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md z-10"
-                                        >
-                                          <X size={12} />
-                                        </button>
-                                      )}
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Colour variant panels */}
+                          {variants.length > 0 && (
+                            <div>
+                              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Colour Variants</p>
+                              <div className="space-y-6">
+                                {variants.map((v, i) => (
+                                  <div key={i} className="p-6 bg-gray-50 rounded-2xl border border-gray-100 relative group/v shadow-inner">
+                                    <button type="button" onClick={() => removeVariant(i)} className="absolute top-4 right-4 w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover/v:opacity-100 transition-all shadow-sm"><X size={16} /></button>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                      <div className="space-y-2">
+                                        <label className="text-[9px] font-black text-gray-500 uppercase">Colour Name</label>
+                                        <input type="text" value={v.color} onChange={(e) => updateVariant(i, 'color', e.target.value)} placeholder="e.g. Electric Blue" className={inputCls} />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <label className="text-[9px] font-black text-gray-500 uppercase">Hex Code (e.g. #0044FF)</label>
+                                        <div className="flex gap-2">
+                                          <input type="text" value={v.colorCode} onChange={(e) => updateVariant(i, 'colorCode', e.target.value)} placeholder="#000000" className={`${inputCls} font-mono`} />
+                                          <input type="color" value={v.colorCode} onChange={(e) => updateVariant(i, 'colorCode', e.target.value)} className="w-14 h-11 p-1 bg-white border border-gray-200 rounded-xl cursor-pointer" />
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="mb-4">
                                       <CloudinaryUpload
                                         label=""
-                                        value={vImg}
-                                        onChange={(url) => {
-                                          const newImgs = [...(v.images || [])];
-                                          newImgs[vIdx] = url;
+                                        value=""
+                                        multiple={true}
+                                        onChange={() => { }}
+                                        onBulkChange={(urls) => {
+                                          const newImgs = [...(v.images || []), ...urls];
                                           updateVariant(i, 'images', newImgs);
                                         }}
                                       />
                                     </div>
-                                  ))}
-                                </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                      {(v.images || ['']).map((vImg, vIdx) => (
+                                        <div key={vIdx} className="relative group/vi bg-white p-2 rounded-xl border border-gray-100">
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              const newImgs = [...(v.images || [])];
+                                              newImgs.splice(vIdx, 1);
+                                              updateVariant(i, 'images', newImgs);
+                                            }}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md z-10"
+                                          >
+                                            <X size={12} />
+                                          </button>
+                                          <CloudinaryUpload
+                                            label=""
+                                            value={vImg}
+                                            onChange={(url) => {
+                                              const newImgs = [...(v.images || [])];
+                                              newImgs[vIdx] = url;
+                                              updateVariant(i, 'images', newImgs);
+                                            }}
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
-                          </div>
+                            </div>
+                          )}
                         </div>
 
                         <div className="space-y-2">
@@ -728,46 +795,115 @@ export const AdminDashboard = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                      {products.map(p => (
-                        <div key={p.id} className="bg-white p-5 rounded-2xl border border-gray-100 flex gap-4 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden">
-                          <img src={p.images?.[0] || (p as any).image || ''} className="w-20 h-20 object-contain p-2 bg-gray-50 rounded-xl" />
-                          <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                            <div>
-                              <p className="text-[8px] font-black text-priority-blue uppercase tracking-widest truncate">
-                                {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
-                              </p>
-                              <h4 className="text-[11px] font-black text-gray-900 truncate leading-tight mt-1 mb-0.5">{p.name || 'Unnamed Product'}</h4>
-                              <p className="text-[10px] font-bold text-gray-400 tracking-tight">
-                                ₹ {(p.price || 0).toLocaleString()}
-                                <span className="line-through text-[8px] ml-1 opacity-50 font-normal">
-                                  ₹ {(p.originalPrice || p.original_price || p.price || 0).toLocaleString()}
-                                </span>
-                              </p>
-                            </div>
-                            <div className="flex gap-4 mt-3">
-                              <button onClick={() => {
-                                setEditingProduct(p);
-                                setFormData({
-                                  ...p,
-                                  originalPrice: p.original_price || p.originalPrice || 0,
-                                  category: p.categories?.slug || p.category || '',
-                                  juniorStyle: (p as any).junior_style || ''
-                                });
-                                setVariants((p.colors || p.variants || []).map((v: any) => ({
-                                  color: v.name || v.color || '',
-                                  colorCode: v.code || v.colorCode || '#000',
-                                  image: v.image || (v.images?.[0]) || ''
-                                })));
-                                setIsAddingProduct(true);
-                              }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
-                              <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
-                            </div>
-                          </div>
-                          {p.isNew && <div className="absolute top-0 right-0 w-8 h-8"><div className="absolute top-0 right-0 w-[150%] h-4 bg-priority-blue text-[7px] font-black text-white flex items-center justify-center rotate-45 translate-x-[30%] translate-y-[20%] uppercase">New</div></div>}
+                    <>
+                      {/* Search + category filter */}
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="relative flex-1">
+                          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Search products..."
+                            value={productSearch}
+                            onChange={e => setProductSearch(e.target.value)}
+                            className="w-full pl-9 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-[11px] font-bold text-gray-900 outline-none focus:border-priority-blue placeholder:text-gray-400"
+                          />
                         </div>
-                      ))}
-                    </div>
+                        <select
+                          value={productCategoryFilter}
+                          onChange={e => setProductCategoryFilter(e.target.value)}
+                          className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-[11px] font-black text-gray-700 outline-none focus:border-priority-blue"
+                        >
+                          <option value="all">All Categories</option>
+                          {MAIN_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                        </select>
+                      </div>
+
+                      {filteredProducts.length === 0 ? (
+                        <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-16 text-center">
+                          <Search size={32} className="mx-auto text-gray-200 mb-3" />
+                          <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">No products match your search</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                          {filteredProducts.map(p => (
+                            <div key={p.id} className="bg-white p-5 rounded-2xl border border-gray-100 flex gap-4 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden">
+                              <div className="relative shrink-0">
+                                <img src={p.images?.[0] || (p as any).image || ''} className="w-20 h-20 object-contain p-2 bg-gray-50 rounded-xl" />
+                                {(p.stock ?? 0) <= 5 && (
+                                  <span className={`absolute -top-1 -right-1 text-[7px] font-black px-1.5 py-0.5 rounded-full ${p.stock === 0 ? 'bg-red-500 text-white' : 'bg-orange-400 text-white'}`}>
+                                    {p.stock === 0 ? 'OUT' : `${p.stock}`}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex-1 flex flex-col justify-between overflow-hidden">
+                                <div>
+                                  <p className="text-[8px] font-black text-priority-blue uppercase tracking-widest truncate">
+                                    {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
+                                  </p>
+                                  <h4 className="text-[11px] font-black text-gray-900 truncate leading-tight mt-1 mb-0.5">{p.name || 'Unnamed Product'}</h4>
+                                  <p className="text-[10px] font-bold text-gray-400 tracking-tight">
+                                    ₹ {(p.price || 0).toLocaleString()}
+                                    <span className="line-through text-[8px] ml-1 opacity-50 font-normal">
+                                      ₹ {(p.originalPrice || p.original_price || p.price || 0).toLocaleString()}
+                                    </span>
+                                  </p>
+                                  {editingStock?.id === p.id ? (
+                                    <div className="flex items-center gap-1.5 mt-1.5">
+                                      <input
+                                        type="number"
+                                        value={editingStock.value}
+                                        onChange={e => setEditingStock({ id: p.id, value: parseInt(e.target.value) || 0 })}
+                                        className="w-16 border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-black text-gray-900 outline-none focus:border-priority-blue"
+                                        autoFocus
+                                      />
+                                      <button onClick={() => handleQuickStockUpdate(p.id, editingStock.value)} className="p-1 bg-priority-blue text-white rounded-lg">
+                                        <Check size={10} />
+                                      </button>
+                                      <button onClick={() => setEditingStock(null)} className="p-1 bg-gray-100 text-gray-500 rounded-lg">
+                                        <X size={10} />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={() => setEditingStock({ id: p.id, value: p.stock ?? 0 })}
+                                      className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-priority-blue transition-colors text-left"
+                                    >
+                                      Stock: {p.stock ?? 0}
+                                    </button>
+                                  )}
+                                </div>
+                                <div className="flex gap-3 mt-3 flex-wrap">
+                                  <button onClick={() => {
+                                    setEditingProduct(p);
+                                    setFormData({
+                                      ...p,
+                                      originalPrice: p.original_price || p.originalPrice || 0,
+                                      category: p.categories?.slug || p.category || '',
+                                      juniorStyle: (p as any).junior_style || ''
+                                    });
+                                    setVariants((p.colors || p.variants || []).map((v: any) => ({
+                                      color: v.name || v.color || '',
+                                      colorCode: v.code || v.colorCode || '#000',
+                                      image: v.image || (v.images?.[0]) || ''
+                                    })));
+                                    setIsAddingProduct(true);
+                                  }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
+                                  <button
+                                    onClick={() => handleToggleVisibility(p)}
+                                    className={`text-[9px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${(p as any).is_active === false ? 'text-gray-300 hover:text-orange-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                  >
+                                    {(p as any).is_active === false ? <EyeOff size={10} /> : <Eye size={10} />}
+                                    {(p as any).is_active === false ? 'Hidden' : 'Live'}
+                                  </button>
+                                  <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
+                                </div>
+                              </div>
+                              {p.isNew && <div className="absolute top-0 right-0 w-8 h-8"><div className="absolute top-0 right-0 w-[150%] h-4 bg-priority-blue text-[7px] font-black text-white flex items-center justify-center rotate-45 translate-x-[30%] translate-y-[20%] uppercase">New</div></div>}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </motion.div>
               )}
@@ -777,21 +913,40 @@ export const AdminDashboard = () => {
                   <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                     <div>
                       <h2 className="text-sm font-black text-gray-900 uppercase">Manage Orders</h2>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">{orders.length} Total orders</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">{filteredOrders.length} of {orders.length} Orders</p>
                     </div>
                   </div>
 
+                  {/* Status filter tabs */}
+                  <div className="flex overflow-x-auto gap-2 pb-1">
+                    {['all', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
+                      <button
+                        key={status}
+                        onClick={() => setOrderStatusFilter(status)}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 transition-all ${
+                          orderStatusFilter === status
+                            ? 'bg-priority-blue text-white shadow-md'
+                            : 'bg-white border border-gray-200 text-gray-500 hover:border-gray-300'
+                        }`}
+                      >
+                        {status === 'all' ? `All (${orders.length})` : `${status} (${orders.filter(o => o.status === status).length})`}
+                      </button>
+                    ))}
+                  </div>
+
                   <div className="space-y-4">
-                    {orders.map(order => (
+                    {filteredOrders.length === 0 ? (
+                      <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-16 text-center">
+                        <Truck size={32} className="mx-auto text-gray-200 mb-3" />
+                        <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">No orders with this status</p>
+                      </div>
+                    ) : filteredOrders.map(order => (
                       <div key={order.id} className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-priority-blue transition-all">
                         <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
                           <div>
                             <div className="flex items-center gap-3 mb-2">
                               <span className="text-[11px] font-black text-gray-900">#ORD-{order.id.slice(0, 8).toUpperCase()}</span>
-                              <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${order.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                                  order.status === 'delivered' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
-                                }`}>
+                              <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${ORDER_STATUS_COLOR[order.status] ?? 'bg-gray-100 text-gray-600'}`}>
                                 {order.status}
                               </span>
                             </div>
@@ -808,10 +963,16 @@ export const AdminDashboard = () => {
                           <button onClick={() => printLabel(order)} className="px-4 py-2 bg-gray-900 text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
                             <Truck size={14} /> Print Label
                           </button>
-                          {order.status !== 'shipped' && order.status !== 'delivered' && (
-                            <button onClick={() => setSelectedOrder(order)} className="px-4 py-2 bg-priority-blue text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
-                              <Check size={14} /> Mark as Shipped
-                            </button>
+                          {ORDER_NEXT[order.status] && (
+                            ORDER_NEXT[order.status].needsInvoice ? (
+                              <button onClick={() => setSelectedOrder(order)} className="px-4 py-2 bg-priority-blue text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
+                                <Check size={14} /> {ORDER_NEXT[order.status].label}
+                              </button>
+                            ) : (
+                              <button onClick={() => updateStatus(order.id, ORDER_NEXT[order.status].status)} className="px-4 py-2 bg-priority-blue text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
+                                <Check size={14} /> {ORDER_NEXT[order.status].label}
+                              </button>
+                            )
                           )}
                           <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-[10px] font-black uppercase">
                             View Details
@@ -1055,14 +1216,75 @@ export const AdminDashboard = () => {
 
               {activeTab === 'overview' && (
                 <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                  <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 bg-priority-blue/10 rounded-2xl flex items-center justify-center text-priority-blue mb-4">
-                      <LayoutDashboard size={32} />
+
+                  {/* Stat cards */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                      { label: "Today's Orders", value: todayOrders.length, icon: ShoppingBag, color: 'bg-priority-blue', sub: 'placed today' },
+                      { label: "Today's Revenue", value: `₹${todayRevenue.toLocaleString('en-IN')}`, icon: TrendingUp, color: 'bg-emerald-500', sub: 'from today\'s orders' },
+                      { label: 'Pending Actions', value: pendingActionCount, icon: Truck, color: 'bg-orange-500', sub: 'orders need attention' },
+                      { label: 'Low Stock Items', value: lowStockProducts.length, icon: AlertTriangle, color: lowStockProducts.length > 0 ? 'bg-red-500' : 'bg-gray-400', sub: 'items running low' },
+                    ].map(stat => (
+                      <div key={stat.label} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+                        <div className={`w-10 h-10 ${stat.color} rounded-xl flex items-center justify-center text-white mb-4`}>
+                          <stat.icon size={18} />
+                        </div>
+                        <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">{stat.label}</p>
+                        <p className="text-[9px] text-gray-300 font-bold uppercase mt-0.5">{stat.sub}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Low stock alert */}
+                  {lowStockProducts.length > 0 && (
+                    <div className="bg-red-50 rounded-2xl border border-red-100 p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <AlertTriangle size={16} className="text-red-500" />
+                        <h3 className="text-[11px] font-black uppercase tracking-widest text-red-700">Low Stock — Restock Needed</h3>
+                      </div>
+                      <div className="space-y-2">
+                        {lowStockProducts.slice(0, 6).map(p => (
+                          <div key={p.id} className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-red-50">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <img src={(p as any).image || (p.images?.[0]) || ''} className="w-8 h-8 object-contain shrink-0" />
+                              <span className="text-[11px] font-black text-gray-800 truncate">{p.name}</span>
+                            </div>
+                            <span className={`ml-3 shrink-0 text-[10px] font-black px-2.5 py-1 rounded-full ${p.stock === 0 ? 'bg-red-500 text-white' : 'bg-orange-100 text-orange-700'}`}>
+                              {p.stock === 0 ? 'Out of Stock' : `${p.stock} left`}
+                            </span>
+                          </div>
+                        ))}
+                        {lowStockProducts.length > 6 && (
+                          <p className="text-[10px] font-black text-red-300 uppercase tracking-widest text-center pt-1">
+                            +{lowStockProducts.length - 6} more low stock items — check Products tab
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">System Overview</h2>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 max-w-xs leading-relaxed">
-                      Real-time analytics and revenue metrics are currently hidden for a cleaner workspace. Use the sidebar to manage inventory and orders.
-                    </p>
+                  )}
+
+                  {/* Recent orders */}
+                  <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                    <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-900 mb-5">Recent Orders</h3>
+                    {orders.length === 0 ? (
+                      <p className="text-[10px] text-gray-300 font-bold uppercase tracking-widest text-center py-8">No orders yet</p>
+                    ) : (
+                      <div className="space-y-0">
+                        {orders.slice(0, 6).map(order => (
+                          <div key={order.id} className="flex items-center justify-between gap-4 py-3.5 border-b border-gray-50 last:border-0">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] font-black text-gray-900 truncate">{order.shipping_name}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-0.5">#ORD-{order.id.slice(0, 8).toUpperCase()} · {new Date(order.created_at).toLocaleDateString('en-IN')}</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-[12px] font-black text-gray-900">₹{Number(order.total).toLocaleString('en-IN')}</p>
+                              <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase ${ORDER_STATUS_COLOR[order.status] ?? 'bg-gray-100 text-gray-600'}`}>{order.status}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}
