@@ -149,6 +149,7 @@ export const ProductDetail = () => {
     setSelectedImage(0);
     window.scrollTo(0, 0);
     api.getProduct(slug).then((raw: any) => {
+      const rawColors = Array.isArray(raw.colors) ? raw.colors : [];
       setProduct({
         ...raw,
         originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price,
@@ -160,6 +161,13 @@ export const ProductDetail = () => {
         images: Array.isArray(raw.images) && raw.images.length > 0
           ? raw.images
           : raw.image ? [raw.image] : [],
+        variants: rawColors.length > 0
+          ? rawColors.map((c: any) => ({
+              color: c.name ?? c.color ?? '',
+              colorCode: c.code ?? c.colorCode ?? '',
+              images: Array.isArray(c.images) ? c.images : [],
+            }))
+          : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []),
       });
     }).catch(() => setFetchError(true)).finally(() => setLoading(false));
   }, [slug]);
@@ -188,7 +196,7 @@ export const ProductDetail = () => {
         <h1 className="text-3xl font-black mb-4 uppercase tracking-tighter">Couldn't Load Product</h1>
         <p className="text-gray-400 mb-8 font-bold uppercase tracking-widest text-[11px]">Check your connection and try again.</p>
         <button
-          onClick={() => { setFetchError(false); setLoading(true); api.getProduct(slug!).then((raw: any) => { setProduct({ ...raw, originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price, reviews: raw.reviews ?? 0, rating: raw.rating ?? 4, specifications: raw.specifications ?? {}, features: Array.isArray(raw.features) ? raw.features : [], category: raw.categories?.slug ?? raw.sub_category ?? '', images: Array.isArray(raw.images) && raw.images.length > 0 ? raw.images : raw.image ? [raw.image] : [] }); setFetchError(false); }).catch(() => setFetchError(true)).finally(() => setLoading(false)); }}
+          onClick={() => { setFetchError(false); setLoading(true); api.getProduct(slug!).then((raw: any) => { const rc = Array.isArray(raw.colors) ? raw.colors : []; setProduct({ ...raw, originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price, reviews: raw.reviews ?? 0, rating: raw.rating ?? 4, specifications: raw.specifications ?? {}, features: Array.isArray(raw.features) ? raw.features : [], category: raw.categories?.slug ?? raw.sub_category ?? '', images: Array.isArray(raw.images) && raw.images.length > 0 ? raw.images : raw.image ? [raw.image] : [], variants: rc.length > 0 ? rc.map((c: any) => ({ color: c.name ?? c.color ?? '', colorCode: c.code ?? c.colorCode ?? '', images: Array.isArray(c.images) ? c.images : [] })) : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []) }); setFetchError(false); }).catch(() => setFetchError(true)).finally(() => setLoading(false)); }}
           className="bg-[#14052b] text-white font-black text-xs px-10 py-5 rounded-xl hover:scale-105 transition-all tracking-widest uppercase inline-flex items-center gap-2"
         >
           <RefreshCw size={14} /> Retry
@@ -280,16 +288,30 @@ export const ProductDetail = () => {
         type="product"
       />
       <div className="container mx-auto px-4 md:px-8 py-6 md:py-16 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
           {/* Left Column: Gallery */}
-          <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-32 space-y-4 md:space-y-8">
+          <div className="lg:col-span-8">
+            <div className="lg:sticky lg:top-32 flex flex-col-reverse lg:flex-row gap-4 md:gap-6">
+              {displayImages.length > 1 && (
+                <div className="flex lg:flex-col gap-3 md:gap-4 pb-4 overflow-x-auto lg:overflow-y-auto no-scrollbar lg:max-h-[600px] shrink-0">
+                  {displayImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(idx)}
+                      className={`w-20 h-20 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 transition-all p-2 md:p-3 shrink-0 bg-white ${selectedImage === idx ? 'border-priority-blue shadow-lg' : 'border-gray-50 hover:border-gray-200'}`}
+                    >
+                      <LazyImage src={img} alt="Thumb" className="w-full h-full object-contain" width={150} />
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <motion.div
                 key={`${selectedVariantIndex}-${selectedImage}`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-[660px] mx-auto aspect-square bg-white border border-gray-50 rounded-2xl md:rounded-[3rem] p-6 md:p-12 flex items-center justify-center relative shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] md:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)]"
+                className="w-full lg:flex-1 max-w-[660px] aspect-square bg-white border border-gray-50 rounded-2xl md:rounded-[3rem] p-6 md:p-12 flex items-center justify-center relative shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] md:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)]"
               >
                 <LazyImage
                   src={displayImages[selectedImage] || product.image}
@@ -305,25 +327,11 @@ export const ProductDetail = () => {
                   <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} />
                 </button>
               </motion.div>
-
-              {displayImages.length > 1 && (
-                <div className="flex gap-3 md:gap-4 pb-4 overflow-x-auto no-scrollbar">
-                  {displayImages.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedImage(idx)}
-                      className={`w-20 h-20 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 transition-all p-2 md:p-3 shrink-0 bg-white ${selectedImage === idx ? 'border-priority-blue shadow-lg' : 'border-gray-50 hover:border-gray-200'}`}
-                    >
-                      <LazyImage src={img} alt="Thumb" className="w-full h-full object-contain" width={150} />
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
           {/* Right Column: Info */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             {/* Product Name */}
             <h1 className="font-outfit font-medium text-[28.58px] leading-snug tracking-normal text-[#190101] uppercase">{product.name}</h1>
 
