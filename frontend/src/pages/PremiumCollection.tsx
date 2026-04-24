@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
@@ -140,6 +140,7 @@ const seriesHighlights = [
 const DEFAULT_EDITORIAL = { category: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' };
 
 export const PremiumCollection = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -161,15 +162,6 @@ export const PremiumCollection = () => {
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
   }, []);
-
-  const handleBannerClick = (category: string) => {
-    // Toggle: clicking the same banner again shows all
-    setActiveCategory(prev => (prev === category ? null : category));
-    // Smooth scroll to product grid
-    setTimeout(() => {
-      gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
-  };
 
   const subcategories = React.useMemo(() => {
     const seen = new Set<string>();
@@ -226,7 +218,7 @@ export const PremiumCollection = () => {
                 return (
                   <motion.button
                     key={series.title}
-                    onClick={() => handleBannerClick(series.category)}
+                    onClick={() => navigate(series.viewAll)}
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
