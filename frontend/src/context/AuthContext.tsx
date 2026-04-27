@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 
 interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string, phone?: string) => Promise<boolean>;
   logout: () => Promise<void>;
   showAuthModal: boolean;
   setShowAuthModal: (v: boolean) => void;
@@ -71,10 +71,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const register = useCallback(async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = useCallback(async (name: string, email: string, password: string, phone?: string): Promise<boolean> => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const { user: raw } = await api.register(name, email, password);
+      const { user: raw } = await api.register(name, email, password, phone);
       const user = mapApiUser(raw);
       localStorage.setItem(USER_KEY, JSON.stringify(user));
       setState({ user, isAuthenticated: true, isLoading: false });

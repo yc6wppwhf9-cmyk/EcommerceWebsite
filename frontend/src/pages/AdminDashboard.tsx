@@ -127,7 +127,7 @@ export const AdminDashboard = () => {
   const [isAddingJob, setIsAddingJob] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [appFilter, setAppFilter] = useState('all');
-  const BLANK_JOB = () => ({ title: '', description: '', location: '', department: '', job_type: 'full-time' as const, salary_min: undefined as number | undefined, salary_max: undefined as number | undefined, requirements: '', status: 'draft' as const });
+  const BLANK_JOB = () => ({ title: '', description: '', location: '', department: '', job_type: 'full-time' as Job['job_type'], salary_min: undefined as number | undefined, salary_max: undefined as number | undefined, requirements: '', status: 'draft' as Job['status'] });
   const [jobForm, setJobForm] = useState(BLANK_JOB());
 
   const metrics = [
@@ -844,7 +844,7 @@ export const AdminDashboard = () => {
                                   <p className="text-[10px] font-bold text-gray-400 tracking-tight">
                                     ₹ {(p.price || 0).toLocaleString()}
                                     <span className="line-through text-[8px] ml-1 opacity-50 font-normal">
-                                      ₹ {(p.originalPrice || p.original_price || p.price || 0).toLocaleString()}
+                                      ₹ {(p.originalPrice || p.price || 0).toLocaleString()}
                                     </span>
                                   </p>
                                   {editingStock?.id === p.id ? (
@@ -877,14 +877,14 @@ export const AdminDashboard = () => {
                                     setEditingProduct(p);
                                     setFormData({
                                       ...p,
-                                      originalPrice: p.original_price || p.originalPrice || 0,
+                                      originalPrice: p.originalPrice || 0,
                                       category: p.categories?.slug || p.category || '',
                                       juniorStyle: (p as any).junior_style || ''
                                     });
-                                    setVariants((p.colors || p.variants || []).map((v: any) => ({
+                                    setVariants((p.variants || []).map((v: any) => ({
                                       color: v.name || v.color || '',
                                       colorCode: v.code || v.colorCode || '#000',
-                                      image: v.image || (v.images?.[0]) || ''
+                                      images: v.images || (v.image ? [v.image] : [''])
                                     })));
                                     setIsAddingProduct(true);
                                   }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
@@ -1330,7 +1330,7 @@ export const AdminDashboard = () => {
                           value={editorialBanner.category}
                           onChange={e => {
                             const opt = BANNER_OPTIONS.find(o => o.value === e.target.value);
-                            if (opt) setEditorialBanner(opt);
+                            if (opt) setEditorialBanner({ category: opt.value, label: opt.label, url: opt.url });
                           }}
                           className={inputCls}
                         >

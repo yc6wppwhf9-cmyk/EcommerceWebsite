@@ -180,12 +180,14 @@ export const updateProduct = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-export const uploadImage = async (req: Request, res: Response) => {
+type MulterRequest = Request & { file?: { path: string; buffer: Buffer; fieldname: string; originalname: string; mimetype: string; size: number } };
+
+export const uploadImage = async (req: MulterRequest, res: Response) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   res.json({ url: req.file.path });
 };
 
-export const bulkUpload = async (req: Request, res: Response) => {
+export const bulkUpload = async (req: MulterRequest, res: Response) => {
   if (!req.file) return res.status(400).json({ error: 'No Excel file uploaded' });
 
   try {

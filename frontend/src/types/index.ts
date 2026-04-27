@@ -32,6 +32,7 @@ export interface Product {
   gender?: 'men' | 'women' | 'kids' | 'unisex';
   ageRange?: string;
   juniorStyle?: string;
+  categories?: { slug: string; title: string };
 }
 
 export interface CategoryInfo {
