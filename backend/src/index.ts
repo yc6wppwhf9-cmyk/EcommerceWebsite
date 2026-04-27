@@ -54,6 +54,15 @@ const authLimiter = rateLimit({
   message: { error: 'Too many auth attempts, please try again in 15 minutes.' },
 });
 
+// Strict limiter for AI chat — each request makes 1-2 Anthropic API calls
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many messages, please slow down and try again shortly.' },
+});
+
 // --- Routes ---
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/products', productRoutes);
@@ -62,7 +71,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobsRoutes);
-app.use('/api/chat', chatRoutes);
+app.use('/api/chat', chatLimiter, chatRoutes);
 app.use('/api/settings', settingsRoutes);
 
 // Health Check

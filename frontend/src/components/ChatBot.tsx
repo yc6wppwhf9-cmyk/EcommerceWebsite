@@ -3,6 +3,50 @@ import { Link } from 'react-router-dom';
 import { MessageCircle, X, Send, Package, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
+// Renders a small subset of markdown: **bold**, *italic*, bullet lists, line breaks
+function renderMarkdown(text: string) {
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+  let key = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Bullet point
+    if (/^[-•*]\s+/.test(trimmed)) {
+      elements.push(
+        <div key={key++} className="flex gap-1.5 items-start">
+          <span className="mt-[3px] shrink-0 w-1 h-1 rounded-full bg-current opacity-60" />
+          <span>{inlineFormat(trimmed.replace(/^[-•*]\s+/, ''))}</span>
+        </div>
+      );
+    } else if (trimmed === '') {
+      // Empty line → small gap (skip consecutive blanks)
+      if (elements.length > 0) elements.push(<div key={key++} className="h-1" />);
+    } else {
+      elements.push(<div key={key++}>{inlineFormat(line)}</div>);
+    }
+  }
+  return <>{elements}</>;
+}
+
+function inlineFormat(text: string) {
+  // Split on **bold** and *italic* markers
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**'))
+          return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>;
+        if (part.startsWith('*') && part.endsWith('*'))
+          return <em key={i}>{part.slice(1, -1)}</em>;
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+}
+
 const BASE = (import.meta as any).env.VITE_API_URL || '';
 
 interface Product {
@@ -184,12 +228,12 @@ export const ChatBot = () => {
             {messages.map((msg, i) => (
               <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 {/* Text bubble */}
-                <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+                <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm leading-relaxed space-y-0.5 ${
                   msg.role === 'user'
                     ? 'bg-black text-white rounded-br-sm'
                     : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm'
                 }`}>
-                  {msg.text}
+                  {msg.role === 'assistant' ? renderMarkdown(msg.text) : msg.text}
                 </div>
 
                 {/* Product cards */}
