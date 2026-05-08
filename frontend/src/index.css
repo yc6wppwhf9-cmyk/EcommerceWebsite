@@ -1,0 +1,328 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900;1000&family=Dancing+Script:wght@700&family=Protest+Riot&display=swap');
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+html.dark {
+  background-color: #0a0a0a !important;
+  color-scheme: dark;
+}
+
+@theme {
+  --font-outfit: "Outfit", sans-serif;
+  --font-nunito: "Nunito", sans-serif;
+  --font-dancing: "Dancing Script", cursive;
+
+  --color-priority-blue: #26B3FF;
+  --color-priority-dark: #1A7FB5;
+  --color-hero-blue: #26B3FF;
+  --color-banner-blue: #26B3FF;
+  --color-junior-orange: #F69245;
+
+  /* Theme Variables */
+  --color-bg-main: #ffffff;
+  --color-bg-card: #f9f9f9;
+  --color-text-main: #000000;
+  --color-text-muted: #666666;
+  --color-border-main: #eeeeee;
+  --color-nav-bg: #4b48b5;
+}
+
+
+@layer base {
+  .dark {
+    --color-bg-main: #0a0a0a;
+    --color-bg-card: #111111;
+    --color-text-main: #f0f0f0;
+    --color-text-muted: #a0a0a0;
+    --color-border-main: #222222;
+    --color-nav-bg: #000000;
+  }
+
+  html.dark,
+  body.dark {
+    background-color: #0a0a0a !important;
+    color: #fdfdfd !important;
+  }
+
+  body {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
+    font-family: var(--font-outfit);
+    font-weight: 400;
+    /* Outfit Regular */
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Global Semi-Bold to Regular Override */
+  .font-semibold,
+  [class*="font-semibold"],
+  b,
+  strong {
+    font-weight: 500 !important;
+    /* Medium (slightly thicker than 400 but not semi-bold) */
+  }
+
+  /* Force Regular for anything that was semi-bold */
+  *[class*="font-600"] {
+    font-weight: 400 !important;
+  }
+}
+
+.font-outfit {
+  font-family: var(--font-outfit);
+}
+
+.font-nunito {
+  font-family: var(--font-nunito);
+}
+
+.font-dancing {
+  font-family: var(--font-dancing);
+}
+
+.font-protest {
+  font-family: "Protest Riot", sans-serif;
+}
+
+/* ─── Global Dark Mode Overrides ────────────────────────────────
+   These cascade to every component without needing dark: on each element. */
+
+.dark .bg-white {
+  background-color: #111111 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #0d0d0d !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #1a1a1a !important;
+}
+
+.dark .bg-\[\#f8f9fa\],
+.dark .bg-\[\#F8FAFC\],
+.dark .bg-\[\#f4f7ff\],
+.dark .bg-\[\#fcf8f1\] {
+  background-color: #050505 !important;
+}
+
+.dark .bg-green-50 {
+  background-color: #0a1a0a !important;
+}
+
+.dark .bg-red-50 {
+  background-color: #1a0a0a !important;
+}
+
+.dark .text-gray-900 {
+  color: #ffffff !important;
+}
+
+.dark .text-gray-800 {
+  color: #f9f9f9 !important;
+}
+
+.dark .text-gray-700 {
+  color: #f0f0f0 !important;
+}
+
+.dark .text-gray-600 {
+  color: #e5e5e5 !important;
+}
+
+.dark .text-gray-500 {
+  color: #d1d1d1 !important;
+}
+
+.dark .text-gray-400 {
+  color: #b0b0b0 !important;
+}
+
+.dark .text-gray-300 {
+  color: #909090 !important;
+}
+
+.dark .text-gray-200 {
+  color: #707070 !important;
+}
+
+.dark .text-green-900 {
+  color: #86efac !important;
+}
+
+.dark .text-green-800 {
+  color: #6ee7a0 !important;
+}
+
+.dark .text-green-600 {
+  color: #4ade80 !important;
+}
+
+.dark .text-priority-blue {
+  color: #ffffff !important;
+}
+
+.dark .text-\[\#14052b\] {
+  color: #ffffff !important;
+}
+
+.dark .text-black {
+  color: #ffffff !important;
+}
+
+.dark .text-\[\#111\] {
+  color: #ffffff !important;
+}
+
+.dark .bg-priority-blue {
+  background-color: #4b48b5 !important;
+}
+
+.dark .border-black {
+  border-color: #ffffff !important;
+}
+
+
+.dark .border-gray-100 {
+  border-color: #1a1a1a !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #262626 !important;
+}
+
+.dark .border-green-100 {
+  border-color: #14532d !important;
+}
+
+.dark .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .shadow-black\/\[0\.03\] {
+  --tw-shadow-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Inputs */
+.dark input:not([type='range']),
+.dark textarea,
+.dark select {
+  background-color: #1a1a1a !important;
+  border-color: #333333 !important;
+  color: #f0f0f0 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #555555 !important;
+}
+
+.dark input:focus,
+.dark textarea:focus {
+  border-color: #4b48b5 !important;
+  background-color: #111111 !important;
+}
+
+/* Range slider dark */
+.dark input[type='range'] {
+  background: #333333;
+}
+
+.dark input[type='range']::-webkit-slider-thumb {
+  background: #ffffff;
+  border-color: #0a0a0a;
+}
+
+/* Premium Utilities */
+.premium-bg-black {
+  background-color: #000000 !important;
+}
+
+.junior-theme {
+  cursor: url("/junior/cursor.png") 0 0, auto;
+}
+
+.junior-theme * {
+  cursor: inherit !important;
+}
+
+/* ─── Utilities ──────────────────────────────────────────────── */
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  overflow-x: clip;
+  width: 100%;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  /* Force smooth momentum scroll */
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-priority-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Custom Price Range Slider */
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #f1f1f1;
+  border-radius: 2px;
+  outline: none;
+  margin: 10px 0;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #000000;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid white;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transition: all 0.2s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #000000;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid white;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
