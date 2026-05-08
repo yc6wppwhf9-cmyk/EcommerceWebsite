@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Package, Heart, MapPin, User, LogOut, ChevronRight, Lock, Mail, Phone, Loader2, X, ShoppingBag, Plus, Trash2, Edit3, Check, Star
+  Package, Heart, MapPin, User, LogOut, ChevronRight, Lock, Mail, Phone, Loader2, X, ShoppingBag, Plus, Trash2, Edit3, Check, Star, RotateCcw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -28,6 +28,10 @@ export const UserDashboard = () => {
   // Orders
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [returningOrderId, setReturningOrderId] = useState<string | null>(null);
+  const [returnReason, setReturnReason] = useState('');
+  const [returnSubmitting, setReturnSubmitting] = useState(false);
+  const [returnMsgs, setReturnMsgs] = useState<Record<string, { type: 'success' | 'err'; text: string }>>({});
 
   // Addresses
   const BLANK_ADDRESS = { name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', is_default: false };
@@ -124,6 +128,22 @@ export const UserDashboard = () => {
       setPassMsg({ type: 'err', text: err.message || 'Change failed' });
     } finally {
       setPassLoading(false);
+    }
+  };
+
+  const handleRequestReturn = async (orderId: string) => {
+    if (!returnReason.trim()) return;
+    setReturnSubmitting(true);
+    try {
+      await api.requestReturn(orderId, returnReason.trim());
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'return_requested', return_reason: returnReason.trim() } : o));
+      setReturnMsgs(prev => ({ ...prev, [orderId]: { type: 'success', text: 'Return requested! We will process it within 2–3 business days.' } }));
+      setReturningOrderId(null);
+      setReturnReason('');
+    } catch (err: any) {
+      setReturnMsgs(prev => ({ ...prev, [orderId]: { type: 'err', text: err.message || 'Failed to submit return request' } }));
+    } finally {
+      setReturnSubmitting(false);
     }
   };
 
@@ -258,33 +278,93 @@ export const UserDashboard = () => {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {orders.map((order) => (
-                          <div key={order.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 sm:p-8 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)] gap-4 sm:gap-6 hover:border-priority-blue/30 transition-all group">
-                            <div className="flex items-center gap-4 sm:gap-6">
-                              <div className="w-16 h-20 sm:w-20 sm:h-24 bg-[var(--color-bg-card)] rounded-2xl flex items-center justify-center border border-[var(--color-border-main)] p-2 shrink-0">
-                                <Package className="text-priority-blue opacity-40" size={28} />
-                              </div>
-                              <div>
-                                <p className="text-sm sm:text-base font-black font-outfit text-[var(--color-text-main)] mb-1 uppercase">
-                                  {order.items?.length ?? 0} Item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
-                                </p>
-                                <div className="flex flex-wrap gap-2 mb-1">
-                                  <span className="bg-priority-blue/10 text-priority-blue text-[9px] font-black uppercase px-3 py-1 rounded-full capitalize">{order.status ?? 'Processing'}</span>
-                                  <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">#{order.id?.slice(0, 8).toUpperCase()}</span>
+                        {orders.map((order) => {
+                          const canReturn = order.status === 'delivered' &&
+                            Date.now() - new Date(order.updated_at).getTime() <= 7 * 24 * 60 * 60 * 1000;
+                          const isReturning = returningOrderId === order.id;
+                          const returnMsg = returnMsgs[order.id];
+                          return (
+                            <div key={order.id} className="p-5 sm:p-8 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)] hover:border-priority-blue/30 transition-all group space-y-4">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+                                <div className="flex items-center gap-4 sm:gap-6">
+                                  <div className="w-16 h-20 sm:w-20 sm:h-24 bg-[var(--color-bg-card)] rounded-2xl flex items-center justify-center border border-[var(--color-border-main)] p-2 shrink-0">
+                                    <Package className="text-priority-blue opacity-40" size={28} />
+                                  </div>
+                                  <div>
+                                    <p className="text-sm sm:text-base font-black font-outfit text-[var(--color-text-main)] mb-1 uppercase">
+                                      {order.items?.length ?? 0} Item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2 mb-1">
+                                      <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full capitalize ${
+                                        order.status === 'return_requested' ? 'bg-orange-100 text-orange-600' :
+                                        order.status === 'returned' ? 'bg-gray-100 text-gray-500' :
+                                        'bg-priority-blue/10 text-priority-blue'
+                                      }`}>{order.status?.replace('_', ' ') ?? 'Processing'}</span>
+                                      <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">#{order.id?.slice(0, 8).toUpperCase()}</span>
+                                    </div>
+                                    <p className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">
+                                      {formatPrice(order.total ?? 0)} • {order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN') : ''}
+                                    </p>
+                                    {order.return_reason && (
+                                      <p className="text-[10px] font-bold text-orange-500 mt-1">Return: {order.return_reason}</p>
+                                    )}
+                                  </div>
                                 </div>
-                                <p className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">
-                                  {formatPrice(order.total ?? 0)} • {order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN') : ''}
-                                </p>
+                                <div className="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+                                  {canReturn && !isReturning && (
+                                    <button
+                                      onClick={() => { setReturningOrderId(order.id); setReturnReason(''); }}
+                                      className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-orange-500 border border-orange-200 px-3 py-2 rounded-xl hover:bg-orange-50 transition-all"
+                                    >
+                                      <RotateCcw size={12} /> Request Return
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => navigate(`/orders/${order.id}`)}
+                                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-priority-blue group-hover:gap-4 transition-all"
+                                  >
+                                    View Details <ChevronRight size={14} />
+                                  </button>
+                                </div>
                               </div>
+
+                              {returnMsg && (
+                                <p className={`text-[10px] font-bold uppercase tracking-widest ${returnMsg.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                                  {returnMsg.text}
+                                </p>
+                              )}
+
+                              {isReturning && (
+                                <div className="pt-2 border-t border-[var(--color-border-main)] space-y-3">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)]">Reason for Return *</p>
+                                  <textarea
+                                    value={returnReason}
+                                    onChange={e => setReturnReason(e.target.value)}
+                                    rows={3}
+                                    placeholder="Please describe why you want to return this order…"
+                                    className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)] resize-none"
+                                  />
+                                  <div className="flex gap-3">
+                                    <button
+                                      onClick={() => handleRequestReturn(order.id)}
+                                      disabled={returnSubmitting || !returnReason.trim()}
+                                      className="flex-1 py-3 bg-orange-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-orange-600 transition-all"
+                                    >
+                                      {returnSubmitting ? <><Loader2 size={12} className="animate-spin" /> Submitting…</> : <><RotateCcw size={12} /> Submit Return</>}
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => { setReturningOrderId(null); setReturnReason(''); }}
+                                      className="px-5 py-3 bg-gray-100 text-gray-500 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                            <button
-                              onClick={() => navigate(`/orders/${order.id}`)}
-                              className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-priority-blue group-hover:gap-4 transition-all self-start sm:self-auto"
-                            >
-                              View Details <ChevronRight size={14} />
-                            </button>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>

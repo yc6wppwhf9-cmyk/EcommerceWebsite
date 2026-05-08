@@ -71,6 +71,33 @@ export const getOrderShippedTemplate = (name: string, orderId: string, invoiceUr
   </div>
 `;
 
+export const getReturnRequestedTemplate = (name: string, orderId: string, reason: string) => `
+  <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #eee;">
+    <h2 style="font-weight: 700; font-size: 24px; color: ${PRIMARY_COLOR}; margin-bottom: 24px;">Return Request Received</h2>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Hi ${name},</p>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">We have received your return request for order <strong>#${orderId.slice(0,8).toUpperCase()}</strong>.</p>
+    <div style="background: #f9f9f9; padding: 16px 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid ${PRIMARY_COLOR};">
+      <p style="margin: 0; font-size: 13px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Your Reason</p>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #333; line-height: 1.5;">${reason}</p>
+    </div>
+    <p style="font-size: 14px; color: #666;">Our team will review your request and process it within 2–3 business days. You will receive a refund confirmation once approved.</p>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 32px 0;">
+    <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags. All rights reserved.</p>
+  </div>
+`;
+
+export const getReturnApprovedTemplate = (name: string, orderId: string) => `
+  <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #eee;">
+    <h2 style="font-weight: 700; font-size: 24px; color: ${PRIMARY_COLOR}; margin-bottom: 24px;">Refund Processed</h2>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Hi ${name},</p>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Your return for order <strong>#${orderId.slice(0,8).toUpperCase()}</strong> has been approved and your refund is on the way.</p>
+    <p style="font-size: 14px; color: #666;">Refunds typically appear in your account within 5–7 business days depending on your bank or card issuer.</p>
+    <p style="font-size: 14px; color: #666;">Thank you for shopping with Priority Bags. We hope to serve you again soon.</p>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 32px 0;">
+    <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags. All rights reserved.</p>
+  </div>
+`;
+
 export const getJobApplicationTemplate = (data: {
   applicantName: string;
   applicantEmail: string;

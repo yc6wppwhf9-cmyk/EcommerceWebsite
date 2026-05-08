@@ -213,10 +213,12 @@ export const api = {
   createOrder: (data: any) =>
     request<any>('/api/orders', { method: 'POST', body: JSON.stringify(data) }),
   updateOrderStatus: (id: string, status: string, invoice_url?: string) =>
-    request<any>(`/api/orders/${id}/status`, { 
-      method: 'PATCH', 
-      body: JSON.stringify({ status, invoice_url }) 
+    request<any>(`/api/orders/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, invoice_url })
     }),
+  requestReturn: (orderId: string, reason: string) =>
+    request<any>(`/api/orders/${orderId}/return`, { method: 'POST', body: JSON.stringify({ reason }) }),
 
   // Reviews
   getReviews: (productId: string) => request<any[]>(`/api/reviews/product/${productId}`),

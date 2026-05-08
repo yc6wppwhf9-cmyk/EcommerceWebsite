@@ -11,5 +11,6 @@ router.get('/', authenticateToken, OrderController.getOrders);
 router.get('/:id', authenticateToken, OrderController.getOrderById);
 router.post('/', authenticateToken, validateCsrf, validate(orderSchema), OrderController.createOrder);
 router.patch('/:id/status', authenticateToken, requireAdmin, validateCsrf, OrderController.updateOrderStatus);
+router.post('/:id/return', authenticateToken, validateCsrf, OrderController.requestReturn);
 
 export default router;

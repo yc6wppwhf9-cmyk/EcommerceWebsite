@@ -146,20 +146,22 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
 export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
   const { status, invoice_url } = req.body;
-  const valid = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'];
+  const valid = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returned'];
   if (!valid.includes(status)) return res.status(400).json({ error: 'Invalid status' });
 
   try {
+    const updatePayload: any = { status, invoice_url };
+    if (status === 'returned') updatePayload.payment_status = 'refunded';
+
     const { data: order, error } = await supabase
       .from('orders')
-      .update({ status, invoice_url })
+      .update(updatePayload)
       .eq('id', req.params.id)
       .select('*, users(name, email)')
       .single();
 
     if (error || !order) return res.status(404).json({ error: 'Order not found' });
 
-    // Send Shipping Email if status is 'shipped'
     if (status === 'shipped') {
       await Mailer.sendEmail(
         (order as any).users.email,
@@ -168,7 +170,57 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
       );
     }
 
+    if (status === 'returned') {
+      await Mailer.sendEmail(
+        (order as any).users.email,
+        'Your Refund has been Processed - Priority Bags',
+        Mailer.getReturnApprovedTemplate((order as any).users.name, order.id)
+      );
+    }
+
     res.json(order);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Server error', message: err.message });
+  }
+};
+
+export const requestReturn = async (req: AuthRequest, res: Response) => {
+  const { reason } = req.body;
+  if (!reason?.trim()) return res.status(400).json({ error: 'Return reason is required' });
+
+  try {
+    const { data: order, error } = await supabase
+      .from('orders')
+      .select('*, users(name, email)')
+      .eq('id', req.params.id)
+      .single();
+
+    if (error || !order) return res.status(404).json({ error: 'Order not found' });
+    if (order.user_id !== req.user?.id) return res.status(403).json({ error: 'Access denied' });
+    if (order.status !== 'delivered') return res.status(400).json({ error: 'Only delivered orders can be returned' });
+
+    const deliveredAt = new Date(order.updated_at).getTime();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+    if (Date.now() - deliveredAt > sevenDays) {
+      return res.status(400).json({ error: 'Return window has expired (7 days from delivery)' });
+    }
+
+    const { data: updated, error: updateErr } = await supabase
+      .from('orders')
+      .update({ status: 'return_requested', return_reason: reason.trim() })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (updateErr) throw updateErr;
+
+    await Mailer.sendEmail(
+      (order as any).users.email,
+      'Return Request Received - Priority Bags',
+      Mailer.getReturnRequestedTemplate((order as any).users.name, order.id, reason.trim())
+    );
+
+    res.json(updated);
   } catch (err: any) {
     res.status(500).json({ error: 'Server error', message: err.message });
   }

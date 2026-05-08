@@ -9,6 +9,7 @@ import {
   Zap, Award, Percent, Crown,
   Briefcase, FileText, ChevronDown, Loader2,
   Eye, EyeOff, AlertTriangle, Search,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -70,6 +71,24 @@ const BLANK_FORM = (): Partial<Product> => ({
 
 const inputCls = 'w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-priority-blue outline-none transition-all placeholder:text-gray-400';
 
+const ORDERS_PER_PAGE = 20;
+const PRODUCTS_PER_PAGE = 18;
+
+const Pagination = ({ page, total, onPage }: { page: number; total: number; onPage: (p: number) => void }) => {
+  if (total <= 1) return null;
+  return (
+    <div className="flex items-center justify-center gap-3 pt-4">
+      <button disabled={page === 1} onClick={() => onPage(page - 1)} className="p-2 rounded-xl bg-white border border-gray-200 disabled:opacity-30 hover:border-priority-blue transition-all">
+        <ChevronLeft size={14} />
+      </button>
+      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Page {page} of {total}</span>
+      <button disabled={page === total} onClick={() => onPage(page + 1)} className="p-2 rounded-xl bg-white border border-gray-200 disabled:opacity-30 hover:border-priority-blue transition-all">
+        <ChevronRight size={14} />
+      </button>
+    </div>
+  );
+};
+
 export const AdminDashboard = () => {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -88,6 +107,11 @@ export const AdminDashboard = () => {
   const [productCategoryFilter, setProductCategoryFilter] = useState('all');
   const [editingStock, setEditingStock] = useState<{ id: string; value: number } | null>(null);
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [productsPage, setProductsPage] = useState(1);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState('');
+  const [bulkUpdating, setBulkUpdating] = useState(false);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -130,12 +154,21 @@ export const AdminDashboard = () => {
   const BLANK_JOB = () => ({ title: '', description: '', location: '', department: '', job_type: 'full-time' as Job['job_type'], salary_min: undefined as number | undefined, salary_max: undefined as number | undefined, requirements: '', status: 'draft' as Job['status'] });
   const [jobForm, setJobForm] = useState(BLANK_JOB());
 
-  const metrics = [
-    { label: 'Revenue Today', value: '₹ 24,500', icon: TrendingUp, color: 'bg-emerald-500' },
-    { label: 'Total Sales', value: orders.length.toString(), icon: ShoppingBag, color: 'bg-priority-blue' },
-    { label: 'Active Users', value: '42', icon: Users, color: 'bg-orange-500' },
-    { label: 'Pending Ships', value: orders.filter(o => o.status === 'confirmed').length.toString(), icon: Truck, color: 'bg-purple-500' },
-  ];
+  const handleBulkStatusUpdate = async () => {
+    if (!bulkStatus || selectedOrderIds.size === 0) return;
+    setBulkUpdating(true);
+    try {
+      await Promise.all([...selectedOrderIds].map(id => api.updateOrderStatus(id, bulkStatus)));
+      showToast(`${selectedOrderIds.size} order${selectedOrderIds.size > 1 ? 's' : ''} updated to "${bulkStatus}"`);
+      setSelectedOrderIds(new Set());
+      setBulkStatus('');
+      fetchData();
+    } catch {
+      showToast('Some orders failed to update', 'error');
+    } finally {
+      setBulkUpdating(false);
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate('/login');
@@ -151,13 +184,13 @@ export const AdminDashboard = () => {
       api.getAllApplications(),
     ]);
     if (prodRes.status === 'fulfilled') setProducts(prodRes.value.products.map((p: any) => ({ ...p, id: String(p.id) })));
-    else console.error('Products fetch error:', prodRes.reason);
+    else showToast('Failed to load products — check connection', 'error');
     if (orderRes.status === 'fulfilled') setOrders(orderRes.value.data);
-    else console.error('Orders fetch error:', orderRes.reason);
+    else showToast('Failed to load orders — check connection', 'error');
     if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs);
-    else console.error('Jobs fetch error:', jobRes.reason);
+    else showToast('Failed to load jobs', 'error');
     if (appRes.status === 'fulfilled') setApplications(appRes.value.applications);
-    else console.error('Applications fetch error:', appRes.reason);
+    else showToast('Failed to load applications', 'error');
     setFetchLoading(false);
   };
 
@@ -236,22 +269,31 @@ export const AdminDashboard = () => {
 
   // ── Filtered orders ───────────────────────────────────────────────────────
   const filteredOrders = orderStatusFilter === 'all' ? orders : orders.filter(o => o.status === orderStatusFilter);
+  const totalOrderPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+  const paginatedOrders = filteredOrders.slice((ordersPage - 1) * ORDERS_PER_PAGE, ordersPage * ORDERS_PER_PAGE);
+  const allPageSelected = paginatedOrders.length > 0 && paginatedOrders.every(o => selectedOrderIds.has(o.id));
+
+  // ── Paginated products ────────────────────────────────────────────────────
+  const totalProductPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice((productsPage - 1) * PRODUCTS_PER_PAGE, productsPage * PRODUCTS_PER_PAGE);
 
   // ── Order status pipeline ─────────────────────────────────────────────────
   const ORDER_NEXT: Record<string, { label: string; status: string; needsInvoice?: boolean }> = {
-    pending:    { label: 'Confirm Order',    status: 'confirmed' },
-    confirmed:  { label: 'Mark Processing',  status: 'processing' },
-    processing: { label: 'Mark as Shipped',  status: 'shipped', needsInvoice: true },
-    shipped:    { label: 'Mark Delivered',   status: 'delivered' },
+    pending:          { label: 'Confirm Order',    status: 'confirmed' },
+    confirmed:        { label: 'Mark Processing',  status: 'processing' },
+    processing:       { label: 'Mark as Shipped',  status: 'shipped', needsInvoice: true },
+    shipped:          { label: 'Mark Delivered',   status: 'delivered' },
+    return_requested: { label: 'Approve Return',   status: 'returned' },
   };
   const ORDER_STATUS_COLOR: Record<string, string> = {
-    pending:    'bg-yellow-100 text-yellow-700',
-    confirmed:  'bg-blue-100 text-blue-700',
-    processing: 'bg-purple-100 text-purple-700',
-    shipped:    'bg-indigo-100 text-indigo-700',
-    delivered:  'bg-green-100 text-green-700',
-    cancelled:  'bg-red-100 text-red-600',
-    returned:   'bg-gray-100 text-gray-600',
+    pending:          'bg-yellow-100 text-yellow-700',
+    confirmed:        'bg-blue-100 text-blue-700',
+    processing:       'bg-purple-100 text-purple-700',
+    shipped:          'bg-indigo-100 text-indigo-700',
+    delivered:        'bg-green-100 text-green-700',
+    cancelled:        'bg-red-100 text-red-600',
+    return_requested: 'bg-orange-100 text-orange-700',
+    returned:         'bg-gray-100 text-gray-600',
   };
 
   // ── Quick stock update ────────────────────────────────────────────────────
@@ -804,13 +846,13 @@ export const AdminDashboard = () => {
                             type="text"
                             placeholder="Search products..."
                             value={productSearch}
-                            onChange={e => setProductSearch(e.target.value)}
+                            onChange={e => { setProductSearch(e.target.value); setProductsPage(1); }}
                             className="w-full pl-9 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-[11px] font-bold text-gray-900 outline-none focus:border-priority-blue placeholder:text-gray-400"
                           />
                         </div>
                         <select
                           value={productCategoryFilter}
-                          onChange={e => setProductCategoryFilter(e.target.value)}
+                          onChange={e => { setProductCategoryFilter(e.target.value); setProductsPage(1); }}
                           className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-[11px] font-black text-gray-700 outline-none focus:border-priority-blue"
                         >
                           <option value="all">All Categories</option>
@@ -824,60 +866,70 @@ export const AdminDashboard = () => {
                           <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">No products match your search</p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                          {filteredProducts.map(p => (
-                            <div key={p.id} className="bg-white p-5 rounded-2xl border border-gray-100 flex gap-4 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden">
-                              <div className="relative shrink-0">
-                                <img src={p.images?.[0] || (p as any).image || ''} className="w-20 h-20 object-contain p-2 bg-gray-50 rounded-xl" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                          {paginatedProducts.map(p => (
+                            <div key={p.id} className="bg-white rounded-2xl border border-gray-100 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
+                              {/* Image */}
+                              <div className="relative bg-gray-50 flex items-center justify-center" style={{ height: '180px' }}>
+                                <img src={p.images?.[0] || (p as any).image || ''} className="w-full h-full object-contain p-4" />
                                 {(p.stock ?? 0) <= 5 && (
-                                  <span className={`absolute -top-1 -right-1 text-[7px] font-black px-1.5 py-0.5 rounded-full ${p.stock === 0 ? 'bg-red-500 text-white' : 'bg-orange-400 text-white'}`}>
-                                    {p.stock === 0 ? 'OUT' : `${p.stock}`}
+                                  <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-1 rounded-full ${p.stock === 0 ? 'bg-red-500 text-white' : 'bg-orange-400 text-white'}`}>
+                                    {p.stock === 0 ? 'OUT OF STOCK' : `Low: ${p.stock}`}
                                   </span>
                                 )}
+                                {(p as any).is_active === false && (
+                                  <span className="absolute top-2 right-2 text-[8px] font-black px-2 py-1 rounded-full bg-gray-400 text-white">Hidden</span>
+                                )}
+                                {p.isNew && (
+                                  <span className="absolute bottom-2 left-2 text-[8px] font-black px-2 py-1 rounded-full bg-priority-blue text-white">New</span>
+                                )}
                               </div>
-                              <div className="flex-1 flex flex-col justify-between overflow-hidden">
+
+                              {/* Info */}
+                              <div className="p-4 flex flex-col flex-1 justify-between">
                                 <div>
-                                  <p className="text-[8px] font-black text-priority-blue uppercase tracking-widest truncate">
+                                  <p className="text-[9px] font-black text-priority-blue uppercase tracking-widest truncate mb-1">
                                     {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
                                   </p>
-                                  <h4 className="text-[11px] font-black text-gray-900 truncate leading-tight mt-1 mb-0.5">{p.name || 'Unnamed Product'}</h4>
-                                  <p className="text-[10px] font-bold text-gray-400 tracking-tight">
-                                    ₹ {(p.price || 0).toLocaleString()}
-                                    <span className="line-through text-[8px] ml-1 opacity-50 font-normal">
-                                      ₹ {(p.originalPrice || p.price || 0).toLocaleString()}
+                                  <h4 className="text-sm font-black text-gray-900 leading-tight mb-1 truncate">{p.name || 'Unnamed Product'}</h4>
+                                  <div className="flex items-baseline gap-2 mb-2">
+                                    <span className="text-sm font-black text-gray-900">₹ {(p.price || 0).toLocaleString()}</span>
+                                    <span className="line-through text-[11px] text-gray-400 font-normal">
+                                      ₹ {(p.originalPrice || (p as any).original_price || p.price || 0).toLocaleString()}
                                     </span>
-                                  </p>
+                                  </div>
                                   {editingStock?.id === p.id ? (
-                                    <div className="flex items-center gap-1.5 mt-1.5">
+                                    <div className="flex items-center gap-1.5">
                                       <input
                                         type="number"
                                         value={editingStock.value}
                                         onChange={e => setEditingStock({ id: p.id, value: parseInt(e.target.value) || 0 })}
-                                        className="w-16 border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-black text-gray-900 outline-none focus:border-priority-blue"
+                                        className="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-[11px] font-black text-gray-900 outline-none focus:border-priority-blue"
                                         autoFocus
                                       />
-                                      <button onClick={() => handleQuickStockUpdate(p.id, editingStock.value)} className="p-1 bg-priority-blue text-white rounded-lg">
-                                        <Check size={10} />
+                                      <button onClick={() => handleQuickStockUpdate(p.id, editingStock.value)} className="p-1.5 bg-priority-blue text-white rounded-lg">
+                                        <Check size={11} />
                                       </button>
-                                      <button onClick={() => setEditingStock(null)} className="p-1 bg-gray-100 text-gray-500 rounded-lg">
-                                        <X size={10} />
+                                      <button onClick={() => setEditingStock(null)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg">
+                                        <X size={11} />
                                       </button>
                                     </div>
                                   ) : (
                                     <button
                                       onClick={() => setEditingStock({ id: p.id, value: p.stock ?? 0 })}
-                                      className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-priority-blue transition-colors text-left"
+                                      className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-priority-blue transition-colors text-left"
                                     >
                                       Stock: {p.stock ?? 0}
                                     </button>
                                   )}
                                 </div>
-                                <div className="flex gap-3 mt-3 flex-wrap">
+
+                                <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50">
                                   <button onClick={() => {
                                     setEditingProduct(p);
                                     setFormData({
                                       ...p,
-                                      originalPrice: p.originalPrice || 0,
+                                      originalPrice: p.originalPrice || (p as any).original_price || 0,
                                       category: p.categories?.slug || p.category || '',
                                       juniorStyle: (p as any).junior_style || ''
                                     });
@@ -886,22 +938,27 @@ export const AdminDashboard = () => {
                                       colorCode: v.code || v.colorCode || '#000',
                                       images: v.images || (v.image ? [v.image] : [''])
                                     })));
+                                    setDiscountPercent(0);
                                     setIsAddingProduct(true);
-                                  }} className="text-[9px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2">Edit</button>
+                                  }} className="text-[10px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1">
+                                    <Edit3 size={11} /> Edit
+                                  </button>
                                   <button
                                     onClick={() => handleToggleVisibility(p)}
-                                    className={`text-[9px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${(p as any).is_active === false ? 'text-gray-300 hover:text-orange-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${(p as any).is_active === false ? 'text-gray-300 hover:text-orange-500' : 'text-gray-500 hover:text-gray-700'}`}
                                   >
-                                    {(p as any).is_active === false ? <EyeOff size={10} /> : <Eye size={10} />}
-                                    {(p as any).is_active === false ? 'Hidden' : 'Live'}
+                                    {(p as any).is_active === false ? <EyeOff size={11} /> : <Eye size={11} />}
+                                    {(p as any).is_active === false ? 'Show' : 'Live'}
                                   </button>
-                                  <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2">Delete</button>
+                                  <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1 ml-auto">
+                                    <Trash2 size={11} /> Delete
+                                  </button>
                                 </div>
                               </div>
-                              {p.isNew && <div className="absolute top-0 right-0 w-8 h-8"><div className="absolute top-0 right-0 w-[150%] h-4 bg-priority-blue text-[7px] font-black text-white flex items-center justify-center rotate-45 translate-x-[30%] translate-y-[20%] uppercase">New</div></div>}
                             </div>
                           ))}
                         </div>
+                        <Pagination page={productsPage} total={totalProductPages} onPage={setProductsPage} />
                       )}
                     </>
                   )}
@@ -919,30 +976,90 @@ export const AdminDashboard = () => {
 
                   {/* Status filter tabs */}
                   <div className="flex overflow-x-auto gap-2 pb-1">
-                    {['all', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
+                    {['all', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'return_requested', 'cancelled', 'returned'].map(status => (
                       <button
                         key={status}
-                        onClick={() => setOrderStatusFilter(status)}
+                        onClick={() => { setOrderStatusFilter(status); setOrdersPage(1); setSelectedOrderIds(new Set()); }}
                         className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 transition-all ${
                           orderStatusFilter === status
                             ? 'bg-priority-blue text-white shadow-md'
                             : 'bg-white border border-gray-200 text-gray-500 hover:border-gray-300'
                         }`}
                       >
-                        {status === 'all' ? `All (${orders.length})` : `${status} (${orders.filter(o => o.status === status).length})`}
+                        {status === 'all' ? `All (${orders.length})` : `${status.replace(/_/g, ' ')} (${orders.filter(o => o.status === status).length})`}
                       </button>
                     ))}
                   </div>
 
+                  {/* Bulk action bar */}
+                  {selectedOrderIds.size > 0 && (
+                    <div className="sticky top-4 z-10 bg-priority-blue text-white rounded-2xl p-4 flex flex-wrap items-center gap-3 shadow-xl">
+                      <span className="text-[11px] font-black">{selectedOrderIds.size} order{selectedOrderIds.size > 1 ? 's' : ''} selected</span>
+                      <select
+                        value={bulkStatus}
+                        onChange={e => setBulkStatus(e.target.value)}
+                        className="bg-white/20 text-white rounded-xl px-3 py-2 text-[10px] font-black outline-none border border-white/30"
+                      >
+                        <option value="">Set status…</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                      <button
+                        onClick={handleBulkStatusUpdate}
+                        disabled={!bulkStatus || bulkUpdating}
+                        className="px-4 py-2 bg-white text-priority-blue rounded-xl text-[10px] font-black disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {bulkUpdating ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                        Apply
+                      </button>
+                      <button onClick={() => setSelectedOrderIds(new Set())} className="ml-auto p-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+
                   <div className="space-y-4">
-                    {filteredOrders.length === 0 ? (
+                    {/* Select all row */}
+                    {paginatedOrders.length > 0 && (
+                      <label className="flex items-center gap-2 px-2 cursor-pointer w-fit">
+                        <input
+                          type="checkbox"
+                          checked={allPageSelected}
+                          onChange={e => {
+                            const next = new Set(selectedOrderIds);
+                            paginatedOrders.forEach(o => e.target.checked ? next.add(o.id) : next.delete(o.id));
+                            setSelectedOrderIds(next);
+                          }}
+                          className="w-4 h-4 rounded accent-priority-blue"
+                        />
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                          {allPageSelected ? 'Deselect page' : 'Select page'}
+                        </span>
+                      </label>
+                    )}
+
+                    {paginatedOrders.length === 0 ? (
                       <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-16 text-center">
                         <Truck size={32} className="mx-auto text-gray-200 mb-3" />
                         <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">No orders with this status</p>
                       </div>
-                    ) : filteredOrders.map(order => (
-                      <div key={order.id} className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-priority-blue transition-all">
+                    ) : paginatedOrders.map(order => (
+                      <div key={order.id} className={`bg-white p-6 rounded-2xl border transition-all ${selectedOrderIds.has(order.id) ? 'border-priority-blue ring-1 ring-priority-blue/20' : 'border-gray-200 hover:border-priority-blue'}`}>
                         <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
+                          <div className="flex items-start gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedOrderIds.has(order.id)}
+                              onChange={e => {
+                                const next = new Set(selectedOrderIds);
+                                e.target.checked ? next.add(order.id) : next.delete(order.id);
+                                setSelectedOrderIds(next);
+                              }}
+                              className="mt-1 w-4 h-4 rounded accent-priority-blue shrink-0"
+                            />
                           <div>
                             <div className="flex items-center gap-3 mb-2">
                               <span className="text-[11px] font-black text-gray-900">#ORD-{order.id.slice(0, 8).toUpperCase()}</span>
@@ -952,6 +1069,10 @@ export const AdminDashboard = () => {
                             </div>
                             <p className="text-sm font-black text-gray-900 mb-0.5">{order.shipping_name}</p>
                             <p className="text-[11px] font-bold text-gray-500">{order.shipping_phone} | {new Date(order.created_at).toLocaleDateString()}</p>
+                            {order.return_reason && (
+                              <p className="text-[10px] font-bold text-orange-600 mt-1 max-w-xs">Return: {order.return_reason}</p>
+                            )}
+                          </div>
                           </div>
                           <div className="text-right">
                             <p className="text-lg font-black text-gray-900">₹ {order.total}</p>
@@ -974,9 +1095,6 @@ export const AdminDashboard = () => {
                               </button>
                             )
                           )}
-                          <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-[10px] font-black uppercase">
-                            View Details
-                          </button>
                         </div>
 
                         {/* Expandable Section for Items */}
@@ -995,6 +1113,9 @@ export const AdminDashboard = () => {
                         </div>
                       </div>
                     ))}
+                  </div>
+
+                  <Pagination page={ordersPage} total={totalOrderPages} onPage={p => { setOrdersPage(p); setSelectedOrderIds(new Set()); }} />
                   </div>
 
                   {/* Shipping Modal */}
@@ -1239,12 +1360,22 @@ export const AdminDashboard = () => {
                   {/* Low stock alert */}
                   {lowStockProducts.length > 0 && (
                     <div className="bg-red-50 rounded-2xl border border-red-100 p-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <AlertTriangle size={16} className="text-red-500" />
-                        <h3 className="text-[11px] font-black uppercase tracking-widest text-red-700">Low Stock — Restock Needed</h3>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle size={16} className="text-red-500" />
+                          <h3 className="text-[11px] font-black uppercase tracking-widest text-red-700">
+                            Low Stock — {lowStockProducts.length} item{lowStockProducts.length > 1 ? 's' : ''} need restocking
+                          </h3>
+                        </div>
+                        <button
+                          onClick={() => { setActiveTab('inventory'); setProductsPage(1); }}
+                          className="text-[9px] font-black uppercase tracking-widest text-red-400 hover:text-red-600 underline decoration-dotted"
+                        >
+                          Manage all →
+                        </button>
                       </div>
-                      <div className="space-y-2">
-                        {lowStockProducts.slice(0, 6).map(p => (
+                      <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                        {lowStockProducts.map(p => (
                           <div key={p.id} className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-red-50">
                             <div className="flex items-center gap-3 min-w-0">
                               <img src={(p as any).image || (p.images?.[0]) || ''} className="w-8 h-8 object-contain shrink-0" />
@@ -1255,11 +1386,6 @@ export const AdminDashboard = () => {
                             </span>
                           </div>
                         ))}
-                        {lowStockProducts.length > 6 && (
-                          <p className="text-[10px] font-black text-red-300 uppercase tracking-widest text-center pt-1">
-                            +{lowStockProducts.length - 6} more low stock items — check Products tab
-                          </p>
-                        )}
                       </div>
                     </div>
                   )}
