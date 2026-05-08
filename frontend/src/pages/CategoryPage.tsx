@@ -463,9 +463,13 @@ export const CategoryPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 bg-white border border-gray-100 px-4 py-2 hover:border-gray-900 transition-colors ml-auto">
+            <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 hover:border-gray-900 transition-colors ml-auto">
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-700 hidden sm:block">
+                {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+              </span>
+              <span className="text-gray-200 hidden sm:block select-none">|</span>
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                Sort By:
+                Sort:
               </span>
               <select
                 value={sortBy}
@@ -473,8 +477,8 @@ export const CategoryPage = () => {
                 className="bg-transparent text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer"
               >
                 <option value="newest">Newest First</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
+                <option value="price-low">Price: Low → High</option>
+                <option value="price-high">Price: High → Low</option>
                 <option value="rating">Highest Rated</option>
               </select>
             </div>

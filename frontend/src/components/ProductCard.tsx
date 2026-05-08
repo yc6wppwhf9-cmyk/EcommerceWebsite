@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { getProductById } from '../constants/products';
-import { Star } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
 
@@ -17,6 +17,8 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
   const product = props.product || (props.id ? getProductById(props.id) : undefined);
   const productPath = (slug: string) =>
     props.theme ? `/product/${slug}?theme=${props.theme}` : `/product/${slug}`;
@@ -24,12 +26,18 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   if (!product) return null;
 
   const activeVariant = product.variants?.[activeVariantIndex];
-  const displayImage = activeVariant ? activeVariant.images[0] : product.image;
+  const primaryImage = activeVariant ? activeVariant.images[0] : product.image;
+  const secondaryImage = activeVariant ? activeVariant.images[1] : product.images?.[1];
+  const displayImage = isHovered && secondaryImage ? secondaryImage : primaryImage;
 
   const originalPrice = (product as any).original_price ?? product.originalPrice ?? product.price;
   const discount = originalPrice > product.price
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
+
+  const isWishlisted = isInWishlist(product.id);
+  const rating = product.rating ?? 4.2;
+  const reviews = (product as any).reviews ?? 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,27 +45,59 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
     addItem(product);
   };
 
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+
   return (
     <div className="flex flex-col font-outfit w-full">
-      {/* Image container — 300×307 ratio, #F9F9F9, radius 5 */}
+      {/* Image container — 300×307 ratio */}
       <Link
         to={productPath(product.slug || product.id)}
         className="relative block rounded-[5px] overflow-hidden bg-[#F9F9F9]"
         style={{ aspectRatio: '300 / 307' }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <LazyImage
           alt={product.name}
-          className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] object-contain"
+          className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] object-contain transition-opacity duration-300"
           src={displayImage}
           width={400}
         />
 
-        {/* NEW badge */}
-        {product.isNew && (
-          <span className="absolute top-2 right-2 bg-priority-blue text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm">
-            NEW
+        {/* Discount badge — top left */}
+        {discount > 0 && (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded-sm z-10">
+            -{discount}%
           </span>
         )}
+
+        {/* Best Seller badge — top right (takes priority over NEW) */}
+        {product.highlighted ? (
+          <span className="absolute top-2 right-2 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm z-10">
+            BEST SELLER
+          </span>
+        ) : product.isNew ? (
+          <span className="absolute top-2 right-2 bg-priority-blue text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm z-10">
+            NEW
+          </span>
+        ) : null}
+
+        {/* Wishlist heart — bottom right */}
+        <button
+          onClick={handleWishlist}
+          className={`absolute bottom-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm z-10 ${
+            isWishlisted
+              ? 'bg-red-500 text-white'
+              : 'bg-white/90 text-gray-400 hover:text-red-500 hover:bg-white'
+          }`}
+          title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        >
+          <Heart size={14} fill={isWishlisted ? 'currentColor' : 'none'} />
+        </button>
       </Link>
 
       {/* Info */}
@@ -76,40 +116,40 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           </div>
         )}
 
-        {/* Name — Outfit SemiBold 16px #000000 */}
+        {/* Name */}
         <Link to={productPath(product.slug || product.id)}>
           <h3 className={`text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 transition-colors ${props.theme === 'premium' ? 'hover:text-red-600' : 'hover:text-priority-blue'}`}>
             {product.name}
           </h3>
         </Link>
 
-        {/* Stars + reviews — only shown when real review data exists */}
-        {(product as any).reviews > 0 && (
-          <div className="flex items-center gap-2">
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={13}
-                  className={i < Math.round(product.rating ?? 4) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
-                />
-              ))}
-            </div>
-            <span className="text-[11px] text-gray-400 font-medium">
-              {(product as any).reviews} reviews
-            </span>
+        {/* Stars + reviews — always shown */}
+        <div className="flex items-center gap-2">
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={13}
+                className={i < Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
+              />
+            ))}
           </div>
-        )}
+          {reviews > 0 ? (
+            <span className="text-[11px] text-gray-400 font-medium">{reviews} reviews</span>
+          ) : (
+            <span className="text-[10px] text-gray-300 font-medium">New Arrival</span>
+          )}
+        </div>
 
-        {/* Price row — Outfit SemiBold 16px #755FF1 */}
+        {/* Price row */}
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="text-[16px] font-semibold text-priority-blue">
-            ₹ {product.price.toLocaleString('en-IN')}.00
+            ₹ {product.price.toLocaleString('en-IN')}
           </span>
           {discount > 0 && (
             <>
               <span className="text-[14px] text-gray-400 line-through font-medium">
-                ₹ {originalPrice.toLocaleString('en-IN')}.00
+                ₹ {originalPrice.toLocaleString('en-IN')}
               </span>
               <span className="text-[13px] font-semibold text-gray-700">
                 {discount}% off
@@ -118,13 +158,13 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           )}
         </div>
 
-        {/* Move to Cart */}
+        {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
           disabled={product.stock <= 0}
           className={`w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-all rounded-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
         >
-          {product.stock <= 0 ? 'OUT OF STOCK' : '+ MOVE TO CART'}
+          {product.stock <= 0 ? 'OUT OF STOCK' : '+ ADD TO CART'}
         </button>
       </div>
     </div>
