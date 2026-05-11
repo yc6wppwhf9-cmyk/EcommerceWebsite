@@ -284,6 +284,23 @@ html.dark {
   background-size: 40px 40px;
 }
 
+@utility junior-glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+@utility magnetic-shadow {
+  transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1), box-shadow 0.4s ease;
+}
+
+@utility magnetic-shadow:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
 @layer base {
   /* Improve touch feedback on mobile */
   button:active, 

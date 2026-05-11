@@ -112,7 +112,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="flex h-full flex-col font-outfit bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+    <div className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-2xl overflow-hidden">
       {/* Image container with blue border */}
       <Link
         to={`/product/${product.slug || product.id}?theme=junior`}
@@ -501,13 +501,20 @@ export const JuniorPage = () => {
                   <button
                     key={cat.label}
                     onClick={() => setActiveTab(cat.label)}
-                    className={`h-10 px-4 md:px-5 rounded-lg text-[10px] md:text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-300 whitespace-nowrap ${
+                    className={`relative h-10 px-4 md:px-5 rounded-lg text-[10px] md:text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-500 whitespace-nowrap ${
                       activeTab === cat.label
-                        ? 'bg-[#F69245] text-white shadow-md shadow-[#F69245]/20'
-                        : 'text-gray-400 hover:text-[#14052b] hover:bg-[#F69245]/10'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-[#14052b]'
                     }`}
                   >
-                    {cat.label}
+                    {activeTab === cat.label && (
+                      <motion.div
+                        layoutId="activeTabJunior"
+                        className="absolute inset-0 bg-[#F69245] rounded-lg shadow-lg shadow-[#F69245]/20"
+                        transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
+                      />
+                    )}
+                    <span className="relative z-10">{cat.label}</span>
                   </button>
                 ))}
               </div>
