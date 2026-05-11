@@ -91,7 +91,10 @@ const BestSellerCard = ({ product }: { product: Product }) => {
     : 0;
 
   return (
-    <Link to={`/product/${product.slug || product.id}`} className="flex flex-col bg-white group">
+    <Link 
+      to={`/product/${product.slug || product.id}`} 
+      className="flex flex-col bg-white group junior-glass-card magnetic-shadow rounded-2xl p-2 md:p-3 overflow-hidden"
+    >
       <div className="overflow-hidden bg-[#F9F9F9]" style={{ aspectRatio: '1 / 1' }}>
         <LazyImage
           src={product.image}
@@ -338,21 +341,30 @@ export const Home = () => {
       {/* Product Tabs Section */}
       <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
-          <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-lg mb-7 md:mb-10">
+          <div className="relative">
+            <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-xl mb-7 md:mb-10">
               {BACKPACK_TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`h-10 px-4 md:px-5 rounded-md text-[11px] md:text-[12px] font-black uppercase tracking-[0.14em] transition-all whitespace-nowrap ${
+                  className={`relative h-11 px-5 rounded-lg text-[11px] md:text-[13px] font-black uppercase tracking-[0.14em] transition-all whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'bg-white text-[#14052b] shadow-sm ring-1 ring-gray-100'
-                      : 'text-gray-400 hover:text-gray-700'
+                      ? 'text-white'
+                      : 'text-gray-500 hover:text-black'
                   }`}
                 >
-                  {tab.label}
+                  {activeTab === tab.id && (
+                    <motion.div
+                      layoutId="homeActiveTab"
+                      className="absolute inset-0 bg-priority-blue rounded-lg shadow-lg"
+                      transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
                 </button>
               ))}
             </div>
+          </div>
 
           {tabCategory && (
             <div className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-lg overflow-hidden bg-[#F8BE57]">
