@@ -548,10 +548,10 @@ export const JuniorPage = () => {
                   <button
                     key={cat.label}
                     onClick={() => setActiveTab(cat.label)}
-                    className={`relative h-10 px-4 md:px-5 rounded-lg text-[10px] md:text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-500 whitespace-nowrap ${
+                    className={`relative h-11 px-5 rounded-lg text-[11px] md:text-[13px] font-black uppercase tracking-[0.14em] transition-all duration-500 whitespace-nowrap ${
                       activeTab === cat.label
                         ? 'text-white'
-                        : 'text-gray-400 hover:text-[#14052b]'
+                        : 'text-gray-600 hover:text-black'
                     }`}
                   >
                     {activeTab === cat.label && (
