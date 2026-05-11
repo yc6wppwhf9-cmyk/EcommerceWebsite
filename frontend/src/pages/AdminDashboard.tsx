@@ -866,100 +866,102 @@ export const AdminDashboard = () => {
                           <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">No products match your search</p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                          {paginatedProducts.map(p => (
-                            <div key={p.id} className="bg-white rounded-2xl border border-gray-100 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
-                              {/* Image */}
-                              <div className="relative bg-gray-50 flex items-center justify-center" style={{ height: '180px' }}>
-                                <img src={p.images?.[0] || (p as any).image || ''} className="w-full h-full object-contain p-4" />
-                                {(p.stock ?? 0) <= 5 && (
-                                  <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-1 rounded-full ${p.stock === 0 ? 'bg-red-500 text-white' : 'bg-orange-400 text-white'}`}>
-                                    {p.stock === 0 ? 'OUT OF STOCK' : `Low: ${p.stock}`}
-                                  </span>
-                                )}
-                                {(p as any).is_active === false && (
-                                  <span className="absolute top-2 right-2 text-[8px] font-black px-2 py-1 rounded-full bg-gray-400 text-white">Hidden</span>
-                                )}
-                                {p.isNew && (
-                                  <span className="absolute bottom-2 left-2 text-[8px] font-black px-2 py-1 rounded-full bg-priority-blue text-white">New</span>
-                                )}
-                              </div>
-
-                              {/* Info */}
-                              <div className="p-4 flex flex-col flex-1 justify-between">
-                                <div>
-                                  <p className="text-[9px] font-black text-priority-blue uppercase tracking-widest truncate mb-1">
-                                    {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
-                                  </p>
-                                  <h4 className="text-sm font-black text-gray-900 leading-tight mb-1 truncate">{p.name || 'Unnamed Product'}</h4>
-                                  <div className="flex items-baseline gap-2 mb-2">
-                                    <span className="text-sm font-black text-gray-900">₹ {(p.price || 0).toLocaleString()}</span>
-                                    <span className="line-through text-[11px] text-gray-400 font-normal">
-                                      ₹ {(p.originalPrice || (p as any).original_price || p.price || 0).toLocaleString()}
+                        <>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                            {paginatedProducts.map(p => (
+                              <div key={p.id} className="bg-white rounded-2xl border border-gray-100 hover:border-priority-blue hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
+                                {/* Image */}
+                                <div className="relative bg-gray-50 flex items-center justify-center" style={{ height: '180px' }}>
+                                  <img src={p.images?.[0] || (p as any).image || ''} className="w-full h-full object-contain p-4" />
+                                  {(p.stock ?? 0) <= 5 && (
+                                    <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-1 rounded-full ${p.stock === 0 ? 'bg-red-500 text-white' : 'bg-orange-400 text-white'}`}>
+                                      {p.stock === 0 ? 'OUT OF STOCK' : `Low: ${p.stock}`}
                                     </span>
-                                  </div>
-                                  {editingStock?.id === p.id ? (
-                                    <div className="flex items-center gap-1.5">
-                                      <input
-                                        type="number"
-                                        value={editingStock.value}
-                                        onChange={e => setEditingStock({ id: p.id, value: parseInt(e.target.value) || 0 })}
-                                        className="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-[11px] font-black text-gray-900 outline-none focus:border-priority-blue"
-                                        autoFocus
-                                      />
-                                      <button onClick={() => handleQuickStockUpdate(p.id, editingStock.value)} className="p-1.5 bg-priority-blue text-white rounded-lg">
-                                        <Check size={11} />
-                                      </button>
-                                      <button onClick={() => setEditingStock(null)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg">
-                                        <X size={11} />
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <button
-                                      onClick={() => setEditingStock({ id: p.id, value: p.stock ?? 0 })}
-                                      className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-priority-blue transition-colors text-left"
-                                    >
-                                      Stock: {p.stock ?? 0}
-                                    </button>
+                                  )}
+                                  {(p as any).is_active === false && (
+                                    <span className="absolute top-2 right-2 text-[8px] font-black px-2 py-1 rounded-full bg-gray-400 text-white">Hidden</span>
+                                  )}
+                                  {p.isNew && (
+                                    <span className="absolute bottom-2 left-2 text-[8px] font-black px-2 py-1 rounded-full bg-priority-blue text-white">New</span>
                                   )}
                                 </div>
 
-                                <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50">
-                                  <button onClick={() => {
-                                    setEditingProduct(p);
-                                    setFormData({
-                                      ...p,
-                                      originalPrice: p.originalPrice || (p as any).original_price || 0,
-                                      category: p.categories?.slug || p.category || '',
-                                      juniorStyle: (p as any).junior_style || ''
-                                    });
-                                    setVariants((p.variants || []).map((v: any) => ({
-                                      color: v.name || v.color || '',
-                                      colorCode: v.code || v.colorCode || '#000',
-                                      images: v.images || (v.image ? [v.image] : [''])
-                                    })));
-                                    setDiscountPercent(0);
-                                    setIsAddingProduct(true);
-                                  }} className="text-[10px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1">
-                                    <Edit3 size={11} /> Edit
-                                  </button>
-                                  <button
-                                    onClick={() => handleToggleVisibility(p)}
-                                    className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${(p as any).is_active === false ? 'text-gray-300 hover:text-orange-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                  >
-                                    {(p as any).is_active === false ? <EyeOff size={11} /> : <Eye size={11} />}
-                                    {(p as any).is_active === false ? 'Show' : 'Live'}
-                                  </button>
-                                  <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1 ml-auto">
-                                    <Trash2 size={11} /> Delete
-                                  </button>
+                                {/* Info */}
+                                <div className="p-4 flex flex-col flex-1 justify-between">
+                                  <div>
+                                    <p className="text-[9px] font-black text-priority-blue uppercase tracking-widest truncate mb-1">
+                                      {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
+                                    </p>
+                                    <h4 className="text-sm font-black text-gray-900 leading-tight mb-1 truncate">{p.name || 'Unnamed Product'}</h4>
+                                    <div className="flex items-baseline gap-2 mb-2">
+                                      <span className="text-sm font-black text-gray-900">₹ {(p.price || 0).toLocaleString()}</span>
+                                      <span className="line-through text-[11px] text-gray-400 font-normal">
+                                        ₹ {(p.originalPrice || (p as any).original_price || p.price || 0).toLocaleString()}
+                                      </span>
+                                    </div>
+                                    {editingStock?.id === p.id ? (
+                                      <div className="flex items-center gap-1.5">
+                                        <input
+                                          type="number"
+                                          value={editingStock.value}
+                                          onChange={e => setEditingStock({ id: p.id, value: parseInt(e.target.value) || 0 })}
+                                          className="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-[11px] font-black text-gray-900 outline-none focus:border-priority-blue"
+                                          autoFocus
+                                        />
+                                        <button onClick={() => handleQuickStockUpdate(p.id, editingStock.value)} className="p-1.5 bg-priority-blue text-white rounded-lg">
+                                          <Check size={11} />
+                                        </button>
+                                        <button onClick={() => setEditingStock(null)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg">
+                                          <X size={11} />
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <button
+                                        onClick={() => setEditingStock({ id: p.id, value: p.stock ?? 0 })}
+                                        className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-priority-blue transition-colors text-left"
+                                      >
+                                        Stock: {p.stock ?? 0}
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50">
+                                    <button onClick={() => {
+                                      setEditingProduct(p);
+                                      setFormData({
+                                        ...p,
+                                        originalPrice: p.originalPrice || (p as any).original_price || 0,
+                                        category: p.categories?.slug || p.category || '',
+                                        juniorStyle: (p as any).junior_style || ''
+                                      });
+                                      setVariants((p.variants || []).map((v: any) => ({
+                                        color: v.name || v.color || '',
+                                        colorCode: v.code || v.colorCode || '#000',
+                                        images: v.images || (v.image ? [v.image] : [''])
+                                      })));
+                                      setDiscountPercent(0);
+                                      setIsAddingProduct(true);
+                                    }} className="text-[10px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1">
+                                      <Edit3 size={11} /> Edit
+                                    </button>
+                                    <button
+                                      onClick={() => handleToggleVisibility(p)}
+                                      className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 transition-colors ${(p as any).is_active === false ? 'text-gray-300 hover:text-orange-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                    >
+                                      {(p as any).is_active === false ? <EyeOff size={11} /> : <Eye size={11} />}
+                                      {(p as any).is_active === false ? 'Show' : 'Live'}
+                                    </button>
+                                    <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1 ml-auto">
+                                      <Trash2 size={11} /> Delete
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
                           ))}
                         </div>
                         <Pagination page={productsPage} total={totalProductPages} onPage={setProductsPage} />
-                      )}
+                      </>
+                    )}
                     </>
                   )}
                 </motion.div>
@@ -1116,7 +1118,6 @@ export const AdminDashboard = () => {
                   </div>
 
                   <Pagination page={ordersPage} total={totalOrderPages} onPage={p => { setOrdersPage(p); setSelectedOrderIds(new Set()); }} />
-                  </div>
 
                   {/* Shipping Modal */}
                   {selectedOrder && (
