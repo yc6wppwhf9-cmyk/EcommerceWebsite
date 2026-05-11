@@ -29,14 +29,14 @@ import { Breadcrumb } from '../components/Breadcrumb';
 
 const THEMES = {
   junior: {
-    btn: 'bg-[#26B3FF] hover:bg-[#0fa0ee] text-white tracking-[0.15em] font-bold',
-    btnOutline: 'border-2 border-[#14052b] text-[#14052b] hover:bg-[#14052b] hover:text-white tracking-[0.15em] font-bold',
-    price: 'text-[#26B3FF]',
-    badge: 'bg-[#FDB913] text-black',
-    wishlistActive: 'border-[#26B3FF] bg-[#26B3FF]/10 text-[#26B3FF]',
-    wishlistHover: 'hover:border-[#26B3FF]',
-    accordionActive: 'text-[#26B3FF]',
-    shadow: 'shadow-[0_20px_40px_-10px_rgba(38,179,255,0.25)]',
+    btn: 'bg-[#F69245] hover:bg-[#e07d3a] text-white tracking-[0.15em] font-bold',
+    btnOutline: 'border-2 border-[#8750DA] text-[#8750DA] hover:bg-[#8750DA] hover:text-white tracking-[0.15em] font-bold',
+    price: 'text-[#F69245]',
+    badge: 'bg-[#F69245] text-white',
+    wishlistActive: 'border-[#8750DA] bg-[#8750DA]/10 text-[#8750DA]',
+    wishlistHover: 'hover:border-[#8750DA]',
+    accordionActive: 'text-[#F69245]',
+    shadow: 'shadow-[0_20px_40px_-10px_rgba(246,146,69,0.3)]',
   },
   premium: {
     btn: 'bg-[#111111] hover:bg-[#000000] text-white tracking-[0.2em] font-bold',
