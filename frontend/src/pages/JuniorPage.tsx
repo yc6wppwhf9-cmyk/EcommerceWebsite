@@ -513,10 +513,27 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      <section className="py-10 md:py-14 bg-white overflow-hidden relative">
-        <div className="absolute inset-0 junior-grid-bg opacity-30 pointer-events-none" />
+      <section className="py-10 md:py-20 bg-white overflow-hidden relative">
+        {/* Dynamic Background Glows */}
+        <div 
+          className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
+          style={{ backgroundColor: activeTab === 'School Backpacks' ? '#F69245' : activeTab === 'Pouches' ? '#8750DA' : '#FFBB5A' }}
+        />
+        <div 
+          className="absolute bottom-1/4 -right-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
+          style={{ backgroundColor: activeTab === 'Lunch Bags' ? '#4ECDC4' : '#F69245' }}
+        />
+
+        <div className="absolute inset-0 junior-grid-bg opacity-[0.15] pointer-events-none" />
+        
+        {/* Floating Decorative Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+          <motion.div animate={{ y: [0, -20, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[15%] left-[5%] text-[#F69245]/20"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L14.39 8.26H22L15.81 12.75L18.19 20L12 15.5L5.81 20L8.19 12.75L2 8.26H9.61L12 1Z"/></svg></motion.div>
+          <motion.div animate={{ y: [0, 25, 0], x: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] right-[10%] text-[#8750DA]/20"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></motion.div>
+        </div>
+
         <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
-          <div className="flex justify-center mb-6 md:mb-8">
+          <div className="flex justify-center mb-10 md:mb-14">
             <div className="relative">
               <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm">
                 {CATEGORIES.map((cat) => (
@@ -557,28 +574,38 @@ export const JuniorPage = () => {
           </Link>
 
           <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
-            <Link
-              to={activeCategoryHref}
-              className="hidden lg:flex h-[500px] relative shrink-0 flex-col overflow-hidden rounded-xl bg-[#FAC05C] shadow-sm group"
+            {/* Left Banner — 3D Parallax Effect */}
+            <motion.div 
+              style={{ perspective: "1000px" }}
+              className="hidden lg:block h-[500px] shrink-0"
             >
-              <div className="p-6 pb-4">
-                <div className="overflow-hidden rounded-lg bg-white/30 shadow-xl h-[360px]">
-                  <img
-                    src={activeCategory.image}
-                    alt={activeTab}
-                    className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
-                  />
+              <motion.div
+                whileHover={{ rotateY: 8, rotateX: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                className="h-full relative shrink-0 flex flex-col overflow-hidden rounded-3xl bg-[#FAC05C] shadow-2xl group cursor-pointer"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <Link to={activeCategoryHref} className="absolute inset-0 z-20" />
+                <div className="p-6 pb-4" style={{ transform: "translateZ(30px)" }}>
+                  <div className="overflow-hidden rounded-2xl bg-white/30 shadow-2xl h-[360px] border border-white/40">
+                    <img
+                      src={activeCategory.image}
+                      alt={activeTab}
+                      className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-110"
+                      crossOrigin="anonymous"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="mt-auto flex min-h-[92px] items-center justify-between gap-4 bg-[#F69245] px-6 py-4">
-                <h3 className="font-protest text-white leading-none drop-shadow-sm" style={{ fontSize: 'clamp(28px, 3vw, 38px)' }}>
-                  {activeTab}
-                </h3>
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-lg transition-transform group-hover:translate-x-1">
-                  <ArrowRight size={20} />
-                </span>
-              </div>
-            </Link>
+                <div className="mt-auto flex min-h-[92px] items-center justify-between gap-4 bg-[#F69245] px-8 py-4" style={{ transform: "translateZ(50px)" }}>
+                  <h3 className="font-protest text-white leading-none drop-shadow-lg" style={{ fontSize: 'clamp(24px, 2.5vw, 34px)' }}>
+                    {activeTab}
+                  </h3>
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-2xl transition-transform group-hover:translate-x-2">
+                    <ArrowRight size={22} />
+                  </span>
+                </div>
+              </motion.div>
+            </motion.div>
 
             <div className="min-w-0">
               <div className="relative">
