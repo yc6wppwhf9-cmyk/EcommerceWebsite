@@ -116,11 +116,19 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
     addItem(product);
   };
 
+  // Mobile-friendly tap to swap
+  const handleTap = () => {
+    if (isTouchDevice) {
+      setIsHovered(!isHovered);
+    }
+  };
+
   return (
     <div 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-3xl overflow-hidden shadow-lg md:shadow-none"
+      onClick={handleTap}
+      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-3xl overflow-hidden shadow-lg md:shadow-none cursor-pointer"
     >
       {/* Image container with blue border */}
       <Link
@@ -565,8 +573,20 @@ export const JuniorPage = () => {
           </div>
 
           <Link to={activeCategoryHref} className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-xl overflow-hidden bg-[#FDE6B9] border border-[#F69245]/10">
-            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-white/70 bg-white">
-              <img src={activeCategory.image} alt={activeTab} className="w-full h-full object-cover object-top" />
+            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-white/70 bg-white relative">
+              <AnimatePresence mode="wait">
+                <motion.img 
+                  key={activeCategory.image}
+                  src={activeCategory.image} 
+                  alt={activeTab} 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.2 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute inset-0 w-full h-full object-cover object-top" 
+                  crossOrigin="anonymous"
+                />
+              </AnimatePresence>
             </div>
             <div className="font-outfit min-w-0 flex-1">
               <p className="font-black uppercase text-[10px] tracking-widest text-[#7A5900] opacity-90">Featured</p>
