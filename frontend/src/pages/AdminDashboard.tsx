@@ -351,12 +351,15 @@ export const AdminDashboard = () => {
 
       if (editingProduct) {
         await api.updateProduct(editingProduct.id, payload);
+        // Update local state instead of refetching all data
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...payload } : p));
         showToast('Product Updated!');
       } else {
-        await api.createProduct(payload);
+        const newProduct = await api.createProduct(payload);
+        // Add new product to local state
+        setProducts(prev => [...prev, newProduct]);
         showToast('New Product Registered!');
       }
-      fetchData();
       setIsAddingProduct(false);
       setEditingProduct(null);
       setFormData(BLANK_FORM());
