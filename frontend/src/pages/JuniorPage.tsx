@@ -99,11 +99,16 @@ const AgeGroupCarousel = () => {
 // Standard card for Junior Showcase
 const JuniorProductCard = ({ product }: { product: Product }) => {
   const { addItem } = useCart();
+  const [isHovered, setIsHovered] = useState(false);
   const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
   const discount = originalPrice > product.price
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
   const ageBadge = product.ageRange || (product as any).age_range || (product.subcategory === 'lunch-bags' ? 'Lunch Ready' : 'School Ready');
+
+  const secondaryImage = product.images?.[1] || product.image;
+  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  const displayImage = !isTouchDevice && isHovered ? secondaryImage : product.image;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -112,7 +117,11 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-2xl overflow-hidden">
+    <div 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-2xl overflow-hidden"
+    >
       {/* Image container with blue border */}
       <Link
         to={`/product/${product.slug || product.id}?theme=junior`}
@@ -121,9 +130,9 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
       >
         <div className="w-full h-full flex items-center justify-center p-3 md:p-5">
           <img
-            src={product.image}
+            src={displayImage}
             alt={product.name}
-            className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
+            className="w-full h-full object-contain transition-all duration-500"
             loading="lazy"
             decoding="async"
           />
@@ -191,17 +200,28 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
 // Simplified Best Seller card matching user image precisely
 const BestSellerCard = ({ product }: { product: Product }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
   const discount = originalPrice > product.price
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
+
+  const secondaryImage = product.images?.[1] || product.image;
+  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  const displayImage = !isTouchDevice && isHovered ? secondaryImage : ((product as any).image_url ?? product.image);
+
   return (
-    <Link to={`/product/${product.id}?theme=junior`} className="flex flex-col bg-white group">
+    <Link 
+      to={`/product/${product.id}?theme=junior`} 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="flex flex-col bg-white group"
+    >
       <div className="overflow-hidden bg-[#F9F9F9]" style={{ aspectRatio: '1 / 1' }}>
         <img
-          src={(product as any).image_url ?? product.image}
+          src={displayImage}
           alt={product.name}
-          className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-contain p-5 transition-all duration-500"
           loading="lazy"
         />
       </div>
