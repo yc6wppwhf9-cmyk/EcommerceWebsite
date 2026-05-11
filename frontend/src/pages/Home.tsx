@@ -157,6 +157,7 @@ export const Home = () => {
   const [tabLoading, setTabLoading] = useState(true);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
+  const activeTabConfig = BACKPACK_TABS.find(t => t.id === activeTab) || BACKPACK_TABS[0];
 
   // Category flip-card state
   const [catFlipIndex, setCatFlipIndex] = useState(0);
@@ -349,91 +350,110 @@ export const Home = () => {
       </section>
 
       {/* Product Tabs Section */}
-      <section className="pt-10 md:pt-24 pb-12 bg-white">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center mb-6 md:mb-16 border-b border-gray-100 pb-1">
-            {BACKPACK_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 md:pb-4 text-[16px] font-semibold uppercase tracking-[0.15em] transition-all relative whitespace-nowrap ${activeTab === tab.id ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}
-              >
-                {tab.label}
-                {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#26B3FF] rounded-full" />}
-              </button>
-            ))}
+      <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-7 md:mb-10">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#26B3FF] mb-2">Shop By Use</p>
+              <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[#14052b]">Backpack Essentials</h2>
+            </div>
+            <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-lg">
+              {BACKPACK_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`h-10 px-4 md:px-5 rounded-md text-[11px] md:text-[12px] font-black uppercase tracking-[0.14em] transition-all whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'bg-white text-[#14052b] shadow-sm ring-1 ring-gray-100'
+                      : 'text-gray-400 hover:text-gray-700'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Mobile: full-width category strip */}
           {tabCategory && (
-            <div className="md:hidden flex items-center gap-4 p-4 mb-6 rounded-xl overflow-hidden" style={{ backgroundColor: '#F8BE57' }}>
-              <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden">
+            <div className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-lg overflow-hidden bg-[#F8BE57]">
+              <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-white/30">
                 <LazyImage
-                  src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster}
-                  alt={activeTab}
+                  src={activeTabConfig.image}
+                  alt={activeTabConfig.label}
                   className="w-full h-full object-cover"
-                  width={64}
+                  width={80}
                 />
               </div>
-              <div className="text-white font-outfit">
-                <p className="font-semibold uppercase text-[10px] tracking-widest opacity-80">Trendy</p>
-                <p className="font-bold uppercase text-xl leading-tight">
-                  {BACKPACK_TABS.find(t => t.id === activeTab)?.label}
-                </p>
+              <div className="text-white font-outfit min-w-0">
+                <p className="font-black uppercase text-[10px] tracking-widest opacity-80">Featured</p>
+                <p className="font-black uppercase text-lg leading-tight truncate">{activeTabConfig.label}</p>
               </div>
             </div>
           )}
 
-          <div className="flex items-start gap-6 lg:gap-8">
-            {tabCategory && (
-              <div className="hidden md:block md:w-[220px] lg:w-[379px] shrink-0 md:h-[440px] lg:h-[506px] overflow-hidden relative group rounded-none">
-                <div className="w-full h-[80px] lg:h-[95px] bg-[#F8BE57] z-20 flex flex-col items-center justify-center text-white font-outfit overflow-hidden">
-                  <p className="font-semibold uppercase tracking-tight leading-[0.8] text-center w-full" style={{ fontSize: 'clamp(18px, 2.5vw, 32.4px)' }}>
-                    Trendy {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(0, -1).join(' ')}
-                  </p>
-                  <p className="font-bold uppercase tracking-tight leading-[0.8] text-center w-full translate-x-[20px] lg:translate-x-[32px]" style={{ fontSize: 'clamp(26px, 3.5vw, 47.4px)' }}>
-                    {BACKPACK_TABS.find(t => t.id === activeTab)?.label.split(' ').slice(-1)[0]}S
-                  </p>
+          <div className="grid md:grid-cols-[260px_minmax(0,1fr)] lg:grid-cols-[330px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
+            <Link
+              to={activeTabConfig.to}
+              className="hidden md:block h-[420px] lg:h-[470px] overflow-hidden relative group rounded-lg bg-[#F8BE57] shadow-sm"
+            >
+              <div className="absolute inset-x-0 top-0 z-20 px-6 pt-6 text-white">
+                <p className="font-black uppercase tracking-[0.16em] leading-none text-[19px] lg:text-[24px]">Trendy</p>
+                <p className="font-black uppercase tracking-tight leading-[0.9] text-[31px] lg:text-[39px] max-w-[230px]">
+                  {activeTabConfig.label}
+                </p>
+                <div className="mt-5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#14052b] shadow-lg transition-transform group-hover:translate-x-1">
+                  <ArrowRight size={18} />
                 </div>
-                <Link
-                  to={BACKPACK_TABS.find(t => t.id === activeTab)?.to || `/${activeTab}`}
-                  className="w-full flex-1 overflow-hidden relative block"
-                  style={{ height: 'calc(100% - 80px)' }}
-                >
-                  <LazyImage
-                    src={BACKPACK_TABS.find(t => t.id === activeTab)?.image || IMG.refPoster}
-                    alt={activeTab}
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
-                    width={500}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                </Link>
               </div>
-            )}
-            <div className="flex-1 min-w-0 relative">
+              <LazyImage
+                src={activeTabConfig.image}
+                alt={activeTabConfig.label}
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                width={520}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#F8BE57]/85 via-[#F8BE57]/10 to-black/35" />
+            </Link>
+
+            <div className="min-w-0 relative">
               <button
-                onClick={() => tabScrollRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
-                className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg"
+                onClick={() => tabScrollRef.current?.scrollBy({ left: -340, behavior: 'smooth' })}
+                className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                aria-label="Previous products"
               >
-                <ChevronLeft size={20} className="text-gray-600" />
+                <ChevronLeft size={20} />
               </button>
               <button
-                onClick={() => tabScrollRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
-                className="absolute right-[-15px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg"
+                onClick={() => tabScrollRef.current?.scrollBy({ left: 340, behavior: 'smooth' })}
+                className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                aria-label="Next products"
               >
-                <ChevronRight size={20} className="text-gray-600" />
+                <ChevronRight size={20} />
               </button>
-              <div ref={tabScrollRef} className="flex justify-center gap-4 md:gap-6 overflow-x-auto no-scrollbar pb-4 px-1">
+
+              <div ref={tabScrollRef} className="flex gap-4 md:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-1 md:px-5 scroll-smooth">
                 {tabLoading ? (
-                  [1, 2, 3, 4, 5].map(n => (
-                    <div key={n} className="w-[44vw] sm:w-[230px] md:w-[260px] shrink-0 aspect-[3/4] bg-gray-100 animate-pulse rounded-2xl" />
+                  [1, 2, 3, 4].map(n => (
+                    <div key={n} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0">
+                      <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
+                      <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
+                      <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
+                      <div className="mt-4 h-10 w-full bg-gray-100 animate-pulse rounded" />
+                    </div>
                   ))
-                ) : (
+                ) : tabProducts.length > 0 ? (
                   tabProducts.map(p => (
-                    <div key={p.id} className="w-[44vw] sm:w-[230px] md:w-[260px] shrink-0">
+                    <div key={p.id} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0">
                       <ProductCard product={p} />
                     </div>
                   ))
+                ) : (
+                  <div className="w-full min-h-[320px] rounded-lg border border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center text-center px-6">
+                    <PackageCheck size={34} className="text-[#26B3FF] mb-4" />
+                    <p className="text-sm font-black uppercase tracking-[0.2em] text-[#14052b] mb-2">Fresh stock coming soon</p>
+                    <Link to={activeTabConfig.to} className="mt-4 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#26B3FF]">
+                      View category <ArrowRight size={14} />
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
