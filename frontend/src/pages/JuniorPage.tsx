@@ -574,14 +574,14 @@ export const JuniorPage = () => {
                 ) : products.length > 0 ? (
                   <>
                     <div className="md:hidden flex gap-3 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
-                      {products.slice(0, 6).map((product, idx) => (
+                      {products.slice(0, 3).map((product, idx) => (
                         <motion.div key={product.id} className="w-[72vw] shrink-0 snap-start" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
                     </div>
                     <div ref={tabScrollRef} className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto pb-5 no-scrollbar snap-x snap-mandatory px-5">
-                      {products.slice(0, 8).map((product, idx) => (
+                      {products.slice(0, 3).map((product, idx) => (
                         <motion.div key={product.id} className="shrink-0 w-[220px] lg:w-[240px] xl:w-[255px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
