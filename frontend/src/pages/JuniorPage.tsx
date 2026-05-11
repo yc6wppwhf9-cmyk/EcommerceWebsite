@@ -542,16 +542,14 @@ export const JuniorPage = () => {
 
         <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
           <div className="flex justify-center mb-10 md:mb-14">
-            <div className="relative">
-              <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm">
+            <div className="relative w-full flex justify-center">
+              <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm px-4">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.label}
                     onClick={() => setActiveTab(cat.label)}
                     className={`relative h-11 px-5 rounded-lg text-[11px] md:text-[13px] font-black uppercase tracking-[0.14em] transition-all duration-500 whitespace-nowrap ${
-                      activeTab === cat.label
-                        ? 'text-white'
-                        : 'text-gray-600 hover:text-black'
+                      activeTab === cat.label ? 'text-white' : 'text-gray-600 hover:text-black'
                     }`}
                   >
                     {activeTab === cat.label && (
@@ -561,14 +559,12 @@ export const JuniorPage = () => {
                         transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
                       />
                     )}
-                    <span className={`relative z-10 ${activeTab === cat.label ? 'text-white' : 'text-gray-400 group-hover:text-black'}`}>
-                      {cat.label}
-                    </span>
+                    <span className="relative z-10">{cat.label}</span>
                   </button>
                 ))}
               </div>
-              {/* Right fade to hint at overflow on small screens */}
-              <div className="pointer-events-none absolute right-0 top-0 h-full w-10 rounded-r-xl bg-gradient-to-l from-white/80 to-transparent lg:hidden" />
+              {/* Right fade hint — narrowed to prevent cutting */}
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-6 rounded-r-xl bg-gradient-to-l from-white/90 to-transparent lg:hidden" />
             </div>
           </div>
 
