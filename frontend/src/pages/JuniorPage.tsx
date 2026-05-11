@@ -46,10 +46,17 @@ const AgeGroupCarousel = () => {
         {[2, 1].map(offset => {
           const stackIdx = (idx + offset) % total;
           return (
-            <div key={`stack-${offset}`} className="absolute inset-y-0 rounded-2xl overflow-hidden pointer-events-none"
-              style={{ left: `${offset * 10}px`, right: `-${offset * 10}px`, transform: `scale(${1 - offset * 0.04}) translateX(${offset * 8}px)`, filter: `brightness(${0.55 - offset * 0.1})`, zIndex: 10 - offset, transformOrigin: 'right center' }}>
+            <div key={`stack-${offset}`} className="absolute inset-y-0 rounded-2xl overflow-hidden pointer-events-none transition-all duration-500 shadow-sm"
+              style={{ 
+                left: `${offset * 12}px`, 
+                right: `-${offset * 12}px`, 
+                transform: `scale(${1 - offset * 0.06}) translateY(${offset * 4}px)`, 
+                filter: `brightness(${0.6 - offset * 0.15}) grayscale(${offset * 0.2})`, 
+                zIndex: 10 - offset, 
+                transformOrigin: 'center right' 
+              }}>
               <div className="relative w-full" style={{ paddingBottom: '140%' }}>
-                <img src={AGE_GROUPS[stackIdx].img} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
+                <img src={AGE_GROUPS[stackIdx].img} alt="" className="absolute inset-0 w-full h-full object-cover object-top opacity-80" />
               </div>
             </div>
           );
