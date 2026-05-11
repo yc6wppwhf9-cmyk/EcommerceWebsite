@@ -31,7 +31,7 @@ const AgeGroupCarousel = () => {
   const goPrev = () => { setDir(-1); setIdx(i => (i - 1 + total) % total); };
 
   return (
-    <div className="md:hidden px-2 mb-2">
+    <div className="md:hidden px-2 mb-0">
       <div
         className="relative select-none max-w-sm mx-auto"
         style={{ perspective: '1200px' }}
@@ -434,7 +434,7 @@ export const JuniorPage = () => {
         />
       </section>
 
-      <section ref={drawSectionRef} className="pt-12 md:pt-16 pb-16 md:pb-24 bg-white relative overflow-hidden">
+      <section ref={drawSectionRef} className="pt-2 md:pt-16 pb-16 md:pb-24 bg-white relative overflow-hidden">
         {/* Dynamic CSS Grid — perfectly aligned with canvas coordinates */}
         <div className="absolute inset-0 junior-grid-bg opacity-100 pointer-events-none" />
 
