@@ -531,7 +531,7 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      <section className="py-10 md:py-20 bg-white overflow-hidden relative">
+      <section className="pt-10 pb-4 md:py-20 bg-white overflow-hidden relative">
         {/* Dynamic Background Glows */}
         <div 
           className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
@@ -687,7 +687,7 @@ export const JuniorPage = () => {
       {/* ═══════════════════════════════════════════════
           EXACT BEST SELLERS SECTION
       ═══════════════════════════════════════════════ */}
-      <section className="py-20 bg-white relative">
+      <section className="pt-8 pb-16 bg-white relative">
         <div className="max-w-[1402px] mx-auto px-6 md:px-14">
 
           <div className="text-center mb-12">
