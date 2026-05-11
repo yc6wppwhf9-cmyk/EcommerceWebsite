@@ -352,8 +352,7 @@ export const Home = () => {
       {/* Product Tabs Section */}
       <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-7 md:mb-10">
-            <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-lg">
+          <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-lg mb-7 md:mb-10">
               {BACKPACK_TABS.map((tab) => (
                 <button
                   key={tab.id}
@@ -368,7 +367,6 @@ export const Home = () => {
                 </button>
               ))}
             </div>
-          </div>
 
           {tabCategory && (
             <div className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-lg overflow-hidden bg-[#F8BE57]">
@@ -390,24 +388,31 @@ export const Home = () => {
           <div className="grid md:grid-cols-[260px_minmax(0,1fr)] lg:grid-cols-[330px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
             <Link
               to={activeTabConfig.to}
-              className="hidden md:block h-[420px] lg:h-[470px] overflow-hidden relative group rounded-lg bg-[#F8BE57] shadow-sm"
+              className="hidden md:flex flex-col h-auto overflow-hidden relative group rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
             >
-              <div className="absolute inset-x-0 top-0 z-20 px-6 pt-6 text-white">
-                <p className="font-black uppercase tracking-[0.16em] leading-none text-[19px] lg:text-[24px]">Trendy</p>
-                <p className="font-black uppercase tracking-tight leading-[0.9] text-[31px] lg:text-[39px] max-w-[230px]">
-                  {activeTabConfig.label}
-                </p>
-                <div className="mt-5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#14052b] shadow-lg transition-transform group-hover:translate-x-1">
-                  <ArrowRight size={18} />
+              {/* Image section with border frame */}
+              <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4" style={{ aspectRatio: '1/1.1' }}>
+                <div className="absolute inset-0 border-[10px] border-[#F8BE57] rounded-lg z-10" />
+                <LazyImage
+                  src={activeTabConfig.image}
+                  alt={activeTabConfig.label}
+                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                  width={520}
+                />
+              </div>
+              
+              {/* Text section below */}
+              <div className="px-5 py-4 bg-[#F8BE57] flex items-center justify-between">
+                <div>
+                  <p className="font-black uppercase tracking-[0.14em] leading-none text-[12px] text-white opacity-90 mb-1">Trendy</p>
+                  <p className="font-black uppercase tracking-tight leading-snug text-[16px] lg:text-[18px] text-white max-w-[220px]">
+                    {activeTabConfig.label}
+                  </p>
+                </div>
+                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#F8BE57] shadow-md transition-transform group-hover:translate-x-1 flex-shrink-0">
+                  <ArrowRight size={16} />
                 </div>
               </div>
-              <LazyImage
-                src={activeTabConfig.image}
-                alt={activeTabConfig.label}
-                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                width={520}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#F8BE57]/85 via-[#F8BE57]/10 to-black/35" />
             </Link>
 
             <div className="min-w-0 relative">
