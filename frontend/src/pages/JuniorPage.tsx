@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const AGE_GROUPS = [
@@ -103,6 +103,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const discount = originalPrice > product.price
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
+  const ageBadge = product.ageRange || (product as any).age_range || (product.subcategory === 'lunch-bags' ? 'Lunch Ready' : 'School Ready');
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -111,14 +112,14 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="flex flex-col font-outfit bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div className="flex h-full flex-col font-outfit bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
       {/* Image container with blue border */}
       <Link
         to={`/product/${product.slug || product.id}?theme=junior`}
-        className="relative block bg-white"
+        className="relative block bg-white shrink-0"
         style={{ aspectRatio: '300 / 307' }}
       >
-        <div className="w-full h-full flex items-center justify-center p-4">
+        <div className="w-full h-full flex items-center justify-center p-3 md:p-5">
           <img
             src={product.image}
             alt={product.name}
@@ -127,25 +128,26 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
             decoding="async"
           />
         </div>
-        {/* Orange NEW badge */}
+        <span className="absolute top-2 left-2 rounded-full bg-[#F69245]/15 text-[#A65011] px-2.5 py-1 text-[8px] md:text-[9px] font-black uppercase tracking-widest">
+          {ageBadge}
+        </span>
         {product.isNew && (
-          <span className="absolute top-2.5 right-2.5 bg-[#FFB347] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm">
+          <span className="absolute top-2 right-2 bg-[#8750DA] text-white text-[8px] md:text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">
             NEW
           </span>
         )}
       </Link>
 
-      {/* Info */}
-      <div className="pt-3 space-y-1.5">
+      <div className="flex flex-1 flex-col p-3 md:p-4 pt-2 md:pt-3">
         <Link to={`/product/${product.slug || product.id}?theme=junior`}>
-          <h3 className="text-[16px] font-bold text-[#000000] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors">
+          <h3 className="min-h-[40px] text-[13px] md:text-[15px] font-black text-[#030014] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors">
             {product.name}
           </h3>
         </Link>
 
         {/* Stars using Star 1.png — only shown when real review data exists */}
         {(product as any).reviews > 0 && (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 mt-2">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />
@@ -158,16 +160,16 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
         )}
 
         {/* Price */}
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[16px] font-semibold text-[#F69245]">
+        <div className="mt-2 flex min-h-[24px] items-baseline gap-1.5 md:gap-2 flex-wrap">
+          <span className="text-[14px] md:text-[16px] font-black text-[#F69245]">
             ₹ {product.price.toLocaleString('en-IN')}.00
           </span>
           {discount > 0 && (
             <>
-              <span className="text-[14px] text-gray-400 line-through">
+              <span className="text-[11px] md:text-[13px] text-gray-400 line-through">
                 ₹ {originalPrice.toLocaleString('en-IN')}.00
               </span>
-              <span className="text-[13px] font-semibold text-black">
+              <span className="text-[10px] md:text-[11px] font-black text-[#030014]">
                 {discount}% off
               </span>
             </>
@@ -177,9 +179,10 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
         {/* Move to Cart */}
         <button
           onClick={handleAddToCart}
-          className="w-full py-2.5 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
+          disabled={product.stock <= 0}
+          className="mt-auto w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          + MOVE TO CART
+          {product.stock <= 0 ? 'Out Of Stock' : '+ Move To Cart'}
         </button>
       </div>
     </div>
@@ -215,6 +218,8 @@ export const JuniorPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [clickEffect, setClickEffect] = useState<'dreamy' | 'power' | null>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
+  const activeCategory = CATEGORIES.find(c => c.label === activeTab) || CATEGORIES[0];
+  const activeCategoryHref = `/${activeCategory.filter}`;
 
   const handleStyleClick = (e: React.MouseEvent, type: 'dreamy' | 'power') => {
     e.preventDefault();
@@ -451,96 +456,134 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 bg-white overflow-hidden relative">
+      <section className="py-10 md:py-14 bg-white overflow-hidden relative">
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none select-none" />
-        <div className="max-w-[1402px] mx-auto px-6 md:px-18 relative z-10">
-          <div className="text-center mb-4 max-w-3xl mx-auto">
-            <p className="text-sm text-gray-500">Explore school backpacks, combo sets, pouches, lunch bags and trolley styles made for every little adventure.</p>
-          </div>
-          <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center mb-6 md:mb-10 border-b border-gray-100 pb-1 relative">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.label}
-                onClick={() => setActiveTab(cat.label)}
-                className={`relative inline-flex items-center justify-center px-4 py-2 rounded-full text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 whitespace-nowrap ${activeTab === cat.label ? 'bg-[#F69245]/15 text-[#14052b] shadow-sm' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}
-              >
-                {cat.label}
-                {activeTab === cat.label && <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#F69245] rounded-full" />}
-              </button>
-            ))}
+        <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-6 md:mb-8">
+            <div className="max-w-2xl">
+              <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.28em] text-[#F69245] mb-2">Junior Favorites</p>
+              <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[#14052b]">Shop Junior Favorites</h2>
+              <p className="mt-2 text-sm md:text-base text-gray-500 leading-relaxed">
+                Explore school backpacks, combo sets, pouches, lunch bags and trolley styles made for every little adventure.
+              </p>
+            </div>
+
+            <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.label}
+                  onClick={() => setActiveTab(cat.label)}
+                  className={`h-10 px-4 md:px-5 rounded-lg text-[10px] md:text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-300 whitespace-nowrap ${
+                    activeTab === cat.label
+                      ? 'bg-[#F69245] text-white shadow-md shadow-[#F69245]/20'
+                      : 'text-gray-400 hover:text-[#14052b] hover:bg-[#F69245]/10'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Mobile: category strip */}
-          <div className="md:hidden flex items-center gap-4 p-4 mb-6 rounded-3xl overflow-hidden" style={{ backgroundColor: '#FDE6B9' }}>
-            <div className="w-16 h-16 shrink-0 rounded-2xl overflow-hidden border border-white/60 bg-white">
-              <img src={CATEGORIES.find(c => c.label === activeTab)?.image || ''} alt={activeTab} className="w-full h-full object-cover object-top" />
+          <Link to={activeCategoryHref} className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-xl overflow-hidden bg-[#FDE6B9] border border-[#F69245]/10">
+            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-white/70 bg-white">
+              <img src={activeCategory.image} alt={activeTab} className="w-full h-full object-cover object-top" />
             </div>
-            <div className="font-outfit">
-              <p className="font-semibold uppercase text-[10px] tracking-widest text-[#7A5900] opacity-90">Featured</p>
-              <p className="font-bold uppercase text-xl leading-tight text-[#14052b]">{activeTab}</p>
+            <div className="font-outfit min-w-0 flex-1">
+              <p className="font-black uppercase text-[10px] tracking-widest text-[#7A5900] opacity-90">Featured</p>
+              <p className="font-black uppercase text-lg leading-tight text-[#14052b] truncate">{activeTab}</p>
             </div>
-          </div>
-          <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
-            <div className="hidden lg:flex relative shrink-0 flex-col items-center justify-start">
-              <Link
-                to={`/${CATEGORIES.find(c => c.label === activeTab)?.filter}`}
-                className="relative flex flex-col items-center pt-6 md:pt-8 w-full max-w-[260px] sm:max-w-[334px] mx-auto lg:mx-0 group"
-                style={{ backgroundColor: '#FAC05C', borderRadius: '5px', minHeight: '360px' }}
-              >
-                <div className="overflow-hidden shadow-2xl mb-4 w-[85%] max-w-[285px] rounded-[5px]" style={{ height: 'clamp(260px, 55vw, 400px)' }}>
+            <ArrowRight size={18} className="text-[#F69245] shrink-0" />
+          </Link>
+
+          <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
+            <Link
+              to={activeCategoryHref}
+              className="hidden lg:flex h-[500px] relative shrink-0 flex-col overflow-hidden rounded-xl bg-[#FAC05C] shadow-sm group"
+            >
+              <div className="p-6 pb-4">
+                <div className="overflow-hidden rounded-lg bg-white/30 shadow-xl h-[360px]">
                   <img
-                    src={CATEGORIES.find(c => c.label === activeTab)?.image || "/junior/Drift Sky Blue_ Hero 1.png"}
+                    src={activeCategory.image}
                     alt={activeTab}
                     className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="font-protest text-white leading-none text-center pb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] group-hover:text-[#8750DA] transition-colors" style={{ fontSize: 'clamp(24px, 5vw, 39.88px)' }}>{activeTab}</h3>
-              </Link>
-            </div>
-            <div className="flex-1 min-w-0">
+              </div>
+              <div className="mt-auto flex min-h-[92px] items-center justify-between gap-4 bg-[#F69245] px-6 py-4">
+                <h3 className="font-protest text-white leading-none drop-shadow-sm" style={{ fontSize: 'clamp(28px, 3vw, 38px)' }}>
+                  {activeTab}
+                </h3>
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-lg transition-transform group-hover:translate-x-1">
+                  <ArrowRight size={20} />
+                </span>
+              </div>
+            </Link>
+
+            <div className="min-w-0">
               <div className="relative">
                 <button
-                  onClick={() => tabScrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' })}
-                  className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 items-center justify-center transition-colors z-30 rounded-r-lg"
+                  onClick={() => tabScrollRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
+                  className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                  aria-label="Previous junior products"
                 >
-                  <ChevronLeft size={20} className="text-gray-600" />
+                  <ChevronLeft size={20} />
                 </button>
                 <button
-                  onClick={() => tabScrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' })}
-                  className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 items-center justify-center transition-colors z-30 rounded-l-lg"
+                  onClick={() => tabScrollRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
+                  className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                  aria-label="Next junior products"
                 >
-                  <ChevronRight size={20} className="text-gray-600" />
+                  <ChevronRight size={20} />
                 </button>
+
                 {isLoading ? (
                   <>
-                    {/* Mobile: 2-col grid skeleton */}
-                    <div className="md:hidden grid grid-cols-2 gap-3 px-1">
-                      {[1, 2, 3, 4].map(n => <div key={n} className="aspect-[4/5] bg-gray-50 animate-pulse rounded-2xl" />)}
+                    <div className="md:hidden flex gap-3 overflow-x-auto no-scrollbar pb-4">
+                      {[1, 2, 3].map(n => (
+                        <div key={n} className="w-[72vw] shrink-0">
+                          <div className="aspect-[300/307] bg-gray-50 animate-pulse rounded-xl" />
+                          <div className="mt-3 h-4 w-4/5 bg-gray-50 animate-pulse rounded" />
+                          <div className="mt-3 h-10 w-full bg-gray-50 animate-pulse rounded" />
+                        </div>
+                      ))}
                     </div>
-                    {/* Desktop: scroll skeleton */}
-                    <div className="hidden md:flex gap-6 overflow-x-auto pb-2 no-scrollbar px-14">
-                      {[1, 2, 3, 4].map(n => <div key={n} className="flex-shrink-0 w-[200px] lg:w-[220px] aspect-[4/5] bg-gray-50 animate-pulse rounded-3xl" />)}
+                    <div className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto pb-5 no-scrollbar px-5">
+                      {[1, 2, 3, 4].map(n => (
+                        <div key={n} className="shrink-0 w-[220px] lg:w-[240px] xl:w-[255px]">
+                          <div className="aspect-[300/307] bg-gray-50 animate-pulse rounded-xl" />
+                          <div className="mt-4 h-4 w-4/5 bg-gray-50 animate-pulse rounded" />
+                          <div className="mt-3 h-4 w-1/2 bg-gray-50 animate-pulse rounded" />
+                          <div className="mt-4 h-11 w-full bg-gray-50 animate-pulse rounded" />
+                        </div>
+                      ))}
                     </div>
                   </>
                 ) : products.length > 0 ? (
                   <>
-                    {/* Mobile: clean 2-column grid */}
-                    <div className="md:hidden grid grid-cols-2 gap-3 px-1">
-                      {products.slice(0, 4).map((product, idx) => (
-                        <motion.div key={product.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                    <div className="md:hidden flex gap-3 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
+                      {products.slice(0, 6).map((product, idx) => (
+                        <motion.div key={product.id} className="w-[72vw] shrink-0 snap-start" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
                     </div>
-                    {/* Desktop: horizontal scroll */}
-                    <div ref={tabScrollRef} className="hidden md:flex gap-6 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory px-14">
-                      {products.slice(0, 4).map((product, idx) => (
-                        <motion.div key={product.id} className="shrink-0 w-[200px] lg:w-[220px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}><JuniorProductCard product={product} /></motion.div>
+                    <div ref={tabScrollRef} className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto pb-5 no-scrollbar snap-x snap-mandatory px-5">
+                      {products.slice(0, 8).map((product, idx) => (
+                        <motion.div key={product.id} className="shrink-0 w-[220px] lg:w-[240px] xl:w-[255px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                          <JuniorProductCard product={product} />
+                        </motion.div>
                       ))}
                     </div>
                   </>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center py-20 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-100"><p className="text-gray-400 font-outfit font-black uppercase tracking-widest">Coming Soon</p></div>
+                  <div className="min-h-[330px] lg:min-h-[500px] flex flex-col items-center justify-center rounded-xl bg-white border border-dashed border-[#F69245]/30 px-6 text-center">
+                    <PackageCheck size={36} className="text-[#F69245] mb-4" />
+                    <p className="text-sm font-black uppercase tracking-[0.2em] text-[#14052b] mb-2">Fresh stock coming soon</p>
+                    <Link to={activeCategoryHref} className="mt-4 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#F69245]">
+                      View category <ArrowRight size={14} />
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
