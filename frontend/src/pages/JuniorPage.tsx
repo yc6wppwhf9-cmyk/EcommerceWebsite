@@ -111,11 +111,11 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="flex flex-col font-outfit bg-white">
+    <div className="flex flex-col font-outfit bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
       {/* Image container with blue border */}
       <Link
         to={`/product/${product.slug || product.id}?theme=junior`}
-        className="relative block rounded-2xl overflow-hidden bg-white"
+        className="relative block bg-white"
         style={{ aspectRatio: '300 / 307' }}
       >
         <div className="w-full h-full flex items-center justify-center p-4">
@@ -454,23 +454,30 @@ export const JuniorPage = () => {
       <section className="py-12 md:py-16 bg-white overflow-hidden relative">
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none select-none" />
         <div className="max-w-[1402px] mx-auto px-6 md:px-18 relative z-10">
+          <div className="text-center mb-4 max-w-3xl mx-auto">
+            <p className="text-sm text-gray-500">Explore school backpacks, combo sets, pouches, lunch bags and trolley styles made for every little adventure.</p>
+          </div>
           <div className="flex overflow-x-auto no-scrollbar gap-4 md:gap-8 md:justify-center mb-6 md:mb-10 border-b border-gray-100 pb-1 relative">
             {CATEGORIES.map((cat) => (
-              <button key={cat.label} onClick={() => setActiveTab(cat.label)} className={`relative pb-3 text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 whitespace-nowrap ${activeTab === cat.label ? 'text-[#14052b]' : 'text-gray-400 hover:text-gray-600'}`}>
+              <button
+                key={cat.label}
+                onClick={() => setActiveTab(cat.label)}
+                className={`relative inline-flex items-center justify-center px-4 py-2 rounded-full text-[13px] font-outfit font-black uppercase tracking-[0.1em] transition-all duration-300 whitespace-nowrap ${activeTab === cat.label ? 'bg-[#F69245]/15 text-[#14052b] shadow-sm' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'}`}
+              >
                 {cat.label}
-                {activeTab === cat.label && <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F69245] rounded-full" />}
+                {activeTab === cat.label && <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#F69245] rounded-full" />}
               </button>
             ))}
           </div>
 
           {/* Mobile: category strip */}
-          <div className="md:hidden flex items-center gap-4 p-4 mb-6 rounded-xl overflow-hidden" style={{ backgroundColor: '#FAC05C' }}>
-            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden">
+          <div className="md:hidden flex items-center gap-4 p-4 mb-6 rounded-3xl overflow-hidden" style={{ backgroundColor: '#FDE6B9' }}>
+            <div className="w-16 h-16 shrink-0 rounded-2xl overflow-hidden border border-white/60 bg-white">
               <img src={CATEGORIES.find(c => c.label === activeTab)?.image || ''} alt={activeTab} className="w-full h-full object-cover object-top" />
             </div>
-            <div className="text-white font-outfit">
-              <p className="font-semibold uppercase text-[10px] tracking-widest opacity-80">Trendy</p>
-              <p className="font-bold uppercase text-xl leading-tight">{activeTab}</p>
+            <div className="font-outfit">
+              <p className="font-semibold uppercase text-[10px] tracking-widest text-[#7A5900] opacity-90">Featured</p>
+              <p className="font-bold uppercase text-xl leading-tight text-[#14052b]">{activeTab}</p>
             </div>
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-14">
