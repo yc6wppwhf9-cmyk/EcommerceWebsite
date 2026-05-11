@@ -46,7 +46,7 @@ const HeroSlider = () => {
   const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
-    <section className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]">
+    <section className="relative w-full bg-black overflow-hidden aspect-[4/3] sm:aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]">
       <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={current}
@@ -63,9 +63,21 @@ const HeroSlider = () => {
             src={HERO_SLIDES[current].src}
             loading="eager"
           />
-          <div className="absolute inset-x-0 bottom-0 h-28 md:h-32 bg-gradient-to-t from-black/5 to-transparent" />
+          {/* Gradient for CTA legibility */}
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         </motion.div>
       </AnimatePresence>
+
+      {/* CTA button on every slide */}
+      <div className="absolute bottom-14 left-6 md:bottom-16 md:left-10 z-30">
+        <Link
+          to={HERO_SLIDES[current].to}
+          className="inline-flex items-center gap-2 bg-white text-gray-900 font-black text-[11px] uppercase tracking-[0.18em] px-5 py-3.5 rounded-full shadow-xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300"
+        >
+          {HERO_SLIDES[current].cta}
+          <ArrowRight size={14} />
+        </Link>
+      </div>
 
       <button onClick={prev} className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-14 h-14 border border-white/30 rounded-full items-center justify-center hover:bg-white hover:text-gray-900 backdrop-blur-sm transition-all duration-300 text-white group shadow-xl">
         <ChevronLeft size={26} className="group-hover:-translate-x-0.5 transition-transform" />
@@ -74,10 +86,12 @@ const HeroSlider = () => {
         <ChevronRight size={26} className="group-hover:translate-x-0.5 transition-transform" />
       </button>
 
-      {/* Dots — mobile & desktop */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+      {/* Dots — padded for 44px tap target */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex z-30">
         {HERO_SLIDES.map((_, i) => (
-          <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
+          <button key={i} onClick={() => setCurrent(i)} className="p-2" aria-label={`Go to slide ${i + 1}`}>
+            <span className={`block h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
+          </button>
         ))}
       </div>
     </section>
@@ -325,8 +339,8 @@ export const Home = () => {
             <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">New Arrival</h2>
             <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 mb-6 select-none">Ready For Your Journey</p>
             <div className="flex gap-6">
-              <Link to="/women" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Women</Link>
-              <Link to="/men" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Men</Link>
+              <Link to="/women" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white py-2 px-1">Shop Women</Link>
+              <Link to="/men" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white py-2 px-1">Shop Men</Link>
             </div>
           </div>
         </div>
@@ -433,7 +447,7 @@ export const Home = () => {
               <div ref={tabScrollRef} className="flex gap-4 md:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-1 md:px-5 scroll-smooth">
                 {tabLoading ? (
                   [1, 2, 3, 4].map(n => (
-                    <div key={n} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0">
+                    <div key={n} className="w-[75vw] sm:w-[250px] lg:w-[270px] shrink-0">
                       <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
                       <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
                       <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
@@ -442,7 +456,7 @@ export const Home = () => {
                   ))
                 ) : tabProducts.length > 0 ? (
                   tabProducts.map(p => (
-                    <div key={p.id} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0">
+                    <div key={p.id} className="w-[75vw] sm:w-[250px] lg:w-[270px] shrink-0">
                       <ProductCard product={p} />
                     </div>
                   ))
@@ -458,6 +472,15 @@ export const Home = () => {
               </div>
             </div>
           </div>
+          {/* Mobile — View All CTA */}
+          <div className="md:hidden mt-5 text-center">
+            <Link
+              to={activeTabConfig.to}
+              className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#26B3FF] border border-[#26B3FF]/30 px-5 py-2.5 rounded-full hover:bg-[#26B3FF] hover:text-white transition-all"
+            >
+              View all {activeTabConfig.label} <ArrowRight size={13} />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -468,13 +491,14 @@ export const Home = () => {
             <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em] uppercase">Shop Best Sellers</h2>
           </div>
           <div className="relative group">
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
+            {/* Arrows sit inside the container — no negative margin overflow */}
+            <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 items-center justify-center transition-colors z-30 rounded-r-lg shadow-sm">
               <ChevronLeft size={20} className="text-gray-600" />
             </button>
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: 400, behavior: 'smooth' })} className="absolute right-[-15px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg">
+            <button onClick={() => bestSellersRef.current?.scrollBy({ left: 400, behavior: 'smooth' })} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 items-center justify-center transition-colors z-30 rounded-l-lg shadow-sm">
               <ChevronRight size={20} className="text-gray-600" />
             </button>
-            <div ref={bestSellersRef} className="flex gap-4 sm:gap-6 md:gap-10 overflow-x-auto no-scrollbar pb-10 px-1 sm:px-4">
+            <div ref={bestSellersRef} className="flex gap-4 sm:gap-6 md:gap-10 overflow-x-auto no-scrollbar pb-10 px-1 sm:px-4 md:px-12">
               {bestSellers.map(p => (
                 <div key={p.id} className="w-[200px] sm:w-[230px] md:w-[260px] lg:w-[290px] shrink-0">
                   <BestSellerCard product={p} />
