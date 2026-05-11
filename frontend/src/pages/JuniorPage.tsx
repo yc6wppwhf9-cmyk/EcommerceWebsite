@@ -71,7 +71,7 @@ const AgeGroupCarousel = () => {
               transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="w-full rounded-2xl overflow-hidden shadow-xl"
             >
-              <Link to={`/${AGE_GROUPS[idx].slug}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
+              <Link to={`/${AGE_GROUPS[idx].slug}?theme=junior`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
                 <img src={AGE_GROUPS[idx].img} alt={AGE_GROUPS[idx].label} className="absolute inset-0 w-full h-full object-cover object-top" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
@@ -235,7 +235,7 @@ export const JuniorPage = () => {
   const [clickEffect, setClickEffect] = useState<'dreamy' | 'power' | null>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
   const activeCategory = CATEGORIES.find(c => c.label === activeTab) || CATEGORIES[0];
-  const activeCategoryHref = `/${activeCategory.filter}`;
+  const activeCategoryHref = `/${activeCategory.filter}?theme=junior`;
 
   const handleStyleClick = (e: React.MouseEvent, type: 'dreamy' | 'power') => {
     e.preventDefault();
