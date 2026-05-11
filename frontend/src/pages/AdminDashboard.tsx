@@ -328,35 +328,45 @@ export const AdminDashboard = () => {
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Validate basic required fields manually for clear UI feedback
       if (!formData.name || !formData.originalPrice || !formData.price || !formData.category) {
         showToast('Please fill all mandatory fields marked with *', 'error');
         return;
       }
 
-      const payload = {
-        ...formData,
-        // Slug / URL part
-        slug: (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7),
-        sub_category: formData.subcategory || '',
-        junior_style: formData.juniorStyle || null,
-        features: formData.features || [],
+      // 1. Build a clean payload — avoid sending extra joined objects or internal IDs
+      const cleanPayload: any = {
+        name: formData.name,
+        price: Number(formData.price),
+        originalPrice: Number(formData.originalPrice),
+        category: formData.category,
+        sub_category: formData.subcategory || formData.sub_category || '',
+        description: formData.description || '',
+        stock: Number(formData.stock),
+        gender: formData.gender || 'unisex',
+        ageRange: formData.ageRange || '',
+        size: formData.size || '',
+        junior_style: formData.juniorStyle || formData.junior_style || null,
+        isNew: !!formData.isNew,
+        highlighted: !!formData.highlighted,
+        isPremium: !!formData.isPremium,
+        features: Array.isArray(formData.features) ? formData.features : [],
         images: (formData.images || []).filter(Boolean),
         colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.images || [] })) : []
       };
 
-      // Remove UI-only fields
-      delete (payload as any).subcategory;
-      delete (payload as any).juniorStyle;
+      // Only generate a new slug if it doesn't exist (for new products)
+      if (!editingProduct) {
+        cleanPayload.slug = (formData.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') + '-' + Math.random().toString(36).substring(2, 7);
+        cleanPayload.sku = formData.sku || 'PB-' + Math.floor(1000 + Math.random() * 9000);
+      }
 
       if (editingProduct) {
-        await api.updateProduct(editingProduct.id, payload);
-        // Update local state instead of refetching all data
-        setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...payload } : p));
+        const updated = await api.updateProduct(editingProduct.id, cleanPayload);
+        // Update local state with the actual response from server to ensure sync
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...updated } : p));
         showToast('Product Updated!');
       } else {
-        const newProduct = await api.createProduct(payload);
-        // Add new product to local state
+        const newProduct = await api.createProduct(cleanPayload);
         setProducts(prev => [...prev, newProduct]);
         showToast('New Product Registered!');
       }

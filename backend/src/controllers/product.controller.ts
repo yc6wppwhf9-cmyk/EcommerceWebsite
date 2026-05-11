@@ -160,24 +160,39 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   const allowed = [
-    'name', 'description', 'price', 'original_price', 'stock',
+    'name', 'slug', 'description', 'price', 'original_price', 'stock',
     'is_active', 'is_new', 'is_highlighted', 'image', 'images',
     'colors', 'features', 'category_id', 'is_premium', 'gender',
     'size', 'age_range', 'sub_category', 'junior_style'
   ];
+  
   const updates: any = {};
+  
+  // 1. Resolve Category Slug to ID if provided
+  if (req.body.category) {
+    const { data: cat } = await supabase.from('categories').select('id').eq('slug', req.body.category).maybeSingle();
+    if (cat) updates.category_id = cat.id;
+  }
+
+  // 2. Map fields and handle both camelCase and snake_case
   allowed.forEach((f) => {
     if (req.body[f] !== undefined) updates[f] = req.body[f];
-    // Also handle camelCase mappings
+    
+    // Explicit mappings for frontend camelCase fields
     if (f === 'original_price' && req.body.originalPrice !== undefined) updates[f] = req.body.originalPrice;
     if (f === 'is_premium' && req.body.isPremium !== undefined) updates[f] = req.body.isPremium;
     if (f === 'age_range' && req.body.ageRange !== undefined) updates[f] = req.body.ageRange;
+    if (f === 'is_new' && req.body.isNew !== undefined) updates[f] = req.body.isNew;
+    if (f === 'is_highlighted' && req.body.highlighted !== undefined) updates[f] = req.body.highlighted;
   });
 
-  if (!Object.keys(updates).length) return res.status(400).json({ error: 'No fields to update' });
+  if (!Object.keys(updates).length) return res.status(400).json({ error: 'No valid fields provided for update' });
 
   const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select().single();
-  if (error) return res.status(400).json({ error: error.message });
+  if (error) {
+    console.error('❌ Update DB Error:', error);
+    return res.status(400).json({ error: error.message });
+  }
   if (!data) return res.status(404).json({ error: 'Product not found' });
   res.json(data);
 };
