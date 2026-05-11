@@ -367,10 +367,6 @@ export const Home = () => {
       <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-7 md:mb-10">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#26B3FF] mb-2">Shop By Use</p>
-              <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[#14052b]">Backpack Essentials</h2>
-            </div>
             <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-lg">
               {BACKPACK_TABS.map((tab) => (
                 <button
