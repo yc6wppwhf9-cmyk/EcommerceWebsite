@@ -269,6 +269,24 @@ html.dark {
   scrollbar-width: none;
 }
 
+@utility snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+@utility snap-start {
+  scroll-snap-align: start;
+}
+
+@layer base {
+  /* Improve touch feedback on mobile */
+  button:active, 
+  a:active {
+    opacity: 0.7;
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   overflow-x: clip;

@@ -252,7 +252,7 @@ export const Checkout = () => {
                         onBlur={() => setTouched(t => ({ ...t, [f.field]: true }))}
                         aria-invalid={hasError || undefined}
                         aria-describedby={hasError ? errorId : undefined}
-                        className={`w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300 ${hasError ? 'border-2 border-red-400 bg-red-50/30' : 'border border-gray-100'}`}
+                        className={`w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold tracking-tight placeholder:text-gray-300 ${hasError ? 'border-2 border-red-400 bg-red-50/30' : 'border border-gray-100'}`}
                       />
                       {hasError && <p id={errorId} className="text-xs text-red-500 mt-1 ml-1">This field is required</p>}
                     </div>

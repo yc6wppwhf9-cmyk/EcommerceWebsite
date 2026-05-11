@@ -258,15 +258,33 @@ export const JuniorPage = () => {
     const canvas = canvasRef.current;
     const section = drawSectionRef.current;
     if (!canvas || !section) return;
+
     const syncSize = () => {
-      const { width, height } = section.getBoundingClientRect();
-      if (canvas.width !== Math.round(width) || canvas.height !== Math.round(height)) {
-        canvas.width = Math.round(width);
-        canvas.height = Math.round(height);
+      const rect = section.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Physical dimensions
+      const displayWidth = Math.round(rect.width);
+      const displayHeight = Math.round(rect.height);
+
+      if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
+        // Set internal buffer size
+        canvas.width = displayWidth * dpr;
+        canvas.height = displayHeight * dpr;
+        
+        // Scale context once
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.scale(dpr, dpr);
+        }
       }
     };
+
     syncSize();
-    const ro = new ResizeObserver(syncSize);
+    const ro = new ResizeObserver(() => {
+      // Use requestAnimationFrame to avoid "ResizeObserver loop limit exceeded"
+      window.requestAnimationFrame(syncSize);
+    });
     ro.observe(section);
     return () => ro.disconnect();
   }, []);
@@ -275,17 +293,17 @@ export const JuniorPage = () => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+    
+    // Get relative position in CSS pixels
     if ('touches' in e) {
       return {
-        x: (e.touches[0].clientX - rect.left) * scaleX,
-        y: (e.touches[0].clientY - rect.top) * scaleY,
+        x: (e.touches[0].clientX - rect.left),
+        y: (e.touches[0].clientY - rect.top),
       };
     }
     return {
-      x: ((e as React.MouseEvent).clientX - rect.left) * scaleX,
-      y: ((e as React.MouseEvent).clientY - rect.top) * scaleY,
+      x: ((e as React.MouseEvent).clientX - rect.left),
+      y: ((e as React.MouseEvent).clientY - rect.top),
     };
   };
 

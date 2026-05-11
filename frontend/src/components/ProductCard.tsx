@@ -28,7 +28,10 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const activeVariant = product.variants?.[activeVariantIndex];
   const primaryImage = activeVariant ? activeVariant.images[0] : product.image;
   const secondaryImage = activeVariant ? activeVariant.images[1] : product.images?.[1];
-  const displayImage = isHovered && secondaryImage ? secondaryImage : primaryImage;
+  
+  // Only show secondary image on hover for non-touch devices
+  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  const displayImage = !isTouchDevice && isHovered && secondaryImage ? secondaryImage : primaryImage;
 
   const originalPrice = (product as any).original_price ?? product.originalPrice ?? product.price;
   const discount = originalPrice > product.price

@@ -417,10 +417,10 @@ export const Home = () => {
                 <ChevronRight size={20} />
               </button>
 
-              <div ref={tabScrollRef} className="flex gap-4 md:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-1 md:px-5 scroll-smooth">
+              <div ref={tabScrollRef} className="flex gap-4 md:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-1 md:px-5 scroll-smooth snap-x snap-mandatory">
                 {tabLoading ? (
                   [1, 2, 3, 4].map(n => (
-                    <div key={n} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0">
+                    <div key={n} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0 snap-start">
                       <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
                       <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
                       <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
@@ -429,7 +429,7 @@ export const Home = () => {
                   ))
                 ) : tabProducts.length > 0 ? (
                   tabProducts.map(p => (
-                    <div key={p.id} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0">
+                    <div key={p.id} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0 snap-start">
                       <ProductCard product={p} />
                     </div>
                   ))
