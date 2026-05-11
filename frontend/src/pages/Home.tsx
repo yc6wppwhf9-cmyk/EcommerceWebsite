@@ -23,9 +23,9 @@ const HERO_SLIDES = [
 ];
 
 const CATS = [
-  { to: '/backpacks', label: 'Backpacks', img: '/Category/Backpack.jpg' },
-  { to: '/luggage', label: 'Luggage', img: '/Category/Travelling Bag.jpg' },
-  { to: '/accessories', label: 'Accessories', img: '/Category/Accessories.jpg' },
+  { to: '/backpacks', label: 'Backpacks', img: '/Category/Backpack.jpg', color: '#26B3FF' },
+  { to: '/luggage', label: 'Luggage', img: '/Category/Travelling Bag.jpg', color: '#F69245' },
+  { to: '/accessories', label: 'Accessories', img: '/Category/Accessories.jpg', color: '#8750DA' },
 ];
 
 const IMG = {
@@ -91,38 +91,40 @@ const BestSellerCard = ({ product }: { product: Product }) => {
     : 0;
 
   return (
-    <div className="flex flex-col bg-white">
-      {/* Large image, minimal padding so bag fills the card */}
+    <div className="flex flex-col bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full">
+      {/* Image with colored border frame */}
       <Link
         to={`/product/${product.slug || product.id}`}
-        className="block overflow-hidden"
-        style={{ aspectRatio: '379 / 411' }}
+        className="block overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 relative"
+        style={{ aspectRatio: '1/1' }}
       >
+        <div className="absolute inset-0 border-[8px] border-[#26B3FF] z-10" />
         <LazyImage
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-contain p-3"
+          className="w-full h-full object-contain p-3 transition-transform duration-500 hover:scale-105"
           width={400}
         />
       </Link>
 
-      <div className="pt-2 space-y-1">
+      {/* Content section */}
+      <div className="pt-3 px-3 pb-3 space-y-2 flex-1 flex flex-col">
         <Link to={`/product/${product.slug || product.id}`}>
-          <h3 className="font-outfit font-bold text-[15px] text-black leading-snug line-clamp-2 hover:text-[#26B3FF] transition-colors">
+          <h3 className="font-outfit font-bold text-[14px] text-black leading-snug line-clamp-2 hover:text-[#26B3FF] transition-colors">
             {product.name}
           </h3>
         </Link>
 
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="font-outfit font-semibold text-[16px] text-[#26B3FF]">
+          <span className="font-outfit font-semibold text-[15px] text-[#26B3FF]">
             ₹ {product.price.toLocaleString('en-IN')}.00
           </span>
           {discount > 0 && (
             <>
-              <span className="font-outfit text-[14px] text-[#A0A0A0] line-through">
+              <span className="font-outfit text-[12px] text-[#A0A0A0] line-through">
                 ₹ {originalPrice.toLocaleString('en-IN')}.00
               </span>
-              <span className="font-outfit font-semibold text-[13px] text-black">
+              <span className="font-outfit font-semibold text-[12px] text-black">
                 {discount}% off
               </span>
             </>
@@ -304,11 +306,21 @@ export const Home = () => {
       <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-10 lg:pt-16 lg:pb-16">
         <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="group relative rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
-              <LazyImage src={cat.img} alt={cat.label} className="w-full h-auto block transition-transform duration-[1.5s] group-hover:scale-110" width={600} />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
-              <div className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                <ArrowRight size={24} className="text-gray-900" />
+            <Link key={cat.label} to={cat.to} className="group flex flex-col bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6" style={{ aspectRatio: '1/1' }}>
+                <div className="absolute inset-0 border-[12px] rounded-lg" style={{ borderColor: cat.color, top: '-12px', left: '-12px', right: '-12px', bottom: '-12px' }} />
+                <LazyImage 
+                  src={cat.img} 
+                  alt={cat.label} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  width={600} 
+                />
+              </div>
+              <div className="flex-1 flex items-center justify-between px-5 py-4" style={{ backgroundColor: cat.color }}>
+                <h3 className="text-white font-black text-lg md:text-xl uppercase tracking-tight">{cat.label}</h3>
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md transition-transform group-hover:translate-x-1">
+                  <ArrowRight size={20} style={{ color: cat.color }} />
+                </div>
               </div>
             </Link>
           ))}
@@ -390,24 +402,28 @@ export const Home = () => {
           <div className="grid md:grid-cols-[260px_minmax(0,1fr)] lg:grid-cols-[330px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
             <Link
               to={activeTabConfig.to}
-              className="hidden md:block h-[420px] lg:h-[470px] overflow-hidden relative group rounded-lg bg-[#F8BE57] shadow-sm"
+              className="hidden md:flex flex-col h-auto overflow-hidden relative group rounded-lg bg-white shadow-sm hover:shadow-md transition-all"
             >
-              <div className="absolute inset-x-0 top-0 z-20 px-6 pt-6 text-white">
-                <p className="font-black uppercase tracking-[0.16em] leading-none text-[19px] lg:text-[24px]">Trendy</p>
-                <p className="font-black uppercase tracking-tight leading-[0.9] text-[31px] lg:text-[39px] max-w-[230px]">
-                  {activeTabConfig.label}
-                </p>
-                <div className="mt-5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#14052b] shadow-lg transition-transform group-hover:translate-x-1">
+              <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6" style={{ aspectRatio: '1/1.2' }}>
+                <div className="absolute inset-0 border-[10px] border-[#F8BE57] z-10" />
+                <LazyImage
+                  src={activeTabConfig.image}
+                  alt={activeTabConfig.label}
+                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                  width={520}
+                />
+              </div>
+              <div className="px-5 py-5 bg-[#F8BE57] flex flex-col items-start justify-between flex-1">
+                <div>
+                  <p className="font-black uppercase tracking-[0.16em] leading-none text-[14px] text-white opacity-90 mb-2">Featured</p>
+                  <p className="font-black uppercase tracking-tight leading-snug text-[18px] lg:text-[22px] text-white max-w-[220px]">
+                    {activeTabConfig.label}
+                  </p>
+                </div>
+                <div className="mt-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#F8BE57] shadow-lg transition-transform group-hover:translate-x-1">
                   <ArrowRight size={18} />
                 </div>
               </div>
-              <LazyImage
-                src={activeTabConfig.image}
-                alt={activeTabConfig.label}
-                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                width={520}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#F8BE57]/85 via-[#F8BE57]/10 to-black/35" />
             </Link>
 
             <div className="min-w-0 relative">
