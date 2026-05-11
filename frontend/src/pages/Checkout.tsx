@@ -35,6 +35,7 @@ export const Checkout = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [touched, setTouched] = useState<Record<string,boolean>>({});
 
   useEffect(() => {
     if (user) {
@@ -185,15 +186,15 @@ export const Checkout = () => {
     );
   }
 
-  const fields: { label: string; field: string; type: string; placeholder: string; span: boolean; optional?: boolean; maxLength?: number; pattern?: string }[] = [
+  const fields: { label: string; field: string; type: string; placeholder: string; span: boolean; optional?: boolean; maxLength?: number; pattern?: string; inputMode?: string }[] = [
     { label: 'Full Recipient Name', field: 'name', type: 'text', placeholder: 'Name on identification', span: false },
     { label: 'Communication Email', field: 'email', type: 'email', placeholder: 'For order tracking', span: false },
-    { label: 'Mobile Number', field: 'phone', type: 'tel', placeholder: '10-digit primary number', span: false, maxLength: 10, pattern: '[0-9]{10}' },
+    { label: 'Mobile Number', field: 'phone', type: 'tel', placeholder: '10-digit primary number', span: false, maxLength: 10, pattern: '[0-9]{10}', inputMode: 'numeric' },
     { label: 'Address Line 1', field: 'line1', type: 'text', placeholder: 'Building / Street', span: true },
     { label: 'Landmark', field: 'line2', type: 'text', placeholder: 'Optional point of reference', span: true, optional: true },
     { label: 'City Hub', field: 'city', type: 'text', placeholder: 'Metropolitan / Town', span: false },
     { label: 'State Zone', field: 'state', type: 'text', placeholder: 'Current state', span: false },
-    { label: 'Postal Code', field: 'pincode', type: 'text', placeholder: '6-digit PIN', span: false, maxLength: 6, pattern: '[0-9]{6}' },
+    { label: 'Postal Code', field: 'pincode', type: 'text', placeholder: '6-digit PIN', span: false, maxLength: 6, pattern: '[0-9]{6}', inputMode: 'numeric' },
   ];
 
   return (
@@ -236,7 +237,9 @@ export const Checkout = () => {
                       placeholder={f.placeholder}
                       maxLength={f.maxLength}
                       pattern={f.pattern}
-                      className="w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 border border-gray-100 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300"
+                      inputMode={f.inputMode as any}
+                      onBlur={() => setTouched(t => ({ ...t, [f.field]: true }))}
+                      className={`w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300 ${touched[f.field] && !f.optional && !(form as any)[f.field] ? 'border-2 border-red-400 bg-red-50/30' : 'border border-gray-100'}`}
                     />
                   </div>
                 ))}
