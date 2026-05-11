@@ -61,7 +61,7 @@ function AppContent() {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen relative bg-[var(--color-bg-main)] text-[var(--color-text-main)] transition-colors duration-300">
         {!isAdmin && !isPremium && <Header onSearchOpen={() => setSearchOpen(true)} />}
-        <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''}`}>
+        <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin ? 'pb-20 lg:pb-0' : ''}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/wishlist" element={<Wishlist />} />
@@ -114,3 +114,4 @@ export default function App() {
     </Router>
   );
 }
+
