@@ -265,7 +265,10 @@ export const JuniorPage = () => {
   const [clickEffect, setClickEffect] = useState<'dreamy' | 'power' | null>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
   const activeCategory = CATEGORIES.find(c => c.label === activeTab) || CATEGORIES[0];
+  const currentIndex = CATEGORIES.findIndex(c => c.label === activeTab);
+  const nextCategory = CATEGORIES[(currentIndex + 1) % CATEGORIES.length];
   const activeCategoryHref = `/${activeCategory.filter}?theme=junior`;
+  const nextCategoryHref = `/${nextCategory.filter}?theme=junior`;
 
   const handleStyleClick = (e: React.MouseEvent, type: 'dreamy' | 'power') => {
     e.preventDefault();
@@ -568,13 +571,13 @@ export const JuniorPage = () => {
             </div>
           </div>
 
-          <Link to={activeCategoryHref} className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-xl overflow-hidden bg-[#FDE6B9] border border-[#F69245]/10">
-            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-white/70 bg-white relative">
+          <Link to={nextCategoryHref} className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-2xl overflow-hidden bg-white junior-glass-card border border-[#F69245]/10 shadow-lg">
+            <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 relative">
               <AnimatePresence mode="wait">
                 <motion.img 
-                  key={activeCategory.image}
-                  src={activeCategory.image} 
-                  alt={activeTab} 
+                  key={nextCategory.image}
+                  src={nextCategory.image} 
+                  alt={nextCategory.label} 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.2 }}
@@ -585,10 +588,12 @@ export const JuniorPage = () => {
               </AnimatePresence>
             </div>
             <div className="font-outfit min-w-0 flex-1">
-              <p className="font-black uppercase text-[10px] tracking-widest text-[#7A5900] opacity-90">Featured</p>
-              <p className="font-black uppercase text-lg leading-tight text-[#14052b] truncate">{activeTab}</p>
+              <p className="font-black uppercase text-[9px] tracking-widest text-[#F69245] opacity-90">Coming Up Next</p>
+              <p className="font-black uppercase text-base leading-tight text-[#14052b] truncate">{nextCategory.label}</p>
             </div>
-            <ArrowRight size={18} className="text-[#F69245] shrink-0" />
+            <div className="w-8 h-8 rounded-full bg-[#F69245]/10 flex items-center justify-center text-[#F69245] shrink-0">
+              <ArrowRight size={16} />
+            </div>
           </Link>
 
           <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
