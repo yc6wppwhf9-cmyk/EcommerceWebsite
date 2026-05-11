@@ -461,6 +461,11 @@ export const JuniorPage = () => {
         <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-6 md:mb-8">
             <div className="max-w-2xl">
+              <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.28em] text-[#F69245] mb-2">Junior Favorites</p>
+              <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[#14052b]">Shop Junior Favorites</h2>
+              <p className="mt-2 text-sm md:text-base text-gray-500 leading-relaxed">
+                Explore school backpacks, combo sets, pouches, lunch bags and trolley styles made for every little adventure.
+              </p>
             </div>
 
             <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm">
