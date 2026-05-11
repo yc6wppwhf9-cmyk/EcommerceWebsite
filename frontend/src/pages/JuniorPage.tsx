@@ -135,6 +135,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
             className="w-full h-full object-contain transition-all duration-500"
             loading="lazy"
             decoding="async"
+            crossOrigin="anonymous"
           />
         </div>
         <span className="absolute top-2 left-2 rounded-full bg-[#F69245]/15 text-[#A65011] px-2.5 py-1 text-[8px] md:text-[9px] font-black uppercase tracking-widest">
@@ -223,6 +224,7 @@ const BestSellerCard = ({ product }: { product: Product }) => {
           alt={product.name}
           className="w-full h-full object-contain p-5 transition-all duration-500"
           loading="lazy"
+          crossOrigin="anonymous"
         />
       </div>
       <div className="pt-3 space-y-1">
