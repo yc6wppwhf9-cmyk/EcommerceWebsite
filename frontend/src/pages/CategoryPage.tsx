@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import { getCategoryBySlug, CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, X, SlidersHorizontal, ChevronRight, LayoutGrid, AlignJustify } from 'lucide-react';
+import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify } from 'lucide-react';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { SEO } from '../components/SEO';
 
 const PAGE_LIMIT = 20;
@@ -408,18 +409,14 @@ export const CategoryPage = () => {
 
         {/* Title + Breadcrumb */}
         <div className="container mx-auto px-4 mb-8 md:mb-16">
-          {parentCategory && (
-            <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
-              <Link
-                to={`/${parentCategory.slug}`}
-                className="hover:text-black transition-colors"
-              >
-                {parentCategory.title}
-              </Link>
-              <ChevronRight size={10} />
-              <span className="text-gray-700">{currentCategory?.title}</span>
-            </div>
-          )}
+          <Breadcrumb
+            className="justify-center mb-3"
+            items={[
+              { label: 'Home', href: '/' },
+              ...(parentCategory ? [{ label: parentCategory.title, href: `/${parentCategory.slug}` }] : []),
+              { label: currentCategory?.title || pageTitle },
+            ]}
+          />
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

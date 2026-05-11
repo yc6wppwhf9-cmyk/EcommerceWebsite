@@ -86,6 +86,13 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           </span>
         ) : null}
 
+        {/* Low stock warning */}
+        {product.stock > 0 && product.stock <= 5 && (
+          <span className="absolute bottom-2 left-2 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm z-10">
+            Only {product.stock} left!
+          </span>
+        )}
+
         {/* Wishlist heart — bottom right */}
         <button
           onClick={handleWishlist}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ShieldCheck, Truck, CreditCard, ArrowRight, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -64,7 +64,7 @@ export const Checkout = () => {
     try {
       const paymentTimeout = setTimeout(() => {
         setIsProcessing(false);
-        showToast('Payment request timed out. Please try again.', 'error');
+        showToast('Payment is taking longer than expected. Please try again.', 'error');
       }, 15000);
 
       let orderData: any;
@@ -180,7 +180,10 @@ export const Checkout = () => {
             </p>
           )}
           <p className="text-sm text-green-600/70 mb-12 font-bold uppercase tracking-widest leading-loose">We'll send you a confirmation message on WhatsApp and Email shortly. Your journey begins.</p>
-          <Link to="/" className="bg-priority-blue text-white font-black text-[11px] px-12 py-5 rounded-2xl hover:scale-105 transition-all tracking-[0.2em] uppercase shadow-2xl shadow-priority-blue/20 inline-block">Back to Shop</Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/" className="bg-priority-blue text-white font-black text-[11px] px-12 py-5 rounded-2xl hover:scale-105 transition-all tracking-[0.2em] uppercase shadow-2xl shadow-priority-blue/20 inline-block">Continue Shopping</Link>
+            <Link to="/account" className="border-2 border-green-700 text-green-800 font-black text-[11px] px-10 py-5 rounded-2xl hover:bg-green-50 transition-all tracking-[0.2em] uppercase inline-block">View My Orders</Link>
+          </div>
         </motion.div>
       </main>
     );
@@ -224,25 +227,37 @@ export const Checkout = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
-                {fields.map((f) => (
-                  <div key={f.field} className={f.span ? 'sm:col-span-2' : ''}>
-                    <label className="block text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3 ml-1" style={{ color: accent }}>
-                      {f.label}{f.optional && <span className="text-gray-400 normal-case tracking-normal ml-1">(optional)</span>}
-                    </label>
-                    <input
-                      {...(!f.optional && { required: true })}
-                      type={f.type}
-                      value={(form as any)[f.field]}
-                      onChange={(e) => updateField(f.field, e.target.value)}
-                      placeholder={f.placeholder}
-                      maxLength={f.maxLength}
-                      pattern={f.pattern}
-                      inputMode={f.inputMode as any}
-                      onBlur={() => setTouched(t => ({ ...t, [f.field]: true }))}
-                      className={`w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300 ${touched[f.field] && !f.optional && !(form as any)[f.field] ? 'border-2 border-red-400 bg-red-50/30' : 'border border-gray-100'}`}
-                    />
-                  </div>
-                ))}
+                {fields.map((f) => {
+                  const hasError = touched[f.field] && !f.optional && !(form as any)[f.field];
+                  const errorId = `checkout-${f.field}-error`;
+                  return (
+                    <div key={f.field} className={f.span ? 'sm:col-span-2' : ''}>
+                      <label
+                        htmlFor={`checkout-${f.field}`}
+                        className="block text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3 ml-1"
+                        style={{ color: accent }}
+                      >
+                        {f.label}{f.optional && <span className="text-gray-400 normal-case tracking-normal ml-1">(optional)</span>}
+                      </label>
+                      <input
+                        id={`checkout-${f.field}`}
+                        {...(!f.optional && { required: true })}
+                        type={f.type}
+                        value={(form as any)[f.field]}
+                        onChange={(e) => updateField(f.field, e.target.value)}
+                        placeholder={f.placeholder}
+                        maxLength={f.maxLength}
+                        pattern={f.pattern}
+                        inputMode={f.inputMode as any}
+                        onBlur={() => setTouched(t => ({ ...t, [f.field]: true }))}
+                        aria-invalid={hasError || undefined}
+                        aria-describedby={hasError ? errorId : undefined}
+                        className={`w-full px-4 py-3.5 md:px-6 md:py-5 bg-gray-50 rounded-xl md:rounded-3xl focus:outline-none focus:ring-4 md:focus:ring-8 focus:bg-white transition-all text-sm font-bold uppercase tracking-tight placeholder:text-gray-300 ${hasError ? 'border-2 border-red-400 bg-red-50/30' : 'border border-gray-100'}`}
+                      />
+                      {hasError && <p id={errorId} className="text-xs text-red-500 mt-1 ml-1">This field is required</p>}
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
@@ -305,7 +320,7 @@ export const Checkout = () => {
                 style={{ backgroundColor: accent }}
               >
                 {isProcessing ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <><Loader2 className="w-5 h-5 animate-spin" /><span className="text-[10px] md:text-xs">Opening Secure Payment...</span></>
                 ) : (
                   <>Secure Pay <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" /></>
                 )}

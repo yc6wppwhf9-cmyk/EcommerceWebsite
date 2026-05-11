@@ -124,7 +124,7 @@ export const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      text: "Hi! 👋 I'm Priya, your Priority Bags assistant. I can help you find bags, check your orders, show new arrivals, and answer any shopping questions!",
+      text: "Hi! 👋 I'm Mihir, your Priority Bags assistant. I can help you find bags, check your orders, show new arrivals, and answer any shopping questions!",
     },
   ]);
   const [input, setInput] = useState('');
@@ -140,8 +140,8 @@ export const ChatBot = () => {
     setMessages([{
       role: 'assistant',
       text: user
-        ? `Hi ${user.name.split(' ')[0]}! 👋 I'm Priya. I can show your orders, recommend products, check new arrivals — just ask!`
-        : "Hi! 👋 I'm Priya, your Priority Bags assistant. I can help you find bags, check new arrivals, and answer any shopping questions!",
+        ? `Hi ${user.name.split(' ')[0]}! 👋 I'm Mihir. I can show your orders, recommend products, check new arrivals — just ask!`
+        : "Hi! 👋 I'm Mihir, your Priority Bags assistant. I can help you find bags, check new arrivals, and answer any shopping questions!",
     }]);
   }, [user?.id]);
 
@@ -215,10 +215,10 @@ export const ChatBot = () => {
           {/* Header */}
           <div className="bg-black px-4 py-3 flex items-center gap-3 shrink-0">
             <div className="w-8 h-8 rounded-full overflow-hidden">
-              <img src="/Traworld/chatbot.jpg" alt="Priya" className="w-full h-full object-cover" />
+              <img src="/Traworld/chatbot.jpg" alt="Mihir" className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white font-semibold text-sm">Priya — Priority Bags</p>
+              <p className="text-white font-semibold text-sm">Mihir — Priority Bags</p>
               <p className="text-white/60 text-[11px]">Orders · Products · Policies · New arrivals</p>
             </div>
           </div>

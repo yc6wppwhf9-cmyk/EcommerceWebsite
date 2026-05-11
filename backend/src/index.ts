@@ -19,6 +19,7 @@ import jobsRoutes from './routes/jobs.routes';
 import chatRoutes from './routes/chat.routes';
 import settingsRoutes from './routes/settings.routes';
 import sitemapRoutes from './routes/sitemap.routes';
+import contactRoutes from './routes/contact.routes';
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/chat', chatLimiter, chatRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api', sitemapRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {

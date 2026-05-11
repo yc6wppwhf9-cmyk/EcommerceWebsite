@@ -641,6 +641,7 @@ export const JuniorPage = () => {
             <motion.img
               src={clickEffect === 'dreamy' ? '/junior/Dreamy.png' : '/junior/Power.png'}
               alt=""
+              aria-hidden
               className="w-[320px] md:w-[480px] h-auto"
               style={{ willChange: 'transform', imageRendering: 'crisp-edges' }}
               initial={{ scale: 0.75, opacity: 0 }}

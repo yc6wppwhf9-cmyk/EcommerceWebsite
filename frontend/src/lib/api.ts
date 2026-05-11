@@ -265,4 +265,11 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  // Contact
+  sendContactMessage: (data: { name: string; email: string; subject: string; message: string }) =>
+    request<{ message: string }>('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };

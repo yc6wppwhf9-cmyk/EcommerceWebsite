@@ -1,7 +1,65 @@
-import React from 'react';
-import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
+import React, { useState } from 'react';
+import { Mail, Phone, MapPin, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
+import { api } from '../lib/api';
+
+interface ContactForm {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
 
 export const ContactUs = () => {
+  const [form, setForm] = useState<ContactForm>({ name: '', email: '', subject: '', message: '' });
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const updateField = (field: keyof ContactForm, value: string) =>
+    setForm(f => ({ ...f, [field]: value }));
+
+  const touchField = (field: string) => setTouched(t => ({ ...t, [field]: true }));
+
+  const isValid = form.name.trim().length > 0
+    && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+    && form.subject.trim().length > 0
+    && form.message.trim().length >= 10;
+
+  const fieldError = (field: keyof ContactForm): string | null => {
+    if (!touched[field]) return null;
+    if (field === 'name' && !form.name.trim()) return 'Name is required';
+    if (field === 'email') {
+      if (!form.email) return 'Email is required';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'Enter a valid email';
+    }
+    if (field === 'subject' && !form.subject.trim()) return 'Subject is required';
+    if (field === 'message' && form.message.trim().length < 10) return 'Message must be at least 10 characters';
+    return null;
+  };
+
+  const handleSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setTouched({ name: true, email: true, subject: true, message: true });
+    if (!isValid) return;
+
+    setStatus('loading');
+    setErrorMsg('');
+    try {
+      await api.sendContactMessage(form);
+      setStatus('success');
+      setForm({ name: '', email: '', subject: '', message: '' });
+      setTouched({});
+    } catch (err: any) {
+      setStatus('error');
+      setErrorMsg(err.message || 'Failed to send message. Please try again.');
+    }
+  };
+
+  const inputClass = (field: keyof ContactForm) =>
+    `w-full bg-gray-50 rounded-xl p-4 text-sm focus:ring-2 focus:ring-priority-blue transition-all outline-none ${
+      fieldError(field) ? 'border-2 border-red-400 bg-red-50/30' : 'border border-transparent'
+    }`;
+
   return (
     <main className="container mx-auto px-4 py-20">
       <div className="max-w-6xl mx-auto">
@@ -66,29 +124,106 @@ export const ContactUs = () => {
 
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-2xl">
             <h3 className="text-2xl font-black mb-8">Send a Message</h3>
-            <form className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Full Name</label>
-                  <input type="text" className="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-priority-blue transition-all" placeholder="John Doe" />
+
+            {status === 'success' ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
+                <CheckCircle className="w-16 h-16 text-green-500" />
+                <h4 className="text-xl font-black text-green-800">Message Sent!</h4>
+                <p className="text-gray-500 text-sm max-w-xs">We've received your message and will get back to you within 1–2 business days.</p>
+                <button
+                  onClick={() => setStatus('idle')}
+                  className="mt-4 text-priority-blue text-sm font-bold hover:underline"
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+                {status === 'error' && (
+                  <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
+                    <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-700">{errorMsg}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="contact-name" className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Full Name *</label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      className={inputClass('name')}
+                      placeholder="John Doe"
+                      value={form.name}
+                      onChange={e => updateField('name', e.target.value)}
+                      onBlur={() => touchField('name')}
+                      aria-invalid={!!fieldError('name')}
+                      aria-describedby={fieldError('name') ? 'contact-name-error' : undefined}
+                      required
+                    />
+                    {fieldError('name') && <p id="contact-name-error" className="text-xs text-red-500 mt-1">{fieldError('name')}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="contact-email" className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Email Address *</label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      className={inputClass('email')}
+                      placeholder="john@example.com"
+                      value={form.email}
+                      onChange={e => updateField('email', e.target.value)}
+                      onBlur={() => touchField('email')}
+                      aria-invalid={!!fieldError('email')}
+                      aria-describedby={fieldError('email') ? 'contact-email-error' : undefined}
+                      required
+                    />
+                    {fieldError('email') && <p id="contact-email-error" className="text-xs text-red-500 mt-1">{fieldError('email')}</p>}
+                  </div>
                 </div>
+
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Email Address</label>
-                  <input type="email" className="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-priority-blue transition-all" placeholder="john@example.com" />
+                  <label htmlFor="contact-subject" className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Subject *</label>
+                  <input
+                    id="contact-subject"
+                    type="text"
+                    className={inputClass('subject')}
+                    placeholder="Inquiry about Product"
+                    value={form.subject}
+                    onChange={e => updateField('subject', e.target.value)}
+                    onBlur={() => touchField('subject')}
+                    aria-invalid={!!fieldError('subject')}
+                    aria-describedby={fieldError('subject') ? 'contact-subject-error' : undefined}
+                    required
+                  />
+                  {fieldError('subject') && <p id="contact-subject-error" className="text-xs text-red-500 mt-1">{fieldError('subject')}</p>}
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Subject</label>
-                <input type="text" className="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-priority-blue transition-all" placeholder="Inquiry about Product" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Message</label>
-                <textarea rows={5} className="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-priority-blue transition-all" placeholder="How can we help you today?"></textarea>
-              </div>
-              <button className="w-full bg-priority-blue text-white font-black py-4 rounded-xl hover:bg-priority-dark transition-all shadow-lg hover:shadow-priority-blue/20">
-                SEND MESSAGE
-              </button>
-            </form>
+
+                <div className="space-y-2">
+                  <label htmlFor="contact-message" className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Message *</label>
+                  <textarea
+                    id="contact-message"
+                    rows={5}
+                    className={inputClass('message')}
+                    placeholder="How can we help you today?"
+                    value={form.message}
+                    onChange={e => updateField('message', e.target.value)}
+                    onBlur={() => touchField('message')}
+                    aria-invalid={!!fieldError('message')}
+                    aria-describedby={fieldError('message') ? 'contact-message-error' : undefined}
+                    required
+                  />
+                  {fieldError('message') && <p id="contact-message-error" className="text-xs text-red-500 mt-1">{fieldError('message')}</p>}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="w-full bg-priority-blue text-white font-black py-4 rounded-xl hover:bg-priority-dark transition-all shadow-lg hover:shadow-priority-blue/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {status === 'loading' ? 'SENDING...' : 'SEND MESSAGE'}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
