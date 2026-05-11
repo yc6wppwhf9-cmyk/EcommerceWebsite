@@ -120,7 +120,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
     <div 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-2xl overflow-hidden"
+      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-3xl overflow-hidden shadow-lg md:shadow-none"
     >
       {/* Image container with blue border */}
       <Link
@@ -648,9 +648,9 @@ export const JuniorPage = () => {
                   </>
                 ) : products.length > 0 ? (
                   <>
-                    <div className="md:hidden flex gap-3 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
+                    <div className="md:hidden flex gap-4 overflow-x-auto no-scrollbar pb-6 snap-x snap-mandatory px-4">
                       {products.slice(0, 3).map((product, idx) => (
-                        <motion.div key={product.id} className="w-[72vw] shrink-0 snap-start" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                        <motion.div key={product.id} className="w-[85vw] shrink-0 snap-start" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
