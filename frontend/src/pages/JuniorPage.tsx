@@ -89,14 +89,12 @@ const AgeGroupCarousel = () => {
           </AnimatePresence>
         </div>
 
-        <div className="flex justify-between items-center mt-6 px-1">
-          <button onClick={goPrev} className="p-2 text-gray-400 transition-opacity"><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex justify-center items-center mt-6 px-1">
           <div className="flex gap-2">
             {AGE_GROUPS.map((_, i) => (
               <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === idx ? 'w-6 bg-[#F69245]' : 'w-1.5 bg-gray-200'}`} />
             ))}
           </div>
-          <button onClick={goNext} className="p-2 text-gray-400 transition-opacity"><ChevronRight className="w-5 h-5" /></button>
         </div>
       </div>
     </div>
