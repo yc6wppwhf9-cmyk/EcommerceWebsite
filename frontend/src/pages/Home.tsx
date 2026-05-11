@@ -91,45 +91,31 @@ const BestSellerCard = ({ product }: { product: Product }) => {
     : 0;
 
   return (
-    <div className="flex flex-col bg-white">
-      {/* Large image, minimal padding so bag fills the card */}
-      <Link
-        to={`/product/${product.slug || product.id}`}
-        className="block overflow-hidden"
-        style={{ aspectRatio: '379 / 411' }}
-      >
+    <Link to={`/product/${product.slug || product.id}`} className="flex flex-col bg-white group">
+      <div className="overflow-hidden bg-[#F9F9F9]" style={{ aspectRatio: '1 / 1' }}>
         <LazyImage
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-contain p-3"
+          className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-105"
           width={400}
         />
-      </Link>
-
-      <div className="pt-2 space-y-1">
-        <Link to={`/product/${product.slug || product.id}`}>
-          <h3 className="font-outfit font-bold text-[15px] text-black leading-snug line-clamp-2 hover:text-[#26B3FF] transition-colors">
-            {product.name}
-          </h3>
-        </Link>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-outfit font-semibold text-[16px] text-[#26B3FF]">
+      </div>
+      <div className="pt-3 space-y-1">
+        <h3 className="font-outfit font-bold text-[13px] md:text-[15px] text-black uppercase tracking-wide leading-snug line-clamp-1">
+          {product.name}
+        </h3>
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="font-outfit font-bold text-[15px] md:text-[17px] text-[#26B3FF] whitespace-nowrap">
             ₹{product.price.toLocaleString('en-IN')}
           </span>
           {discount > 0 && (
-            <>
-              <span className="font-outfit text-[13px] text-[#A0A0A0] line-through">
-                ₹{originalPrice.toLocaleString('en-IN')}
-              </span>
-              <span className="font-outfit font-semibold text-[11px] text-gray-600">
-                {discount}% off
-              </span>
-            </>
+            <span className="font-outfit text-[12px] text-[#A0A0A0] line-through whitespace-nowrap">
+              MRP ₹{originalPrice.toLocaleString('en-IN')}
+            </span>
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -468,16 +454,24 @@ export const Home = () => {
           <div className="text-center mb-12">
             <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em] uppercase">Shop Best Sellers</h2>
           </div>
-          <div className="relative group">
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="absolute left-[-15px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
+          {/* Mobile: 2-column grid */}
+          <div className="md:hidden grid grid-cols-2 gap-x-4 gap-y-6">
+            {bestSellers.slice(0, 6).map(p => (
+              <BestSellerCard key={p.id} product={p} />
+            ))}
+          </div>
+
+          {/* Desktop: horizontal scroll */}
+          <div className="hidden md:block relative group">
+            <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="absolute left-[-40px] top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
               <ChevronLeft size={20} className="text-gray-600" />
             </button>
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: 400, behavior: 'smooth' })} className="absolute right-[-15px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg">
+            <button onClick={() => bestSellersRef.current?.scrollBy({ left: 400, behavior: 'smooth' })} className="absolute right-[-40px] top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg">
               <ChevronRight size={20} className="text-gray-600" />
             </button>
-            <div ref={bestSellersRef} className="flex gap-4 sm:gap-6 md:gap-10 overflow-x-auto no-scrollbar pb-10 px-1 sm:px-4">
+            <div ref={bestSellersRef} className="flex gap-10 overflow-x-auto no-scrollbar pb-10 px-1">
               {bestSellers.map(p => (
-                <div key={p.id} className="w-[200px] sm:w-[230px] md:w-[260px] lg:w-[290px] shrink-0">
+                <div key={p.id} className="w-[260px] lg:w-[290px] shrink-0">
                   <BestSellerCard product={p} />
                 </div>
               ))}

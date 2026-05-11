@@ -196,25 +196,31 @@ const BestSellerCard = ({ product }: { product: Product }) => {
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
   return (
-    <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-      <Link to={`/product/${product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-4 md:p-8 mb-3">
-        <img src={(product as any).image_url ?? product.image} alt={product.name} className="w-full h-full object-contain" />
-      </Link>
-      <div className="px-1">
-        <Link to={`/product/${product.id}?theme=junior`}>
-          <h3 className="font-outfit font-bold text-[13px] md:text-[14px] text-black leading-snug mb-1.5 line-clamp-2 hover:text-[#8750DA] transition-colors">{product.name}</h3>
-        </Link>
-        <div className="flex items-baseline gap-1.5 flex-wrap">
-          <span className="text-[14px] font-outfit font-bold text-[#8750DA] whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</span>
+    <Link to={`/product/${product.id}?theme=junior`} className="flex flex-col bg-white group">
+      <div className="overflow-hidden bg-[#F9F9F9]" style={{ aspectRatio: '1 / 1' }}>
+        <img
+          src={(product as any).image_url ?? product.image}
+          alt={product.name}
+          className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+      </div>
+      <div className="pt-3 space-y-1">
+        <h3 className="font-outfit font-bold text-[13px] md:text-[14px] text-black uppercase tracking-wide leading-snug line-clamp-1 group-hover:text-[#8750DA] transition-colors">
+          {product.name}
+        </h3>
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="text-[15px] font-outfit font-bold text-[#8750DA] whitespace-nowrap">
+            ₹{product.price.toLocaleString('en-IN')}
+          </span>
           {discount > 0 && (
-            <>
-              <span className="text-[11px] text-gray-400 line-through whitespace-nowrap">₹{originalPrice.toLocaleString('en-IN')}</span>
-              <span className="text-[10px] font-bold text-gray-600">{discount}% off</span>
-            </>
+            <span className="text-[12px] text-[#A0A0A0] line-through whitespace-nowrap">
+              MRP ₹{originalPrice.toLocaleString('en-IN')}
+            </span>
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
