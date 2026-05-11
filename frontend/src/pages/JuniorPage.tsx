@@ -395,7 +395,8 @@ export const JuniorPage = () => {
       </section>
 
       <section ref={drawSectionRef} className="pt-12 md:pt-16 pb-16 md:pb-24 bg-white relative overflow-hidden">
-        <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none select-none" />
+        {/* Dynamic CSS Grid — perfectly aligned with canvas coordinates */}
+        <div className="absolute inset-0 junior-grid-bg opacity-100 pointer-events-none" />
 
         {/* Drawing canvas */}
         <canvas
@@ -491,7 +492,7 @@ export const JuniorPage = () => {
       </section>
 
       <section className="py-10 md:py-14 bg-white overflow-hidden relative">
-        <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none select-none" />
+        <div className="absolute inset-0 junior-grid-bg opacity-30 pointer-events-none" />
         <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
           <div className="flex justify-center mb-6 md:mb-8">
             <div className="relative">

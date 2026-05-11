@@ -277,6 +277,13 @@ html.dark {
   scroll-snap-align: start;
 }
 
+@utility junior-grid-bg {
+  background-image: 
+    linear-gradient(to right, #f0f0f0 1px, transparent 1px),
+    linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
 @layer base {
   /* Improve touch feedback on mobile */
   button:active, 
