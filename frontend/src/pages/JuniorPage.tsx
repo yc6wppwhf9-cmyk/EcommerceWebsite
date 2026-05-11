@@ -143,7 +143,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
         className="relative block bg-white shrink-0"
         style={{ aspectRatio: '300 / 307' }}
       >
-        <div className="w-full h-full flex items-center justify-center p-3 md:p-5">
+        <div className="w-full h-full flex items-center justify-center p-1.5 md:p-4">
           <img
             src={displayImage}
             alt={product.name}
@@ -233,11 +233,11 @@ const BestSellerCard = ({ product }: { product: Product }) => {
       onMouseLeave={() => setIsHovered(false)}
       className="flex flex-col bg-white group"
     >
-      <div className="overflow-hidden bg-[#F9F9F9]" style={{ aspectRatio: '1 / 1' }}>
+      <div className="overflow-hidden bg-[#F9F9F9] rounded-xl" style={{ aspectRatio: '1 / 1' }}>
         <img
           src={displayImage}
           alt={product.name}
-          className="w-full h-full object-contain p-5 transition-all duration-500"
+          className="w-full h-full object-contain p-2 md:p-4 transition-all duration-500"
           loading="lazy"
           crossOrigin="anonymous"
         />
