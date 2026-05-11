@@ -549,11 +549,13 @@ export const JuniorPage = () => {
                     {activeTab === cat.label && (
                       <motion.div
                         layoutId="activeTabJunior"
-                        className="absolute inset-0 bg-[#F69245] rounded-lg shadow-lg shadow-[#F69245]/20"
+                        className="absolute inset-0 bg-[#F69245] rounded-lg shadow-lg"
                         transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
                       />
                     )}
-                    <span className="relative z-10">{cat.label}</span>
+                    <span className={`relative z-10 ${activeTab === cat.label ? 'text-white' : 'text-gray-400 group-hover:text-black'}`}>
+                      {cat.label}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -648,9 +650,9 @@ export const JuniorPage = () => {
                   </>
                 ) : products.length > 0 ? (
                   <>
-                    <div className="md:hidden flex gap-4 overflow-x-auto no-scrollbar pb-6 snap-x snap-mandatory px-4">
-                      {products.slice(0, 3).map((product, idx) => (
-                        <motion.div key={product.id} className="w-[85vw] shrink-0 snap-start" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                    <div className="md:hidden grid grid-cols-2 gap-3 pb-8 px-4">
+                      {products.slice(0, 4).map((product, idx) => (
+                        <motion.div key={product.id} className="min-w-0" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
