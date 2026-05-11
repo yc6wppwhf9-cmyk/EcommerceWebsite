@@ -238,9 +238,23 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </div>
         </div>
 
-        <button className="lg:hidden p-2 text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile: cart badge + hamburger */}
+        <div className="lg:hidden flex items-center gap-1">
+          <button
+            onClick={() => toggleCart()}
+            className="relative w-10 h-10 flex items-center justify-center text-white opacity-80 hover:opacity-100"
+          >
+            <ShoppingCart size={20} />
+            {itemCount > 0 && (
+              <span className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
+                {itemCount}
+              </span>
+            )}
+          </button>
+          <button className="p-2 text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
     </header>
