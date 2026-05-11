@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
 import type { Product } from '../types';
-import { ChevronDown, Search, ShoppingBag, User, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, Search, ShoppingBag, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { SearchModal } from '../components/SearchModal';
 
@@ -144,9 +144,6 @@ export const PremiumCollection = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
   const gridRef = useRef<HTMLElement>(null);
   const [editorialBanner, setEditorialBanner] = useState(DEFAULT_EDITORIAL);
 
@@ -163,25 +160,6 @@ export const PremiumCollection = () => {
     }).catch(() => setIsLoading(false));
   }, []);
 
-  const subcategories = React.useMemo(() => {
-    const seen = new Set<string>();
-    products.forEach(p => {
-      const sub = (p as any).sub_category || (p as any).subcategory;
-      if (sub) seen.add(sub);
-    });
-    return Array.from(seen).sort();
-  }, [products]);
-
-  const displayedProducts = products.filter(p => {
-    if (activeCategory && p.category !== activeCategory) return false;
-    if (activeSubcategory) {
-      const sub = (p as any).sub_category || (p as any).subcategory;
-      if (sub !== activeSubcategory) return false;
-    }
-    return true;
-  });
-
-  const activeLabel = seriesHighlights.find(s => s.category === activeCategory)?.title ?? null;
 
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
@@ -213,93 +191,33 @@ export const PremiumCollection = () => {
         <section className="pb-0">
           <div className="max-w-6xl mx-auto px-3 sm:px-6 sm:-mt-14 relative z-10 pt-4 sm:pt-0">
             <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 lg:gap-10">
-              {seriesHighlights.map((series, idx) => {
-                const isActive = activeCategory === series.category;
-                return (
-                  <motion.button
-                    key={series.title}
-                    onClick={() => navigate(series.viewAll)}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="group relative cursor-pointer overflow-hidden aspect-[360/524] w-full focus:outline-none"
-                    aria-pressed={isActive}
-                  >
-                    <img
-                      src={series.image}
-                      alt={series.title}
-                      className={`w-full h-full object-cover transition-all duration-700 ${isActive
-                          ? 'grayscale-0 scale-105'
-                          : 'grayscale-[0.2] group-hover:grayscale-0'
-                        }`}
-                    />
-
-                    {/* Active glow border */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-banner-border"
-                        className="absolute inset-0 border-2 border-[#b80000] pointer-events-none"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                      />
-                    )}
-
-                    {/* Label bar */}
-                    <div
-                      className={`absolute bottom-0 left-0 right-0 h-[28px] sm:h-[36px] md:h-[40px] flex items-center justify-center transition-colors duration-300 ${isActive ? 'bg-[#b80000]' : 'bg-[#111] group-hover:bg-[#b80000]'
-                        }`}
+              {seriesHighlights.map((series, idx) => (
+                <motion.button
+                  key={series.title}
+                  onClick={() => navigate(series.viewAll)}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="group relative cursor-pointer overflow-hidden aspect-[360/524] w-full focus:outline-none"
+                >
+                  <img
+                    src={series.image}
+                    alt={series.title}
+                    className="w-full h-full object-cover transition-all duration-700 grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 h-[28px] sm:h-[36px] md:h-[40px] flex items-center justify-center bg-[#111] group-hover:bg-[#b80000] transition-colors duration-300">
+                    <h3
+                      className="text-white font-medium font-outfit tracking-[0.15em] md:tracking-[0.2em] uppercase leading-none"
+                      style={{ fontSize: 'clamp(9px, 2.5vw, 20px)' }}
                     >
-                      <h3
-                        className="text-white font-medium font-outfit tracking-[0.15em] md:tracking-[0.2em] uppercase leading-none"
-                        style={{ fontSize: 'clamp(9px, 2.5vw, 20px)' }}
-                      >
-                        {series.title}
-                      </h3>
-                    </div>
-
-                    {/* "Active" checkmark badge */}
-                    {isActive && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute top-2 right-2 sm:top-3 sm:right-3 w-5 h-5 sm:w-6 sm:h-6 bg-[#b80000] rounded-full flex items-center justify-center"
-                      >
-                        <svg viewBox="0 0 12 9" className="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none">
-                          <path d="M1 4.5L4.5 8L11 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </motion.div>
-                    )}
-                  </motion.button>
-                );
-              })}
+                      {series.title}
+                    </h3>
+                  </div>
+                </motion.button>
+              ))}
             </div>
 
-            {/* Active filter indicator */}
-            <AnimatePresence>
-              {activeCategory && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="flex items-center justify-center gap-3 mt-4 sm:mt-6"
-                >
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
-                    Showing:
-                  </span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black">
-                    {activeLabel}
-                  </span>
-                  <span className="text-gray-300">·</span>
-                  <button
-                    onClick={() => setActiveCategory(null)}
-                    className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b80000] hover:underline transition-colors"
-                  >
-                    Show All
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </section>
 
@@ -334,124 +252,13 @@ export const PremiumCollection = () => {
       {/* 3. FILTERED PRODUCT GRID */}
       <section ref={gridRef} className="bg-white text-black py-12 md:py-24 scroll-mt-16">
         <div className="container mx-auto px-4 md:px-12 max-w-[1400px]">
-          <div className="mb-10 md:mb-20 whitespace-normal">
-            <div className="relative flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                <motion.h2
-                  key={activeLabel ?? 'all'}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.3 }}
-                  className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.6em] pb-4 text-center"
-                  style={{ fontSize: '18px', color: '#111111' }}
-                >
-                  {activeLabel ? `${activeLabel} COLLECTION` : 'Our Collection'}
-                </motion.h2>
-              </AnimatePresence>
-
-              {/* Funnel button */}
-              <div className="absolute right-0 top-0">
-                {(() => {
-                  const activeCount = (activeCategory ? 1 : 0) + (activeSubcategory ? 1 : 0);
-                  return (
-                    <button
-                      onClick={() => setFilterOpen(v => !v)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-black uppercase tracking-widest transition-colors ${filterOpen || activeCount > 0 ? 'bg-black text-white border-black' : 'border-gray-300 text-gray-500 hover:border-black hover:text-black'}`}
-                    >
-                      <SlidersHorizontal size={12} />
-                      Filter {activeCount > 0 && `·${activeCount}`}
-                    </button>
-                  );
-                })()}
-
-                {/* Dropdown panel */}
-                <AnimatePresence>
-                  {filterOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 6 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-1 w-56 bg-white border border-gray-200 shadow-xl z-30 py-2"
-                    >
-                      {/* Category section */}
-                      <p className="px-4 pt-2 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">Category</p>
-                      <button
-                        onClick={() => setActiveCategory(null)}
-                        className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-wider transition-colors ${!activeCategory ? 'font-black text-black' : 'font-semibold text-gray-400 hover:text-black'}`}
-                      >
-                        All
-                      </button>
-                      {seriesHighlights.map(s => (
-                        <button
-                          key={s.category}
-                          onClick={() => setActiveCategory(prev => prev === s.category ? null : s.category)}
-                          className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-wider transition-colors ${activeCategory === s.category ? 'font-black text-black' : 'font-semibold text-gray-400 hover:text-black'}`}
-                        >
-                          {s.title}
-                        </button>
-                      ))}
-
-                      {/* Sub-category section */}
-                      {subcategories.length > 0 && (
-                        <>
-                          <div className="my-2 border-t border-gray-100" />
-                          <p className="px-4 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">Sub-Category</p>
-                          <button
-                            onClick={() => setActiveSubcategory(null)}
-                            className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-wider transition-colors ${!activeSubcategory ? 'font-black text-black' : 'font-semibold text-gray-400 hover:text-black'}`}
-                          >
-                            All
-                          </button>
-                          {subcategories.map(sub => (
-                            <button
-                              key={sub}
-                              onClick={() => setActiveSubcategory(activeSubcategory === sub ? null : sub)}
-                              className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-wider transition-colors ${activeSubcategory === sub ? 'font-black text-black' : 'font-semibold text-gray-400 hover:text-black'}`}
-                            >
-                              {sub.replace(/-/g, ' ')}
-                            </button>
-                          ))}
-                        </>
-                      )}
-
-                      {/* Clear all */}
-                      {(activeCategory || activeSubcategory) && (
-                        <>
-                          <div className="my-2 border-t border-gray-100" />
-                          <button
-                            onClick={() => { setActiveCategory(null); setActiveSubcategory(null); setFilterOpen(false); }}
-                            className="w-full text-left px-4 py-2 text-[11px] font-black uppercase tracking-wider text-[#b80000] hover:opacity-70"
-                          >
-                            Clear All
-                          </button>
-                        </>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Active filter badges */}
-            {(activeCategory || activeSubcategory) && (
-              <div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Filtered by:</span>
-                {activeCategory && (
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest">
-                    {seriesHighlights.find(s => s.category === activeCategory)?.title}
-                    <button onClick={() => setActiveCategory(null)} className="hover:opacity-70"><X size={10} /></button>
-                  </span>
-                )}
-                {activeSubcategory && (
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest">
-                    {activeSubcategory.replace(/-/g, ' ')}
-                    <button onClick={() => setActiveSubcategory(null)} className="hover:opacity-70"><X size={10} /></button>
-                  </span>
-                )}
-              </div>
-            )}
+          <div className="mb-10 md:mb-20 text-center">
+            <h2
+              className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.6em] pb-4"
+              style={{ fontSize: '18px', color: '#111111' }}
+            >
+              Our Collection
+            </h2>
           </div>
 
           {isLoading ? (
@@ -460,13 +267,13 @@ export const PremiumCollection = () => {
                 <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse" />
               ))}
             </div>
-          ) : displayedProducts.length > 0 ? (
+          ) : products.length > 0 ? (
             <motion.div
               layout
               className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-12 md:gap-y-24"
             >
               <AnimatePresence mode="popLayout">
-                {displayedProducts.map((product, pIdx) => (
+                {products.map((product, pIdx) => (
                   <motion.div
                     key={product.id}
                     layout
@@ -488,21 +295,6 @@ export const PremiumCollection = () => {
             </div>
           )}
 
-          {/* View full collection link */}
-          {activeCategory && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex justify-center mt-12 md:mt-20"
-            >
-              <Link
-                to={seriesHighlights.find(s => s.category === activeCategory)?.viewAll ?? '/premium'}
-                className="flex items-center gap-3 px-8 py-4 border border-black text-[11px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all"
-              >
-                View Full {activeLabel} Collection
-              </Link>
-            </motion.div>
-          )}
         </div>
       </section>
 

@@ -113,16 +113,16 @@ const BestSellerCard = ({ product }: { product: Product }) => {
           </h3>
         </Link>
 
-        <div className="flex items-baseline gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-outfit font-semibold text-[16px] text-[#26B3FF]">
-            ₹ {product.price.toLocaleString('en-IN')}.00
+            ₹{product.price.toLocaleString('en-IN')}
           </span>
           {discount > 0 && (
             <>
-              <span className="font-outfit text-[14px] text-[#A0A0A0] line-through">
-                ₹ {originalPrice.toLocaleString('en-IN')}.00
+              <span className="font-outfit text-[13px] text-[#A0A0A0] line-through">
+                ₹{originalPrice.toLocaleString('en-IN')}
               </span>
-              <span className="font-outfit font-semibold text-[13px] text-black">
+              <span className="font-outfit font-semibold text-[11px] text-gray-600">
                 {discount}% off
               </span>
             </>

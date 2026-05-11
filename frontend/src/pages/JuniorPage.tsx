@@ -162,12 +162,12 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
         {/* Price */}
         <div className="mt-2 flex min-h-[24px] items-baseline gap-1.5 md:gap-2 flex-wrap">
           <span className="text-[14px] md:text-[16px] font-black text-[#F69245]">
-            ₹ {product.price.toLocaleString('en-IN')}.00
+            ₹{product.price.toLocaleString('en-IN')}
           </span>
           {discount > 0 && (
             <>
               <span className="text-[11px] md:text-[13px] text-gray-400 line-through">
-                ₹ {originalPrice.toLocaleString('en-IN')}.00
+                ₹{originalPrice.toLocaleString('en-IN')}
               </span>
               <span className="text-[10px] md:text-[11px] font-black text-[#030014]">
                 {discount}% off
@@ -176,13 +176,13 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
           )}
         </div>
 
-        {/* Move to Cart */}
+        {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
           disabled={product.stock <= 0}
           className="mt-auto w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {product.stock <= 0 ? 'Out Of Stock' : '+ Move To Cart'}
+          {product.stock <= 0 ? 'Out Of Stock' : '+ Add To Cart'}
         </button>
       </div>
     </div>
@@ -190,23 +190,33 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 };
 
 // Simplified Best Seller card matching user image precisely
-const BestSellerCard = ({ product }: { product: Product }) => (
-  <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
-    <Link to={`/product/${product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-8 mb-4">
-      <img src={(product as any).image_url ?? product.image} alt={product.name} className="w-full h-full object-contain" />
-    </Link>
-    <div className="px-1">
-      <Link to={`/product/${product.id}?theme=junior`}>
-        <h3 className="font-outfit font-bold text-[14px] text-black leading-snug mb-2 line-clamp-2">{product.name}</h3>
+const BestSellerCard = ({ product }: { product: Product }) => {
+  const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
+  const discount = originalPrice > product.price
+    ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
+    : 0;
+  return (
+    <div className="flex flex-col h-full bg-white transition-all duration-300 relative group">
+      <Link to={`/product/${product.id}?theme=junior`} className="aspect-square bg-[#F9F9F9] rounded-sm overflow-hidden flex items-center justify-center p-4 md:p-8 mb-3">
+        <img src={(product as any).image_url ?? product.image} alt={product.name} className="w-full h-full object-contain" />
       </Link>
-      <div className="flex items-baseline gap-2">
-        <span className="text-[14px] font-outfit font-bold text-[#8750DA]">₹ {product.price}.00</span>
-        <span className="text-[11px] text-gray-400 line-through">₹ {Math.round(product.price * 1.5)}.00</span>
-        <span className="text-[11px] font-bold text-black opacity-80">50% off</span>
+      <div className="px-1">
+        <Link to={`/product/${product.id}?theme=junior`}>
+          <h3 className="font-outfit font-bold text-[13px] md:text-[14px] text-black leading-snug mb-1.5 line-clamp-2 hover:text-[#8750DA] transition-colors">{product.name}</h3>
+        </Link>
+        <div className="flex items-baseline gap-1.5 flex-wrap">
+          <span className="text-[14px] font-outfit font-bold text-[#8750DA] whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</span>
+          {discount > 0 && (
+            <>
+              <span className="text-[11px] text-gray-400 line-through whitespace-nowrap">₹{originalPrice.toLocaleString('en-IN')}</span>
+              <span className="text-[10px] font-bold text-gray-600">{discount}% off</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const DRAW_COLORS = ['#F69245', '#8750DA', '#FFBB5A', '#FF6B6B', '#4ECDC4', '#000000'];
 
@@ -459,29 +469,25 @@ export const JuniorPage = () => {
       <section className="py-10 md:py-14 bg-white overflow-hidden relative">
         <img src="/junior/grid view.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none select-none" />
         <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-6 md:mb-8">
-            <div className="max-w-2xl">
-              <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.28em] text-[#F69245] mb-2">Junior Favorites</p>
-              <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[#14052b]">Shop Junior Favorites</h2>
-              <p className="mt-2 text-sm md:text-base text-gray-500 leading-relaxed">
-                Explore school backpacks, combo sets, pouches, lunch bags and trolley styles made for every little adventure.
-              </p>
-            </div>
-
-            <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.label}
-                  onClick={() => setActiveTab(cat.label)}
-                  className={`h-10 px-4 md:px-5 rounded-lg text-[10px] md:text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-300 whitespace-nowrap ${
-                    activeTab === cat.label
-                      ? 'bg-[#F69245] text-white shadow-md shadow-[#F69245]/20'
-                      : 'text-gray-400 hover:text-[#14052b] hover:bg-[#F69245]/10'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
+          <div className="flex justify-center mb-6 md:mb-8">
+            <div className="relative">
+              <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.label}
+                    onClick={() => setActiveTab(cat.label)}
+                    className={`h-10 px-4 md:px-5 rounded-lg text-[10px] md:text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-300 whitespace-nowrap ${
+                      activeTab === cat.label
+                        ? 'bg-[#F69245] text-white shadow-md shadow-[#F69245]/20'
+                        : 'text-gray-400 hover:text-[#14052b] hover:bg-[#F69245]/10'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+              {/* Right fade to hint at overflow on small screens */}
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-10 rounded-r-xl bg-gradient-to-l from-white/80 to-transparent lg:hidden" />
             </div>
           </div>
 
@@ -607,21 +613,12 @@ export const JuniorPage = () => {
             </h2>
           </div>
 
-          <div className="relative group">
-            <button className="absolute left-[-20px] md:left-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
-              <ChevronLeft size={20} className="text-gray-600" />
-            </button>
-            <button className="absolute right-[-20px] md:right-[-40px] top-1/2 -translate-y-1/2 w-8 h-12 md:w-10 md:h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg">
-              <ChevronRight size={20} className="text-gray-600" />
-            </button>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
-              {isLoading ? (
-                [1, 2, 3, 4].map(n => <div key={n} className="aspect-square bg-gray-50 animate-pulse" />)
-              ) : bestSellers.slice(0, 4).map((product) => (
-                <BestSellerCard key={product.id} product={product} />
-              ))}
-            </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10">
+            {isLoading ? (
+              [1, 2, 3, 4].map(n => <div key={n} className="aspect-square bg-gray-50 animate-pulse rounded-sm" />)
+            ) : bestSellers.slice(0, 4).map((product) => (
+              <BestSellerCard key={product.id} product={product} />
+            ))}
           </div>
 
         </div>
