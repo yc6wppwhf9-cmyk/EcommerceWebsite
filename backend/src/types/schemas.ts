@@ -58,6 +58,7 @@ export const orderSchema = z.object({
     razorpay_order_id: z.string().optional(),
     razorpay_payment_id: z.string().optional(),
     razorpay_signature: z.string().optional(),
+    reserved_order_id: z.string().uuid().optional(),
     notes: z.string().optional(),
   }),
 });

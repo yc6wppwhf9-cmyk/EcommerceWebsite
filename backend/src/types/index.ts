@@ -47,7 +47,7 @@ export interface OrderItem {
 export interface Order {
   id: string;
   user_id: string;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'return_requested' | 'returned';
   subtotal: number;
   shipping_fee: number;
   total: number;

@@ -15,6 +15,8 @@ const THEME_ACCENT: Record<string, string> = {
   default: '#26B3FF',
 };
 
+type PaymentMethod = 'online' | 'cod';
+
 export const Checkout = () => {
   const [searchParams] = useSearchParams();
   const themeKey = searchParams.get('theme') || sessionStorage.getItem('siteTheme') || 'default';
@@ -34,8 +36,10 @@ export const Checkout = () => {
   });
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [placedPaymentMethod, setPlacedPaymentMethod] = useState<PaymentMethod | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [touched, setTouched] = useState<Record<string,boolean>>({});
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('online');
 
   useEffect(() => {
     if (user) {
@@ -53,6 +57,17 @@ export const Checkout = () => {
   const shipping = total >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
   const grandTotal = total + shipping;
 
+  const buildOrderPayload = () => ({
+    items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
+    shipping_name: form.name,
+    shipping_phone: form.phone,
+    shipping_line1: form.line1,
+    shipping_line2: form.line2 || undefined,
+    shipping_city: form.city,
+    shipping_state: form.state,
+    shipping_pincode: form.pincode,
+  });
+
   const handlePlaceOrder = async () => {
     if (!isFormValid) {
       showToast('Please fill all required delivery details.', 'error');
@@ -62,6 +77,19 @@ export const Checkout = () => {
     setIsProcessing(true);
 
     try {
+      if (paymentMethod === 'cod') {
+        const savedOrder = await api.createOrder({
+          ...buildOrderPayload(),
+          payment_method: 'cod',
+        });
+        setOrderId(savedOrder?.id || savedOrder?.order_id || null);
+        setPlacedPaymentMethod('cod');
+        clearCart();
+        setOrderPlaced(true);
+        setIsProcessing(false);
+        return;
+      }
+
       const paymentTimeout = setTimeout(() => {
         setIsProcessing(false);
         showToast('Payment is taking longer than expected. Please try again.', 'error');
@@ -69,7 +97,11 @@ export const Checkout = () => {
 
       let orderData: any;
       try {
-        orderData = await api.createPaymentOrder(grandTotal, `receipt_${Date.now()}`);
+        orderData = await api.createPaymentOrder({
+          receipt: `receipt_${Date.now()}`,
+          currency: 'INR',
+          ...buildOrderPayload(),
+        });
       } finally {
         clearTimeout(paymentTimeout);
       }
@@ -91,22 +123,17 @@ export const Checkout = () => {
             });
 
             const savedOrder = await api.createOrder({
-              items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
-              shipping_name: form.name,
-              shipping_phone: form.phone,
-              shipping_line1: form.line1,
-              shipping_line2: form.line2 || undefined,
-              shipping_city: form.city,
-              shipping_state: form.state,
-              shipping_pincode: form.pincode,
+              ...buildOrderPayload(),
               payment_method: 'online',
               payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              reserved_order_id: orderData.app_order_id,
             });
 
             setOrderId(savedOrder?.id || savedOrder?.order_id || response.razorpay_order_id);
+            setPlacedPaymentMethod('online');
             clearCart();
             setIsProcessing(false);
             setOrderPlaced(true);
@@ -133,7 +160,12 @@ export const Checkout = () => {
       });
       rzp.open();
     } catch (err: any) {
-      showToast(err.message || 'Could not initiate payment. Please try again.', 'error');
+      showToast(
+        err.message || (paymentMethod === 'online'
+          ? 'Could not initiate payment. Please try again.'
+          : 'Could not place your COD order. Please try again.'),
+        'error'
+      );
       setIsProcessing(false);
     }
   };
@@ -177,6 +209,11 @@ export const Checkout = () => {
           {orderId && (
             <p className="text-[10px] font-black text-green-700/60 uppercase tracking-widest mb-4">
               Order ID: <span className="text-green-800">{orderId}</span>
+            </p>
+          )}
+          {placedPaymentMethod && (
+            <p className="text-[10px] font-black text-green-700/60 uppercase tracking-widest mb-4">
+              Payment: <span className="text-green-800">{placedPaymentMethod === 'cod' ? 'Cash On Delivery' : 'Online (Paid)'}</span>
             </p>
           )}
           <p className="text-sm text-green-600/70 mb-12 font-bold uppercase tracking-widest leading-loose">We'll send you a confirmation message on WhatsApp and Email shortly. Your journey begins.</p>
@@ -269,10 +306,33 @@ export const Checkout = () => {
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                   <ShieldCheck className="w-6 h-6" style={{ color: accent }} />
                 </div>
-                <h3 className="text-xl font-black uppercase tracking-tight">Verified Digital Payment</h3>
+                <h3 className="text-xl font-black uppercase tracking-tight">Payment Method</h3>
               </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('online')}
+                  className={`text-left rounded-2xl border px-5 py-4 transition-colors ${paymentMethod === 'online' ? 'border-black bg-white' : 'border-gray-200 bg-white/70 hover:border-gray-300'}`}
+                >
+                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-900">Online Payment</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mt-2">UPI, Cards, Net Banking</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`text-left rounded-2xl border px-5 py-4 transition-colors ${paymentMethod === 'cod' ? 'border-black bg-white' : 'border-gray-200 bg-white/70 hover:border-gray-300'}`}
+                >
+                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-900">Cash On Delivery</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mt-2">Pay when your order arrives</p>
+                </button>
+              </div>
+
               <p className="text-sm font-bold text-gray-500 uppercase tracking-widest max-w-lg leading-loose">
-                Your transaction is protected by 256-bit encryption. We accept UPI, Cards, and Net Banking through our secure Razorpay gateway.
+                {paymentMethod === 'online'
+                  ? 'Your transaction is protected by 256-bit encryption through Razorpay.'
+                  : 'Place your order instantly and pay at your doorstep.'}
               </p>
             </section>
           </div>
@@ -320,15 +380,25 @@ export const Checkout = () => {
                 style={{ backgroundColor: accent }}
               >
                 {isProcessing ? (
-                  <><Loader2 className="w-5 h-5 animate-spin" /><span className="text-[10px] md:text-xs">Opening Secure Payment...</span></>
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="text-[10px] md:text-xs">
+                      {paymentMethod === 'online' ? 'Opening Secure Payment...' : 'Placing Order...'}
+                    </span>
+                  </>
                 ) : (
-                  <>Secure Pay <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" /></>
+                  <>
+                    {paymentMethod === 'online' ? 'Secure Pay' : 'Place COD Order'}
+                    <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                  </>
                 )}
               </button>
 
               <div className="flex items-center justify-center gap-3 opacity-30">
                 <div className="w-2 h-2 rounded-full bg-gray-400" />
-                <span className="text-[9px] font-black uppercase tracking-[0.3em]">Encrypted Session Active</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.3em]">
+                  {paymentMethod === 'online' ? 'Encrypted Session Active' : 'Secure Order Placement'}
+                </span>
                 <div className="w-2 h-2 rounded-full bg-gray-400" />
               </div>
             </div>

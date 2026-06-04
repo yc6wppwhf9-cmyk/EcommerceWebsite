@@ -15,8 +15,6 @@ function cacheGet<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   const hit = _cache.get(key);
   const now = Date.now();
   if (hit && now - hit.ts < CACHE_TTL) {
-    // Return stale data instantly; silently refresh in background
-    fetcher().then(data => _cache.set(key, { data, ts: Date.now() })).catch(() => {});
     return Promise.resolve(hit.data as T);
   }
   // Deduplicate in-flight requests for the same key
@@ -28,6 +26,16 @@ function cacheGet<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   }).catch(err => { _inflight.delete(key); throw err; });
   _inflight.set(key, promise);
   return promise;
+}
+
+function clearCache(prefix?: string) {
+  if (!prefix) {
+    _cache.clear();
+    return;
+  }
+  for (const key of _cache.keys()) {
+    if (key.startsWith(prefix)) _cache.delete(key);
+  }
 }
 
 /**
@@ -48,7 +56,18 @@ function getCsrfToken(): string {
 
 const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
-let _isRefreshing = false;
+let _refreshPromise: Promise<boolean> | null = null;
+
+async function refreshAccessToken(): Promise<boolean> {
+  if (_refreshPromise) return _refreshPromise;
+  _refreshPromise = fetch(`${BASE}/api/auth/refresh`, { method: 'POST', credentials: 'include' })
+    .then((res) => res.ok)
+    .catch(() => false)
+    .finally(() => {
+      _refreshPromise = null;
+    });
+  return _refreshPromise;
+}
 
 function getFriendlyErrorMessage(error: string): string {
   if (!error) return 'Something went wrong. Please try again.';
@@ -74,7 +93,7 @@ function getFriendlyErrorMessage(error: string): string {
   return error; // Return original if not matched, but it might still be a user-friendly message from backend
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}, allowRetry = true): Promise<T> {
   const method = (options.method || 'GET').toUpperCase();
   const isFormData = options.body instanceof FormData;
 
@@ -106,15 +125,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     }
 
     if (!res.ok) {
-      // On 401, attempt a silent token refresh then retry once
-      if (res.status === 401 && !_isRefreshing && path !== '/api/auth/refresh') {
-        _isRefreshing = true;
-        try {
-          await fetch(`${BASE}/api/auth/refresh`, { method: 'POST', credentials: 'include' });
-        } finally {
-          _isRefreshing = false;
-        }
-        return request<T>(path, options);
+      // On 401, attempt a single silent refresh, then retry once.
+      if (res.status === 401 && allowRetry && path !== '/api/auth/refresh') {
+        const refreshed = await refreshAccessToken();
+        if (refreshed) return request<T>(path, options, false);
+        throw new Error(getFriendlyErrorMessage('token expired'));
       }
       const rawMsg = data.error || data.message || `Request failed (${res.status})`;
       throw new Error(getFriendlyErrorMessage(rawMsg));
@@ -177,19 +192,23 @@ export const api = {
     request<any>(`/api/users/me/addresses/${id}`, { method: 'DELETE' }),
 
   // Products
-  getProducts: (params?: Record<string, string>) => {
+  getProducts: (params?: Record<string, string>, skipCache = false) => {
     const qs = params ? '?' + new URLSearchParams(params).toString() : '';
     const url = `/api/products${qs}`;
+    if (skipCache) return request<{ products: any[]; page: number; limit: number }>(url);
     return cacheGet(url, () => request<{ products: any[]; page: number; limit: number }>(url));
   },
   getProduct: (slug: string) =>
     cacheGet(`/api/products/${slug}`, () => request<any>(`/api/products/${slug}`)),
   createProduct: (data: any) =>
-    request<any>('/api/products', { method: 'POST', body: JSON.stringify(data) }),
+    request<any>('/api/products', { method: 'POST', body: JSON.stringify(data) })
+      .then((res) => { clearCache('/api/products'); return res; }),
   updateProduct: (id: string, data: any) =>
-    request<any>(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    request<any>(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+      .then((res) => { clearCache('/api/products'); return res; }),
   deleteProduct: (id: string) =>
-    request<any>(`/api/products/${id}`, { method: 'DELETE' }),
+    request<any>(`/api/products/${id}`, { method: 'DELETE' })
+      .then((res) => { clearCache('/api/products'); return res; }),
 
   uploadImage: (formData: FormData) =>
     request<{ url: string }>('/api/products/upload-image', {
@@ -202,7 +221,7 @@ export const api = {
       method: 'POST',
       body: formData,
       headers: {},
-    }),
+    }).then((res) => { clearCache('/api/products'); return res; }),
 
   // Orders
   getOrders: (params?: { page?: number; limit?: number }) => {
@@ -255,10 +274,21 @@ export const api = {
     request<any>(`/api/settings/${key}`, { method: 'PUT', body: JSON.stringify(value) }),
 
   // Payments (Razorpay)
-  createPaymentOrder: (amount: number, receipt: string) =>
+  createPaymentOrder: (data: {
+    items: Array<{ product_id: string; quantity: number }>;
+    receipt: string;
+    currency?: 'INR';
+    shipping_name: string;
+    shipping_phone: string;
+    shipping_line1: string;
+    shipping_line2?: string;
+    shipping_city: string;
+    shipping_state: string;
+    shipping_pincode: string;
+  }) =>
     request<any>('/api/payments/create-order', {
       method: 'POST',
-      body: JSON.stringify({ amount, receipt }),
+      body: JSON.stringify(data),
     }),
   verifyPayment: (data: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) =>
     request<any>('/api/payments/verify', {

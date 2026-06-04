@@ -95,6 +95,13 @@ CREATE INDEX idx_products_category ON products(category_id);
 CREATE INDEX idx_products_price ON products(price);
 CREATE INDEX idx_products_rating ON products(rating DESC);
 CREATE INDEX idx_products_name_trgm ON products USING gin (name gin_trgm_ops);
+CREATE INDEX idx_products_active_created ON products(is_active, created_at DESC);
+CREATE INDEX idx_products_active_category_created ON products(is_active, category_id, created_at DESC);
+CREATE INDEX idx_products_active_sub_category_created ON products(is_active, sub_category, created_at DESC);
+CREATE INDEX idx_products_active_premium_created ON products(is_active, is_premium, created_at DESC);
+CREATE INDEX idx_products_active_gender_created ON products(is_active, gender, created_at DESC);
+CREATE INDEX idx_products_active_size_created ON products(is_active, size, created_at DESC);
+CREATE INDEX idx_products_active_popular ON products(is_active, review_count DESC, rating DESC);
 
 -- ─── Product Reviews ─────────────────────────────────────────
 CREATE TABLE reviews (
@@ -116,7 +123,7 @@ CREATE TABLE orders (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id         UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   status          VARCHAR(30) DEFAULT 'pending'
-                    CHECK (status IN ('pending','confirmed','processing','shipped','delivered','cancelled','returned')),
+                    CHECK (status IN ('pending','confirmed','processing','shipped','delivered','cancelled','return_requested','returned')),
   subtotal        DECIMAL(10,2) NOT NULL,
   shipping_fee    DECIMAL(10,2) DEFAULT 0,
   total           DECIMAL(10,2) NOT NULL,
@@ -204,8 +211,9 @@ BEGIN
     p_user_id, p_subtotal, p_shipping_fee, p_total,
     p_shipping_name, p_shipping_phone, p_shipping_line1, p_shipping_line2,
     p_shipping_city, p_shipping_state, p_shipping_pincode,
-    p_payment_method, p_payment_id, p_notes, 'confirmed', 
-    CASE WHEN p_payment_method = 'online' THEN 'paid' ELSE 'pending' END
+    p_payment_method, p_payment_id, p_notes,
+    CASE WHEN p_payment_method = 'online' THEN 'pending' ELSE 'confirmed' END,
+    'pending'
   ) RETURNING id INTO v_order_id;
 
   -- 2. Insert Items and Decrement Stock
@@ -230,6 +238,47 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ─── Function: Atomic Stock Decrement ───────────────────────
+CREATE OR REPLACE FUNCTION release_expired_payment_reservations(
+  p_older_than INTERVAL DEFAULT INTERVAL '20 minutes'
+) RETURNS INT AS $$
+DECLARE
+  v_order RECORD;
+  v_item RECORD;
+  v_released INT := 0;
+BEGIN
+  FOR v_order IN
+    SELECT id
+    FROM orders
+    WHERE payment_method = 'online'
+      AND status = 'pending'
+      AND payment_status = 'pending'
+      AND created_at < NOW() - p_older_than
+    FOR UPDATE SKIP LOCKED
+  LOOP
+    FOR v_item IN
+      SELECT product_id, quantity
+      FROM order_items
+      WHERE order_id = v_order.id
+    LOOP
+      UPDATE products
+      SET stock = stock + v_item.quantity,
+          updated_at = NOW()
+      WHERE id = v_item.product_id;
+    END LOOP;
+
+    UPDATE orders
+    SET status = 'cancelled',
+        payment_status = 'failed',
+        updated_at = NOW()
+    WHERE id = v_order.id;
+
+    v_released := v_released + 1;
+  END LOOP;
+
+  RETURN v_released;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION decrement_stock(product_id UUID, qty INT)
 RETURNS VOID AS $$
 BEGIN
