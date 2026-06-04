@@ -13,22 +13,31 @@ const REFRESH_TOKEN_TTL = '30d';
 const ACCESS_COOKIE_AGE  = 60 * 60 * 1000;           // 1 hour in ms
 const REFRESH_COOKIE_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
 
-/** Attach short-lived access token + long-lived refresh token as httpOnly cookies. */
-function setAuthCookies(res: Response, userId: string, email: string, role: string) {
-  const cookieBase = {
+/**
+ * Shared base cookie options — single source of truth so logout and login
+ * always use the same secure/httpOnly/sameSite configuration.
+ */
+function baseCookieOpts(httpOnly = true) {
+  return {
+    httpOnly,
     secure: isProduction,
     sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
     path: '/',
   };
+}
+
+/** Attach short-lived access token + long-lived refresh token as httpOnly cookies. */
+function setAuthCookies(res: Response, userId: string, email: string, role: string) {
+  const opts = baseCookieOpts(true);
 
   const accessToken = jwt.sign({ id: userId, email, role }, config.JWT_SECRET, { expiresIn: ACCESS_TOKEN_TTL });
-  res.cookie('access_token', accessToken, { ...cookieBase, httpOnly: true, maxAge: ACCESS_COOKIE_AGE });
+  res.cookie('access_token', accessToken, { ...opts, maxAge: ACCESS_COOKIE_AGE });
 
   const refreshToken = jwt.sign({ id: userId }, config.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_TTL });
-  res.cookie('refresh_token', refreshToken, { ...cookieBase, httpOnly: true, maxAge: REFRESH_COOKIE_AGE });
+  res.cookie('refresh_token', refreshToken, { ...opts, maxAge: REFRESH_COOKIE_AGE });
 
   const csrfToken = crypto.randomBytes(32).toString('hex');
-  res.cookie('csrf_token', csrfToken, { ...cookieBase, httpOnly: false, maxAge: REFRESH_COOKIE_AGE });
+  res.cookie('csrf_token', csrfToken, { ...baseCookieOpts(false), maxAge: REFRESH_COOKIE_AGE });
 
   return accessToken;
 }
@@ -49,7 +58,7 @@ export const register = async (req: Request, res: Response) => {
         email, 
         password: hash, 
         phone: phone || null,
-        is_verified: true,
+        is_verified: false,
         verification_token: vToken
       })
       .select('id, name, email, phone, role, is_verified, created_at')
@@ -120,7 +129,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     // Email contains the raw token; DB stores the hash
     const rUrl = `${config.FRONTEND_URL}/reset-password?token=${rRaw}`;
-    await Mailer.sendEmail(
+    void Mailer.sendEmail(
       email,
       'Password Reset Request - Priority Bags',
       Mailer.getPasswordResetTemplate(user.name, rUrl)
@@ -196,15 +205,10 @@ export const resetPassword = async (req: Request, res: Response) => {
 };
 
 export const logout = (_req: Request, res: Response) => {
-  const cookieOpts = {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
-    path: '/',
-  };
-  res.clearCookie('access_token', cookieOpts);
-  res.clearCookie('refresh_token', cookieOpts);
-  res.clearCookie('csrf_token', { ...cookieOpts, httpOnly: false });
+  const opts = baseCookieOpts(true);
+  res.clearCookie('access_token', opts);
+  res.clearCookie('refresh_token', opts);
+  res.clearCookie('csrf_token', baseCookieOpts(false));
   res.json({ message: 'Logged out successfully' });
 };
 
@@ -246,7 +250,7 @@ export const login = async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).json({ error: 'Invalid credentials' });
 
-    // if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email address before logging in' });
+    if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email address before logging in' });
 
     const token = setAuthCookies(res, user.id, user.email, user.role);
     res.json({

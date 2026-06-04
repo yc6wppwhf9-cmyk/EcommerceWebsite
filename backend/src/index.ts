@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { config } from './config/env';
 import { supabase } from './config/supabase';
+import { AppError } from './lib/errors';
 
 // Route Imports
 import authRoutes from './routes/auth.routes';
@@ -57,6 +58,14 @@ const authLimiter = rateLimit({
 });
 
 // Strict limiter for AI chat — each request makes 1-2 Anthropic API calls
+const authRecoveryLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 40,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please wait a few minutes and try again.' },
+});
+
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 8,
@@ -66,7 +75,12 @@ const chatLimiter = rateLimit({
 });
 
 // --- Routes ---
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/forgot-password', authRecoveryLimiter);
+app.use('/api/auth/reset-password', authRecoveryLimiter);
+app.use('/api/auth/refresh', authRecoveryLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
@@ -96,15 +110,21 @@ app.get('/api/health', async (_req, res) => {
 
 // --- Global Error Handler ---
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('❌ Global Error Handler:', err);
-  
-  const status = err.status || 500;
-  const message = err.message || 'Internal Server Error';
-  
+  // Structured error response — never leak internal details in production
+  const isAppError = err instanceof AppError;
+  const status = isAppError ? err.statusCode : (err.status || 500);
+  const message = isAppError ? err.message : (err.message || 'Internal Server Error');
+
+  // Only log unexpected (5xx) errors at error level
+  if (status >= 500) {
+    console.error('❌ Unhandled Error:', err);
+  }
+
   res.status(status).json({
     error: message,
     status: 'error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    ...(err.code && { code: err.code }),
+    ...(config.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 

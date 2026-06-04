@@ -1,6 +1,6 @@
-// In development the Vite proxy forwards /api/* to localhost:4000, making cookies
-// same-origin. In production set VITE_API_URL to your backend URL.
-const BASE = import.meta.env.VITE_API_URL || '';
+// Keep browser auth cookies first-party in production. Vercel rewrites /api/*
+// to the backend, while local development can still use VITE_API_URL if needed.
+const BASE = import.meta.env.DEV ? (import.meta.env.VITE_API_URL || '') : '';
 
 // ─── In-memory GET cache (stale-while-revalidate) ────────────────────────────
 // Caches responses for GET requests for TTL ms. On a cache hit the stored value
@@ -149,28 +149,28 @@ export const api = {
     request<{ user: any; token: string }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
-    }),
+    }, false),
 
   register: (name: string, email: string, password: string, phone?: string) =>
     request<{ user: any; token: string }>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password, phone }),
-    }),
+    }, false),
   verifyEmail: (token: string) =>
     request<{ message: string }>('/api/auth/verify-email', {
       method: 'POST',
       body: JSON.stringify({ token }),
-    }),
+    }, false),
   forgotPassword: (email: string) =>
     request<{ message: string }>('/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
-    }),
+    }, false),
   resetPassword: (token: string, password: string) =>
     request<{ message: string }>('/api/auth/reset-password', {
       method: 'POST',
       body: JSON.stringify({ token, password }),
-    }),
+    }, false),
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
     request<{ message: string }>('/api/auth/change-password', {
       method: 'POST',
