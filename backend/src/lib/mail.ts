@@ -1,31 +1,21 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { config } from '../config/env';
 import { escapeHtml } from './sanitize';
 
-const transporter = nodemailer.createTransport({
-  host: config.SMTP_HOST,
-  port: config.SMTP_PORT,
-  secure: config.SMTP_PORT === 465,
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
-  auth: config.SMTP_USER && config.SMTP_PASS ? {
-    user: config.SMTP_USER,
-    pass: config.SMTP_PASS,
-  } : undefined,
-});
+const resend = new Resend(config.RESEND_API_KEY);
 
 const APP_NAME = 'Priority Bags';
-const PRIMARY_COLOR = '#000000'; // Sleek Black for Digital Atelier
+const PRIMARY_COLOR = '#000000';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {
-    await transporter.sendMail({
-      from: `"${APP_NAME}" <${config.FROM_EMAIL}>`,
+    const { error } = await resend.emails.send({
+      from: `${APP_NAME} <${config.FROM_EMAIL}>`,
       to,
       subject,
       html,
     });
+    if (error) console.error('❌ Email Sending Failed:', error);
   } catch (err) {
     console.error('❌ Email Sending Failed:', err);
   }
