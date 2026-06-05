@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, User, ShoppingCart, ChevronDown, Menu, X, Heart } from 'lucide-react';
+import { Search, User, ShoppingCart, ChevronDown, Menu, X, Heart, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -209,6 +209,16 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               )}
             </button>
 
+            {/* Logout */}
+            {isAuthenticated && (
+              <button
+                onClick={logout}
+                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 active:scale-95"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </button>
+            )}
           </div>
         </div>
 
