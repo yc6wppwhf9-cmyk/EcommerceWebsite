@@ -64,7 +64,7 @@ const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
   gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
-  size: '', juniorStyle: '',
+  size: '', juniorStyle: '', amazon_url: '',
   isNew: false, highlighted: false, // highlighted used for best seller
 });
 
@@ -395,7 +395,8 @@ export const AdminDashboard = () => {
         isPremium: !!formData.isPremium || formData.category === 'premium',
         features: Array.isArray(formData.features) ? formData.features : [],
         images: (formData.images || []).filter(Boolean),
-        colors: variants.filter(v => v.color.trim()).map(v => ({ name: v.color, code: v.colorCode, images: (v.images || []).filter(Boolean) }))
+        colors: variants.filter(v => v.color.trim()).map(v => ({ name: v.color, code: v.colorCode, images: (v.images || []).filter(Boolean) })),
+        amazon_url: (formData as any).amazon_url || null,
       };
 
       // Only generate a new slug if it doesn't exist (for new products)
@@ -863,6 +864,12 @@ export const AdminDashboard = () => {
                           <textarea rows={4} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Describe features, materials, and highlights..." className={`${inputCls} resize-none`} />
                         </div>
 
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Amazon Product URL</label>
+                          <input type="url" value={(formData as any).amazon_url || ''} onChange={(e) => setFormData({ ...formData, amazon_url: e.target.value } as any)} placeholder="https://www.amazon.in/dp/..." className={inputCls} />
+                          <p className="text-[9px] text-gray-400 ml-1">When set, the buy button redirects customers to Amazon instead of cart.</p>
+                        </div>
+
                         <div className="pt-8 flex gap-4 border-t border-gray-100">
                           <button type="submit" className="flex-1 py-5 bg-priority-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-priority-blue/30 active:scale-95 transition-all">
                             Publish Product File
@@ -995,6 +1002,7 @@ export const AdminDashboard = () => {
                                         highlighted: (p as any).is_highlighted ?? p.highlighted ?? false,
                                         isNew: (p as any).is_new ?? p.isNew ?? false,
                                         juniorStyle: (p as any).junior_style || '',
+                                        amazon_url: (p as any).amazon_url || '',
                                         images: Array.isArray((p as any).images) ? (p as any).images : [],
                                       });
                                       setVariants(((p as any).colors || p.variants || []).map((v: any) => ({

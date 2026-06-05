@@ -30,6 +30,7 @@ export interface Product {
   is_new: boolean;
   is_highlighted: boolean;
   is_active: boolean;
+  amazon_url?: string;
   created_at: string;
   updated_at: string;
 }

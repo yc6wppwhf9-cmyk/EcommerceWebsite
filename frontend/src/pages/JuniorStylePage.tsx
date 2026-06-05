@@ -118,13 +118,22 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
             </>
           )}
         </div>
-        <button
-          onClick={e => { e.preventDefault(); addItem(product); }}
-          className="w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
-          style={{ backgroundColor: accent }}
-        >
-          + MOVE TO CART
-        </button>
+        {(product as any).amazon_url ? (
+          <button
+            onClick={e => { e.preventDefault(); window.open((product as any).amazon_url, '_blank', 'noopener,noreferrer'); }}
+            className="w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
+            style={{ backgroundColor: accent }}
+          >
+            Buy on Amazon
+          </button>
+        ) : (
+          <button
+            disabled
+            className="w-full py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] rounded-md mt-1 bg-gray-100 text-gray-400 cursor-not-allowed"
+          >
+            Coming Soon
+          </button>
+        )}
       </div>
     </div>
   );

@@ -255,15 +255,10 @@ export const ProductDetail = () => {
         }))
       : FALLBACK_HIGHLIGHTS;
 
-  const handleAddToCart = () => {
-    const p = { ...product, image: displayImages[selectedImage] || product.image };
-    addItem(p, quantity);
-  };
+  const amazonUrl = (product as any).amazon_url;
 
-  const handleBuyNow = () => {
-    const p = { ...product, image: displayImages[selectedImage] || product.image };
-    addItem(p, quantity);
-    navigate(themeKey !== 'default' ? `/checkout?theme=${themeKey}` : '/checkout');
+  const handleBuyOnAmazon = () => {
+    if (amazonUrl) window.open(amazonUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleToggleWishlist = () => {
@@ -442,23 +437,22 @@ export const ProductDetail = () => {
 
             {/* Actions */}
             <div className="space-y-3 pt-2">
-              {/* Move to Cart */}
-              <button
-                onClick={handleAddToCart}
-                disabled={!inStock}
-                className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${theme.btn}`}
-              >
-                + MOVE TO CART
-              </button>
-
-              {/* Buy Now */}
-              <button
-                onClick={handleBuyNow}
-                disabled={!inStock}
-                className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${theme.btnOutline}`}
-              >
-                BUY NOW
-              </button>
+              {/* Buy on Amazon */}
+              {amazonUrl ? (
+                <button
+                  onClick={handleBuyOnAmazon}
+                  className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors ${theme.btn}`}
+                >
+                  BUY ON AMAZON
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed"
+                >
+                  COMING SOON
+                </button>
+              )}
             </div>
 
             {/* Trust badges */}
@@ -610,21 +604,22 @@ export const ProductDetail = () => {
       </div>
 
       {/* Mobile sticky bottom bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 flex gap-3 shadow-2xl">
-        <button
-          onClick={handleAddToCart}
-          disabled={!inStock}
-          className={`flex-1 h-12 text-[10px] uppercase rounded-xl ${theme.btnOutline} transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 font-black tracking-wider`}
-        >
-          <ShoppingCart size={14} /> Cart
-        </button>
-        <button
-          onClick={handleBuyNow}
-          disabled={!inStock}
-          className={`flex-1 h-12 text-[10px] uppercase rounded-xl ${theme.btn} transition-all disabled:opacity-50 font-black tracking-wider`}
-        >
-          Buy Now
-        </button>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 shadow-2xl">
+        {amazonUrl ? (
+          <button
+            onClick={handleBuyOnAmazon}
+            className={`w-full h-12 text-[11px] uppercase rounded-xl ${theme.btn} transition-all font-black tracking-wider`}
+          >
+            BUY ON AMAZON
+          </button>
+        ) : (
+          <button
+            disabled
+            className="w-full h-12 text-[11px] uppercase rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed font-black tracking-wider"
+          >
+            COMING SOON
+          </button>
+        )}
       </div>
     </main>
   );

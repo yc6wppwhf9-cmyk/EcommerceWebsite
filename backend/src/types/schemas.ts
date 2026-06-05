@@ -37,6 +37,7 @@ export const productSchema = z.object({
     gender: z.string().optional(),
     ageRange: z.string().optional(),
     size: z.string().optional(),
+    amazon_url: z.string().optional(),
   }).passthrough(),
 });
 

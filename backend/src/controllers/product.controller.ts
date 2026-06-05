@@ -141,7 +141,8 @@ export const createProduct = async (req: Request, res: Response) => {
       age_range: body.ageRange || body.age_range || '',
       sub_category: body.sub_category || '',
       junior_style: body.junior_style || null,
-      is_active: body.is_active !== undefined ? body.is_active : true
+      is_active: body.is_active !== undefined ? body.is_active : true,
+      amazon_url: body.amazon_url || null
     };
 
     if (!productData.category_id) {
@@ -163,7 +164,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     'name', 'slug', 'description', 'price', 'original_price', 'stock',
     'is_active', 'is_new', 'is_highlighted', 'image', 'images',
     'colors', 'features', 'category_id', 'is_premium', 'gender',
-    'size', 'age_range', 'sub_category', 'junior_style'
+    'size', 'age_range', 'sub_category', 'junior_style', 'amazon_url'
   ];
   
   const updates: any = {};
