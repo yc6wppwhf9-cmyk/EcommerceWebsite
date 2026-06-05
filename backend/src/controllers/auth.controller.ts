@@ -250,8 +250,6 @@ export const login = async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).json({ error: 'Invalid credentials' });
 
-    if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email address before logging in' });
-
     const token = setAuthCookies(res, user.id, user.email, user.role);
     res.json({
       user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, is_verified: user.is_verified, created_at: user.created_at },
