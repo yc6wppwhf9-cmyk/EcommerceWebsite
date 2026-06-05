@@ -6,7 +6,6 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify } from 'lucide-react';
-import { Breadcrumb } from '../components/Breadcrumb';
 import { SEO } from '../components/SEO';
 
 const PAGE_LIMIT = 20;
@@ -71,7 +70,6 @@ export const CategoryPage = () => {
         limit: String(PAGE_LIMIT),
       };
       if (themeParam === 'premium') {
-        // Premium theme: always fetch by isPremium=true, map slug to sub_category if applicable
         params.isPremium = 'true';
         const premiumSubCatMap: Record<string, string> = {
           luggage: 'premium-luggage',
@@ -79,6 +77,12 @@ export const CategoryPage = () => {
           accessories: 'premium-accessories',
         };
         if (premiumSubCatMap[slug]) params.sub_category = premiumSubCatMap[slug];
+      } else if (themeParam === 'junior') {
+        // Junior sub-pages: fetch by category=junior + sub_category=slug
+        params.category = 'junior';
+        params.isPremium = 'false';
+        const juniorCat = getCategoryBySlug(slug);
+        if (juniorCat?.parentCategory === 'junior') params.sub_category = slug;
       } else if (isGenderFilter) {
         params.gender = slug;
         params.isPremium = 'false';
@@ -92,7 +96,7 @@ export const CategoryPage = () => {
       try {
         const res = await api.getProducts(params);
         const products = res.products as unknown as Product[];
-        setHasMore(products.length === PAGE_LIMIT);
+        setHasMore(products.length >= PAGE_LIMIT);
         if (replace) {
           setAllProducts(products);
           window.scrollTo(0, 0);
@@ -106,7 +110,7 @@ export const CategoryPage = () => {
         setIsLoadingMore(false);
       }
     },
-    [slug, isGenderFilter, isPremiumFilter, themeParam]
+    [slug, isGenderFilter, isPremiumFilter, themeParam] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {
@@ -133,11 +137,14 @@ export const CategoryPage = () => {
 
   const availableColors = useMemo(() => {
     const map = new Map<string, string>();
-    allProducts.forEach(p =>
-      (p.variants || []).forEach(v => {
-        if (v.color && v.colorCode) map.set(v.color, v.colorCode);
-      })
-    );
+    allProducts.forEach(p => {
+      const colorList = (p as any).colors || p.variants || [];
+      colorList.forEach((v: any) => {
+        const name = v.name ?? v.color ?? '';
+        const code = v.code ?? v.colorCode ?? '';
+        if (name && code) map.set(name, code);
+      });
+    });
     return Array.from(map.entries()).map(([color, code]) => ({ color, code }));
   }, [allProducts]);
 
@@ -310,7 +317,7 @@ export const CategoryPage = () => {
         </div>
       </FilterSection>
 
-      {slug !== 'junior' && (
+      {slug !== 'junior' && themeParam !== 'premium' && themeParam !== 'junior' && (
         <FilterSection id="gender" title="Style / Gender">
           <div className="space-y-3">
             {['Men', 'Women'].map(g => (
