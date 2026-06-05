@@ -312,7 +312,7 @@ export const CategoryPage = () => {
 
       <FilterSection id="gender" title="Style / Gender">
         <div className="space-y-3">
-          {['Unisex', 'Men', 'Women', 'Kids'].map(g => (
+          {(['Men', 'Women', ...(slug === 'junior' ? ['Kids'] : [])]).map(g => (
             <CheckRow
               key={g}
               label={g}
