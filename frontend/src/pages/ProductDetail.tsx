@@ -317,15 +317,7 @@ export const ProductDetail = () => {
         }}
       />
       <div className="container mx-auto px-4 md:px-8 py-6 md:py-16 relative">
-        <Breadcrumb
-          className="mb-6"
-          items={[
-            { label: 'Home', href: '/' },
-            ...(product.category ? [{ label: product.category.replace(/-/g, ' '), href: `/${product.category}` }] : []),
-            { label: product.name },
-          ]}
-        />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
           {/* Left Column: Gallery */}
           <div className="lg:col-span-8">

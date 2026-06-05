@@ -409,14 +409,6 @@ export const CategoryPage = () => {
 
         {/* Title + Breadcrumb */}
         <div className="container mx-auto px-4 mb-8 md:mb-16">
-          <Breadcrumb
-            className="justify-center mb-3"
-            items={[
-              { label: 'Home', href: '/' },
-              ...(parentCategory ? [{ label: parentCategory.title, href: `/${parentCategory.slug}` }] : []),
-              { label: currentCategory?.title || pageTitle },
-            ]}
-          />
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
