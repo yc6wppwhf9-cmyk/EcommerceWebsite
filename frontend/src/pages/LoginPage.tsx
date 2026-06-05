@@ -104,7 +104,7 @@ export const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className={`${inputClass} pr-12`}
+              className={`${inputClass} pr-12 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden`}
               required
             />
             <button
