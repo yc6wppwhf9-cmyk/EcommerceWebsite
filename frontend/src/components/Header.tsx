@@ -182,18 +182,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Account / User — with theme toggle inside dropdown */}
             {isAuthenticated ? (
               <div className="relative group">
-                <button className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-300 ${
-                  location.pathname.startsWith('/account') || location.pathname.startsWith('/admin')
-                    ? 'bg-white border-white'
-                    : 'bg-white/20 border-white/30 hover:bg-white/30'
-                }`}>
-                  <span className={`text-[11px] font-bold uppercase ${
-                    location.pathname.startsWith('/account') || location.pathname.startsWith('/admin')
-                      ? 'text-priority-blue'
-                      : 'text-white'
-                  }`}>
-                    {user?.name?.charAt(0)}
-                  </span>
+                <button className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10">
+                  <User size={20} className="text-current" />
                 </button>
                 <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <div className="bg-white dark:bg-[#111] shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 p-2">
