@@ -376,3 +376,37 @@ INSERT INTO site_settings (key, value) VALUES
 ON CONFLICT (key) DO NOTHING;
 
 CREATE TRIGGER trg_site_settings_updated BEFORE UPDATE ON site_settings FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- ─── Coupons ──────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS coupons (
+  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code            VARCHAR(50) UNIQUE NOT NULL,
+  discount_type   VARCHAR(10) NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+  discount_value  DECIMAL(10,2) NOT NULL,
+  max_uses        INT,
+  used_count      INT DEFAULT 0,
+  min_cart_value  DECIMAL(10,2),
+  start_date      TIMESTAMPTZ,
+  end_date        TIMESTAMPTZ,
+  is_active       BOOLEAN DEFAULT true,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS coupon_uses (
+  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  coupon_id   UUID NOT NULL REFERENCES coupons(id) ON DELETE CASCADE,
+  user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  order_id    UUID REFERENCES orders(id) ON DELETE SET NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_coupon_uses_user   ON coupon_uses(user_id);
+CREATE INDEX IF NOT EXISTS idx_coupon_uses_coupon ON coupon_uses(coupon_id);
+
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_id       UUID REFERENCES coupons(id) ON DELETE SET NULL;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_discount DECIMAL(10,2) DEFAULT 0;
+
+ALTER TABLE cart_items ADD COLUMN IF NOT EXISTS abandoned_email_sent_at TIMESTAMPTZ;
+
+CREATE TRIGGER trg_coupons_updated BEFORE UPDATE ON coupons FOR EACH ROW EXECUTE FUNCTION set_updated_at();

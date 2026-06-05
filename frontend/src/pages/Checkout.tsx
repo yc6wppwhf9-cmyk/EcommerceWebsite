@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ChevronRight, ShieldCheck, Truck, CreditCard, ArrowRight, Loader2 } from 'lucide-react';
+import { ChevronRight, ShieldCheck, Truck, CreditCard, ArrowRight, Loader2, Tag, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../constants/products';
@@ -40,6 +40,10 @@ export const Checkout = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [touched, setTouched] = useState<Record<string,boolean>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('online');
+  const [couponCode, setCouponCode] = useState('');
+  const [couponApplied, setCouponApplied] = useState<{ coupon_id: string; code: string; discount_amount: number } | null>(null);
+  const [couponError, setCouponError] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -55,7 +59,28 @@ export const Checkout = () => {
   const SHIPPING_THRESHOLD = Number(import.meta.env.VITE_SHIPPING_THRESHOLD ?? 1499);
   const SHIPPING_FEE = Number(import.meta.env.VITE_SHIPPING_FEE ?? 99);
   const shipping = total >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-  const grandTotal = total + shipping;
+  const couponDiscount = couponApplied?.discount_amount ?? 0;
+  const grandTotal = total + shipping - couponDiscount;
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError('');
+    try {
+      const result = await api.validateCoupon(couponCode.trim(), total);
+      setCouponApplied({ coupon_id: result.coupon_id, code: result.code, discount_amount: result.discount_amount });
+      setCouponCode('');
+    } catch (err: any) {
+      setCouponError(err.message || 'Invalid coupon');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponApplied(null);
+    setCouponError('');
+  };
 
   const buildOrderPayload = () => ({
     items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
@@ -66,6 +91,8 @@ export const Checkout = () => {
     shipping_city: form.city,
     shipping_state: form.state,
     shipping_pincode: form.pincode,
+    coupon_id: couponApplied?.coupon_id || undefined,
+    coupon_discount: couponDiscount || undefined,
   });
 
   const handlePlaceOrder = async () => {
@@ -356,6 +383,41 @@ export const Checkout = () => {
                 </div>
               </div>
 
+              {/* Coupon Input */}
+              <div className="pt-4 border-t border-gray-100">
+                {couponApplied ? (
+                  <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Tag size={14} className="text-green-600" />
+                      <span className="text-[11px] font-black uppercase tracking-widest text-green-700">{couponApplied.code}</span>
+                      <span className="text-[11px] font-bold text-green-600">-{formatPrice(couponApplied.discount_amount)}</span>
+                    </div>
+                    <button onClick={handleRemoveCoupon} className="text-green-500 hover:text-red-500 transition-colors">
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
+                      onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                      placeholder="COUPON CODE"
+                      className="flex-1 px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-[11px] font-black uppercase tracking-widest placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-black/10"
+                    />
+                    <button
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="px-4 py-3 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl disabled:opacity-40 hover:bg-gray-800 transition-colors"
+                    >
+                      {couponLoading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
+                    </button>
+                  </div>
+                )}
+                {couponError && <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{couponError}</p>}
+              </div>
+
               <div className="space-y-4 md:space-y-5 pt-6 md:pt-10 border-t border-gray-100">
                 <div className="flex justify-between text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-gray-400">
                   <span>Subtotal</span>
@@ -365,6 +427,12 @@ export const Checkout = () => {
                   <span>Shipping</span>
                   <span className={shipping === 0 ? 'text-green-600' : ''}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span>
                 </div>
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-green-600">
+                    <span>Coupon Discount</span>
+                    <span>-{formatPrice(couponDiscount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-end pt-6 md:pt-8 mt-4 border-t border-gray-100">
                   <div className="flex flex-col">
                     <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] mb-1" style={{ color: accent }}>Total Payable</span>

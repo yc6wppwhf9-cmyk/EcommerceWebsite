@@ -138,6 +138,7 @@ export const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [viewerCount, setViewerCount] = useState(0);
   const isWishlisted = product ? isInWishlist(product.id) : false;
 
   useEffect(() => {
@@ -182,6 +183,21 @@ export const ProductDetail = () => {
       setRelatedProducts(res.products.filter((p: any) => p.id !== product.id).slice(0, 4));
     }).catch(() => {});
   }, [product?.category, product?.id, product?.is_premium]);
+
+  useEffect(() => {
+    if (!product?.id) return;
+    const sessionId = sessionStorage.getItem('pbsid') || (() => {
+      const id = Math.random().toString(36).slice(2);
+      sessionStorage.setItem('pbsid', id);
+      return id;
+    })();
+    api.trackProductView(product.id, sessionId);
+    api.getProductViewCount(product.id).then(r => setViewerCount(r.count)).catch(() => {});
+    const interval = setInterval(() => {
+      api.getProductViewCount(product.id).then(r => setViewerCount(r.count)).catch(() => {});
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [product?.id]);
 
   if (loading) {
     return (
@@ -383,6 +399,11 @@ export const ProductDetail = () => {
             )}
             {!inStock && (
               <p className="text-[11px] font-semibold uppercase tracking-widest text-red-500">Out of Stock</p>
+            )}
+            {viewerCount > 1 && (
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-red-500">
+                🔥 {viewerCount} people are viewing this right now
+              </p>
             )}
 
             {/* Quantity */}

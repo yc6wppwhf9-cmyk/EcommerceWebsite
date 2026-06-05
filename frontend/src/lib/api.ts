@@ -302,4 +302,21 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  // Coupons
+  validateCoupon: (code: string, cart_total: number) =>
+    request<{ valid: boolean; coupon_id: string; code: string; discount_type: string; discount_value: number; discount_amount: number }>(
+      '/api/coupons/validate',
+      { method: 'POST', body: JSON.stringify({ code, cart_total }) }
+    ),
+
+  // Analytics
+  trackProductView: (product_id: string, session_id: string) =>
+    fetch(`${BASE}/api/analytics/view/${product_id}`, {
+      method: 'POST',
+      headers: { 'x-session-id': session_id },
+    }).catch(() => {}),
+
+  getProductViewCount: (product_id: string) =>
+    request<{ count: number }>(`/api/analytics/view/${product_id}`),
 };

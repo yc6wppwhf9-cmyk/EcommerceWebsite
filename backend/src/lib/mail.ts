@@ -102,6 +102,31 @@ export const getReturnApprovedTemplate = (name: string, orderId: string) => `
   </div>
 `;
 
+export const getAbandonedCartTemplate = (name: string, items: { name: string; price: number; image?: string; quantity: number }[], cartUrl: string) => `
+  <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #eee;">
+    <h2 style="font-weight: 700; font-size: 24px; color: ${PRIMARY_COLOR}; margin-bottom: 8px;">You left something behind!</h2>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Hi ${escapeHtml(name)},</p>
+    <p style="font-size: 16px; line-height: 1.6; color: #333;">Your cart is waiting. Complete your order before your items sell out.</p>
+    <div style="margin: 24px 0; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden;">
+      ${items.map(item => `
+        <div style="display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #f0f0f0; gap: 16px;">
+          ${item.image ? `<img src="${item.image}" alt="${escapeHtml(item.name)}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 6px; border: 1px solid #f0f0f0;" />` : ''}
+          <div style="flex: 1;">
+            <p style="margin: 0; font-weight: 600; font-size: 14px; color: #111;">${escapeHtml(item.name)}</p>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #666;">Qty: ${item.quantity} &nbsp;•&nbsp; ₹${(item.price * item.quantity).toLocaleString('en-IN')}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin: 32px 0;">
+      <a href="${cartUrl}" style="background: ${PRIMARY_COLOR}; color: white; padding: 14px 28px; text-decoration: none; font-weight: 600; border-radius: 4px; display: inline-block;">Complete My Order</a>
+    </div>
+    <p style="font-size: 13px; color: #999;">This offer is time-sensitive — stock is limited!</p>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 32px 0;">
+    <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Priority Bags. All rights reserved.</p>
+  </div>
+`;
+
 export const getJobApplicationTemplate = (data: {
   applicantName: string;
   applicantEmail: string;
