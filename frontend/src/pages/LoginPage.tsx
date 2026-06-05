@@ -14,20 +14,24 @@ export const LoginPage = () => {
   const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && !registered) {
       navigate(user.role === 'admin' ? '/admin' : '/account');
     }
-  }, [user, navigate]);
+  }, [user, navigate, registered]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     try {
-      await (mode === 'login'
-        ? login(email, password)
-        : register(name, email, password, phone || undefined));
+      if (mode === 'login') {
+        await login(email, password);
+      } else {
+        await register(name, email, password, phone || undefined);
+        setRegistered(true);
+      }
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
     }
@@ -44,6 +48,20 @@ export const LoginPage = () => {
           </Link>
         </div>
 
+        {registered ? (
+          <div className="text-center py-8">
+            <div className="text-5xl mb-6">📬</div>
+            <h2 className="text-xl font-bold text-gray-900 mb-3">Check your inbox</h2>
+            <p className="text-gray-500 text-sm leading-relaxed mb-6">
+              We've sent a verification link to <strong>{email}</strong>.<br />
+              Click the link to verify your account.
+            </p>
+            <Link to="/" className="text-[12px] font-black uppercase tracking-widest text-gray-400 underline underline-offset-4 hover:text-black transition-colors">
+              Continue Shopping
+            </Link>
+          </div>
+        ) : (
+        <>
         <header className="mb-12 text-center">
           <h1 className="text-3xl font-light text-gray-900 tracking-tight">
             {mode === 'login' ? 'Login' : 'Create account'}
@@ -149,6 +167,8 @@ export const LoginPage = () => {
             </button>
           </div>
         </form>
+        </>
+        )}
       </div>
     </main>
   );
