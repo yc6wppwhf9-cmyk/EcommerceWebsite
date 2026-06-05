@@ -92,7 +92,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       items: [
         { label: 'Luggage', slug: 'luggage' },
         { label: 'Duffle', slug: 'duffle' },
-        { label: 'Trekking', slug: 'trekking' },
       ]
     },
     {

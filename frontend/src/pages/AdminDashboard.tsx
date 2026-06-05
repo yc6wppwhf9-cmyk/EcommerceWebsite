@@ -36,7 +36,6 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   travel: [
     { value: 'luggage', label: 'Luggage' },
     { value: 'duffle', label: 'Duffle Bags' },
-    { value: 'trekking', label: 'Trekking' },
   ],
   accessories: [
     { value: 'pouch', label: 'Pouches' },

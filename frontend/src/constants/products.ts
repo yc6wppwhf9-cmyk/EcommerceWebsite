@@ -81,16 +81,6 @@ export const CATEGORIES: CategoryInfo[] = [
     parentCategory: 'travel',
   },
   {
-    id: 'trekking',
-    title: 'ADVENTURE',
-    subtitle: 'TREKKING',
-    slug: 'trekking',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ujuQPAAo1qnLVdfWGCHjfcF2mTWv5IC-o-PStyWouff_BWsOBXS-HJLTa1S2M63l3LLw0-ARnnoivB9fU1vExT0fH87tg66KKoVtcq7P_4FRLjnB7fSUT9CC1JQHuH9aWcNLvUAy1DhppzaAN0WUf8whsecUq0f6IMy7FhjIgWpTXXRvdb9Jyh0FZz7sC2zJ3qbY3K760qyFDMNqIlArv8dwPbMfRCQ4_yGLuoruQcTTAQKR1fO2Lqy3cQ',
-    bgColor: '#ff7675',
-    description: 'Durable gear for your wilderness adventures.',
-    parentCategory: 'travel',
-  },
-  {
     id: 'accessories',
     title: 'STYLISH',
     subtitle: 'ACCESSORIES',
