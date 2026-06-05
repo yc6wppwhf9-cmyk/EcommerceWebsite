@@ -304,6 +304,12 @@ export const api = {
     }),
 
   // Coupons
+  listCoupons: () => request<any[]>('/api/coupons'),
+  createCoupon: (data: { code: string; discount_type: string; discount_value: number; max_uses?: number; min_cart_value?: number; start_date?: string; end_date?: string }) =>
+    request<any>('/api/coupons', { method: 'POST', body: JSON.stringify(data) }),
+  toggleCoupon: (id: string, is_active: boolean) =>
+    request<any>(`/api/coupons/${id}/toggle`, { method: 'PATCH', body: JSON.stringify({ is_active }) }),
+
   validateCoupon: (code: string, cart_total: number) =>
     request<{ valid: boolean; coupon_id: string; code: string; discount_type: string; discount_value: number; discount_amount: number }>(
       '/api/coupons/validate',
