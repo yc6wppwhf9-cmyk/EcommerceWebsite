@@ -225,16 +225,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               )}
             </button>
 
-            {/* Logout button — only shown when logged in */}
-            {isAuthenticated && (
-              <button
-                onClick={logout}
-                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-red-500/10 text-red-400 hover:text-red-500 active:scale-95"
-                title="Logout"
-              >
-                <LogOut size={20} />
-              </button>
-            )}
           </div>
         </div>
 
