@@ -157,6 +157,33 @@ export const CATEGORIES: CategoryInfo[] = [
     bgColor: '#302a5e',
     description: 'Exclusive, high-end travel gear and accessories for the discerning traveller.',
   },
+  {
+    id: 'premium-backpacks',
+    title: 'Premium Backpacks',
+    subtitle: 'Premium Backpacks',
+    slug: 'premium-backpacks',
+    image: '',
+    bgColor: '#302a5e',
+    parentCategory: 'premium',
+  },
+  {
+    id: 'premium-luggage',
+    title: 'Premium Luggage',
+    subtitle: 'Premium Luggage',
+    slug: 'premium-luggage',
+    image: '',
+    bgColor: '#302a5e',
+    parentCategory: 'premium',
+  },
+  {
+    id: 'premium-accessories',
+    title: 'Premium Accessories',
+    subtitle: 'Premium Accessories',
+    slug: 'premium-accessories',
+    image: '',
+    bgColor: '#302a5e',
+    parentCategory: 'premium',
+  },
 ];
 
 export const PRODUCTS: Product[] = [];

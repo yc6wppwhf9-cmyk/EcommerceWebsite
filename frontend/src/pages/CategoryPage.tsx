@@ -159,7 +159,7 @@ export const CategoryPage = () => {
       const matchesPrice = priceRange >= NO_PRICE_FILTER || p.price <= priceRange;
       const matchesSub =
         selectedSubcategories.length === 0 ||
-        selectedSubcategories.includes(p.subcategory ?? '');
+        selectedSubcategories.includes((p as any).sub_category ?? p.subcategory ?? '');
       const matchesSize =
         selectedSizes.length === 0 ||
         selectedSizes.some(s => s.toLowerCase() === (p.size ?? '').toLowerCase());
