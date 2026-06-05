@@ -215,7 +215,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Cart */}
             <button
               onClick={() => toggleCart()}
-              className={`w-10 h-10 flex items-center justify-center rounded-full relative transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 opacity-80 hover:opacity-100 ${(itemCount > 0 || location.pathname === '/checkout') ? '' : ''}`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full relative transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 opacity-80 hover:opacity-100`}
             >
               <ShoppingCart size={20} />
               {itemCount > 0 && (
@@ -224,6 +224,17 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 </span>
               )}
             </button>
+
+            {/* Logout button — only shown when logged in */}
+            {isAuthenticated && (
+              <button
+                onClick={logout}
+                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-red-500/10 text-red-400 hover:text-red-500 active:scale-95"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </button>
+            )}
           </div>
         </div>
 
