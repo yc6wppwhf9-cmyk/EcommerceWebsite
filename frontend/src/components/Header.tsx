@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, User, ShoppingCart, ChevronDown, Menu, X, LogOut, LayoutDashboard, Heart } from 'lucide-react';
+import { Search, User, ShoppingCart, ChevronDown, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -179,37 +179,21 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               <Heart size={20} fill={location.pathname === '/wishlist' ? 'currentColor' : 'none'} />
             </Link>
 
-            {/* Account / User — with theme toggle inside dropdown */}
+            {/* Account / User */}
             {isAuthenticated ? (
-              <div className="relative group">
-                <button className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10">
-                  <User size={20} className="text-current" />
-                </button>
-                <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="bg-white dark:bg-[#111] shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 p-2">
-                    <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="flex items-center gap-3 px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
-                      <LayoutDashboard size={16} /> {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
-                    </Link>
-                    <div className="my-1 border-t border-gray-100 dark:border-white/5" />
-                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-[16px] font-semibold tracking-widest uppercase text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all">
-                      <LogOut size={16} /> Logout
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <Link
+                to={user?.role === 'admin' ? '/admin' : '/account'}
+                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
+              >
+                <User size={20} className="text-current" />
+              </Link>
             ) : (
-              <div className="relative group">
-                <Link to="/login" className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 ${location.pathname === '/login' ? 'bg-white/20' : ''}`}>
-                  <User size={20} />
-                </Link>
-                <div className="absolute top-full right-0 w-56 pt-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="bg-white dark:bg-[#111] shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 p-2">
-                    <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-[16px] font-semibold tracking-widest uppercase text-priority-blue dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-all">
-                      <User size={16} /> Login
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <Link
+                to="/login"
+                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 ${location.pathname === '/login' ? 'bg-white/20' : ''}`}
+              >
+                <User size={20} />
+              </Link>
             )}
 
             {/* Cart */}
