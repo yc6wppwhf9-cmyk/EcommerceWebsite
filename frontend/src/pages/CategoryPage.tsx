@@ -423,8 +423,8 @@ export const CategoryPage = () => {
           url={`https://prioritybags.in/${slug}`}
         />
 
-        {/* Title + Breadcrumb */}
-        <div className="container mx-auto px-4 mb-8 md:mb-16">
+        {/* Title */}
+        <div className="w-full px-6 md:px-12 mb-8 md:mb-12">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -434,7 +434,7 @@ export const CategoryPage = () => {
           </motion.h1>
         </div>
 
-        <div className="container mx-auto px-4 md:px-12 pb-24">
+        <div className="w-full px-4 md:px-8 pb-24">
           {/* Top bar: mobile filter button + sort */}
           <div className="flex items-center justify-between mb-8 md:mb-12 gap-3">
             <div className="lg:hidden flex items-center gap-2">
@@ -566,7 +566,7 @@ export const CategoryPage = () => {
 
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             {/* ── Desktop Sidebar ── */}
-            <aside className="hidden lg:block lg:w-64 shrink-0">
+            <aside className="hidden lg:block lg:w-56 shrink-0">
               <div className="sticky top-32">
                 <div className="flex justify-between items-center mb-6 border-b border-gray-900 pb-2">
                   <h2 className="text-[12px] font-black uppercase tracking-[0.2em]">Filters</h2>
@@ -589,7 +589,7 @@ export const CategoryPage = () => {
                 {isLoading ? (
                   <div
                     key="skeleton"
-                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} lg:grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-10 md:gap-y-16`}
+                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10 md:gap-y-14`}
                   >
                     {[...Array(6)].map((_, i) => (
                       <div key={i} className="aspect-[4/5] bg-gray-50 animate-pulse rounded" />
@@ -599,7 +599,7 @@ export const CategoryPage = () => {
                   <motion.div
                     key="grid"
                     layout
-                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-8 lg:gap-x-10 gap-y-10 md:gap-y-20 lg:gap-y-28`}
+                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} sm:grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-10 md:gap-y-16 lg:gap-y-20`}
                   >
                     {filteredProducts.map((product, idx) => (
                       <motion.div
