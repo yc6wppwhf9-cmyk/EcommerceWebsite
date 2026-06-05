@@ -310,22 +310,24 @@ export const CategoryPage = () => {
         </div>
       </FilterSection>
 
-      <FilterSection id="gender" title="Style / Gender">
-        <div className="space-y-3">
-          {(['Men', 'Women', ...(slug === 'junior' ? ['Kids'] : [])]).map(g => (
-            <CheckRow
-              key={g}
-              label={g}
-              checked={selectedGenders.includes(g)}
-              onChange={() =>
-                setSelectedGenders(prev =>
-                  prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]
-                )
-              }
-            />
-          ))}
-        </div>
-      </FilterSection>
+      {slug !== 'junior' && (
+        <FilterSection id="gender" title="Style / Gender">
+          <div className="space-y-3">
+            {['Men', 'Women'].map(g => (
+              <CheckRow
+                key={g}
+                label={g}
+                checked={selectedGenders.includes(g)}
+                onChange={() =>
+                  setSelectedGenders(prev =>
+                    prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]
+                  )
+                }
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       <FilterSection id="sizes" title="Sizes">
         <div className="space-y-3">
