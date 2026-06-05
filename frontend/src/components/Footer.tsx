@@ -58,7 +58,7 @@ export const Footer = () => {
         {/* Brand — always visible */}
         <div className="mb-8 md:mb-0 md:hidden">
           <Link to="/" className="mb-4 block">
-            <img src="/Priority Logo-02.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
+            <img src="/logo.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
           </Link>
           <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-3">The Digital Atelier</p>
           <p className="text-xs text-gray-400 leading-relaxed font-medium">
@@ -70,7 +70,7 @@ export const Footer = () => {
           {/* Brand — desktop */}
           <div className="hidden md:block col-span-1 break-inside-avoid">
             <Link to="/" className="mb-8 block">
-              <img src="/Priority Logo-02.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
+              <img src="/logo.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
             </Link>
             <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-4">The Digital Atelier</p>
             <p className="text-xs text-gray-400 leading-relaxed font-medium">
