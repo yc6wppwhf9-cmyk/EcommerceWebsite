@@ -164,10 +164,10 @@ export const ProductDetail = () => {
           ? raw.images
           : raw.image ? [raw.image] : [],
         variants: rawColors.length > 0
-          ? rawColors.map((c: any) => ({
+          ? rawColors.filter((c: any) => (c.name ?? c.color ?? '').trim()).map((c: any) => ({
               color: c.name ?? c.color ?? '',
               colorCode: c.code ?? c.colorCode ?? '',
-              images: Array.isArray(c.images) ? c.images : [],
+              images: Array.isArray(c.images) ? c.images.filter(Boolean) : [],
             }))
           : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []),
       });
@@ -238,7 +238,8 @@ export const ProductDetail = () => {
   }
 
   const activeVariant = product.variants?.[selectedVariantIndex];
-  const rawDisplayImages = activeVariant?.images?.length > 0 ? activeVariant.images : product.images;
+  const variantImages = (activeVariant?.images || []).filter(Boolean);
+  const rawDisplayImages = variantImages.length > 0 ? variantImages : product.images;
   const displayImages: string[] = rawDisplayImages?.length > 0 ? rawDisplayImages : product.image ? [product.image] : [];
   const inStock = product.stock > 0;
   const discount = product.originalPrice > product.price

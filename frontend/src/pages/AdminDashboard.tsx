@@ -390,7 +390,7 @@ export const AdminDashboard = () => {
         isPremium: !!formData.isPremium,
         features: Array.isArray(formData.features) ? formData.features : [],
         images: (formData.images || []).filter(Boolean),
-        colors: variants.length > 0 ? variants.map(v => ({ name: v.color, code: v.colorCode, images: v.images || [] })) : []
+        colors: variants.filter(v => v.color.trim()).map(v => ({ name: v.color, code: v.colorCode, images: (v.images || []).filter(Boolean) }))
       };
 
       // Only generate a new slug if it doesn't exist (for new products)
