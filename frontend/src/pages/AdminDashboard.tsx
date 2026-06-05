@@ -631,32 +631,32 @@ export const AdminDashboard = () => {
                           </div>
                         </div>
 
-                        {/* --- JUNIOR STYLE (Dreamy / Power — applies to any bag) --- */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Junior Style Tag <span className="text-gray-400 font-normal normal-case">(optional — any bag can be Dreamy or Power)</span></label>
-                            <select value={formData.juniorStyle || ''} onChange={(e) => setFormData({ ...formData, juniorStyle: e.target.value })} className={inputCls}>
-                              <option value="">-- None --</option>
-                              <option value="dreamy">Dreamy</option>
-                              <option value="power">Power</option>
-                            </select>
+                        {/* --- JUNIOR STYLE (only shown for Junior category) --- */}
+                        {formData.category === 'junior' && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Junior Style Tag <span className="text-gray-400 font-normal normal-case">(optional — Dreamy or Power)</span></label>
+                              <select value={formData.juniorStyle || ''} onChange={(e) => setFormData({ ...formData, juniorStyle: e.target.value })} className={inputCls}>
+                                <option value="">-- None --</option>
+                                <option value="dreamy">Dreamy</option>
+                                <option value="power">Power</option>
+                              </select>
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                         {/* --- ATTRIBUTES (Size & Features) --- */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-priority-blue/5 rounded-2xl border border-priority-blue/10">
-                          {formData.category !== 'backpacks' && formData.subcategory !== 'duffle' && (
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
-                              <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} className={inputCls}>
-                                <option value="">-- None --</option>
-                                <option value="Small">Small / Cabin</option>
-                                <option value="Medium">Medium / Check-in</option>
-                                <option value="Large">Large / XL</option>
-                                <option value="One Size">One Size (Accessories)</option>
-                              </select>
-                            </div>
-                          )}
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Product Size (Filtering)</label>
+                            <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} className={inputCls}>
+                              <option value="">-- None --</option>
+                              <option value="Small">Small / Cabin</option>
+                              <option value="Medium">Medium / Check-in</option>
+                              <option value="Large">Large / XL</option>
+                              <option value="One Size">One Size (Accessories)</option>
+                            </select>
+                          </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-priority-blue uppercase ml-1">Key Features (Optional)</label>
                             <input
