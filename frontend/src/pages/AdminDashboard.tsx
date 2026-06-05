@@ -226,9 +226,7 @@ export const AdminDashboard = () => {
     if (orderRes.status === 'fulfilled') setOrders(orderRes.value.data);
     else showToast('Failed to load orders — check connection', 'error');
     if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs);
-    else showToast('Failed to load jobs', 'error');
     if (appRes.status === 'fulfilled') setApplications(appRes.value.applications);
-    else showToast('Failed to load applications', 'error');
     setFetchLoading(false);
   };
 
