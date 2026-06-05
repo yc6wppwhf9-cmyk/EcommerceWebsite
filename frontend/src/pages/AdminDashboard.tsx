@@ -709,13 +709,14 @@ export const AdminDashboard = () => {
                             </div>
                             <span className="flex items-center gap-1 text-[10px] font-black uppercase text-orange-600"><Award size={12} /> Mark as Best Seller</span>
                           </label>
-                          <label className="flex items-center gap-3 cursor-pointer group">
-                            <input type="checkbox" checked={formData.isPremium} onChange={(e) => setFormData({ ...formData, isPremium: e.target.checked })} className="hidden" />
-                            <div className={`w-10 h-6 rounded-full transition-all relative ${formData.isPremium ? 'bg-amber-500' : 'bg-gray-200'}`}>
-                              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isPremium ? 'left-5' : 'left-1'}`} />
-                            </div>
-                            <span className="flex items-center gap-1 text-[10px] font-black uppercase text-amber-600"><Crown size={12} /> Premium Collection</span>
-                          </label>
+                          {formData.category === 'premium' && (
+                            <label className="flex items-center gap-3 cursor-not-allowed opacity-70">
+                              <div className="w-10 h-6 rounded-full relative bg-amber-500">
+                                <div className="absolute top-1 left-5 w-4 h-4 rounded-full bg-white" />
+                              </div>
+                              <span className="flex items-center gap-1 text-[10px] font-black uppercase text-amber-600"><Crown size={12} /> Premium Collection (Auto)</span>
+                            </label>
+                          )}
                         </div>
 
                         {/* --- PHOTOS & COLOUR OPTIONS (unified) --- */}
