@@ -40,7 +40,7 @@ export const LoginPage = () => {
       <div className="w-full max-w-[440px]">
         <div className="flex justify-center mb-10">
           <Link to="/">
-            <img src="/Priority Logo-02.png" alt="Priority" className="h-10 w-auto" />
+            <img src="/logo.png" alt="Priority" className="h-10 w-auto" />
           </Link>
         </div>
 
