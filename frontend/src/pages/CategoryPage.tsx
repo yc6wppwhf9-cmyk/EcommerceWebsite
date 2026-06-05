@@ -70,7 +70,16 @@ export const CategoryPage = () => {
         page: String(pageNum),
         limit: String(PAGE_LIMIT),
       };
-      if (isGenderFilter) {
+      if (themeParam === 'premium') {
+        // Premium theme: always fetch by isPremium=true, map slug to sub_category if applicable
+        params.isPremium = 'true';
+        const premiumSubCatMap: Record<string, string> = {
+          luggage: 'premium-luggage',
+          backpacks: 'premium-backpacks',
+          accessories: 'premium-accessories',
+        };
+        if (premiumSubCatMap[slug]) params.sub_category = premiumSubCatMap[slug];
+      } else if (isGenderFilter) {
         params.gender = slug;
         params.isPremium = 'false';
       } else if (isPremiumFilter) {
@@ -79,8 +88,6 @@ export const CategoryPage = () => {
         params.category = slug;
         params.isPremium = 'false';
       }
-
-      if (themeParam === 'premium') params.isPremium = 'true';
 
       try {
         const res = await api.getProducts(params);

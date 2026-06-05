@@ -385,7 +385,7 @@ export const AdminDashboard = () => {
         junior_style: formData.juniorStyle || formData.junior_style || null,
         isNew: !!formData.isNew,
         highlighted: !!formData.highlighted,
-        isPremium: !!formData.isPremium,
+        isPremium: !!formData.isPremium || formData.category === 'premium',
         features: Array.isArray(formData.features) ? formData.features : [],
         images: (formData.images || []).filter(Boolean),
         colors: variants.filter(v => v.color.trim()).map(v => ({ name: v.color, code: v.colorCode, images: (v.images || []).filter(Boolean) }))
@@ -619,7 +619,7 @@ export const AdminDashboard = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Category (Main Section) <span className="text-red-500">*</span></label>
-                            <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: '' })} className={inputCls}>
+                            <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: '', isPremium: e.target.value === 'premium' ? true : formData.isPremium })} className={inputCls}>
                               {MAIN_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                             </select>
                           </div>
