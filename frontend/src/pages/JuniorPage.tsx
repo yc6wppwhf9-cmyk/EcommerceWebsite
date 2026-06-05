@@ -450,27 +450,28 @@ export const JuniorPage = () => {
           onTouchEnd={endDraw}
         />
 
-        {/* Eraser — top left */}
-        <button
-          onClick={clearCanvas}
-          className="absolute top-4 left-4 z-[60] flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
-          style={{ background: '#fff', color: '#e53e3e', border: '2px solid #e53e3e' }}
-        >
-          🧹 Erase
-        </button>
-
-        {/* Pencil / Draw — top right */}
-        <button
-          onClick={() => setDrawingMode(d => !d)}
-          className="absolute top-4 right-4 z-[60] flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
-          style={{ background: drawingMode ? '#8750DA' : '#fff', color: drawingMode ? '#fff' : '#8750DA', border: '2px solid #8750DA' }}
-        >
-          ✏️ {drawingMode ? 'Done' : 'Draw'}
-        </button>
+        {/* Draw controls — sticky so they stay within section and never overlap navbar */}
+        <div className="sticky top-16 z-[60] flex items-center justify-between px-4 pointer-events-none" style={{ height: 0 }}>
+          <button
+            onClick={clearCanvas}
+            className="pointer-events-auto flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+            style={{ background: '#fff', color: '#e53e3e', border: '2px solid #e53e3e', marginTop: '1rem' }}
+          >
+            🧹 Erase
+          </button>
+          <button
+            onClick={() => setDrawingMode(d => !d)}
+            className="pointer-events-auto flex items-center justify-center gap-1.5 rounded-full px-3 h-9 shadow-md text-sm font-bold font-outfit transition-all duration-200"
+            style={{ background: drawingMode ? '#8750DA' : '#fff', color: drawingMode ? '#fff' : '#8750DA', border: '2px solid #8750DA', marginTop: '1rem' }}
+          >
+            ✏️ {drawingMode ? 'Done' : 'Draw'}
+          </button>
+        </div>
 
         {/* Toolbar (visible when drawing) */}
         {drawingMode && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+          <div className="sticky top-16 z-[60] flex items-center justify-center pointer-events-none" style={{ height: 0 }}>
+          <div className="pointer-events-auto flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg" style={{ marginTop: '1rem' }}>
             {DRAW_COLORS.map(c => (
               <button key={c} onClick={() => setDrawColor(c)}
                 className="w-6 h-6 rounded-full transition-transform hover:scale-110"
@@ -479,6 +480,7 @@ export const JuniorPage = () => {
             ))}
             <div className="w-px h-5 bg-gray-200 mx-1" />
             <input type="range" min={2} max={20} value={brushSize} onChange={e => setBrushSize(+e.target.value)} className="w-16 accent-[#8750DA]" />
+          </div>
           </div>
         )}
 
