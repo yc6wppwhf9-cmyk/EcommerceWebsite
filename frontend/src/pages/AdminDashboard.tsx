@@ -983,13 +983,18 @@ export const AdminDashboard = () => {
                                       setFormData({
                                         ...p,
                                         originalPrice: p.originalPrice || (p as any).original_price || 0,
-                                        category: p.categories?.slug || p.category || '',
-                                        juniorStyle: (p as any).junior_style || ''
+                                        category: (p as any).categories?.slug || p.category || '',
+                                        subcategory: (p as any).sub_category || p.subcategory || '',
+                                        isPremium: (p as any).is_premium ?? p.isPremium ?? false,
+                                        highlighted: (p as any).is_highlighted ?? p.highlighted ?? false,
+                                        isNew: (p as any).is_new ?? p.isNew ?? false,
+                                        juniorStyle: (p as any).junior_style || '',
+                                        images: Array.isArray((p as any).images) ? (p as any).images : [],
                                       });
-                                      setVariants((p.variants || []).map((v: any) => ({
+                                      setVariants(((p as any).colors || p.variants || []).map((v: any) => ({
                                         color: v.name || v.color || '',
                                         colorCode: v.code || v.colorCode || '#000',
-                                        images: v.images || (v.image ? [v.image] : [''])
+                                        images: (v.images || []).filter(Boolean),
                                       })));
                                       setDiscountPercent(0);
                                       setIsAddingProduct(true);
