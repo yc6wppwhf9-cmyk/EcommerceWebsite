@@ -41,7 +41,7 @@ export const Footer = () => {
   const isDreamy = location.pathname === '/junior/dreamy';
   const isPower = location.pathname === '/junior/power';
 
-  const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-dark';
+  const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-blue';
   const footerStyle = isDreamy
     ? { backgroundColor: '#A368FB', color: '#FFFFFF' }
     : isPower
