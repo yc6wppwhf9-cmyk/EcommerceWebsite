@@ -74,11 +74,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = useCallback(async (name: string, email: string, password: string, phone?: string): Promise<boolean> => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const { user: raw } = await api.register(name, email, password, phone);
-      const user = mapApiUser(raw);
-      localStorage.setItem(USER_KEY, JSON.stringify(user));
-      setState({ user, isAuthenticated: true, isLoading: false });
-      setShowAuthModal(false);
+      await api.register(name, email, password, phone);
+      setState((s) => ({ ...s, isLoading: false }));
       return true;
     } catch (err: any) {
       setState((s) => ({ ...s, isLoading: false }));

@@ -77,8 +77,7 @@ export const register = async (req: Request, res: Response) => {
       Mailer.getVerificationTemplate(name, vUrl)
     );
 
-    const token = setAuthCookies(res, user.id, user.email, user.role);
-    res.status(201).json({ user, token, message: 'Registration successful.' });
+    res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
   } catch (err: any) {
     console.error('register error', err);
     res.status(500).json({ error: 'Server error' });
@@ -249,6 +248,8 @@ export const login = async (req: Request, res: Response) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).json({ error: 'Invalid credentials' });
+
+    if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email before logging in. Check your inbox for the verification link.' });
 
     const token = setAuthCookies(res, user.id, user.email, user.role);
     res.json({
