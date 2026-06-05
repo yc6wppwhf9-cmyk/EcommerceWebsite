@@ -298,7 +298,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
                     {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
                   </Link>
-                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full border border-red-200 text-red-500 py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block">Logout</button>
+                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full bg-gray-100 text-black py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block">Logout</button>
                 </>
               ) : (
                 <Link to="/login" className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>Login</Link>
