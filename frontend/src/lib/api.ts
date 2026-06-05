@@ -180,6 +180,7 @@ export const api = {
     request<{ message: string }>('/api/auth/logout', { method: 'POST' }),
 
   // User
+  getAllUsers: () => request<any[]>('/api/users'),
   getMe: () => request<any>('/api/users/me'),
   updateMe: (data: { name?: string; phone?: string }) =>
     request<any>('/api/users/me', { method: 'PUT', body: JSON.stringify(data) }),

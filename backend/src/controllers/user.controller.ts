@@ -43,6 +43,22 @@ export const updateMe = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// ─── Admin: All Users ─────────────────────────────────────────────────────────
+
+export const getAllUsers = async (_req: AuthRequest, res: Response) => {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, name, email, phone, role, is_verified, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to fetch users', message: err.message });
+  }
+};
+
 // ─── Addresses ────────────────────────────────────────────────────────────────
 
 export const getAddresses = async (req: AuthRequest, res: Response) => {
