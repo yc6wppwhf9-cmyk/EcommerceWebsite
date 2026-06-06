@@ -171,7 +171,11 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         </div>
 
         {/* Buy on Amazon / Add to Cart / Out of Stock */}
-        {amazonUrl && product.stock > 0 ? (
+        {product.stock <= 0 ? (
+          <button disabled className="w-full py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] rounded-sm mt-1 bg-gray-100 text-gray-400 cursor-not-allowed">
+            Notify Me
+          </button>
+        ) : amazonUrl ? (
           <button onClick={handleBuyOnAmazon} className={`w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-all rounded-sm mt-1 ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}>
             Buy on Amazon
           </button>

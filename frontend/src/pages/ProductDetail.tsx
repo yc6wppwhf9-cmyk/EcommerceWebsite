@@ -438,18 +438,16 @@ export const ProductDetail = () => {
             {/* Actions */}
             <div className="space-y-3 pt-2">
               {/* Buy on Amazon / Add to Cart / Notify Me */}
-              {amazonUrl && inStock ? (
-                <button
-                  onClick={handleBuyOnAmazon}
-                  className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors ${theme.btn}`}
-                >
+              {!inStock ? (
+                <button disabled className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed">
+                  NOTIFY ME
+                </button>
+              ) : amazonUrl ? (
+                <button onClick={handleBuyOnAmazon} className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors ${theme.btn}`}>
                   BUY ON AMAZON
                 </button>
               ) : (
-                <button
-                  disabled
-                  className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed"
-                >
+                <button disabled className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed">
                   OUT OF STOCK
                 </button>
               )}
@@ -605,7 +603,11 @@ export const ProductDetail = () => {
 
       {/* Mobile sticky bottom bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 shadow-2xl">
-        {amazonUrl && inStock ? (
+        {!inStock ? (
+          <button disabled className="w-full h-12 text-[11px] uppercase rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed font-black tracking-wider">
+            NOTIFY ME
+          </button>
+        ) : amazonUrl ? (
           <button onClick={handleBuyOnAmazon} className={`w-full h-12 text-[11px] uppercase rounded-xl ${theme.btn} transition-all font-black tracking-wider`}>
             BUY ON AMAZON
           </button>
