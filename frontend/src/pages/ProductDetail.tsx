@@ -437,8 +437,15 @@ export const ProductDetail = () => {
 
             {/* Actions */}
             <div className="space-y-3 pt-2">
-              {/* Buy on Amazon */}
-              {amazonUrl ? (
+              {/* Buy on Amazon / Add to Cart / Notify Me */}
+              {!inStock ? (
+                <button
+                  disabled
+                  className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed"
+                >
+                  NOTIFY ME
+                </button>
+              ) : amazonUrl ? (
                 <button
                   onClick={handleBuyOnAmazon}
                   className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors ${theme.btn}`}
@@ -447,10 +454,10 @@ export const ProductDetail = () => {
                 </button>
               ) : (
                 <button
-                  disabled
-                  className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed"
+                  onClick={() => { addItem({ ...product, image: displayImages[selectedImage] || product.image }, quantity); }}
+                  className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors ${theme.btn}`}
                 >
-                  COMING SOON
+                  + ADD TO CART
                 </button>
               )}
             </div>
@@ -605,19 +612,17 @@ export const ProductDetail = () => {
 
       {/* Mobile sticky bottom bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 shadow-2xl">
-        {amazonUrl ? (
-          <button
-            onClick={handleBuyOnAmazon}
-            className={`w-full h-12 text-[11px] uppercase rounded-xl ${theme.btn} transition-all font-black tracking-wider`}
-          >
+        {!inStock ? (
+          <button disabled className="w-full h-12 text-[11px] uppercase rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed font-black tracking-wider">
+            NOTIFY ME
+          </button>
+        ) : amazonUrl ? (
+          <button onClick={handleBuyOnAmazon} className={`w-full h-12 text-[11px] uppercase rounded-xl ${theme.btn} transition-all font-black tracking-wider`}>
             BUY ON AMAZON
           </button>
         ) : (
-          <button
-            disabled
-            className="w-full h-12 text-[11px] uppercase rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed font-black tracking-wider"
-          >
-            COMING SOON
+          <button onClick={() => { addItem({ ...product, image: displayImages[selectedImage] || product.image }, quantity); }} className={`w-full h-12 text-[11px] uppercase rounded-xl ${theme.btn} transition-all font-black tracking-wider`}>
+            + ADD TO CART
           </button>
         )}
       </div>

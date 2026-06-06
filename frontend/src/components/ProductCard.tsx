@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { getProductById } from '../constants/products';
 import { Star, Heart } from 'lucide-react';
@@ -13,6 +14,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = (props) => {
+  const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -168,20 +170,18 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           )}
         </div>
 
-        {/* Buy on Amazon */}
-        {amazonUrl ? (
-          <button
-            onClick={handleBuyOnAmazon}
-            className={`w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-all rounded-sm mt-1 ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
-          >
+        {/* Buy on Amazon / Add to Cart / Out of Stock */}
+        {product.stock <= 0 ? (
+          <button disabled className="w-full py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] rounded-sm mt-1 bg-gray-100 text-gray-400 cursor-not-allowed">
+            Out of Stock
+          </button>
+        ) : amazonUrl ? (
+          <button onClick={handleBuyOnAmazon} className={`w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-all rounded-sm mt-1 ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}>
             Buy on Amazon
           </button>
         ) : (
-          <button
-            disabled
-            className="w-full py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] rounded-sm mt-1 bg-gray-100 text-gray-400 cursor-not-allowed"
-          >
-            Coming Soon
+          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem(product); }} className={`w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-all rounded-sm mt-1 ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}>
+            + Add to Cart
           </button>
         )}
       </div>
