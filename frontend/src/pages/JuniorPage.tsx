@@ -181,22 +181,6 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
           </div>
         )}
 
-        {/* Price */}
-        <div className="mt-2 flex min-h-[24px] items-baseline gap-1.5 md:gap-2 flex-wrap">
-          <span className="text-[14px] md:text-[16px] font-black text-[#F69245]">
-            ₹{product.price.toLocaleString('en-IN')}
-          </span>
-          {discount > 0 && (
-            <>
-              <span className="text-[11px] md:text-[13px] text-gray-400 line-through">
-                ₹{originalPrice.toLocaleString('en-IN')}
-              </span>
-              <span className="text-[10px] md:text-[11px] font-black text-[#030014]">
-                {discount}% off
-              </span>
-            </>
-          )}
-        </div>
 
         {/* Buy on Amazon */}
         {amazonUrl ? (
@@ -251,16 +235,6 @@ const BestSellerCard = ({ product }: { product: Product }) => {
         <h3 className="font-outfit font-bold text-[13px] md:text-[14px] text-black uppercase tracking-wide leading-snug line-clamp-1 group-hover:text-[#8750DA] transition-colors">
           {product.name}
         </h3>
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[15px] font-outfit font-bold text-[#8750DA] whitespace-nowrap">
-            ₹{product.price.toLocaleString('en-IN')}
-          </span>
-          {discount > 0 && (
-            <span className="text-[12px] text-[#A0A0A0] line-through whitespace-nowrap">
-              MRP ₹{originalPrice.toLocaleString('en-IN')}
-            </span>
-          )}
-        </div>
       </div>
     </Link>
   );

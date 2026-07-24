@@ -107,16 +107,6 @@ const BestSellerCard = ({ product }: { product: Product }) => {
         <h3 className="font-outfit font-bold text-[13px] md:text-[15px] text-black uppercase tracking-wide leading-snug line-clamp-1">
           {product.name}
         </h3>
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="font-outfit font-bold text-[15px] md:text-[17px] text-[#26B3FF] whitespace-nowrap">
-            ₹{product.price.toLocaleString('en-IN')}
-          </span>
-          {discount > 0 && (
-            <span className="font-outfit text-[12px] text-[#A0A0A0] line-through whitespace-nowrap">
-              MRP ₹{originalPrice.toLocaleString('en-IN')}
-            </span>
-          )}
-        </div>
       </div>
     </Link>
   );

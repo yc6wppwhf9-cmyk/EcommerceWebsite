@@ -71,13 +71,6 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           width={400}
         />
 
-        {/* Discount badge — top left */}
-        {discount > 0 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded-sm z-10">
-            -{discount}%
-          </span>
-        )}
-
         {/* Best Seller badge — top right (takes priority over NEW) */}
         {product.highlighted ? (
           <span className="absolute top-2 right-2 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm z-10">
@@ -148,23 +141,6 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
             <span className="text-[11px] text-gray-400 font-medium">{reviews} reviews</span>
           ) : (
             <span className="text-[10px] text-gray-300 font-medium">New Arrival</span>
-          )}
-        </div>
-
-        {/* Price row */}
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[16px] font-semibold text-priority-blue">
-            ₹{product.price.toLocaleString('en-IN')}
-          </span>
-          {discount > 0 && (
-            <>
-              <span className="text-[14px] text-gray-400 line-through font-medium">
-                ₹{originalPrice.toLocaleString('en-IN')}
-              </span>
-              <span className="text-[13px] font-semibold text-gray-700">
-                {discount}% off
-              </span>
-            </>
           )}
         </div>
 

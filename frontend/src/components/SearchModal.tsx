@@ -95,7 +95,6 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                             <p className="text-[13px] font-medium text-white/90 tracking-[0.05em] line-clamp-1">{product.name}</p>
                             <p className="text-[11px] text-white/30 uppercase tracking-[0.15em] mt-0.5">{product.category.replace(/-/g, ' ')}</p>
                           </div>
-                          <span className="text-[13px] font-medium text-white/60 shrink-0">{formatPrice(product.price)}</span>
                         </Link>
                       ))}
                     </div>
@@ -147,10 +146,6 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-gray-900 line-clamp-1">{product.name}</p>
                             <p className="text-xs text-gray-400 capitalize mt-0.5">{product.category.replace(/-/g, ' ')}</p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-sm font-bold text-priority-blue">{formatPrice(product.price)}</span>
-                              <span className="text-xs text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
-                            </div>
                           </div>
                         </Link>
                       ))}

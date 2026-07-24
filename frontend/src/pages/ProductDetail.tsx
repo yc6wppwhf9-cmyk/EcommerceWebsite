@@ -370,16 +370,6 @@ export const ProductDetail = () => {
               <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">{product.reviews} verified reviews</span>
             </div>
 
-            {/* Price */}
-            <div className="flex items-baseline gap-3 flex-wrap border-t border-gray-100 pt-5">
-              <span className="font-outfit font-semibold text-[26.26px] text-[#190101]">{formatPrice(product.price)}</span>
-              {discount > 0 && (
-                <>
-                  <span className="font-outfit text-[16px] text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
-                  <span className="font-outfit text-[14px] text-gray-500">{discount}% off</span>
-                </>
-              )}
-            </div>
 
             {/* Low stock / out of stock */}
             {inStock && product.stock <= 5 && (

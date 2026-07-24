@@ -109,15 +109,6 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
           {[...Array(5)].map((_, i) => <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />)}
           <span className="text-[11px] text-gray-400 font-medium">{(product as any).reviews ?? 10} reviews</span>
         </div>
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[16px] font-semibold text-[#755FF1]">₹ {product.price.toLocaleString('en-IN')}.00</span>
-          {discount > 0 && (
-            <>
-              <span className="text-[14px] text-gray-400 line-through">₹ {originalPrice.toLocaleString('en-IN')}.00</span>
-              <span className="text-[13px] font-semibold text-black">{discount}% off</span>
-            </>
-          )}
-        </div>
         {(product as any).amazon_url ? (
           <button
             onClick={e => { e.preventDefault(); window.open((product as any).amazon_url, '_blank', 'noopener,noreferrer'); }}
