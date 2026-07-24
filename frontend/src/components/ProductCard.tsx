@@ -119,9 +119,9 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           </div>
         )}
 
-        {/* Name */}
+        {/* Name — fixed 2-line height so the buy button aligns across cards */}
         <Link to={productPath(product.slug || product.id)}>
-          <h3 className={`text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 transition-colors ${props.theme === 'premium' ? 'hover:text-red-600' : 'hover:text-priority-blue'}`}>
+          <h3 className={`text-[16px] font-semibold text-[#000000] leading-snug line-clamp-2 min-h-[2.75rem] transition-colors ${props.theme === 'premium' ? 'hover:text-red-600' : 'hover:text-priority-blue'}`}>
             {product.name}
           </h3>
         </Link>
