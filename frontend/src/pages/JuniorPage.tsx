@@ -597,14 +597,14 @@ export const JuniorPage = () => {
             <div className="min-w-0">
               <div className="relative">
                 <button
-                  onClick={() => tabScrollRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
+                  onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' }); }}
                   className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
                   aria-label="Previous junior products"
                 >
                   <ChevronLeft size={20} />
                 </button>
                 <button
-                  onClick={() => tabScrollRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
+                  onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: el.clientWidth, behavior: 'smooth' }); }}
                   className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
                   aria-label="Next junior products"
                 >
@@ -644,7 +644,7 @@ export const JuniorPage = () => {
                     </div>
                     <div ref={tabScrollRef} className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto pb-5 no-scrollbar snap-x snap-mandatory px-5">
                       {products.map((product, idx) => (
-                        <motion.div key={product.id} className="shrink-0 w-[220px] lg:w-[240px] xl:w-[255px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                        <motion.div key={product.id} className="shrink-0 w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
