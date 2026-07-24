@@ -169,7 +169,7 @@ export const Home = () => {
     const params = { ...(tab?.apiParams || { category: activeTab }), limit: '20' };
     // Will resolve from cache instantly if prefetchHomeData already ran
     api.getProducts(params as any).then(res => {
-      setTabProducts((res.products as unknown as Product[]).slice(0, 5));
+      setTabProducts((res.products as unknown as Product[]).slice(0, 3));
     }).catch(() => { }).finally(() => setTabLoading(false));
   }, [activeTab]);
 
@@ -404,20 +404,24 @@ export const Home = () => {
             </Link>
 
             <div className="min-w-0 relative">
-              <button
-                onClick={() => tabScrollRef.current?.scrollBy({ left: -340, behavior: 'smooth' })}
-                className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
-                aria-label="Previous products"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                onClick={() => tabScrollRef.current?.scrollBy({ left: 340, behavior: 'smooth' })}
-                className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
-                aria-label="Next products"
-              >
-                <ChevronRight size={20} />
-              </button>
+              {tabProducts.length > 3 && (
+                <>
+                  <button
+                    onClick={() => tabScrollRef.current?.scrollBy({ left: -340, behavior: 'smooth' })}
+                    className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                    aria-label="Previous products"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={() => tabScrollRef.current?.scrollBy({ left: 340, behavior: 'smooth' })}
+                    className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                    aria-label="Next products"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
 
               <div ref={tabScrollRef} className="flex gap-4 md:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-1 md:px-5 scroll-smooth snap-x snap-mandatory">
                 {tabLoading ? (
@@ -431,7 +435,7 @@ export const Home = () => {
                   ))
                 ) : tabProducts.length > 0 ? (
                   tabProducts.map(p => (
-                    <div key={p.id} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0 snap-start">
+                    <div key={p.id} className="w-[68vw] sm:w-[250px] md:w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] shrink-0 snap-start">
                       <ProductCard product={p} />
                     </div>
                   ))
