@@ -490,8 +490,8 @@ export const Home = () => {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-16">
             {[
-              { Icon: Truck, label: 'Fast Delivery', desc: 'Secure shipping across India' },
-              { Icon: CreditCard, label: 'Safe Payment', desc: 'UPI and Card ready' },
+              { Icon: Truck, label: 'Amazon Fulfilled', desc: 'Fast, tracked delivery by Amazon' },
+              { Icon: CreditCard, label: 'Secure Amazon Checkout', desc: 'Pay safely on Amazon' },
               { Icon: ShieldCheck, label: 'Brand Promise', desc: 'Certified priority items' },
               { Icon: PackageCheck, label: 'Quality Unit', desc: '8-stage strength testing' }
             ].map((f, i) => (
