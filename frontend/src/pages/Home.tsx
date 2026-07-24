@@ -423,32 +423,56 @@ export const Home = () => {
                 </>
               )}
 
-              <div ref={tabScrollRef} className="flex gap-4 md:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-1 md:px-5 scroll-smooth snap-x snap-mandatory">
-                {tabLoading ? (
-                  [1, 2, 3, 4].map(n => (
-                    <div key={n} className="w-[68vw] sm:w-[250px] lg:w-[270px] shrink-0 snap-start">
-                      <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
-                      <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
-                      <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
-                      <div className="mt-4 h-10 w-full bg-gray-100 animate-pulse rounded" />
-                    </div>
-                  ))
-                ) : tabProducts.length > 0 ? (
-                  tabProducts.map(p => (
-                    <div key={p.id} className="w-[68vw] sm:w-[250px] md:w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] shrink-0 snap-start">
-                      <ProductCard product={p} />
-                    </div>
-                  ))
-                ) : (
-                  <div className="w-full min-h-[320px] rounded-lg border border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center text-center px-6">
-                    <PackageCheck size={34} className="text-[#26B3FF] mb-4" />
-                    <p className="text-sm font-black uppercase tracking-[0.2em] text-[#14052b] mb-2">Fresh stock coming soon</p>
-                    <Link to={activeTabConfig.to} className="mt-4 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#26B3FF]">
-                      View category <ArrowRight size={14} />
-                    </Link>
+              {tabLoading ? (
+                <>
+                  <div className="md:hidden grid grid-cols-2 gap-3">
+                    {[1, 2, 3, 4].map(n => (
+                      <div key={n}>
+                        <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
+                        <div className="mt-3 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
+                        <div className="mt-3 h-9 w-full bg-gray-100 animate-pulse rounded" />
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
+                  <div className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-5">
+                    {[1, 2, 3].map(n => (
+                      <div key={n} className="w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] shrink-0">
+                        <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
+                        <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
+                        <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
+                        <div className="mt-4 h-10 w-full bg-gray-100 animate-pulse rounded" />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : tabProducts.length > 0 ? (
+                <>
+                  {/* Mobile: clean 2-column grid */}
+                  <div className="md:hidden grid grid-cols-2 gap-3 pb-2">
+                    {tabProducts.slice(0, 6).map(p => (
+                      <div key={p.id} className="min-w-0">
+                        <ProductCard product={p} />
+                      </div>
+                    ))}
+                  </div>
+                  {/* Desktop: 3-up paging carousel */}
+                  <div ref={tabScrollRef} className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-5 scroll-smooth snap-x snap-mandatory">
+                    {tabProducts.map(p => (
+                      <div key={p.id} className="w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] shrink-0 snap-start">
+                        <ProductCard product={p} />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="w-full min-h-[320px] rounded-lg border border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center text-center px-6">
+                  <PackageCheck size={34} className="text-[#26B3FF] mb-4" />
+                  <p className="text-sm font-black uppercase tracking-[0.2em] text-[#14052b] mb-2">Fresh stock coming soon</p>
+                  <Link to={activeTabConfig.to} className="mt-4 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#26B3FF]">
+                    View category <ArrowRight size={14} />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
