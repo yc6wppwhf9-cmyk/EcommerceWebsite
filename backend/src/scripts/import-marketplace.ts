@@ -184,7 +184,7 @@ console.log(`Images: ${IMAGES_DIR}`);
 console.log(`Rows to process: ${rows.length}${LIMIT ? ` (limited to ${LIMIT})` : ''}\n`);
 
 // ── Categories from DB ───────────────────────────────────────────────────────
-const { data: categories, error: catErr } = await supabase.from('categories').select('id, slug, name');
+const { data: categories, error: catErr } = await supabase.from('categories').select('id, slug');
 if (catErr || !categories?.length) {
   console.error('❌ Could not load categories from Supabase:', catErr?.message);
   process.exit(1);
