@@ -332,12 +332,12 @@ export const Home = () => {
       <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
           <div className="relative">
-            <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-xl mb-7 md:mb-10">
+            <div className="flex gap-1.5 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-xl mb-7 md:mb-10">
               {BACKPACK_TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative h-11 px-5 rounded-lg text-[11px] md:text-[13px] font-black uppercase tracking-[0.14em] transition-all whitespace-nowrap ${
+                  className={`relative flex-1 h-11 px-2 md:px-5 rounded-lg text-[11px] md:text-[13px] font-black uppercase tracking-[0.1em] md:tracking-[0.14em] transition-all whitespace-nowrap text-center ${
                     activeTab === tab.id
                       ? 'text-white'
                       : 'text-gray-500 hover:text-black'
@@ -350,7 +350,10 @@ export const Home = () => {
                       transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
                     />
                   )}
-                  <span className="relative z-10">{tab.label}</span>
+                  <span className="relative z-10">
+                    <span className="md:hidden">{tab.label.replace(/\s*backpack$/i, '')}</span>
+                    <span className="hidden md:inline">{tab.label}</span>
+                  </span>
                 </button>
               ))}
             </div>
