@@ -437,9 +437,9 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-5">
+                  <div className="hidden md:flex gap-6 overflow-x-auto no-scrollbar pb-6 px-5">
                     {[1, 2, 3].map(n => (
-                      <div key={n} className="w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] shrink-0">
+                      <div key={n} className="shrink-0" style={{ width: 'calc((100% - 3rem) / 3)' }}>
                         <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
                         <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
                         <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
@@ -459,9 +459,9 @@ export const Home = () => {
                     ))}
                   </div>
                   {/* Desktop: 3-up paging carousel */}
-                  <div ref={tabScrollRef} className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-6 px-5 scroll-smooth snap-x snap-mandatory">
+                  <div ref={tabScrollRef} className="hidden md:flex gap-6 overflow-x-auto no-scrollbar pb-6 px-5 scroll-smooth snap-x snap-mandatory">
                     {tabProducts.map(p => (
-                      <div key={p.id} className="w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3rem)/3)] shrink-0 snap-start">
+                      <div key={p.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - 3rem) / 3)' }}>
                         <ProductCard product={p} />
                       </div>
                     ))}
