@@ -169,7 +169,7 @@ export const Home = () => {
     const params = { ...(tab?.apiParams || { category: activeTab }), limit: '20' };
     // Will resolve from cache instantly if prefetchHomeData already ran
     api.getProducts(params as any).then(res => {
-      setTabProducts((res.products as unknown as Product[]).slice(0, 3));
+      setTabProducts((res.products as unknown as Product[]).slice(0, 15));
     }).catch(() => { }).finally(() => setTabLoading(false));
   }, [activeTab]);
 
@@ -407,14 +407,14 @@ export const Home = () => {
               {tabProducts.length > 3 && (
                 <>
                   <button
-                    onClick={() => tabScrollRef.current?.scrollBy({ left: -340, behavior: 'smooth' })}
+                    onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' }); }}
                     className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
                     aria-label="Previous products"
                   >
                     <ChevronLeft size={20} />
                   </button>
                   <button
-                    onClick={() => tabScrollRef.current?.scrollBy({ left: 340, behavior: 'smooth' })}
+                    onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: el.clientWidth, behavior: 'smooth' }); }}
                     className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
                     aria-label="Next products"
                   >
