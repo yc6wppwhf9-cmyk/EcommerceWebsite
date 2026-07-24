@@ -36,6 +36,7 @@ const getArg = (name: string): string | undefined => {
 };
 
 const COMMIT = hasFlag('commit');
+const REUPLOAD = hasFlag('reupload'); // force re-upload images even if the product already has them
 const LIMIT = Number(getArg('limit') || '0') || 0;
 const DEFAULT_STOCK = Number(getArg('stock') || process.env.IMPORT_STOCK || '100');
 const IMAGES_DIR =
@@ -99,7 +100,6 @@ const optimize = (url: string) =>
 const CATEGORY_RULES: Array<[RegExp, string]> = [
   [/laptop/i, 'laptop-backpacks'],
   [/college/i, 'college-backpacks'],
-  [/school/i, 'school-backpacks'],
   [/trekk|rucksack|hiking/i, 'trekking-backpacks'],
   [/duffle|duffel/i, 'duffle'],
   [/trolley|luggage|suitcase|cabin|check-?in/i, 'luggage'],
@@ -191,15 +191,21 @@ if (catErr || !categories?.length) {
 }
 const slugToId = new Map(categories.map((c: any) => [String(c.slug).toLowerCase(), c.id]));
 const fallbackCatId = slugToId.get('backpacks') || categories[0].id;
-const resolveCategory = (name: string): { id: string; slug: string } => {
-  for (const [re, slug] of CATEGORY_RULES) {
-    if (re.test(name) && slugToId.has(slug)) return { id: slugToId.get(slug)!, slug };
+const resolveCategory = (name: string): { id: string; slug: string; sub_category: string } => {
+  // Kids "school bag" products belong on the Junior page: tag with the junior
+  // category + a junior sub_category filter (matches the site's convention).
+  const juniorId = slugToId.get('junior');
+  if (/school/i.test(name) && juniorId) {
+    return { id: juniorId, slug: 'junior', sub_category: 'school-backpacks' };
   }
-  return { id: fallbackCatId, slug: 'backpacks (fallback)' };
+  for (const [re, slug] of CATEGORY_RULES) {
+    if (re.test(name) && slugToId.has(slug)) return { id: slugToId.get(slug)!, slug, sub_category: '' };
+  }
+  return { id: fallbackCatId, slug: 'backpacks (fallback)', sub_category: '' };
 };
 
 // ── Existing products (idempotency) ──────────────────────────────────────────
-const { data: existing } = await supabase.from('products').select('id, sku, slug');
+const { data: existing } = await supabase.from('products').select('id, sku, slug, image, images');
 const skuToRow = new Map((existing || []).map((p: any) => [p.sku, p]));
 const usedSlugs = new Set<string>((existing || []).map((p: any) => p.slug).filter(Boolean));
 const uniqueSlug = (name: string, sku: string): string => {
@@ -217,39 +223,52 @@ const categoryTally = new Map<string, number>();
 
 for (const row of rows) {
   const type = detectType(row.name);
-  const { id: category_id, slug: catSlug } = resolveCategory(row.name);
+  const { id: category_id, slug: catSlug, sub_category: subCat } = resolveCategory(row.name);
   categoryTally.set(catSlug, (categoryTally.get(catSlug) || 0) + 1);
 
   const folder = path.join(IMAGES_DIR, row.sku);
   const imageFiles = gatherImages(folder);
-  if (!imageFiles.length) {
+  const exists = skuToRow.get(row.sku);
+  const canReuse = !!exists && Array.isArray(exists.images) && exists.images.length > 0 && !REUPLOAD;
+
+  if (!imageFiles.length && !canReuse) {
     summary.skippedNoImages.push(row.sku);
     console.log(`⏭️  ${row.sku}  ${row.name}  → NO IMAGE FOLDER, skipped`);
     continue;
   }
 
-  const exists = skuToRow.get(row.sku);
   console.log(
-    `${exists ? '♻️  update' : '➕ insert'}  ${row.sku}  [${catSlug}]  ${imageFiles.length} imgs  ${row.name}`,
+    `${exists ? '♻️  update' : '➕ insert'}  ${row.sku}  [${catSlug}${subCat ? '/' + subCat : ''}]  ` +
+      `${canReuse ? 'reuse imgs' : imageFiles.length + ' imgs'}  ${row.name}`,
   );
 
   if (!COMMIT) continue; // dry run stops here (no uploads, no writes)
 
   try {
-    // Upload images
-    const urls: string[] = [];
-    for (let n = 0; n < imageFiles.length; n++) {
-      const res = await cloudinary.uploader.upload(imageFiles[n], {
-        folder: 'priority-bags/products',
-        public_id: `${row.sku}_${n + 1}`,
-        overwrite: true,
-        resource_type: 'image',
-      });
-      urls.push(optimize(res.secure_url));
+    let urls: string[];
+    if (canReuse) {
+      urls = exists.images as string[];
+    } else {
+      // Upload images — skip any that fail (e.g. Cloudinary's 10MB source limit)
+      urls = [];
+      for (let n = 0; n < imageFiles.length; n++) {
+        try {
+          const res = await cloudinary.uploader.upload(imageFiles[n], {
+            folder: 'priority-bags/products',
+            public_id: `${row.sku}_${n + 1}`,
+            overwrite: true,
+            resource_type: 'image',
+          });
+          urls.push(optimize(res.secure_url));
+        } catch (imgErr: any) {
+          console.error(`   ⚠️  ${row.sku} image ${n + 1} skipped: ${imgErr.message}`);
+        }
+      }
+      if (!urls.length) throw new Error('all images failed to upload');
     }
 
     const slug = exists ? exists.slug : uniqueSlug(row.name, row.sku);
-    const productData = {
+    const productData: Record<string, any> = {
       sku: row.sku,
       slug,
       name: row.name,
@@ -268,18 +287,19 @@ for (const row of rows) {
       gender: 'unisex',
       size: '',
       age_range: '',
-      sub_category: '',
-      junior_style: null,
+      sub_category: subCat,
       is_active: true,
       amazon_url: row.amazon_url,
     };
 
     if (exists) {
+      // Update in place; junior_style is intentionally omitted so any existing
+      // style tag is preserved.
       const { error } = await supabase.from('products').update(productData).eq('id', exists.id);
       if (error) throw error;
       summary.updated++;
     } else {
-      const { error } = await supabase.from('products').insert(productData);
+      const { error } = await supabase.from('products').insert({ ...productData, junior_style: null });
       if (error) throw error;
       summary.inserted++;
     }

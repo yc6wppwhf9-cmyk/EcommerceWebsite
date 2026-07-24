@@ -394,7 +394,7 @@ export const JuniorPage = () => {
     setIsLoading(true);
     setProducts([]);
     if (tabScrollRef.current) tabScrollRef.current.scrollLeft = 0;
-    api.getProducts({ sub_category: cat.filter, limit: '4' })
+    api.getProducts({ sub_category: cat.filter, limit: '20' })
       .then(res => { setProducts(res.products as unknown as Product[]); setIsLoading(false); })
       .catch(() => setIsLoading(false));
   }, [activeTab]);
@@ -636,14 +636,14 @@ export const JuniorPage = () => {
                 ) : products.length > 0 ? (
                   <>
                     <div className="md:hidden grid grid-cols-2 gap-3 pb-8 px-4">
-                      {products.slice(0, 4).map((product, idx) => (
+                      {products.slice(0, 8).map((product, idx) => (
                         <motion.div key={product.id} className="min-w-0" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
                     </div>
                     <div ref={tabScrollRef} className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto pb-5 no-scrollbar snap-x snap-mandatory px-5">
-                      {products.slice(0, 3).map((product, idx) => (
+                      {products.map((product, idx) => (
                         <motion.div key={product.id} className="shrink-0 w-[220px] lg:w-[240px] xl:w-[255px] snap-start" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
