@@ -6,6 +6,8 @@ import { config } from '../config/env';
 import { AuthRequest } from '../middleware/auth';
 import * as Mailer from '../lib/mail';
 import { parsePagination, paginationMeta } from '../lib/pagination';
+import { resolveEligibleCoupon } from '../lib/coupon.service';
+import { calculateCheckoutTotals } from '../lib/pricing';
 
 const razorpay = new Razorpay({
   key_id: config.RAZORPAY_KEY_ID,
@@ -54,7 +56,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
   const {
     items, shipping_name, shipping_phone, shipping_line1, shipping_line2,
     shipping_city, shipping_state, shipping_pincode, payment_method, payment_id,
-    razorpay_order_id, razorpay_payment_id, razorpay_signature, reserved_order_id, notes,
+    razorpay_order_id, razorpay_payment_id, razorpay_signature, reserved_order_id, coupon_id, notes,
   } = req.body;
 
   // For online payments, verify the Razorpay signature server-side before creating
@@ -68,7 +70,12 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       .createHmac('sha256', config.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
-    if (expectedSig !== razorpay_signature) {
+    const providedSignature = String(razorpay_signature);
+    const expectedBuffer = Buffer.from(expectedSig);
+    const providedBuffer = Buffer.from(providedSignature);
+    const signatureIsValid = providedBuffer.length === expectedBuffer.length
+      && crypto.timingSafeEqual(expectedBuffer, providedBuffer);
+    if (!signatureIsValid) {
       return res.status(400).json({ error: 'Payment signature verification failed' });
     }
   }
@@ -80,6 +87,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
         .select('*, order_items(*)')
         .eq('id', reserved_order_id)
         .eq('user_id', req.user?.id)
+        .eq('razorpay_order_id', razorpay_order_id)
         .single();
 
       if (reservedErr || !reservedOrder) throw new Error('Reserved order not found');
@@ -97,6 +105,9 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
         throw new Error('Payment does not belong to the provided order');
       }
       if ((orderAny.currency || '').toUpperCase() !== 'INR') {
+        throw new Error('Invalid payment currency');
+      }
+      if ((paymentAny.currency || '').toUpperCase() !== 'INR') {
         throw new Error('Invalid payment currency');
       }
       if (orderAny.amount !== expectedAmountSubunits) {
@@ -170,11 +181,16 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     }
 
     const shipping_fee = subtotal >= config.SHIPPING_THRESHOLD ? 0 : config.SHIPPING_FEE;
-    const total = subtotal + shipping_fee;
+    const coupon = await resolveEligibleCoupon({
+      couponId: coupon_id,
+      userId: req.user!.id,
+      subtotal,
+    });
+    const totals = calculateCheckoutTotals(subtotal, shipping_fee, coupon);
 
     // Validate online payment amount against server-computed total.
     if (payment_method === 'online') {
-      const expectedAmountSubunits = Math.round(total * 100);
+      const expectedAmountSubunits = Math.round(totals.total * 100);
       const [rzOrder, rzPayment] = await Promise.all([
         razorpay.orders.fetch(razorpay_order_id),
         razorpay.payments.fetch(razorpay_payment_id),
@@ -203,11 +219,10 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     }
 
     // Use RPC for atomic transaction
-    const { data: orderId, error: rpcErr } = await supabase.rpc('create_order_v2', {
+    const { data: createdOrder, error: rpcErr } = await supabase.rpc('create_order_v3', {
       p_user_id: req.user?.id,
-      p_subtotal: subtotal,
-      p_shipping_fee: shipping_fee,
-      p_total: total,
+      p_subtotal: totals.subtotal,
+      p_shipping_fee: totals.shippingFee,
       p_shipping_name: shipping_name,
       p_shipping_phone: shipping_phone,
       p_shipping_line1: shipping_line1,
@@ -217,11 +232,15 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       p_shipping_pincode: shipping_pincode,
       p_payment_method: payment_method || 'cod',
       p_payment_id: payment_id || null,
+      p_razorpay_order_id: payment_method === 'online' ? razorpay_order_id : null,
       p_notes: notes || null,
-      p_items: orderItems
+      p_items: orderItems,
+      p_coupon_id: coupon?.id || null,
     });
 
     if (rpcErr) throw rpcErr;
+    const orderId = (createdOrder as any)?.order_id;
+    if (!orderId) throw new Error('Order creation did not return an order ID');
 
     // Fetch and Return Final Order
     const { data: finalOrder } = await supabase

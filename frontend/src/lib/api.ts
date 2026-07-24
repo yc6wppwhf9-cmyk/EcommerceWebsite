@@ -286,6 +286,7 @@ export const api = {
     shipping_city: string;
     shipping_state: string;
     shipping_pincode: string;
+    coupon_id?: string;
   }) =>
     request<any>('/api/payments/create-order', {
       method: 'POST',
@@ -299,10 +300,28 @@ export const api = {
 
   // Contact
   sendContactMessage: (data: { name: string; email: string; subject: string; message: string }) =>
-    request<{ message: string }>('/api/contact', {
+    request<{ message: string; ticket_number: string }>('/api/contact', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  // Support and warranty
+  submitWarrantyClaim: (data: {
+    name: string;
+    email: string;
+    phone: string;
+    order_id: string;
+    product_name: string;
+    purchase_date: string;
+    issue: string;
+  }) => request<{ message: string; ticket_number: string; status: string }>('/api/support/warranty', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  getSupportStatus: (ticketNumber: string, email: string) =>
+    request<{ ticket_number: string; type: string; subject: string; status: string; created_at: string; updated_at: string }>(
+      `/api/support/status/${encodeURIComponent(ticketNumber)}?email=${encodeURIComponent(email)}`,
+    ),
 
   // Coupons
   listCoupons: () => request<any[]>('/api/coupons'),
@@ -311,10 +330,10 @@ export const api = {
   toggleCoupon: (id: string, is_active: boolean) =>
     request<any>(`/api/coupons/${id}/toggle`, { method: 'PATCH', body: JSON.stringify({ is_active }) }),
 
-  validateCoupon: (code: string, cart_total: number) =>
-    request<{ valid: boolean; coupon_id: string; code: string; discount_type: string; discount_value: number; discount_amount: number }>(
+  validateCoupon: (code: string, items: Array<{ product_id: string; quantity: number }>) =>
+    request<{ valid: boolean; coupon_id: string; code: string; discount_type: string; discount_value: number; discount_amount: number; cart_subtotal: number }>(
       '/api/coupons/validate',
-      { method: 'POST', body: JSON.stringify({ code, cart_total }) }
+      { method: 'POST', body: JSON.stringify({ code, items }) }
     ),
 
   // Analytics

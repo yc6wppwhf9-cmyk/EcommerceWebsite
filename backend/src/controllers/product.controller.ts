@@ -1,8 +1,27 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
-import * as xlsx from 'xlsx';
+import { readSheet } from 'read-excel-file/node';
+import cloudinary from '../config/cloudinary';
+import { AuthRequest } from '../middleware/auth';
 
-export const getProducts = async (req: Request, res: Response) => {
+const getPublishIssues = (product: Record<string, any>): string[] => {
+  const images = [product.image, ...(Array.isArray(product.images) ? product.images : [])]
+    .filter((value) => typeof value === 'string' && value.trim());
+  const features = Array.isArray(product.features)
+    ? product.features.filter((value) => typeof value === 'string' && value.trim())
+    : [];
+  const issues: string[] = [];
+  if (!String(product.description || '').trim() || String(product.description).trim().length < 40) {
+    issues.push('a meaningful description of at least 40 characters');
+  }
+  if (!images.length) issues.push('at least one product image');
+  if (!features.length) issues.push('at least one product feature');
+  if (!product.category_id) issues.push('a valid category');
+  if (!product.sku) issues.push('a SKU');
+  return issues;
+};
+
+export const getProducts = async (req: AuthRequest, res: Response) => {
   const { category, sub_category, gender, isPremium, junior_style, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
   try {
@@ -10,8 +29,8 @@ export const getProducts = async (req: Request, res: Response) => {
       .from('products')
       .select('*, categories(slug, title)');
 
-    // Storefront filters active products; Admin passes no filters and sees everything
-    if (category || isPremium || gender || sub_category || search) {
+    const includeInactive = req.user?.role === 'admin' && req.query.include_inactive === 'true';
+    if (!includeInactive) {
       query = query.eq('is_active', true);
     }
 
@@ -150,6 +169,17 @@ export const createProduct = async (req: Request, res: Response) => {
       if (fallback) productData.category_id = fallback.id;
     }
 
+    if (productData.is_active) {
+      const publishIssues = getPublishIssues(productData);
+      if (publishIssues.length) {
+        return res.status(400).json({
+          error: `Product cannot be published until it has ${publishIssues.join(', ')}.`,
+          code: 'PRODUCT_NOT_READY',
+          issues: publishIssues,
+        });
+      }
+    }
+
     const { data, error } = await supabase.from('products').insert(productData).select().single();
     if (error) throw error;
     res.status(201).json(data);
@@ -189,6 +219,24 @@ export const updateProduct = async (req: Request, res: Response) => {
 
   if (!Object.keys(updates).length) return res.status(400).json({ error: 'No valid fields provided for update' });
 
+  if (updates.is_active === true) {
+    const { data: current, error: currentError } = await supabase
+      .from('products')
+      .select('name, description, image, images, features, category_id, sku')
+      .eq('id', req.params.id)
+      .maybeSingle();
+    if (currentError) return res.status(400).json({ error: currentError.message });
+    if (!current) return res.status(404).json({ error: 'Product not found' });
+    const publishIssues = getPublishIssues({ ...current, ...updates });
+    if (publishIssues.length) {
+      return res.status(400).json({
+        error: `Product cannot be published until it has ${publishIssues.join(', ')}.`,
+        code: 'PRODUCT_NOT_READY',
+        issues: publishIssues,
+      });
+    }
+  }
+
   const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select().single();
   if (error) {
     console.error('❌ Update DB Error:', error);
@@ -198,28 +246,95 @@ export const updateProduct = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-type MulterRequest = Request & { file?: { path: string; buffer: Buffer; fieldname: string; originalname: string; mimetype: string; size: number } };
+type MulterRequest = Request & { file?: { buffer: Buffer; fieldname: string; originalname: string; mimetype: string; size: number } };
+
+const uploadBufferToCloudinary = (buffer: Buffer) => new Promise<string>((resolve, reject) => {
+  const stream = cloudinary.uploader.upload_stream(
+    {
+      folder: 'priority-bags/products',
+      resource_type: 'image',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    },
+    (error, result) => {
+      if (error || !result?.secure_url) {
+        reject(error || new Error('Cloudinary did not return an image URL'));
+        return;
+      }
+      resolve(result.secure_url);
+    },
+  );
+  stream.end(buffer);
+});
+
+const parseCsv = (input: string): Record<string, string>[] => {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = '';
+  let quoted = false;
+
+  for (let index = 0; index < input.length; index += 1) {
+    const character = input[index];
+    const next = input[index + 1];
+    if (character === '"' && quoted && next === '"') {
+      cell += '"';
+      index += 1;
+    } else if (character === '"') {
+      quoted = !quoted;
+    } else if (character === ',' && !quoted) {
+      row.push(cell);
+      cell = '';
+    } else if ((character === '\n' || character === '\r') && !quoted) {
+      if (character === '\r' && next === '\n') index += 1;
+      row.push(cell);
+      if (row.some((value) => value.trim())) rows.push(row);
+      row = [];
+      cell = '';
+    } else {
+      cell += character;
+    }
+  }
+
+  row.push(cell);
+  if (row.some((value) => value.trim())) rows.push(row);
+  const headers = (rows.shift() || []).map((value) => value.trim());
+  return rows.map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] || ''])));
+};
+
+const parseCatalogueFile = async (file: NonNullable<MulterRequest['file']>): Promise<Record<string, unknown>[]> => {
+  if (file.originalname.toLowerCase().endsWith('.csv')) {
+    return parseCsv(file.buffer.toString('utf8'));
+  }
+
+  const worksheet = await readSheet(file.buffer);
+  const headers = (worksheet.shift() || []).map((value) => String(value || '').trim());
+  return worksheet
+    .filter((values) => values.some((value) => value !== null && String(value).trim()))
+    .map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index]])));
+};
 
 export const uploadImage = async (req: MulterRequest, res: Response) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  res.json({ url: req.file.path });
+  try {
+    const url = await uploadBufferToCloudinary(req.file.buffer);
+    res.json({ url });
+  } catch (err: any) {
+    console.error('Image upload error:', err);
+    res.status(502).json({ error: 'Failed to upload image' });
+  }
 };
 
 export const bulkUpload = async (req: MulterRequest, res: Response) => {
   if (!req.file) return res.status(400).json({ error: 'No Excel file uploaded' });
 
   try {
-    const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const rows: any[] = xlsx.utils.sheet_to_json(sheet);
+    const rows = await parseCatalogueFile(req.file);
 
     if (!rows.length) return res.status(400).json({ error: 'Excel sheet is empty' });
 
     const valid: any[] = [];
     const skipped: { row: number; reason: string }[] = [];
 
-    rows.forEach((p, idx) => {
+    rows.forEach((p: any, idx) => {
       const rowNum = idx + 2; // +2 because row 1 is the header
       const name = (p.name || p.Name || '').toString().trim();
       const sku = (p.sku || p.SKU || '').toString().trim();
@@ -243,7 +358,10 @@ export const bulkUpload = async (req: MulterRequest, res: Response) => {
         stock: Math.floor(stock),
         image: (p.image || p.Image || p.image_url || p.Image_URL || '').toString().trim(),
         sku,
-        is_active: true,
+        features: (p.features || p.Features || '').toString().split('|').map((value: string) => value.trim()).filter(Boolean),
+        amazon_url: (p.amazon_url || p.Amazon_URL || '').toString().trim() || null,
+        // Imported products remain drafts until their content and links are reviewed.
+        is_active: false,
       });
     });
 
@@ -257,6 +375,8 @@ export const bulkUpload = async (req: MulterRequest, res: Response) => {
     res.status(201).json({
       success: true,
       inserted: data.length,
+      count: data.length,
+      status: 'draft',
       skipped_count: skipped.length,
       skipped,
     });

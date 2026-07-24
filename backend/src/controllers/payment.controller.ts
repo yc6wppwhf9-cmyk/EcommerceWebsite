@@ -4,6 +4,8 @@ import Razorpay from 'razorpay';
 import { supabase } from '../config/supabase';
 import { config } from '../config/env';
 import { AuthRequest } from '../middleware/auth';
+import { resolveEligibleCoupon } from '../lib/coupon.service';
+import { calculateCheckoutTotals } from '../lib/pricing';
 
 const razorpay = new Razorpay({
   key_id: config.RAZORPAY_KEY_ID,
@@ -32,6 +34,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       shipping_state,
       shipping_pincode,
       notes,
+      coupon_id,
     } = req.body as {
       items: Array<{ product_id: string; quantity: number }>;
       receipt: string;
@@ -44,6 +47,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       shipping_state?: string;
       shipping_pincode?: string;
       notes?: string;
+      coupon_id?: string;
     };
 
     if (!items?.length) {
@@ -93,11 +97,21 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     }
 
     const shippingFee = subtotal >= config.SHIPPING_THRESHOLD ? 0 : config.SHIPPING_FEE;
-    const total = subtotal + shippingFee;
+    let coupon = null;
+    try {
+      coupon = await resolveEligibleCoupon({
+        couponId: coupon_id,
+        userId: req.user!.id,
+        subtotal,
+      });
+    } catch (couponError: any) {
+      return res.status(400).json({ error: couponError.message || 'Coupon is no longer valid' });
+    }
+    const totals = calculateCheckoutTotals(subtotal, shippingFee, coupon);
 
     // 2. Create Razorpay order (amount in smallest currency unit — paise for INR)
     const rzOrder = await razorpay.orders.create({
-      amount: Math.round(total * 100),
+      amount: Math.round(totals.total * 100),
       currency,
       receipt: receipt || `receipt_${Date.now()}`,
       notes: { user_id: req.user!.id },
@@ -105,11 +119,10 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
     // 3. Reserve stock by creating a pending online order. If stock disappears
     // between the pre-check and this call, payment never opens for the customer.
-    const { data: appOrderId, error: rpcErr } = await supabase.rpc('create_order_v2', {
+    const { data: createdOrder, error: rpcErr } = await supabase.rpc('create_order_v3', {
       p_user_id: req.user?.id,
-      p_subtotal: subtotal,
-      p_shipping_fee: shippingFee,
-      p_total: total,
+      p_subtotal: totals.subtotal,
+      p_shipping_fee: totals.shippingFee,
       p_shipping_name: shipping_name,
       p_shipping_phone: shipping_phone,
       p_shipping_line1: shipping_line1,
@@ -119,12 +132,19 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       p_shipping_pincode: shipping_pincode,
       p_payment_method: 'online',
       p_payment_id: null,
-      p_notes: notes || `razorpay_order_id:${rzOrder.id}`,
+      p_razorpay_order_id: rzOrder.id,
+      p_notes: notes || null,
       p_items: orderItems,
+      p_coupon_id: coupon?.id || null,
     });
 
     if (rpcErr) {
       return res.status(400).json({ error: rpcErr.message || 'Unable to reserve stock for payment' });
+    }
+
+    const appOrderId = (createdOrder as any)?.order_id;
+    if (!appOrderId) {
+      return res.status(500).json({ error: 'Unable to create the reserved order' });
     }
 
     const { error: reserveStateErr } = await supabase
@@ -142,7 +162,14 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'Unable to prepare reserved order for payment' });
     }
 
-    res.json({ ...rzOrder, app_order_id: appOrderId });
+    res.json({
+      ...rzOrder,
+      app_order_id: appOrderId,
+      subtotal: Number((createdOrder as any).subtotal),
+      shipping_fee: Number((createdOrder as any).shipping_fee),
+      coupon_discount: Number((createdOrder as any).coupon_discount),
+      total: Number((createdOrder as any).total),
+    });
   } catch (err: any) {
     console.error('Payment create-order error:', err);
     res.status(500).json({ error: 'Failed to create payment order' });

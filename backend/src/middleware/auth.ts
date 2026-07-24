@@ -27,6 +27,19 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
   }
 }
 
+export function optionalAuthenticate(req: AuthRequest, _res: Response, next: NextFunction) {
+  const token: string | undefined =
+    (req as any).cookies?.access_token ?? req.headers.authorization?.split(' ')[1];
+  if (!token) return next();
+
+  try {
+    req.user = jwt.verify(token, config.JWT_SECRET) as AuthRequest['user'];
+  } catch {
+    // Invalid optional credentials are treated as an anonymous storefront request.
+  }
+  next();
+}
+
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
   if (req.user?.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required' });

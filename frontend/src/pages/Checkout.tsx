@@ -67,7 +67,10 @@ export const Checkout = () => {
     setCouponLoading(true);
     setCouponError('');
     try {
-      const result = await api.validateCoupon(couponCode.trim(), total);
+      const result = await api.validateCoupon(
+        couponCode.trim(),
+        items.map((item) => ({ product_id: item.product.id, quantity: item.quantity })),
+      );
       setCouponApplied({ coupon_id: result.coupon_id, code: result.code, discount_amount: result.discount_amount });
       setCouponCode('');
     } catch (err: any) {
@@ -92,7 +95,6 @@ export const Checkout = () => {
     shipping_state: form.state,
     shipping_pincode: form.pincode,
     coupon_id: couponApplied?.coupon_id || undefined,
-    coupon_discount: couponDiscount || undefined,
   });
 
   const handlePlaceOrder = async () => {

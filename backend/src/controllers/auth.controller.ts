@@ -21,7 +21,8 @@ function baseCookieOpts(httpOnly = true) {
   return {
     httpOnly,
     secure: isProduction,
-    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+    // The frontend proxies /api to the backend, so auth remains first-party in production.
+    sameSite: 'lax' as const,
     path: '/',
   };
 }

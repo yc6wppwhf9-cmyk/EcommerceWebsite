@@ -10,6 +10,18 @@ export const BulkUpload = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const downloadTemplate = () => {
+    const headers = ['name', 'sku', 'price', 'original_price', 'category_id', 'stock', 'description', 'features', 'image_url', 'amazon_url'];
+    const example = ['Priority Backpack', 'PB-EXAMPLE-001', '1999', '2499', '', '25', 'Replace this row with the complete product description', 'Padded laptop sleeve|Water-resistant fabric', 'https://', ''];
+    const csv = `${headers.join(',')}\n${example.map((value) => `"${value.replace(/"/g, '""')}"`).join(',')}\n`;
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'priority-bags-product-template.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) {
@@ -49,17 +61,13 @@ export const BulkUpload = () => {
           <p className="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest">Upload Excel / CSV to update inventory</p>
         </div>
         <div className="flex items-center gap-3">
-          <a 
-            href="/templates/products_template.xlsx" 
+          <button
+            type="button"
             className="text-[10px] font-black uppercase tracking-widest text-priority-blue hover:underline"
-            onClick={(e) => {
-              // Mock download for a template if we had one
-              // For now just prevent default since we don't have the file on disk
-              // e.preventDefault(); 
-            }}
+            onClick={downloadTemplate}
           >
             Download Template
-          </a>
+          </button>
         </div>
       </div>
 
@@ -136,7 +144,7 @@ export const BulkUpload = () => {
               </div>
               <div>
                 <p className="text-sm font-black text-green-900">Success!</p>
-                <p className="text-[11px] text-green-700/60 mt-1">{result?.count} products have been imported successfully.</p>
+                <p className="text-[11px] text-green-700/60 mt-1">{result?.count} products were imported as drafts for review.</p>
               </div>
               <button 
                 onClick={() => setStatus('idle')}
@@ -196,7 +204,7 @@ export const BulkUpload = () => {
         <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
           <p className="text-[10px] font-black uppercase tracking-widest text-[#14052b] mb-4">Optional Fields</p>
           <div className="grid grid-cols-2 gap-2">
-            {['description', 'image_url', 'sku', 'is_premium', 'original_price'].map(col => (
+            {['description', 'features', 'image_url', 'amazon_url', 'is_premium', 'original_price'].map(col => (
                <div key={col} className="flex items-center gap-2">
                  <div className="w-1 h-1 bg-gray-300 rounded-full" />
                  <span className="text-[10px] font-medium text-gray-400">{col}</span>

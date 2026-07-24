@@ -219,7 +219,7 @@ export const AdminDashboard = () => {
   const fetchData = async () => {
     setFetchLoading(true);
     const [prodRes, orderRes, jobRes, appRes] = await Promise.allSettled([
-      api.getProducts({ limit: '999' }),
+      api.getProducts({ limit: '999', include_inactive: 'true' }),
       api.getOrders({ limit: 500 }),
       api.getJobs({ status: 'all' }),
       api.getAllApplications(),

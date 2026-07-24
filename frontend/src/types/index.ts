@@ -1,111 +1,131 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import rateLimit from 'express-rate-limit';
-import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
-import { config } from './config/env';
-import { supabase } from './config/supabase';
+export interface Address {
+  id?: string;
+  user_id?: string;
+  name: string;
+  phone: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  pincode: string;
+  is_default?: boolean;
+  created_at?: string;
+}
 
-// Route Imports
-import authRoutes from './routes/auth.routes';
-import productRoutes from './routes/product.routes';
-import orderRoutes from './routes/order.routes';
-import reviewRoutes from './routes/review.routes';
-import paymentRoutes from './routes/payment.routes';
-import userRoutes from './routes/user.routes';
-import jobsRoutes from './routes/jobs.routes';
-import chatRoutes from './routes/chat.routes';
-import settingsRoutes from './routes/settings.routes';
-import sitemapRoutes from './routes/sitemap.routes';
-import contactRoutes from './routes/contact.routes';
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: 'user' | 'admin';
+  is_verified?: boolean;
+  addresses?: Address[];
+  createdAt?: string;
+  created_at?: string;
+}
 
-const app = express();
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
 
-// Enable trust proxy for Render/Vercel
-app.set('trust proxy', 1);
+export interface ProductVariant {
+  color: string;
+  colorCode: string;
+  images: string[];
+}
 
-// --- Middleware ---
-app.use(helmet());
-app.use(compression());
-// Use 'combined' (Apache-style) in production for proper log aggregation
-app.use(morgan(config.NODE_ENV === 'production' ? 'combined' : 'dev'));
-app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
-app.use(cookieParser());
-// Keep JSON limit small; multer handles its own limits for file uploads
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+export interface Product {
+  id: string;
+  sku?: string;
+  slug?: string;
+  name: string;
+  description?: string;
+  price: number;
+  originalPrice?: number;
+  original_price?: number;
+  category: string;
+  category_id?: string;
+  categories?: { slug: string; title?: string };
+  subcategory?: string;
+  sub_category?: string;
+  gender?: string;
+  ageRange?: string;
+  age_range?: string;
+  size?: string;
+  juniorStyle?: string;
+  junior_style?: string;
+  image: string;
+  images?: string[];
+  amazonUrl?: string;
+  amazon_url?: string;
+  variants?: ProductVariant[];
+  colors?: Array<{ name?: string; color?: string; code?: string; colorCode?: string; images?: string[] }>;
+  features?: string[];
+  specifications?: Record<string, string>;
+  rating?: number;
+  reviews?: number;
+  review_count?: number;
+  stock: number;
+  isNew?: boolean;
+  is_new?: boolean;
+  highlighted?: boolean;
+  is_highlighted?: boolean;
+  isPremium?: boolean;
+  is_premium?: boolean;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
 
-// General API rate limit (increased for admin operations like bulk product updates)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 500,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many requests, please try again later.' },
-});
-app.use('/api/', limiter);
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
-// Stricter limiter for auth endpoints — prevents credential stuffing
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many auth attempts, please try again in 15 minutes.' },
-});
+export interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
 
-// Strict limiter for AI chat — each request makes 1-2 Anthropic API calls
-const chatLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 8,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many messages, please slow down and try again shortly.' },
-});
+export interface CategoryInfo {
+  id: string;
+  title: string;
+  subtitle: string;
+  slug: string;
+  image: string;
+  bgColor: string;
+  description?: string;
+  parentCategory?: string;
+}
 
-// --- Routes ---
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/jobs', jobsRoutes);
-app.use('/api/chat', chatLimiter, chatRoutes);
-app.use('/api/settings', settingsRoutes);
-app.use('/api', sitemapRoutes);
-app.use('/api/contact', contactRoutes);
+export interface Job {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  department?: string;
+  job_type: 'full-time' | 'part-time' | 'contract' | 'internship';
+  salary_min?: number;
+  salary_max?: number;
+  requirements?: string;
+  status: 'open' | 'closed' | 'draft';
+  created_at?: string;
+  updated_at?: string;
+}
 
-// Health Check
-app.get('/api/health', async (_req, res) => {
-  try {
-    const { error } = await supabase.from('categories').select('id').limit(1);
-    if (error) throw error;
-    res.json({ 
-      status: 'ok', 
-      db: 'connected', 
-      timestamp: new Date().toISOString(),
-      version: '2.4.1'
-    });
-  } catch {
-    res.status(503).json({ status: 'error', db: 'disconnected' });
-  }
-});
-
-// --- Global Error Handler ---
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('❌ Global Error Handler:', err);
-  
-  const status = err.status || 500;
-  const message = err.message || 'Internal Server Error';
-  
-  res.status(status).json({
-    error: message,
-    status: 'error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
-});
-
-export default app;
+export interface Application {
+  id: string;
+  job_id: string;
+  applicant_name: string;
+  applicant_email: string;
+  applicant_phone?: string;
+  cover_letter?: string;
+  resume_url?: string;
+  status: 'pending' | 'shortlisted' | 'rejected' | 'hired';
+  applied_at: string;
+  jobs?: { id?: string; title?: string; location?: string; job_type?: string };
+  users?: { id?: string; name?: string; email?: string };
+}

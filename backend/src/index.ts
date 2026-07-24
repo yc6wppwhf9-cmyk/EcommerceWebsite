@@ -23,6 +23,7 @@ import sitemapRoutes from './routes/sitemap.routes';
 import contactRoutes from './routes/contact.routes';
 import couponRoutes from './routes/coupon.routes';
 import analyticsRoutes from './routes/analytics.routes';
+import supportRoutes from './routes/support.routes';
 
 const app = express();
 
@@ -34,7 +35,16 @@ app.use(helmet());
 app.use(compression());
 // Use 'combined' (Apache-style) in production for proper log aggregation
 app.use(morgan(config.NODE_ENV === 'production' ? 'combined' : 'dev'));
-app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || config.CORS_ORIGINS.includes(origin.replace(/\/$/, ''))) {
+      callback(null, true);
+      return;
+    }
+    callback(new AppError('Origin is not allowed', 403));
+  },
+  credentials: true,
+}));
 app.use(cookieParser());
 // Keep JSON limit small; multer handles its own limits for file uploads
 app.use(express.json({ limit: '1mb' }));
@@ -76,6 +86,14 @@ const chatLimiter = rateLimit({
   message: { error: 'Too many messages, please slow down and try again shortly.' },
 });
 
+const supportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many support requests. Please try again later.' },
+});
+
 // --- Routes ---
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
@@ -92,7 +110,8 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/chat', chatLimiter, chatRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api', sitemapRoutes);
-app.use('/api/contact', contactRoutes);
+app.use('/api/contact', supportLimiter, contactRoutes);
+app.use('/api/support', supportLimiter, supportRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/analytics', analyticsRoutes);
 

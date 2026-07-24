@@ -60,6 +60,7 @@ export const orderSchema = z.object({
     razorpay_payment_id: z.string().optional(),
     razorpay_signature: z.string().optional(),
     reserved_order_id: z.string().uuid().optional(),
+    coupon_id: z.string().uuid().optional(),
     notes: z.string().optional(),
   }),
 });
@@ -106,5 +107,17 @@ export const applicationSchema = z.object({
     phone: z.string().min(7, 'Phone is required'),
     cover_letter: z.string().optional(),
     resume_url: z.string().optional(),
+  }),
+});
+
+export const warrantyClaimSchema = z.object({
+  body: z.object({
+    name: z.string().trim().min(2).max(120),
+    email: z.string().trim().email().max(254),
+    phone: z.string().trim().min(7).max(20),
+    order_id: z.string().trim().min(3).max(100),
+    product_name: z.string().trim().min(2).max(200),
+    purchase_date: z.string().date(),
+    issue: z.string().trim().min(10).max(4000),
   }),
 });

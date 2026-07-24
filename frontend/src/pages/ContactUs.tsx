@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 import { api } from '../lib/api';
 
@@ -14,6 +15,8 @@ export const ContactUs = () => {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [ticketNumber, setTicketNumber] = useState('');
+  const [submittedEmail, setSubmittedEmail] = useState('');
 
   const updateField = (field: keyof ContactForm, value: string) =>
     setForm(f => ({ ...f, [field]: value }));
@@ -45,7 +48,9 @@ export const ContactUs = () => {
     setStatus('loading');
     setErrorMsg('');
     try {
-      await api.sendContactMessage(form);
+      const result = await api.sendContactMessage(form);
+      setTicketNumber(result.ticket_number);
+      setSubmittedEmail(form.email);
       setStatus('success');
       setForm({ name: '', email: '', subject: '', message: '' });
       setTouched({});
@@ -130,6 +135,8 @@ export const ContactUs = () => {
                 <CheckCircle className="w-16 h-16 text-green-500" />
                 <h4 className="text-xl font-black text-green-800">Message Sent!</h4>
                 <p className="text-gray-500 text-sm max-w-xs">We've received your message and will get back to you within 1–2 business days.</p>
+                <p className="font-mono text-sm font-bold text-green-800">{ticketNumber}</p>
+                <Link to={`/support-status?ticket=${encodeURIComponent(ticketNumber)}&email=${encodeURIComponent(submittedEmail)}`} className="text-priority-blue text-sm font-bold hover:underline">Track this request</Link>
                 <button
                   onClick={() => setStatus('idle')}
                   className="mt-4 text-priority-blue text-sm font-bold hover:underline"

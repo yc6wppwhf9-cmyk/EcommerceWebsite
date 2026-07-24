@@ -1,58 +1,75 @@
 import { Response } from 'express';
 import { supabase } from '../config/supabase';
+import { resolveEligibleCoupon } from '../lib/coupon.service';
 import { AuthRequest } from '../middleware/auth';
 
 export const validateCoupon = async (req: AuthRequest, res: Response) => {
-  const { code, cart_total } = req.body;
+  const { code, items } = req.body as {
+    code?: string;
+    items?: Array<{ product_id: string; quantity: number }>;
+  };
   if (!code) return res.status(400).json({ error: 'Coupon code is required' });
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Cart items are required to validate a coupon' });
+  }
 
-  const { data: coupon, error } = await supabase
-    .from('coupons')
-    .select('*')
-    .eq('code', code.toUpperCase().trim())
-    .eq('is_active', true)
-    .single();
+  try {
+    const normalizedItems = items.map((item) => ({
+      product_id: item.product_id,
+      quantity: Number(item.quantity),
+    }));
+    if (normalizedItems.some((item) => !item.product_id || !Number.isInteger(item.quantity) || item.quantity <= 0)) {
+      return res.status(400).json({ error: 'Cart contains an invalid quantity' });
+    }
 
-  if (error || !coupon) return res.status(404).json({ error: 'Invalid or expired coupon code' });
+    const productIds = [...new Set(normalizedItems.map((item) => item.product_id))];
+    const { data: products, error: productError } = await supabase
+      .from('products')
+      .select('id, price, is_active')
+      .in('id', productIds)
+      .eq('is_active', true);
 
-  const now = new Date();
-  if (coupon.start_date && new Date(coupon.start_date) > now)
-    return res.status(400).json({ error: 'This coupon is not active yet' });
-  if (coupon.end_date && new Date(coupon.end_date) < now)
-    return res.status(400).json({ error: 'This coupon has expired' });
-  if (coupon.max_uses !== null && coupon.used_count >= coupon.max_uses)
-    return res.status(400).json({ error: 'This coupon has reached its usage limit' });
-  if (coupon.min_cart_value && cart_total < coupon.min_cart_value)
-    return res.status(400).json({ error: `Minimum cart value of ₹${coupon.min_cart_value} required` });
+    if (productError || !products || products.length !== productIds.length) {
+      return res.status(400).json({ error: 'Cart contains an unavailable product' });
+    }
 
-  // Check if user already used this coupon
-  const { data: alreadyUsed } = await supabase
-    .from('coupon_uses')
-    .select('id')
-    .eq('coupon_id', coupon.id)
-    .eq('user_id', req.user!.id)
-    .maybeSingle();
+    const prices = new Map(products.map((product) => [product.id, Number(product.price)]));
+    const subtotal = normalizedItems.reduce(
+      (sum, item) => sum + (prices.get(item.product_id) || 0) * item.quantity,
+      0,
+    );
 
-  if (alreadyUsed) return res.status(400).json({ error: 'You have already used this coupon' });
+    const coupon = await resolveEligibleCoupon({
+      code,
+      userId: req.user!.id,
+      subtotal,
+    });
 
-  const discount_amount = coupon.discount_type === 'percentage'
-    ? Math.round((cart_total * coupon.discount_value) / 100)
-    : Math.min(coupon.discount_value, cart_total);
-
-  res.json({
-    valid: true,
-    coupon_id: coupon.id,
-    code: coupon.code,
-    discount_type: coupon.discount_type,
-    discount_value: coupon.discount_value,
-    discount_amount,
-  });
+    res.json({
+      valid: true,
+      coupon_id: coupon!.id,
+      code: coupon!.code,
+      discount_type: coupon!.discount_type,
+      discount_value: coupon!.discount_value,
+      discount_amount: coupon!.discount_amount,
+      cart_subtotal: subtotal,
+    });
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message || 'Unable to validate coupon' });
+  }
 };
 
 export const createCoupon = async (req: AuthRequest, res: Response) => {
   const { code, discount_type, discount_value, max_uses, min_cart_value, start_date, end_date } = req.body;
-  if (!code || !discount_type || discount_value == null)
+  if (!code || !discount_type || discount_value == null) {
     return res.status(400).json({ error: 'code, discount_type and discount_value are required' });
+  }
+  if (!['percentage', 'fixed'].includes(discount_type) || Number(discount_value) <= 0) {
+    return res.status(400).json({ error: 'Coupon discount must be a positive percentage or fixed amount' });
+  }
+  if (discount_type === 'percentage' && Number(discount_value) > 100) {
+    return res.status(400).json({ error: 'Percentage discount cannot exceed 100' });
+  }
 
   const { data, error } = await supabase
     .from('coupons')
