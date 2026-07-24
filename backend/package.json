@@ -9,7 +9,8 @@
     "lint": "tsc --noEmit",
     "test": "node --import tsx --test --test-force-exit src/**/*.test.ts",
     "check:catalog": "tsx src/scripts/catalog-readiness.ts",
-    "test:razorpay": "tsx src/scripts/razorpay-test-order.ts"
+    "test:razorpay": "tsx src/scripts/razorpay-test-order.ts",
+    "import:marketplace": "tsx src/scripts/import-marketplace.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.114.0",
