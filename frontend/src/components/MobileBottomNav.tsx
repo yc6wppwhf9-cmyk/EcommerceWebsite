@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, ShoppingCart, User, Heart } from 'lucide-react';
+import { Home, Search, User, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
 export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const location = useLocation();
-  const { itemCount, toggleCart } = useCart();
   const { isAuthenticated, user } = useAuth();
 
   const accountPath = isAuthenticated
@@ -18,7 +16,6 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
     { icon: Home, label: 'Home', path: '/' },
     { icon: Heart, label: 'Wishlist', path: '/wishlist' },
     { icon: Search, label: 'Search', onClick: onSearchOpen },
-    { icon: ShoppingCart, label: 'Cart', onClick: () => toggleCart() },
     { icon: User, label: 'Account', path: accountPath },
   ];
 
@@ -37,11 +34,6 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
                   strokeWidth={isActive ? 2.5 : 1.8}
                   className={`transition-all duration-200 ${isActive ? 'text-priority-blue' : 'text-gray-400 dark:text-gray-500'}`}
                 />
-                {item.label === 'Cart' && itemCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[8px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-1">
-                    {itemCount}
-                  </span>
-                )}
               </div>
               <span className={`text-[9px] font-semibold tracking-wide transition-colors duration-200 ${isActive ? 'text-priority-blue' : 'text-gray-400 dark:text-gray-500'}`}>
                 {item.label}

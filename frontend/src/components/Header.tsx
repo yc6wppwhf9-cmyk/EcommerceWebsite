@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, User, ShoppingCart, ChevronDown, Menu, X, Heart, LogOut } from 'lucide-react';
+import { Search, User, ChevronDown, Menu, X, Heart, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
 interface NavItemProps {
@@ -61,7 +60,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
-  const { itemCount, toggleCart } = useCart();
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
 
@@ -195,19 +193,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 <User size={20} />
               </Link>
             )}
-
-            {/* Cart */}
-            <button
-              onClick={() => toggleCart()}
-              className={`w-10 h-10 flex items-center justify-center rounded-full relative transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 opacity-80 hover:opacity-100`}
-            >
-              <ShoppingCart size={20} />
-              {itemCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
-                  {itemCount}
-                </span>
-              )}
-            </button>
 
             {/* Logout */}
             {isAuthenticated && (

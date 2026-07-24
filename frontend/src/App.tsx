@@ -7,7 +7,6 @@ import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { CartDrawer } from './components/CartDrawer';
 import { ChatBot } from './components/ChatBot';
 import { AuthModal } from './components/AuthModal';
 import { SearchModal } from './components/SearchModal';
@@ -19,7 +18,6 @@ const CategoryPage = lazy(() => import('./pages/CategoryPage').then((module) => 
 const JuniorPage = lazy(() => import('./pages/JuniorPage').then((module) => ({ default: module.JuniorPage })));
 const JuniorStylePage = lazy(() => import('./pages/JuniorStylePage').then((module) => ({ default: module.JuniorStylePage })));
 const ProductDetail = lazy(() => import('./pages/ProductDetail').then((module) => ({ default: module.ProductDetail })));
-const Checkout = lazy(() => import('./pages/Checkout').then((module) => ({ default: module.Checkout })));
 const PremiumCollection = lazy(() => import('./pages/PremiumCollection').then((module) => ({ default: module.PremiumCollection })));
 const LoginPage = lazy(() => import('./pages/LoginPage').then((module) => ({ default: module.LoginPage })));
 const UserDashboard = lazy(() => import('./pages/UserDashboard').then((module) => ({ default: module.UserDashboard })));
@@ -73,7 +71,6 @@ function AppContent() {
             <Route path="/" element={<Home />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
-            <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/junior" element={<JuniorPage />} />
             <Route path="/junior/:style" element={<JuniorStylePage />} />
             <Route path="/premium" element={<PremiumCollection />} />
@@ -100,7 +97,6 @@ function AppContent() {
         </div>
         {!isAdmin && !isPremiumTheme && <Footer />}
       </div>
-      <CartDrawer />
       <AuthModal />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       {!isAdmin && <MobileBottomNav onSearchOpen={() => setSearchOpen(true)} />}

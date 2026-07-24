@@ -4,7 +4,6 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
-import { useCart } from '../context/CartContext';
 
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
@@ -103,7 +102,6 @@ const AgeGroupCarousel = () => {
 
 // Standard card for Junior Showcase
 const JuniorProductCard = ({ product }: { product: Product }) => {
-  const { addItem } = useCart();
   const [isHovered, setIsHovered] = useState(false);
   const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
   const discount = originalPrice > product.price
@@ -115,10 +113,11 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   const displayImage = !isTouchDevice && isHovered ? secondaryImage : product.image;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const amazonUrl = (product as any).amazon_url;
+  const handleBuyOnAmazon = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem(product);
+    if (amazonUrl) window.open(amazonUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Mobile-friendly tap to swap
@@ -199,14 +198,22 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
           )}
         </div>
 
-        {/* Add to Cart */}
-        <button
-          onClick={handleAddToCart}
-          disabled={product.stock <= 0}
-          className="mt-auto w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {product.stock <= 0 ? 'Out Of Stock' : '+ Add To Cart'}
-        </button>
+        {/* Buy on Amazon */}
+        {amazonUrl ? (
+          <button
+            onClick={handleBuyOnAmazon}
+            className="mt-auto w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
+          >
+            Buy on Amazon
+          </button>
+        ) : (
+          <button
+            disabled
+            className="mt-auto w-full h-10 md:h-11 bg-gray-100 text-gray-400 text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] rounded-md cursor-not-allowed"
+          >
+            Coming Soon
+          </button>
+        )}
       </div>
     </div>
   );
