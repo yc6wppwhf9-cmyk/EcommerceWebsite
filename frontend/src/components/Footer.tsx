@@ -53,7 +53,7 @@ export const Footer = () => {
     : {};
 
   return (
-    <footer className={`${footerBg} ${isJunior || isHome ? '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white' : 'text-gray-300'} py-10 md:py-12 pb-28 lg:pb-12 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
+    <footer className={`${footerBg} ${isPremium ? 'text-gray-300' : '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white'} py-10 md:py-12 pb-28 lg:pb-12 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
       <div className="container mx-auto px-5 md:px-10">
         {/* Brand — always visible */}
         <div className="mb-8 md:mb-0 md:hidden">
