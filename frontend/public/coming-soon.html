@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Priority Bags — Launching Soon</title>
+    <meta name="description" content="Priority Bags is launching soon. Premium backpacks, travel luggage, and accessories, engineered for movement." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: radial-gradient(1200px 600px at 50% -10%, #4fc3ff 0%, #26B3FF 40%, #0f7ec2 100%);
+        color: #fff;
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+        background-size: 46px 46px;
+        mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 75%);
+        -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 75%);
+        pointer-events: none;
+      }
+      .card { position: relative; max-width: 640px; width: 100%; }
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.32em;
+        font-size: clamp(20px, 4vw, 28px);
+        text-transform: uppercase;
+        margin-bottom: 34px;
+      }
+      .brand span { color: #fff; }
+      .pill {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.35);
+        padding: 8px 18px;
+        border-radius: 999px;
+        margin-bottom: 26px;
+      }
+      h1 {
+        font-weight: 800;
+        font-size: clamp(38px, 9vw, 76px);
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+        margin-bottom: 20px;
+      }
+      p.lead {
+        font-size: clamp(15px, 2.4vw, 19px);
+        line-height: 1.6;
+        color: rgba(255,255,255,0.92);
+        max-width: 480px;
+        margin: 0 auto 34px;
+      }
+      .contact {
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        color: rgba(255,255,255,0.9);
+      }
+      .contact a { color: #fff; font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.5); }
+      .contact a:hover { border-color: #fff; }
+      .socials { margin-top: 28px; display: flex; gap: 22px; justify-content: center; }
+      .socials a {
+        color: #fff; text-decoration: none; font-size: 11px; font-weight: 800;
+        letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.85;
+      }
+      .socials a:hover { opacity: 1; }
+      .footer { margin-top: 40px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="brand"><span>PRIOR1TY</span> BAGS</div>
+      <div class="pill">Launching Soon</div>
+      <h1>Something great<br />is on the way.</h1>
+      <p class="lead">
+        Premium backpacks, travel luggage, and accessories — engineered for movement.
+        Our new store is almost ready.
+      </p>
+      <p class="contact">
+        For enquiries: <a href="mailto:info@prioritybags.in">info@prioritybags.in</a>
+        &nbsp;·&nbsp; <a href="tel:+917400459254">+91 74004 59254</a>
+      </p>
+      <div class="socials">
+        <a href="https://www.instagram.com/priority.bags" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://www.facebook.com/share/16nwvio56J/" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a href="https://youtube.com/@prioritybags" target="_blank" rel="noopener noreferrer">YouTube</a>
+      </div>
+      <div class="footer">© <span id="y"></span> High Spirit Commercial Ventures Pvt. Ltd.</div>
+    </div>
+    <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+  </body>
+</html>
