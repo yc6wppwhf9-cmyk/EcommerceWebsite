@@ -120,7 +120,10 @@ const AccordionItem = ({ id, title, children, openAccordion, setOpenAccordion, a
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
-  const themeKey = (searchParams.get('theme') || sessionStorage.getItem('siteTheme') || 'default') as keyof typeof THEMES;
+  // Theme comes only from the URL (?theme=…). Product links on premium/junior
+  // pages set it; links from home/default don't, so a product opened from home
+  // no longer inherits a sticky premium/junior theme from sessionStorage.
+  const themeKey = (searchParams.get('theme') || 'default') as keyof typeof THEMES;
   const theme = THEMES[themeKey] ?? THEMES.default;
   const navigate = useNavigate();
   const { showToast } = useCart();
