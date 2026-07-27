@@ -253,14 +253,7 @@ export const ChatBot = () => {
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-[12px] font-semibold text-gray-800 line-clamp-2 leading-tight">{p.name}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[12px] font-bold text-black">₹{p.price.toLocaleString('en-IN')}</span>
-                            {p.original_price && p.original_price > p.price && (
-                              <span className="text-[10px] text-gray-400 line-through">
-                                ₹{p.original_price.toLocaleString('en-IN')}
-                              </span>
-                            )}
-                          </div>
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-[#26B3FF] mt-0.5 inline-block">View on Amazon</span>
                         </div>
                         <span className="text-[10px] text-gray-400 flex-shrink-0">View →</span>
                       </Link>
