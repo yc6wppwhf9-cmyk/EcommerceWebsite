@@ -148,6 +148,26 @@ export const CategoryPage = () => {
     return Array.from(map.entries()).map(([color, code]) => ({ color, code }));
   }, [allProducts]);
 
+  // Genders actually present in the catalog (excludes the default "unisex")
+  const availableGenders = useMemo(() => {
+    const set = new Set<string>();
+    allProducts.forEach(p => {
+      const g = (p.gender ?? '').toString().trim().toLowerCase();
+      if (g && g !== 'unisex') set.add(g.charAt(0).toUpperCase() + g.slice(1));
+    });
+    return Array.from(set).sort();
+  }, [allProducts]);
+
+  // Sizes actually present in the catalog
+  const availableSizes = useMemo(() => {
+    const set = new Set<string>();
+    allProducts.forEach(p => {
+      const sz = (p.size ?? '').toString().trim();
+      if (sz) set.add(sz);
+    });
+    return Array.from(set).sort();
+  }, [allProducts]);
+
   // Count of active filters
   const activeFilterCount = [
     selectedSubcategories.length,
@@ -292,10 +312,10 @@ export const CategoryPage = () => {
       )}
 
 
-      {slug !== 'junior' && themeParam !== 'premium' && themeParam !== 'junior' && (
+      {availableGenders.length > 0 && (
         <FilterSection id="gender" title="Style / Gender">
           <div className="space-y-3">
-            {['Men', 'Women'].map(g => (
+            {availableGenders.map(g => (
               <CheckRow
                 key={g}
                 label={g}
@@ -311,28 +331,26 @@ export const CategoryPage = () => {
         </FilterSection>
       )}
 
-      <FilterSection id="sizes" title="Sizes">
-        <div className="space-y-3">
-          {[
-            { label: 'Small / Cabin', val: 'Small' },
-            { label: 'Medium / Check-in', val: 'Medium' },
-            { label: 'Large / XL', val: 'Large' },
-          ].map(size => (
-            <CheckRow
-              key={size.val}
-              label={size.label}
-              checked={selectedSizes.includes(size.val)}
-              onChange={() =>
-                setSelectedSizes(prev =>
-                  prev.includes(size.val)
-                    ? prev.filter(s => s !== size.val)
-                    : [...prev, size.val]
-                )
-              }
-            />
-          ))}
-        </div>
-      </FilterSection>
+      {availableSizes.length > 0 && (
+        <FilterSection id="sizes" title="Sizes">
+          <div className="space-y-3">
+            {availableSizes.map(size => (
+              <CheckRow
+                key={size}
+                label={size}
+                checked={selectedSizes.includes(size)}
+                onChange={() =>
+                  setSelectedSizes(prev =>
+                    prev.includes(size)
+                      ? prev.filter(s => s !== size)
+                      : [...prev, size]
+                  )
+                }
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       {availableFeatures.length > 0 && (
         <FilterSection id="features" title="Features">
