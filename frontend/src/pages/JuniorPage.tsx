@@ -9,7 +9,7 @@ const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
   { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', color: '#A368FB' },
   { label: '6 to 10 Years', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
-  { label: '11 Years & Above', slug: 'college-backpacks', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
+  { label: '11 Years & Above', slug: 'school-backpacks', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
 ];
 
 const CATEGORIES = [
