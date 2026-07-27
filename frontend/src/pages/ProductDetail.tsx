@@ -258,7 +258,10 @@ export const ProductDetail = () => {
   const amazonUrl = (product as any).amazon_url;
 
   const handleBuyOnAmazon = () => {
-    if (amazonUrl) window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+    if (amazonUrl) {
+      api.trackAmazonClick(product.id);
+      window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const handleToggleWishlist = () => {

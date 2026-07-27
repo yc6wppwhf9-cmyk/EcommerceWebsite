@@ -116,7 +116,10 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const handleBuyOnAmazon = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (amazonUrl) window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+    if (amazonUrl) {
+      api.trackAmazonClick(product.id);
+      window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   // Mobile-friendly tap to swap
@@ -372,7 +375,7 @@ export const JuniorPage = () => {
     document.documentElement.classList.remove('dark');
     sessionStorage.setItem('siteTheme', 'junior');
     const juniorCategories = ['school-backpacks', 'trolley-backpacks', 'lunch-bags', 'combo-set', 'pouches'];
-    Promise.all(juniorCategories.map(cat => api.getProducts({ category: 'junior', sub_category: cat, sort: 'rating', limit: '4' })))
+    Promise.all(juniorCategories.map(cat => api.getProducts({ category: 'junior', sub_category: cat, sort: 'bestseller', limit: '4' })))
       .then(juniorResults => {
         const seen = new Set<string>();
         const combined = juniorResults

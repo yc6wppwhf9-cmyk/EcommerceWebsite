@@ -34,6 +34,27 @@ export const getProductViewCount = (req: Request, res: Response) => {
   res.json({ count });
 };
 
+// Persistent "Buy on Amazon" click counter — drives the Best Sellers ranking.
+export const trackAmazonClick = async (req: Request, res: Response) => {
+  const { product_id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('amazon_clicks')
+      .eq('id', product_id)
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: 'Product not found' });
+    await supabase
+      .from('products')
+      .update({ amazon_clicks: (data.amazon_clicks || 0) + 1 })
+      .eq('id', product_id);
+    res.json({ ok: true });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // ─── Abandoned Cart ────────────────────────────────────────────────────────
 export const sendAbandonedCartEmails = async (_req: Request, res: Response) => {
   const cutoff = new Date(Date.now() - 60 * 60 * 1000).toISOString(); // 1 hour ago

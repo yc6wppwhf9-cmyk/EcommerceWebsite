@@ -124,7 +124,7 @@ const prefetchHomeData = (() => {
         const params = { ...(tab.apiParams || { category: tab.id }), limit: '20' };
         return api.getProducts(params as any).catch(() => {});
       }),
-      api.getProducts({ sort: 'popular', limit: '12', isPremium: 'false' }).catch(() => {}),
+      api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' }).catch(() => {}),
     ];
     Promise.all(fetches).catch(() => {});
   };
@@ -174,7 +174,7 @@ export const Home = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    api.getProducts({ sort: 'popular', limit: '12', isPremium: 'false' }).then(res => {
+    api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' }).then(res => {
       const filtered = (res.products as unknown as Product[]).filter(
         (p: any) => p.categories?.slug !== 'junior'
       );

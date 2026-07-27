@@ -201,6 +201,15 @@ export const api = {
   },
   getProduct: (slug: string) =>
     cacheGet(`/api/products/${slug}`, () => request<any>(`/api/products/${slug}`)),
+  // Fire-and-forget: records a "Buy on Amazon" click to rank Best Sellers by demand.
+  trackAmazonClick: (productId: string) => {
+    if (!productId) return;
+    const url = `${BASE}/api/analytics/amazon-click/${productId}`;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.sendBeacon) navigator.sendBeacon(url);
+      else fetch(url, { method: 'POST', keepalive: true }).catch(() => {});
+    } catch { /* noop */ }
+  },
   createProduct: (data: any) =>
     request<any>('/api/products', { method: 'POST', body: JSON.stringify(data) })
       .then((res) => { clearCache('/api/products'); return res; }),

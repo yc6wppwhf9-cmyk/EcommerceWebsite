@@ -75,6 +75,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       'price-desc': { column: 'price', ascending: false },
       'rating': { column: 'rating', ascending: false },
       'newest': { column: 'created_at', ascending: false },
+      'bestseller': { column: 'amazon_clicks', ascending: false },
     };
     const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
     query = query.order(s.column, { ascending: s.ascending });

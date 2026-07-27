@@ -7,6 +7,7 @@ const router = Router();
 
 router.post('/view/:product_id', AnalyticsController.trackProductView);
 router.get('/view/:product_id', AnalyticsController.getProductViewCount);
+router.post('/amazon-click/:product_id', AnalyticsController.trackAmazonClick);
 router.post('/abandoned-cart', authenticateToken, requireAdmin, validateCsrf, AnalyticsController.sendAbandonedCartEmails);
 
 export default router;

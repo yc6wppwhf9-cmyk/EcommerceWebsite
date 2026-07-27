@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { getProductById } from '../constants/products';
+import { api } from '../lib/api';
 import { Star, Heart } from 'lucide-react';
 import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
@@ -45,7 +46,10 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const handleBuyOnAmazon = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (amazonUrl) window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+    if (amazonUrl) {
+      api.trackAmazonClick(product.id);
+      window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const handleWishlist = (e: React.MouseEvent) => {
