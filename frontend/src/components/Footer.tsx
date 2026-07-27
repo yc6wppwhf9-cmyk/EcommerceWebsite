@@ -89,8 +89,6 @@ export const Footer = () => {
 
           <FooterSection title="Company">
             <ul className="space-y-3">
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/about">About Us</Link></li>
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/team">Our Team</Link></li>
               <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/careers">Careers</Link></li>
               <li className="hidden md:block"><Link className="hover:text-white transition-colors text-xs font-medium" to={isAuthenticated ? (user?.role === 'admin' ? "/admin" : "/account") : "/login"}>Account</Link></li>
             </ul>

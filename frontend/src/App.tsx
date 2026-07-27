@@ -22,10 +22,8 @@ const PremiumCollection = lazy(() => import('./pages/PremiumCollection').then((m
 const LoginPage = lazy(() => import('./pages/LoginPage').then((module) => ({ default: module.LoginPage })));
 const UserDashboard = lazy(() => import('./pages/UserDashboard').then((module) => ({ default: module.UserDashboard })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then((module) => ({ default: module.AdminDashboard })));
-const AboutUs = lazy(() => import('./pages/AboutUs').then((module) => ({ default: module.AboutUs })));
 const ContactUs = lazy(() => import('./pages/ContactUs').then((module) => ({ default: module.ContactUs })));
 const Careers = lazy(() => import('./pages/Careers').then((module) => ({ default: module.Careers })));
-const OurTeam = lazy(() => import('./pages/OurTeam').then((module) => ({ default: module.OurTeam })));
 const ShippingPolicy = lazy(() => import('./pages/Policies').then((module) => ({ default: module.ShippingPolicy })));
 const ReturnsRefunds = lazy(() => import('./pages/Policies').then((module) => ({ default: module.ReturnsRefunds })));
 const PrivacyPolicy = lazy(() => import('./pages/Policies').then((module) => ({ default: module.PrivacyPolicy })));
@@ -80,9 +78,7 @@ function AppContent() {
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/account" element={<ProtectedRoute userOnly><UserDashboard /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<ContactUs />} />
-            <Route path="/team" element={<OurTeam />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/shipping" element={<ShippingPolicy />} />
             <Route path="/returns" element={<ReturnsRefunds />} />
