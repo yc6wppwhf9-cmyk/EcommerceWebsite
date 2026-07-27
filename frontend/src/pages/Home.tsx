@@ -516,24 +516,24 @@ export const Home = () => {
       </section>
 
       {/* Why Shop With Us */}
-      <section className="pt-10 pb-10 md:pt-14 md:pb-14 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
+      <section className="py-7 md:py-9 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
         <div className="container mx-auto px-5 md:px-8">
-          <div className="flex flex-col items-center mb-6 md:mb-10">
-            <p className="text-[16px] font-semibold text-[#14052b] uppercase tracking-[0.2em] font-outfit">Why Shop With Us</p>
+          <div className="flex flex-col items-center mb-5 md:mb-7">
+            <p className="text-[14px] md:text-[15px] font-semibold text-[#14052b] uppercase tracking-[0.2em] font-outfit">Why Shop With Us</p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-6 md:gap-x-12">
             {[
               { Icon: Truck, label: 'Amazon Fulfilled', desc: 'Fast, tracked delivery by Amazon' },
               { Icon: CreditCard, label: 'Secure Amazon Checkout', desc: 'Pay safely on Amazon' },
               { Icon: ShieldCheck, label: 'Brand Promise', desc: 'Certified priority items' },
               { Icon: PackageCheck, label: 'Quality Unit', desc: '8-stage strength testing' }
             ].map((f, i) => (
-              <div key={i} className="flex flex-col items-center text-center gap-3 md:gap-4">
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 text-[#26B3FF]">
-                  <f.Icon size={26} strokeWidth={1.5} />
+              <div key={i} className="flex flex-col items-center text-center gap-2 md:gap-2.5">
+                <div className="w-11 h-11 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center shadow-md border border-gray-100 text-[#26B3FF]">
+                  <f.Icon size={20} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-[16px] font-semibold uppercase tracking-[0.12em] font-outfit">{f.label}</h3>
-                <p className="text-[14px] font-medium text-gray-400 leading-snug font-outfit">{f.desc}</p>
+                <h3 className="text-[13px] md:text-[14px] font-semibold uppercase tracking-[0.12em] font-outfit">{f.label}</h3>
+                <p className="text-[12px] md:text-[13px] font-medium text-gray-400 leading-snug font-outfit">{f.desc}</p>
               </div>
             ))}
           </div>
