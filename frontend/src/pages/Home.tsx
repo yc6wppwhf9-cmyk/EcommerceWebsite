@@ -193,7 +193,8 @@ export const Home = () => {
       <h1 className="sr-only">Priority Bags — Quality Backpacks & Premium Luggage Online</h1>
       <HeroSlider />
 
-      {/* Categories — Mobile: Book-page flip stack */}
+      {/* Categories section — hidden for now (change `false` to `true` to restore) */}
+      {false && (<>
       <section className="md:hidden py-8 px-4 text-center">
         <h2 className="text-[12px] font-black uppercase tracking-[0.35em] text-gray-400 mb-6">Shop By Category</h2>
         <div className="md:hidden px-2">
@@ -293,6 +294,7 @@ export const Home = () => {
           ))}
         </div>
       </section>
+      </>)}
 
       {/* Editorial Banner (Keeping same as previous per customer screenshot) */}
       <section className="relative bg-banner-blue">
