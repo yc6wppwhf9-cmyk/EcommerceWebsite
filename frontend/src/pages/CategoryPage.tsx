@@ -291,31 +291,6 @@ export const CategoryPage = () => {
         </FilterSection>
       )}
 
-      <FilterSection id="price" title="Price Range">
-        <div className="space-y-3">
-          <div className="flex justify-between text-[10px] font-black text-gray-700 uppercase tracking-widest">
-            <span>₹0</span>
-            <span>
-              {priceRange >= maxPrice
-                ? `Up to ₹${maxPrice.toLocaleString('en-IN')}`
-                : `Up to ₹${priceRange.toLocaleString('en-IN')}`}
-            </span>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={maxPrice}
-            step={100}
-            value={Math.min(priceRange, maxPrice)}
-            onChange={e => setPriceRange(Number(e.target.value))}
-            className="w-full accent-black h-[2px] cursor-pointer"
-          />
-          <div className="flex justify-between text-[9px] text-gray-300 font-bold uppercase tracking-widest">
-            <span>Min</span>
-            <span>Max ₹{maxPrice.toLocaleString('en-IN')}</span>
-          </div>
-        </div>
-      </FilterSection>
 
       {slug !== 'junior' && themeParam !== 'premium' && themeParam !== 'junior' && (
         <FilterSection id="gender" title="Style / Gender">
@@ -482,8 +457,6 @@ export const CategoryPage = () => {
                 className="bg-transparent text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer"
               >
                 <option value="newest">Newest First</option>
-                <option value="price-low">Price: Low → High</option>
-                <option value="price-high">Price: High → Low</option>
                 <option value="rating">Highest Rated</option>
               </select>
             </div>
