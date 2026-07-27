@@ -464,6 +464,8 @@ export const JuniorPage = () => {
           </div>
         )}
 
+        {/* Shop By Age — hidden for now (change `false` to `true` to restore) */}
+        {false && (
         <div className="max-w-[1280px] mx-auto px-6 md:px-14 relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <img src="/junior/flower.png" alt="" aria-hidden className="w-4 h-4 select-none" />
@@ -488,6 +490,7 @@ export const JuniorPage = () => {
             ))}
           </div>
         </div>
+        )}
       </section>
 
       <section className="relative mb-6 overflow-visible px-4 md:px-0 flex justify-center">
