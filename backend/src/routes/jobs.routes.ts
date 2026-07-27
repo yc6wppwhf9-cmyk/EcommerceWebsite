@@ -1,9 +1,21 @@
 import { Router } from 'express';
+import multer from 'multer';
 import * as JobsController from '../controllers/jobs.controller';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 import { validateCsrf } from '../middleware/csrf';
 
 const router = Router();
+
+// Public resume upload — memory storage, 5MB cap, PDF/DOC/image only.
+const resumeUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const ok = /pdf|msword|officedocument|image\//.test(file.mimetype);
+    cb(ok ? null : new Error('Only PDF, DOC, or image resumes are allowed'), ok);
+  },
+});
+router.post('/upload-resume', resumeUpload.single('resume'), JobsController.uploadResume);
 
 // Public: list open jobs + single job
 router.get('/', JobsController.getJobs);

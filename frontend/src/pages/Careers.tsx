@@ -69,24 +69,25 @@ export const Careers = () => {
     const selectedJob = jobs.find(j => j.title === form.position);
 
     try {
-      if (selectedJob) {
-        await api.submitApplication(selectedJob.id, {
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          cover_letter: form.cover_letter,
-          resume_url: form.resume ? form.resume.name : undefined,
-        });
-      } else {
-        // General application
-        await api.submitApplication('general', {
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          cover_letter: form.cover_letter,
-          resume_url: form.resume ? form.resume.name : undefined,
-        });
+      // Upload the resume file first so admins get a real, openable link.
+      let resumeUrl: string | undefined;
+      if (form.resume) {
+        try {
+          resumeUrl = await api.uploadResume(form.resume);
+        } catch {
+          showToast('Could not upload your resume. Please try a smaller PDF/DOC and retry.', 'error');
+          setSubmitting(false);
+          return;
+        }
       }
+
+      await api.submitApplication(selectedJob ? selectedJob.id : 'general', {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        cover_letter: form.cover_letter,
+        resume_url: resumeUrl,
+      });
       setForm(EMPTY_FORM);
       if (fileInputRef.current) fileInputRef.current.value = '';
       showToast("Application submitted! We'll be in touch soon.", 'success');

@@ -267,6 +267,14 @@ export const api = {
     request<any>(`/api/jobs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteJob: (id: string) =>
     request<any>(`/api/jobs/${id}`, { method: 'DELETE' }),
+  uploadResume: async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('resume', file);
+    const res = await fetch(`${BASE}/api/jobs/upload-resume`, { method: 'POST', body: fd });
+    if (!res.ok) throw new Error('Resume upload failed');
+    const data = await res.json();
+    return data.url as string;
+  },
   submitApplication: (jobId: string, data: { name: string; email: string; phone: string; cover_letter?: string; resume_url?: string }) =>
     request<any>(`/api/jobs/${jobId}/apply`, { method: 'POST', body: JSON.stringify(data) }),
   getAllApplications: (params?: { status?: string; page?: number; limit?: number }) => {

@@ -2,6 +2,30 @@ import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 import { AuthRequest } from '../middleware/auth';
 import { sendEmail, getJobApplicationTemplate } from '../lib/mail';
+import cloudinary from '../config/cloudinary';
+
+type MulterRequest = Request & { file?: { buffer: Buffer; originalname: string; mimetype: string } };
+
+// Public: applicants upload their resume; we host it on Cloudinary and return a
+// permanent URL that gets stored on the application so admins can open it.
+export const uploadResume = async (req: MulterRequest, res: Response) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  try {
+    const url = await new Promise<string>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'priority-bags/resumes', resource_type: 'auto' },
+        (error, result) => {
+          if (error || !result?.secure_url) reject(error || new Error('Upload failed'));
+          else resolve(result.secure_url);
+        },
+      );
+      stream.end(req.file!.buffer);
+    });
+    res.json({ url });
+  } catch {
+    res.status(502).json({ error: 'Failed to upload resume' });
+  }
+};
 
 export const getJobs = async (req: Request, res: Response) => {
   const { status, page = '1', limit = '20' } = req.query;
