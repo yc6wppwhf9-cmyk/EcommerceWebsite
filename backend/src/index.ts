@@ -35,12 +35,21 @@ app.use(helmet());
 app.use(compression());
 // Use 'combined' (Apache-style) in production for proper log aggregation
 app.use(morgan(config.NODE_ENV === 'production' ? 'combined' : 'dev'));
+// Production hosts always allowed (apex + www handled by www-stripping below),
+// so login works regardless of which variant the browser is on.
+const ALWAYS_ALLOWED_HOSTS = ['prioritybags.in'];
+const stripWww = (host: string) => host.replace(/^www\./, '');
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || config.CORS_ORIGINS.includes(origin.replace(/\/$/, ''))) {
-      callback(null, true);
-      return;
-    }
+    if (!origin) { callback(null, true); return; }
+    const clean = origin.replace(/\/$/, '');
+    try {
+      const host = stripWww(new URL(clean).host);
+      const inAllowlist = config.CORS_ORIGINS.some((o) => {
+        try { return stripWww(new URL(o).host) === host; } catch { return o === clean; }
+      });
+      if (inAllowlist || ALWAYS_ALLOWED_HOSTS.includes(host)) { callback(null, true); return; }
+    } catch { /* malformed origin falls through to reject */ }
     callback(new AppError('Origin is not allowed', 403));
   },
   credentials: true,
