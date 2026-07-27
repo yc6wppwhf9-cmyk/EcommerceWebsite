@@ -516,9 +516,9 @@ export const Home = () => {
       </section>
 
       {/* Why Shop With Us */}
-      <section className="pt-12 pb-10 md:pt-20 md:pb-32 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
+      <section className="pt-10 pb-10 md:pt-14 md:pb-14 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
         <div className="container mx-auto px-5 md:px-8">
-          <div className="flex flex-col items-center mb-8 md:mb-20">
+          <div className="flex flex-col items-center mb-6 md:mb-10">
             <p className="text-[16px] font-semibold text-[#14052b] uppercase tracking-[0.2em] font-outfit">Why Shop With Us</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-16">
