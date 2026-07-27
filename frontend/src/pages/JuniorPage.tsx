@@ -107,7 +107,6 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const discount = originalPrice > product.price
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
-  const ageBadge = product.ageRange || (product as any).age_range || (product.subcategory === 'lunch-bags' ? 'Lunch Ready' : 'School Ready');
 
   const secondaryImage = product.images?.[1] || product.image;
   const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -150,9 +149,6 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
             crossOrigin="anonymous"
           />
         </div>
-        <span className="absolute top-2 left-2 rounded-full bg-[#F69245]/15 text-[#A65011] px-2.5 py-1 text-[8px] md:text-[9px] font-black uppercase tracking-widest">
-          {ageBadge}
-        </span>
         {product.isNew && (
           <span className="absolute top-2 right-2 bg-[#8750DA] text-white text-[8px] md:text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">
             NEW
