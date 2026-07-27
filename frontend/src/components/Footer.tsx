@@ -60,7 +60,7 @@ export const Footer = () => {
           <Link to="/" className="mb-4 block">
             <img src="/logo.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
           </Link>
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-3">The Digital Atelier</p>
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-3">Be First</p>
           <p className="text-xs text-gray-400 leading-relaxed font-medium">
             Premium bags and luggage for every journey. Quality craftsmanship since 1999.
           </p>
@@ -72,7 +72,7 @@ export const Footer = () => {
             <Link to="/" className="mb-8 block">
               <img src="/logo.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
             </Link>
-            <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-4">The Digital Atelier</p>
+            <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-4">Be First</p>
             <p className="text-xs text-gray-400 leading-relaxed font-medium">
               Premium bags and luggage for every journey. Quality craftsmanship since 1999. Engineered for movement.
             </p>

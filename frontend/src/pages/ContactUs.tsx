@@ -116,7 +116,7 @@ export const ContactUs = () => {
               <div className="p-8 bg-priority-dark rounded-2xl text-white relative overflow-hidden">
                 <div className="relative z-10">
                   <h3 className="text-2xl font-black mb-4">WhatsApp Shopping</h3>
-                  <p className="text-gray-400 text-sm mb-6">Experience our Digital Atelier on WhatsApp. Browse, ask, and order directly.</p>
+                  <p className="text-gray-400 text-sm mb-6">Experience Be First on WhatsApp. Browse, ask, and order directly.</p>
                   <a href="https://wa.me/917400459254" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl transition-all">
                     <MessageSquare className="w-5 h-5" />
                     CHAT WITH CONCIERGE
