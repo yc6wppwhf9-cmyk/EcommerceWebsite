@@ -248,8 +248,8 @@ export const JuniorPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [tabPage, setTabPage] = useState(0);
   const [clickEffect, setClickEffect] = useState<'dreamy' | 'power' | null>(null);
-  const tabScrollRef = useRef<HTMLDivElement>(null);
   const activeCategory = CATEGORIES.find(c => c.label === activeTab) || CATEGORIES[0];
   const currentIndex = CATEGORIES.findIndex(c => c.label === activeTab);
   const nextCategory = CATEGORIES[(currentIndex + 1) % CATEGORIES.length];
@@ -393,7 +393,7 @@ export const JuniorPage = () => {
     if (!cat) return;
     setIsLoading(true);
     setProducts([]);
-    if (tabScrollRef.current) tabScrollRef.current.scrollLeft = 0;
+    setTabPage(0);
     api.getProducts({ sub_category: cat.filter, limit: '20' })
       .then(res => { setProducts(res.products as unknown as Product[]); setIsLoading(false); })
       .catch(() => setIsLoading(false));
@@ -596,20 +596,26 @@ export const JuniorPage = () => {
 
             <div className="min-w-0">
               <div className="relative">
-                <button
-                  onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' }); }}
-                  className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
-                  aria-label="Previous junior products"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: el.clientWidth, behavior: 'smooth' }); }}
-                  className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
-                  aria-label="Next junior products"
-                >
-                  <ChevronRight size={20} />
-                </button>
+                {products.length > 3 && (
+                  <>
+                    <button
+                      onClick={() => setTabPage(p => Math.max(0, p - 1))}
+                      disabled={tabPage === 0}
+                      className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
+                      aria-label="Previous junior products"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button
+                      onClick={() => setTabPage(p => Math.min(Math.ceil(products.length / 3) - 1, p + 1))}
+                      disabled={tabPage >= Math.ceil(products.length / 3) - 1}
+                      className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#F69245] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
+                      aria-label="Next junior products"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </>
+                )}
 
                 {isLoading ? (
                   <>
@@ -622,9 +628,9 @@ export const JuniorPage = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="hidden md:flex gap-5 lg:gap-6 overflow-x-auto pb-5 no-scrollbar px-5">
-                      {[1, 2, 3, 4].map(n => (
-                        <div key={n} className="shrink-0 w-[220px] lg:w-[240px] xl:w-[255px]">
+                    <div className="hidden md:grid grid-cols-3 gap-6">
+                      {[1, 2, 3].map(n => (
+                        <div key={n}>
                           <div className="aspect-[300/307] bg-gray-50 animate-pulse rounded-xl" />
                           <div className="mt-4 h-4 w-4/5 bg-gray-50 animate-pulse rounded" />
                           <div className="mt-3 h-4 w-1/2 bg-gray-50 animate-pulse rounded" />
@@ -642,9 +648,9 @@ export const JuniorPage = () => {
                         </motion.div>
                       ))}
                     </div>
-                    <div ref={tabScrollRef} className="hidden md:flex gap-6 overflow-x-auto pb-5 no-scrollbar snap-x snap-mandatory px-5">
-                      {products.map((product, idx) => (
-                        <motion.div key={product.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - 3rem) / 3)' }} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                    <div className="hidden md:grid grid-cols-3 gap-6">
+                      {products.slice(tabPage * 3, tabPage * 3 + 3).map((product, idx) => (
+                        <motion.div key={product.id} className="min-w-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}

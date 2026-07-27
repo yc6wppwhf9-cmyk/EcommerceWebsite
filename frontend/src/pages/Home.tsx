@@ -134,6 +134,7 @@ export const Home = () => {
   const [activeTab, setActiveTab] = useState<string>('college-backpacks');
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
   const [tabLoading, setTabLoading] = useState(true);
+  const [tabPage, setTabPage] = useState(0);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
   const activeTabConfig = BACKPACK_TABS.find(t => t.id === activeTab) || BACKPACK_TABS[0];
@@ -159,12 +160,11 @@ export const Home = () => {
   }, []);
 
   const bestSellersRef = useRef<HTMLDivElement>(null);
-  const tabScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setTabLoading(true);
     setTabProducts([]);
-    if (tabScrollRef.current) tabScrollRef.current.scrollLeft = 0;
+    setTabPage(0);
     const tab = BACKPACK_TABS.find(t => t.id === activeTab);
     const params = { ...(tab?.apiParams || { category: activeTab }), limit: '20' };
     // Will resolve from cache instantly if prefetchHomeData already ran
@@ -410,15 +410,17 @@ export const Home = () => {
               {tabProducts.length > 3 && (
                 <>
                   <button
-                    onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' }); }}
-                    className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                    onClick={() => setTabPage(p => Math.max(0, p - 1))}
+                    disabled={tabPage === 0}
+                    className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
                     aria-label="Previous products"
                   >
                     <ChevronLeft size={20} />
                   </button>
                   <button
-                    onClick={() => { const el = tabScrollRef.current; if (el) el.scrollBy({ left: el.clientWidth, behavior: 'smooth' }); }}
-                    className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100"
+                    onClick={() => setTabPage(p => Math.min(Math.ceil(tabProducts.length / 3) - 1, p + 1))}
+                    disabled={tabPage >= Math.ceil(tabProducts.length / 3) - 1}
+                    className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
                     aria-label="Next products"
                   >
                     <ChevronRight size={20} />
@@ -437,9 +439,9 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="hidden md:flex gap-6 overflow-x-auto no-scrollbar pb-6 px-5">
+                  <div className="hidden md:grid grid-cols-3 gap-6">
                     {[1, 2, 3].map(n => (
-                      <div key={n} className="shrink-0" style={{ width: 'calc((100% - 3rem) / 3)' }}>
+                      <div key={n}>
                         <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
                         <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
                         <div className="mt-3 h-4 w-1/2 bg-gray-100 animate-pulse rounded" />
@@ -458,10 +460,10 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  {/* Desktop: 3-up paging carousel */}
-                  <div ref={tabScrollRef} className="hidden md:flex gap-6 overflow-x-auto no-scrollbar pb-6 px-5 scroll-smooth snap-x snap-mandatory">
-                    {tabProducts.map(p => (
-                      <div key={p.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - 3rem) / 3)' }}>
+                  {/* Desktop: paginated 3-up grid (no overflow → never a clipped card) */}
+                  <div className="hidden md:grid grid-cols-3 gap-6">
+                    {tabProducts.slice(tabPage * 3, tabPage * 3 + 3).map(p => (
+                      <div key={p.id} className="min-w-0">
                         <ProductCard product={p} />
                       </div>
                     ))}
