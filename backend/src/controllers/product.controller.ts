@@ -22,7 +22,7 @@ const getPublishIssues = (product: Record<string, any>): string[] => {
 };
 
 export const getProducts = async (req: AuthRequest, res: Response) => {
-  const { category, sub_category, gender, isPremium, junior_style, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
+  const { category, sub_category, gender, isPremium, junior_style, age_range, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
   try {
     let query = supabase
@@ -51,6 +51,10 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
 
     if (gender) {
       query = query.eq('gender', gender);
+    }
+
+    if (age_range) {
+      query = query.eq('age_range', age_range);
     }
 
     if (isPremium === 'true' || category === 'premium') {

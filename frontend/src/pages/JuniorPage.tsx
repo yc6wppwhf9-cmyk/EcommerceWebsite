@@ -6,10 +6,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
 
 const AGE_GROUPS = [
-  { label: 'Below 3 Years', slug: 'school-backpacks', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
-  { label: '3 to 5 Years', slug: 'school-backpacks', img: '/junior/Rectangle 29.png', color: '#A368FB' },
-  { label: '6 to 10 Years', slug: 'school-backpacks', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
-  { label: '11 Years & Above', slug: 'school-backpacks', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
+  { label: 'Below 3 Years', slug: 'school-backpacks', age: '30-36 months', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
+  { label: '3 to 5 Years', slug: 'school-backpacks', age: '3-5 years', img: '/junior/Rectangle 29.png', color: '#A368FB' },
+  { label: '6 to 10 Years', slug: 'school-backpacks', age: '6-10 years', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
+  { label: '11 Years & Above', slug: 'school-backpacks', age: '11+ years', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
 ];
 
 const CATEGORIES = [
@@ -77,7 +77,7 @@ const AgeGroupCarousel = () => {
               transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="w-full rounded-2xl overflow-hidden shadow-xl"
             >
-              <Link to={`/${AGE_GROUPS[idx].slug}?theme=junior`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
+              <Link to={`/${AGE_GROUPS[idx].slug}?theme=junior&age=${encodeURIComponent(AGE_GROUPS[idx].age)}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
                 <img src={AGE_GROUPS[idx].img} alt={AGE_GROUPS[idx].label} className="absolute inset-0 w-full h-full object-cover object-top" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
@@ -478,7 +478,7 @@ export const JuniorPage = () => {
           <div className="hidden md:grid grid-cols-4 gap-8 lg:gap-10">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                <Link to={`/${group.slug}?theme=junior`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
+                <Link to={`/${group.slug}?theme=junior&age=${encodeURIComponent(group.age)}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
                   <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
                   <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#8750DA] h-[52px] rounded-tl-[40px]">
                     <p className="relative z-10 text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>

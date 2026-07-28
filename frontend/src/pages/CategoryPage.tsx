@@ -15,6 +15,7 @@ export const CategoryPage = () => {
   const { category } = useParams<{ category: string }>();
   const [searchParams] = useSearchParams();
   const themeParam = searchParams.get('theme') ?? undefined;
+  const ageParam = searchParams.get('age') ?? undefined;
 
   const slug = category || 'backpacks';
   const currentCategory = getCategoryBySlug(slug);
@@ -93,6 +94,8 @@ export const CategoryPage = () => {
         params.isPremium = 'false';
       }
 
+      if (ageParam) params.age_range = ageParam;
+
       try {
         const res = await api.getProducts(params);
         const products = res.products as unknown as Product[];
@@ -110,7 +113,7 @@ export const CategoryPage = () => {
         setIsLoadingMore(false);
       }
     },
-    [slug, isGenderFilter, isPremiumFilter, themeParam] // eslint-disable-line react-hooks/exhaustive-deps
+    [slug, isGenderFilter, isPremiumFilter, themeParam, ageParam] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {
