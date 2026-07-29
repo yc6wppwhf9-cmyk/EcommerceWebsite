@@ -33,8 +33,11 @@ const IMG = {
   refPoster: '/Category/ref.png',
 };
 
-// Editorial banner CTAs. Each is shown only if its gender query returns stock,
-// so a button never navigates to an empty product grid.
+// Primary editorial banner CTA — always present, regardless of gender tagging.
+const BANNER_CTA = { to: '/luggage', label: 'Shop Now' };
+
+// Secondary editorial banner CTAs. Each is shown only if its gender query returns
+// stock, so a button never navigates to an empty product grid.
 const GENDER_LINKS = [
   { gender: 'women', to: '/women', label: 'Shop Women' },
   { gender: 'men', to: '/men', label: 'Shop Men' },
@@ -378,13 +381,6 @@ export const Home = () => {
       </section>
 
       <section className="hidden md:block max-w-[1720px] mx-auto px-8 lg:px-12 pt-12 pb-10 lg:pt-16 lg:pb-14">
-        <div className="flex items-end justify-between mb-7 lg:mb-9">
-          <div>
-            <p className="text-[12px] font-black uppercase tracking-[0.24em] text-[#26B3FF] mb-2">Explore the range</p>
-            <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#14052b]">Shop by category</h2>
-          </div>
-          <p className="text-sm font-medium text-gray-500">Find the right companion for every journey.</p>
-        </div>
         <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
@@ -413,14 +409,18 @@ export const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
             <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">{banner.heading}</h2>
-            <p className={`text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 select-none ${banner.links.length ? 'mb-6' : ''}`}>{banner.subheading}</p>
+            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 select-none mb-6">{banner.subheading}</p>
             {banner.links.length > 0 && (
-              <div className="flex gap-6">
+              <div className="flex gap-6 mb-6">
                 {banner.links.map((link) => (
                   <Link key={link.to} to={link.to} className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">{link.label}</Link>
                 ))}
               </div>
             )}
+            <Link to={BANNER_CTA.to} className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-[#26B3FF] shadow-lg">
+              {BANNER_CTA.label}
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
 
@@ -447,14 +447,10 @@ export const Home = () => {
                   ))}
                 </div>
               )}
-              <div className="flex flex-wrap gap-3 mt-8">
-                {CATS.map((cat) => (
-                  <Link key={cat.to} to={cat.to} className="inline-flex items-center gap-2 rounded-full border border-white/40 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-white hover:text-[#26B3FF]">
-                    {cat.label}
-                    <ArrowRight size={14} />
-                  </Link>
-                ))}
-              </div>
+              <Link to={BANNER_CTA.to} className="inline-flex items-center gap-2.5 rounded-full bg-white px-8 py-3.5 mt-8 text-[12px] font-black uppercase tracking-[0.16em] text-[#26B3FF] shadow-lg transition-transform duration-300 hover:-translate-y-0.5">
+                {BANNER_CTA.label}
+                <ArrowRight size={16} />
+              </Link>
             </div>
           </div>
         </div>
