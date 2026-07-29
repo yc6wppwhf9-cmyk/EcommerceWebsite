@@ -33,6 +33,13 @@ const IMG = {
   refPoster: '/Category/ref.png',
 };
 
+// Editorial banner CTAs. Each is shown only if its gender query returns stock,
+// so a button never navigates to an empty product grid.
+const GENDER_LINKS = [
+  { gender: 'women', to: '/women', label: 'Shop Women' },
+  { gender: 'men', to: '/men', label: 'Shop Men' },
+];
+
 const heroVariants = {
   enter: { opacity: 0, scale: 1.03 },
   center: { opacity: 1, scale: 1 },
@@ -126,6 +133,9 @@ const prefetchHomeData = (() => {
       }),
       api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' }).catch(() => {}),
       api.getProducts({ limit: '1' }).catch(() => {}),
+      ...GENDER_LINKS.map(link =>
+        api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' }).catch(() => {})
+      ),
     ];
     Promise.all(fetches).catch(() => {});
   };
@@ -140,6 +150,8 @@ export const Home = () => {
   // null = still checking. Drives the editorial banner: real "New Arrival" copy once
   // the catalogue has anything in it, "Launching Soon" while it's empty.
   const [hasProducts, setHasProducts] = useState<boolean | null>(null);
+  // null = still checking. Holds only the gender CTAs that have stock behind them.
+  const [genderStock, setGenderStock] = useState<typeof GENDER_LINKS | null>(null);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
   const activeTabConfig = BACKPACK_TABS.find(t => t.id === activeTab) || BACKPACK_TABS[0];
 
@@ -193,6 +205,18 @@ export const Home = () => {
       .catch(() => setHasProducts(false));
   }, []);
 
+  useEffect(() => {
+    // Ask the exact queries the CTAs navigate to. A product only counts here once
+    // it is tagged women/men — everything tagged `unisex` answers neither, which is
+    // why the buttons stay hidden until the catalogue is actually gendered.
+    Promise.all(
+      GENDER_LINKS.map(link =>
+        api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' })
+          .then(res => (res.products?.length ?? 0) > 0)
+          .catch(() => false)
+      )
+    ).then(results => setGenderStock(GENDER_LINKS.filter((_, i) => results[i])));
+  }, []);
 
   // Banner copy follows the catalogue: a live store gets the real "New Arrival"
   // pitch, an empty one gets an honest holding message with a CTA that goes
@@ -202,10 +226,8 @@ export const Home = () => {
         heading: 'New Arrival',
         subheading: 'Ready For Your Journey',
         imageTo: '/backpacks' as string | null,
-        links: [
-          { to: '/women', label: 'Shop Women' },
-          { to: '/men', label: 'Shop Men' },
-        ],
+        // Only the genders that actually have stock. Empty until products are tagged.
+        links: (genderStock ?? []).map(({ to, label }) => ({ to, label })),
       }
     : {
         heading: 'Launching Soon',
@@ -329,7 +351,7 @@ export const Home = () => {
 
       {/* Editorial Banner (Keeping same as previous per customer screenshot).
           Hidden until the product check resolves so the copy never flips mid-view. */}
-      {hasProducts !== null && (
+      {hasProducts !== null && genderStock !== null && (
       <section className="relative bg-banner-blue">
         {/* Mobile version */}
         <div className="md:hidden relative w-full overflow-hidden">
@@ -337,12 +359,14 @@ export const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
             <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">{banner.heading}</h2>
-            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 mb-6 select-none">{banner.subheading}</p>
-            <div className="flex gap-6">
-              {banner.links.map((link) => (
-                <Link key={link.to} to={link.to} className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">{link.label}</Link>
-              ))}
-            </div>
+            <p className={`text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 select-none ${banner.links.length ? 'mb-6' : ''}`}>{banner.subheading}</p>
+            {banner.links.length > 0 && (
+              <div className="flex gap-6">
+                {banner.links.map((link) => (
+                  <Link key={link.to} to={link.to} className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">{link.label}</Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -360,12 +384,14 @@ export const Home = () => {
             )}
             <div className="w-1/2 text-left">
               <h2 className="text-6xl lg:text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">{banner.heading}</h2>
-              <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-10">{banner.subheading}</p>
-              <div className="flex gap-8">
-                {banner.links.map((link) => (
-                  <Link key={link.to} to={link.to} className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">{link.label}</Link>
-                ))}
-              </div>
+              <p className={`text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none ${banner.links.length ? 'mb-10' : ''}`}>{banner.subheading}</p>
+              {banner.links.length > 0 && (
+                <div className="flex gap-8">
+                  {banner.links.map((link) => (
+                    <Link key={link.to} to={link.to} className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">{link.label}</Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
