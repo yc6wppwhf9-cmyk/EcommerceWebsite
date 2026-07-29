@@ -105,9 +105,17 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
         <Link to={`/product/${product.slug || product.id}`}>
           <h3 className="text-[16px] font-bold text-black leading-snug line-clamp-2 hover:text-[#755FF1] transition-colors">{product.name}</h3>
         </Link>
-        <div className="flex items-center gap-1.5">
-          {[...Array(5)].map((_, i) => <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />)}
-          <span className="text-[11px] text-gray-400 font-medium">{(product as any).reviews ?? 10} reviews</span>
+        <div className="flex items-center gap-1.5 min-h-[16px]">
+          {(product.rating ?? 0) > 0 ? (
+            <>
+              {[...Array(5)].map((_, i) => <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />)}
+              <span className="text-[11px] text-gray-400 font-medium">
+                {(product.rating ?? 0).toFixed(1)}{(product as any).reviews > 0 ? ` (${(product as any).reviews})` : ''}
+              </span>
+            </>
+          ) : (
+            <span className="text-[10px] text-gray-300 font-medium uppercase tracking-widest">New Arrival</span>
+          )}
         </div>
         {(product as any).amazon_url ? (
           <button

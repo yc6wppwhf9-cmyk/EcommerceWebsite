@@ -159,7 +159,7 @@ export const ProductDetail = () => {
         ...raw,
         originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price,
         reviews: raw.reviews ?? 0,
-        rating: raw.rating ?? 4,
+        rating: raw.rating ?? 0,
         specifications: raw.specifications ?? {},
         features: Array.isArray(raw.features) ? raw.features : [],
         category: raw.categories?.slug ?? raw.sub_category ?? '',
@@ -219,7 +219,7 @@ export const ProductDetail = () => {
         <h1 className="text-3xl font-black mb-4 uppercase tracking-tighter">Couldn't Load Product</h1>
         <p className="text-gray-400 mb-8 font-bold uppercase tracking-widest text-[11px]">Check your connection and try again.</p>
         <button
-          onClick={() => { setFetchError(false); setLoading(true); api.getProduct(slug!).then((raw: any) => { const rc = Array.isArray(raw.colors) ? raw.colors : []; setProduct({ ...raw, originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price, reviews: raw.reviews ?? 0, rating: raw.rating ?? 4, specifications: raw.specifications ?? {}, features: Array.isArray(raw.features) ? raw.features : [], category: raw.categories?.slug ?? raw.sub_category ?? '', images: Array.isArray(raw.images) && raw.images.length > 0 ? raw.images : raw.image ? [raw.image] : [], variants: rc.length > 0 ? rc.map((c: any) => ({ color: c.name ?? c.color ?? '', colorCode: c.code ?? c.colorCode ?? '', images: Array.isArray(c.images) ? c.images : [] })) : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []) }); setFetchError(false); }).catch(() => setFetchError(true)).finally(() => setLoading(false)); }}
+          onClick={() => { setFetchError(false); setLoading(true); api.getProduct(slug!).then((raw: any) => { const rc = Array.isArray(raw.colors) ? raw.colors : []; setProduct({ ...raw, originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price, reviews: raw.reviews ?? 0, rating: raw.rating ?? 0, specifications: raw.specifications ?? {}, features: Array.isArray(raw.features) ? raw.features : [], category: raw.categories?.slug ?? raw.sub_category ?? '', images: Array.isArray(raw.images) && raw.images.length > 0 ? raw.images : raw.image ? [raw.image] : [], variants: rc.length > 0 ? rc.map((c: any) => ({ color: c.name ?? c.color ?? '', colorCode: c.code ?? c.colorCode ?? '', images: Array.isArray(c.images) ? c.images : [] })) : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []) }); setFetchError(false); }).catch(() => setFetchError(true)).finally(() => setLoading(false)); }}
           className="bg-[#14052b] text-white font-black text-xs px-10 py-5 rounded-xl hover:scale-105 transition-all tracking-widest uppercase inline-flex items-center gap-2"
         >
           <RefreshCw size={14} /> Retry
@@ -366,15 +366,21 @@ export const ProductDetail = () => {
             {/* Product Name */}
             <h1 className="font-outfit font-medium text-[28.58px] leading-snug tracking-normal text-[#190101] uppercase">{product.name}</h1>
 
-            {/* Stars */}
-            <div className="flex items-center gap-3">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
-                ))}
+            {/* Stars — only when there is a real Amazon rating */}
+            {product.rating > 0 ? (
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
+                  ))}
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                  {product.rating.toFixed(1)}{product.reviews > 0 ? ` · ${product.reviews} reviews` : ''}
+                </span>
               </div>
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">{product.reviews} verified reviews</span>
-            </div>
+            ) : (
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-300">New Arrival</span>
+            )}
 
 
             {/* Low stock / out of stock */}
@@ -497,8 +503,8 @@ export const ProductDetail = () => {
                 <div className="space-y-10 pt-4 mb-8">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-gray-50 pb-8">
                     <div className="text-center sm:text-left">
-                      <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">{product.rating?.toFixed(1) ?? '—'} / 5.0</h4>
-                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1">Join {product.reviews} verified owners</p>
+                      <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">{product.rating > 0 ? `${product.rating.toFixed(1)} / 5.0` : 'No ratings yet'}</h4>
+                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1">{product.reviews > 0 ? `Join ${product.reviews} verified owners` : 'Be the first to review'}</p>
                     </div>
                     <button
                       onClick={() => setShowReviewForm(!showReviewForm)}

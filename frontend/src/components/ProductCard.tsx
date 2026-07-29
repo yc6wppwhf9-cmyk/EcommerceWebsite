@@ -38,8 +38,9 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
     : 0;
 
   const isWishlisted = isInWishlist(product.id);
-  const rating = product.rating ?? 4.2;
+  const rating = product.rating ?? 0;
   const reviews = (product as any).reviews ?? 0;
+  const hasRating = rating > 0;
 
   const amazonUrl = (product as any).amazon_url;
 
@@ -130,21 +131,25 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           </h3>
         </Link>
 
-        {/* Stars + reviews — always shown */}
-        <div className="flex items-center gap-2">
-          <div className="flex gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={13}
-                className={i < Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
-              />
-            ))}
-          </div>
-          {reviews > 0 ? (
-            <span className="text-[11px] text-gray-400 font-medium">{reviews} reviews</span>
+        {/* Stars + reviews — only when we have a real Amazon rating */}
+        <div className="flex items-center gap-2 min-h-[18px]">
+          {hasRating ? (
+            <>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={13}
+                    className={i < Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
+                  />
+                ))}
+              </div>
+              <span className="text-[11px] text-gray-400 font-medium">
+                {rating.toFixed(1)}{reviews > 0 ? ` (${reviews})` : ''}
+              </span>
+            </>
           ) : (
-            <span className="text-[10px] text-gray-300 font-medium">New Arrival</span>
+            <span className="text-[10px] text-gray-300 font-medium uppercase tracking-widest">New Arrival</span>
           )}
         </div>
 
