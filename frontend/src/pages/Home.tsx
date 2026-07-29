@@ -125,6 +125,7 @@ const prefetchHomeData = (() => {
         return api.getProducts(params as any).catch(() => {});
       }),
       api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' }).catch(() => {}),
+      api.getProducts({ limit: '1' }).catch(() => {}),
     ];
     Promise.all(fetches).catch(() => {});
   };
@@ -136,6 +137,9 @@ export const Home = () => {
   const [tabLoading, setTabLoading] = useState(true);
   const [tabPage, setTabPage] = useState(0);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  // null = still checking. Drives the editorial banner: real "New Arrival" copy once
+  // the catalogue has anything in it, "Launching Soon" while it's empty.
+  const [hasProducts, setHasProducts] = useState<boolean | null>(null);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
   const activeTabConfig = BACKPACK_TABS.find(t => t.id === activeTab) || BACKPACK_TABS[0];
 
@@ -182,6 +186,33 @@ export const Home = () => {
     }).catch(() => { });
   }, []);
 
+  useEffect(() => {
+    // Cheapest possible existence check — one row is enough to know the store is live.
+    api.getProducts({ limit: '1' })
+      .then(res => setHasProducts((res.products?.length ?? 0) > 0))
+      .catch(() => setHasProducts(false));
+  }, []);
+
+
+  // Banner copy follows the catalogue: a live store gets the real "New Arrival"
+  // pitch, an empty one gets an honest holding message with a CTA that goes
+  // somewhere real instead of an empty product grid.
+  const banner = hasProducts
+    ? {
+        heading: 'New Arrival',
+        subheading: 'Ready For Your Journey',
+        imageTo: '/backpacks' as string | null,
+        links: [
+          { to: '/women', label: 'Shop Women' },
+          { to: '/men', label: 'Shop Men' },
+        ],
+      }
+    : {
+        heading: 'Launching Soon',
+        subheading: 'Ready For Your Journey',
+        imageTo: null as string | null,
+        links: [{ to: '/contact', label: 'Notify Me' }],
+      };
 
   return (
     <main className="font-outfit">
@@ -296,18 +327,21 @@ export const Home = () => {
       </section>
       </>)}
 
-      {/* Editorial Banner (Keeping same as previous per customer screenshot) */}
+      {/* Editorial Banner (Keeping same as previous per customer screenshot).
+          Hidden until the product check resolves so the copy never flips mid-view. */}
+      {hasProducts !== null && (
       <section className="relative bg-banner-blue">
         {/* Mobile version */}
         <div className="md:hidden relative w-full overflow-hidden">
-          <img src={IMG.banner} alt="New Arrival" className="w-full h-auto object-cover block" />
+          <img src={IMG.banner} alt={banner.heading} className="w-full h-auto object-cover block" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
-            <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">New Arrival</h2>
-            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 mb-6 select-none">Ready For Your Journey</p>
+            <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">{banner.heading}</h2>
+            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 mb-6 select-none">{banner.subheading}</p>
             <div className="flex gap-6">
-              <Link to="/women" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Women</Link>
-              <Link to="/men" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Men</Link>
+              {banner.links.map((link) => (
+                <Link key={link.to} to={link.to} className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">{link.label}</Link>
+              ))}
             </div>
           </div>
         </div>
@@ -315,20 +349,28 @@ export const Home = () => {
         {/* Desktop version - Exactly as shown in screenshot */}
         <div className="hidden md:block text-white relative py-12">
           <div className="container mx-auto px-8 relative z-10 flex flex-row items-center gap-16">
-            <Link to="/backpacks" className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block group">
-              <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
-            </Link>
+            {banner.imageTo ? (
+              <Link to={banner.imageTo} className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block group">
+                <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+              </Link>
+            ) : (
+              <div className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block">
+                <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
+              </div>
+            )}
             <div className="w-1/2 text-left">
-              <h2 className="text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
-              <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-10">Ready For Your Journey</p>
+              <h2 className="text-6xl lg:text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">{banner.heading}</h2>
+              <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-10">{banner.subheading}</p>
               <div className="flex gap-8">
-                <Link to="/women" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Women</Link>
-                <Link to="/men" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Men</Link>
+                {banner.links.map((link) => (
+                  <Link key={link.to} to={link.to} className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">{link.label}</Link>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* Product Tabs Section */}
       <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
