@@ -85,7 +85,10 @@ const HeroSlider = () => {
   const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
-    <section className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[2.5/1] xl:aspect-[2.65/1]">
+    // Ratio must match the source creatives (2880x1621 = 16:9). Any wider box makes
+    // object-cover crop the difference off the top and bottom — at 2.65/1 that was a
+    // third of the image, clipping heads and product. Widen only with new artwork.
+    <section className="relative w-full bg-black overflow-hidden aspect-[16/9]">
       <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={current}
