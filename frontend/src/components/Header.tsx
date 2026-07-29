@@ -140,7 +140,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         }`}
       style={{ color: 'white' }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
+      <div className="max-w-[1720px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center lg:static lg:translate-x-0 lg:flex-1">
           <Link to="/" className="flex items-center">

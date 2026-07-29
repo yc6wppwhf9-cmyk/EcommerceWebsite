@@ -40,6 +40,35 @@ const GENDER_LINKS = [
   { gender: 'men', to: '/men', label: 'Shop Men' },
 ];
 
+// Desktop column counts per width tier. Wider screens get more products rather
+// than bigger cards — the cards render their image `object-contain` inside a
+// padded square, so inflating them just grows the white space around the photo.
+// Classes are written out in full because Tailwind cannot see interpolated names.
+const COLUMN_TIERS = [
+  { min: 0,    tabs: 3, tabsClass: 'grid-cols-3', best: 4, bestClass: 'grid-cols-4' },
+  { min: 1280, tabs: 4, tabsClass: 'grid-cols-4', best: 5, bestClass: 'grid-cols-5' },
+  { min: 1536, tabs: 5, tabsClass: 'grid-cols-5', best: 6, bestClass: 'grid-cols-6' },
+];
+
+// Tracks which tier the viewport is in. Needed in JS (not just CSS) because the
+// grids are paginated — the slice size has to agree with the column count.
+const useColumnTier = () => {
+  const [tier, setTier] = useState(COLUMN_TIERS[0]);
+
+  useEffect(() => {
+    const queries = COLUMN_TIERS.slice(1).map(t => ({ t, mq: window.matchMedia(`(min-width: ${t.min}px)`) }));
+    const update = () => {
+      const matched = queries.filter(q => q.mq.matches).map(q => q.t);
+      setTier(matched.length ? matched[matched.length - 1] : COLUMN_TIERS[0]);
+    };
+    update();
+    queries.forEach(q => q.mq.addEventListener('change', update));
+    return () => queries.forEach(q => q.mq.removeEventListener('change', update));
+  }, []);
+
+  return tier;
+};
+
 const heroVariants = {
   enter: { opacity: 0, scale: 1.03 },
   center: { opacity: 1, scale: 1 },
@@ -154,6 +183,7 @@ export const Home = () => {
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
   const [tabLoading, setTabLoading] = useState(true);
   const [tabPage, setTabPage] = useState(0);
+  const columns = useColumnTier();
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   // null = still checking. Drives the editorial banner: real "New Arrival" copy once
   // the catalogue has anything in it, "Launching Soon" while it's empty.
@@ -182,8 +212,6 @@ export const Home = () => {
     document.documentElement.classList.remove('dark');
     prefetchHomeData(); // fire all API calls in parallel on first render
   }, []);
-
-  const bestSellersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setTabLoading(true);
@@ -226,6 +254,13 @@ export const Home = () => {
     ).then(results => setGenderStock(GENDER_LINKS.filter((_, i) => results[i])));
   }, []);
 
+  const tabPageCount = Math.max(1, Math.ceil(tabProducts.length / columns.tabs));
+
+  useEffect(() => {
+    // Widening the window fits more per page, which can strand tabPage past the end.
+    setTabPage(p => Math.min(p, tabPageCount - 1));
+  }, [tabPageCount]);
+
   // Banner copy follows the catalogue: a live store gets the real "New Arrival"
   // pitch, an empty one gets an honest holding message with a CTA that goes
   // somewhere real instead of an empty product grid.
@@ -255,7 +290,7 @@ export const Home = () => {
       <HeroSlider />
 
       {/* Categories section — hidden for now (change `false` to `true` to restore) */}
-      {false && (<>
+      <>
       <section className="md:hidden py-8 px-4 text-center">
         <h2 className="text-[12px] font-black uppercase tracking-[0.35em] text-gray-400 mb-6">Shop By Category</h2>
         <div className="md:hidden px-2">
@@ -342,12 +377,23 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-10 lg:pt-16 lg:pb-16">
+      <section className="hidden md:block max-w-[1720px] mx-auto px-8 lg:px-12 pt-12 pb-10 lg:pt-16 lg:pb-14">
+        <div className="flex items-end justify-between mb-7 lg:mb-9">
+          <div>
+            <p className="text-[12px] font-black uppercase tracking-[0.24em] text-[#26B3FF] mb-2">Explore the range</p>
+            <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#14052b]">Shop by category</h2>
+          </div>
+          <p className="text-sm font-medium text-gray-500">Find the right companion for every journey.</p>
+        </div>
         <div className="grid grid-cols-3 gap-6 lg:gap-10">
           {CATS.map((cat) => (
             <Link key={cat.label} to={cat.to} className="group relative rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
               <LazyImage src={cat.img} alt={cat.label} className="w-full h-auto block transition-transform duration-[1.5s] group-hover:scale-110" width={600} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
+              <div className="absolute left-6 bottom-6 text-white drop-shadow-lg">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">Shop</p>
+                <h3 className="text-2xl font-black uppercase tracking-tight">{cat.label}</h3>
+              </div>
               <div className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                 <ArrowRight size={24} className="text-gray-900" />
               </div>
@@ -355,7 +401,7 @@ export const Home = () => {
           ))}
         </div>
       </section>
-      </>)}
+      </>
 
       {/* Editorial Banner (Keeping same as previous per customer screenshot).
           Hidden until the product check resolves so the copy never flips mid-view. */}
@@ -379,18 +425,19 @@ export const Home = () => {
         </div>
 
         {/* Desktop version - Exactly as shown in screenshot */}
-        <div className="hidden md:block text-white relative py-12">
-          <div className="container mx-auto px-8 relative z-10 flex flex-row items-center gap-16">
+        <div className="hidden md:block text-white relative py-10 lg:py-12">
+          <div className="max-w-[1720px] mx-auto px-8 lg:px-12 relative z-10 flex flex-row items-center gap-12 lg:gap-20">
             {banner.imageTo ? (
-              <Link to={banner.imageTo} className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block group">
+              <Link to={banner.imageTo} className="w-[46%] relative z-30 rounded-[2.5rem] overflow-hidden shadow-2xl -mt-16 -mb-16 block group">
                 <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
               </Link>
             ) : (
-              <div className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block">
+              <div className="w-[46%] relative z-30 rounded-[2.5rem] overflow-hidden shadow-2xl -mt-16 -mb-16 block">
                 <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
               </div>
             )}
-            <div className="w-1/2 text-left">
+            <div className="flex-1 text-left py-5">
+              <p className="text-[12px] font-black uppercase tracking-[0.25em] text-white/65 mb-4">Fresh picks for every trip</p>
               <h2 className="text-6xl lg:text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">{banner.heading}</h2>
               <p className={`text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none ${banner.links.length ? 'mb-10' : ''}`}>{banner.subheading}</p>
               {banner.links.length > 0 && (
@@ -400,6 +447,14 @@ export const Home = () => {
                   ))}
                 </div>
               )}
+              <div className="flex flex-wrap gap-3 mt-8">
+                {CATS.map((cat) => (
+                  <Link key={cat.to} to={cat.to} className="inline-flex items-center gap-2 rounded-full border border-white/40 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-white hover:text-[#26B3FF]">
+                    {cat.label}
+                    <ArrowRight size={14} />
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -408,7 +463,7 @@ export const Home = () => {
 
       {/* Product Tabs Section */}
       <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
+        <div className="max-w-[1720px] mx-auto px-4 md:px-10 lg:px-14">
           <div className="relative">
             <div className="flex gap-1.5 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-xl mb-7 md:mb-10">
               {BACKPACK_TABS.map((tab) => (
@@ -485,7 +540,7 @@ export const Home = () => {
             </Link>
 
             <div className="min-w-0 relative">
-              {tabProducts.length > 3 && (
+              {tabProducts.length > columns.tabs && (
                 <>
                   <button
                     onClick={() => setTabPage(p => Math.max(0, p - 1))}
@@ -496,8 +551,8 @@ export const Home = () => {
                     <ChevronLeft size={20} />
                   </button>
                   <button
-                    onClick={() => setTabPage(p => Math.min(Math.ceil(tabProducts.length / 3) - 1, p + 1))}
-                    disabled={tabPage >= Math.ceil(tabProducts.length / 3) - 1}
+                    onClick={() => setTabPage(p => Math.min(tabPageCount - 1, p + 1))}
+                    disabled={tabPage >= tabPageCount - 1}
                     className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
                     aria-label="Next products"
                   >
@@ -517,8 +572,8 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="hidden md:grid grid-cols-3 gap-6">
-                    {[1, 2, 3].map(n => (
+                  <div className={`hidden md:grid gap-6 ${columns.tabsClass}`}>
+                    {Array.from({ length: columns.tabs }, (_, n) => (
                       <div key={n}>
                         <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
                         <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
@@ -538,9 +593,9 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  {/* Desktop: paginated 3-up grid (no overflow → never a clipped card) */}
-                  <div className="hidden md:grid grid-cols-3 gap-6">
-                    {tabProducts.slice(tabPage * 3, tabPage * 3 + 3).map(p => (
+                  {/* Desktop: paginated grid, one page per row (no overflow → never a clipped card) */}
+                  <div className={`hidden md:grid gap-6 ${columns.tabsClass}`}>
+                    {tabProducts.slice(tabPage * columns.tabs, tabPage * columns.tabs + columns.tabs).map(p => (
                       <div key={p.id} className="min-w-0">
                         <ProductCard product={p} />
                       </div>
@@ -563,7 +618,7 @@ export const Home = () => {
 
       {/* Best Sellers Section */}
       <section className="pb-16 pt-10 md:pt-20 bg-white border-t border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-14">
+        <div className="max-w-[1720px] mx-auto px-4 md:px-14">
           <div className="text-center mb-12">
             <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em] uppercase">Shop Best Sellers</h2>
           </div>
@@ -574,28 +629,17 @@ export const Home = () => {
             ))}
           </div>
 
-          {/* Desktop: horizontal scroll */}
-          <div className="hidden md:block relative group">
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="absolute left-[-40px] top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
-              <ChevronLeft size={20} className="text-gray-600" />
-            </button>
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: 400, behavior: 'smooth' })} className="absolute right-[-40px] top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg">
-              <ChevronRight size={20} className="text-gray-600" />
-            </button>
-            <div ref={bestSellersRef} className="flex gap-10 overflow-x-auto no-scrollbar pb-10 px-1">
-              {bestSellers.map(p => (
-                <div key={p.id} className="w-[260px] lg:w-[290px] shrink-0">
-                  <BestSellerCard product={p} />
-                </div>
-              ))}
-            </div>
+          <div className={`hidden md:grid gap-6 lg:gap-8 ${columns.bestClass}`}>
+            {bestSellers.slice(0, columns.best).map(p => (
+              <BestSellerCard key={p.id} product={p} />
+            ))}
           </div>
         </div>
       </section>
 
       {/* Why Shop With Us */}
       <section className="py-7 md:py-9 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
-        <div className="container mx-auto px-5 md:px-8">
+        <div className="max-w-[1720px] mx-auto px-5 md:px-8">
           <div className="flex flex-col items-center mb-5 md:mb-7">
             <p className="text-[14px] md:text-[15px] font-semibold text-[#14052b] uppercase tracking-[0.2em] font-outfit">Why Shop With Us</p>
           </div>
