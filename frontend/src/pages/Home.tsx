@@ -53,7 +53,7 @@ const HeroSlider = () => {
   const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
-    <section className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]">
+    <section className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[2.5/1] xl:aspect-[2.65/1]">
       <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={current}
@@ -87,6 +87,14 @@ const HeroSlider = () => {
           <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
         ))}
       </div>
+
+      <Link
+        to={HERO_SLIDES[current].to}
+        className="absolute z-30 bottom-10 left-1/2 -translate-x-1/2 md:bottom-12 md:left-[8%] md:translate-x-0 inline-flex items-center gap-2 bg-black px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-lg transition-colors hover:bg-white hover:text-black"
+      >
+        {HERO_SLIDES[current].cta}
+        <ArrowRight size={16} />
+      </Link>
     </section>
   );
 };
