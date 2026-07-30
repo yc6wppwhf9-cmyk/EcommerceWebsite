@@ -389,10 +389,6 @@ export const Home = () => {
             <Link key={cat.label} to={cat.to} className="group relative rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
               <LazyImage src={cat.img} alt={cat.label} className="w-full h-auto block transition-transform duration-[1.5s] group-hover:scale-110" width={600} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
-              <div className="absolute left-6 bottom-6 text-white drop-shadow-lg">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">Shop</p>
-                <h3 className="text-2xl font-black uppercase tracking-tight">{cat.label}</h3>
-              </div>
               <div className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                 <ArrowRight size={24} className="text-gray-900" />
               </div>
