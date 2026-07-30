@@ -15,6 +15,20 @@ html.dark {
 
   --color-priority-blue: #26B3FF;
   --color-priority-dark: #1A7FB5;
+
+  /* ── Quiet palette (pilot: product detail page) ──────────────
+     Neutral-dominant direction proposed after the "not classy"
+     feedback. Marine is priority-dark taken deeper so the brand
+     blue survives as an accent instead of a full-bleed surface.
+     Target ratio on screen: 90% neutral / 8% marine / 2% brass. */
+  --color-ink: #0F1417;
+  --color-graphite: #39434A;
+  --color-slate: #616C73;
+  --color-line: #E5E1DA;
+  --color-bone: #F5F2ED;
+  --color-marine: #14506E;
+  --color-marine-deep: #0E3A50;
+  --color-brass: #B08D57;
   --color-hero-blue: #26B3FF;
   --color-banner-blue: #26B3FF;
   --color-junior-orange: #F69245;
