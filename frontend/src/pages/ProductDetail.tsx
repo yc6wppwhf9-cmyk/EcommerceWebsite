@@ -91,9 +91,9 @@ const AccordionItem = ({ id, title, children, openAccordion, setOpenAccordion, a
     <div className="border-b border-line last:border-0 font-outfit">
       <button
         onClick={() => setOpenAccordion(isOpen ? null : id)}
-        className="w-full py-6 flex justify-between items-center"
+        className="w-full py-5 flex justify-between items-center"
       >
-        <span className={`text-[13px] font-black uppercase tracking-[0.2em] transition-colors ${isOpen ? accordionActiveClass : 'text-[#14052b]'}`}>
+        <span className={`text-[13px] font-outfit font-semibold uppercase tracking-[0.18em] transition-colors ${isOpen ? accordionActiveClass : 'text-ink'}`}>
           {title}
         </span>
         <ChevronDown
@@ -477,8 +477,8 @@ export const ProductDetail = () => {
                           <h.Icon size={18} strokeWidth={1.5} />
                         </div>
                         <div className="space-y-0.5 py-0.5">
-                          <h4 className="font-black text-[#14052b] uppercase text-[10px] tracking-widest leading-none">{h.title}</h4>
-                          {h.desc && <p className="text-[11px] text-slate leading-tight">{h.desc}</p>}
+                          <h4 className="font-outfit font-semibold text-ink uppercase text-[11px] tracking-[0.12em] leading-snug">{h.title}</h4>
+                          {h.desc && <p className="text-[11px] font-outfit font-normal text-slate leading-tight">{h.desc}</p>}
                         </div>
                       </li>
                     ))}
@@ -559,9 +559,9 @@ export const ProductDetail = () => {
                 <AccordionItem id="size" title="Technical Specs" {...accordionProps}>
                   <div className="grid grid-cols-2 gap-4">
                     {Object.entries(product.specifications).map(([key, val]) => (
-                      <div key={key} className="p-4 bg-white border border-line rounded-sm">
+                      <div key={key} className="p-4 bg-white border border-line rounded-sm font-outfit">
                         <span className="block text-[10px] font-medium uppercase text-slate tracking-[0.18em] mb-1">{key}</span>
-                        <span className="block text-[13px] font-bold text-[#14052b]">{val as string}</span>
+                        <span className="block text-[13px] font-outfit font-semibold text-ink">{val as string}</span>
                       </div>
                     ))}
                   </div>
