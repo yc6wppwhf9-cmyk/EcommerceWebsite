@@ -161,7 +161,7 @@ const HeroSlider = () => {
         >
           <img
             alt={HERO_SLIDES[current].title}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-top"
             src={HERO_SLIDES[current].src}
             loading="eager"
           />

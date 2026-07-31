@@ -297,7 +297,7 @@ export const ProductDetail = () => {
   const hasFeatures = product.features.length > 0;
 
   return (
-    <main className={`min-h-screen font-outfit pt-2 md:pt-4 overflow-x-hidden relative pb-24 md:pb-0 ${themeKey === 'default' ? 'bg-bone' : 'bg-white'}`}>
+    <main className={`min-h-screen font-outfit pt-0 overflow-x-hidden relative pb-24 md:pb-0 ${themeKey === 'default' ? 'bg-bone' : 'bg-white'}`}>
       <SEO
         title={product.name}
         description={productDesc}
@@ -314,12 +314,12 @@ export const ProductDetail = () => {
           slug: product.slug || product.id,
         }}
       />
-      <div className="container mx-auto px-4 md:px-8 py-3 md:py-6 relative">
-<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+      <div className="container mx-auto px-4 md:px-8 pt-1 md:pt-3 pb-8 md:pb-16 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
           {/* Left Column: Gallery */}
           <div className="lg:col-span-8">
-            <div className="lg:sticky lg:top-32 flex flex-col-reverse lg:flex-row gap-4 md:gap-6">
+            <div className="lg:sticky lg:top-20 flex flex-col-reverse lg:flex-row gap-4 md:gap-6">
               {displayImages.length > 1 && (
                 <div className="flex lg:flex-col gap-3 md:gap-4 pb-4 overflow-x-auto lg:overflow-y-auto no-scrollbar lg:max-h-[600px] shrink-0">
                   {displayImages.map((img, idx) => (
