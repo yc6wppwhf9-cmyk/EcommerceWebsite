@@ -393,14 +393,14 @@ export const Home = () => {
       {/* The trust strip that sat here duplicated the "Why Shop With Us" section
           further down the page, which carries the same four promises. */}
       <>
-      <section className="md:hidden py-8 px-4 text-center">
-        <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-6">Shop By Category</h2>
+      <section className="md:hidden py-6 px-4 text-center">
+        <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-4">Shop By Category</h2>
         <div className="md:hidden px-2">
           {(() => {
             const total = CATS.length;
             return (
               <div
-                className="relative select-none max-w-sm mx-auto"
+                className="relative select-none max-w-[270px] xs:max-w-[290px] mx-auto"
                 style={{ perspective: '1200px' }}
                 onTouchStart={handleCatTouchStart}
                 onTouchEnd={(e) => handleCatTouchEnd(e, total)}
@@ -422,7 +422,7 @@ export const Home = () => {
                         transformOrigin: 'right center',
                       }}
                     >
-                      <div className="relative w-full" style={{ paddingBottom: '120%' }}>
+                      <div className="relative w-full" style={{ paddingBottom: '100%' }}>
                         <img
                           src={CATS[idx]?.img || ''}
                           alt=""
@@ -442,17 +442,17 @@ export const Home = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.97 }}
                       transition={{ duration: 0.4, ease: 'easeInOut' }}
-                      className="w-full rounded-sm overflow-hidden border border-line"
+                      className="w-full rounded-sm overflow-hidden border border-line shadow-md"
                     >
-                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '120%' }}>
+                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '100%' }}>
                         <img
                           src={CATS[catFlipIndex].img}
                           alt={CATS[catFlipIndex].label}
                           className="absolute inset-0 w-full h-full object-cover object-top"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
-                          <span className="block text-white text-[22px] font-black uppercase tracking-widest leading-tight drop-shadow-lg">{CATS[catFlipIndex].label}</span>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
+                          <span className="block text-white text-[17px] font-black uppercase tracking-widest leading-tight drop-shadow-md">{CATS[catFlipIndex].label}</span>
                         </div>
                       </Link>
                     </motion.div>
