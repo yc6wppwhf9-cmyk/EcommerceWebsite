@@ -147,7 +147,7 @@ const HeroSlider = () => {
     // its top and bottom edges. 100dvh (not vh) so mobile browser chrome collapsing
     // does not reintroduce the clipping.
     <section
-      className="relative w-full bg-black overflow-hidden h-[calc(100vh-4rem)] max-h-[720px] min-h-[480px] sm:min-h-[550px] lg:max-h-[760px]"
+      className="relative w-full bg-black overflow-hidden aspect-[16/9] sm:aspect-auto sm:h-[calc(100vh-4rem)] max-h-[280px] xs:max-h-[360px] sm:max-h-[620px] lg:max-h-[760px] min-h-[190px] sm:min-h-[480px]"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
@@ -161,40 +161,33 @@ const HeroSlider = () => {
         >
           <img
             alt={HERO_SLIDES[current].title}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-contain sm:object-cover object-center bg-black"
             src={HERO_SLIDES[current].src}
             loading="eager"
           />
-          {/* The creatives are finished banners — they carry their own headline and
-              colour. The heavy dual gradient existed to make an overlaid headline
-              legible; with that headline gone it only muddied the artwork (the
-              luggage banner's yellow read as olive). A light foot gradient is all
-              that remains, so the CTA and slide controls stay readable. */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          {/* The creatives are finished banners — light gradient so controls stay readable */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         </motion.div>
       </AnimatePresence>
 
       {/* Content Overlay */}
-      <div className="relative z-20 h-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 flex flex-col justify-end pb-12 sm:pb-16 lg:pb-20">
+      <div className="relative z-20 h-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 flex flex-col justify-end pb-3 sm:pb-16 lg:pb-20">
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="max-w-2xl text-left"
           >
-            {/* No badge / headline / subtitle here: each creative already has its
-                own headline baked in, so overlaying more type printed two
-                competing titles on the same slide. Only the CTA sits on top. */}
             <div className="flex items-center gap-4">
               <Link
                 to={HERO_SLIDES[current].to}
-                className="inline-flex items-center gap-3 bg-white text-black px-7 py-3.5 sm:px-8 sm:py-4 rounded-sm text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] shadow-2xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
+                className="inline-flex items-center gap-2 sm:gap-3 bg-white text-black px-3.5 py-2 sm:px-8 sm:py-4 rounded-sm text-[9.5px] sm:text-[12px] font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] shadow-xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
               >
                 {HERO_SLIDES[current].cta}
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </motion.div>
@@ -218,16 +211,16 @@ const HeroSlider = () => {
       </button>
 
       {/* Dots & Slide Counter */}
-      <div className="absolute bottom-6 right-6 sm:right-12 z-30 flex items-center gap-3 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/15">
-        <span className="text-[11px] font-bold tracking-widest text-white/80">0{current + 1} / 0{HERO_SLIDES.length}</span>
-        <div className="w-px h-3 bg-white/20" />
-        <div className="flex gap-1.5">
+      <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-12 z-30 flex items-center gap-2 sm:gap-3 bg-black/60 backdrop-blur-md px-3 py-1 sm:px-4 sm:py-2 rounded-full border border-white/15">
+        <span className="text-[9px] sm:text-[11px] font-bold tracking-widest text-white/90">0{current + 1} / 0{HERO_SLIDES.length}</span>
+        <div className="w-px h-2.5 sm:h-3 bg-white/20" />
+        <div className="flex gap-1 sm:gap-1.5">
           {HERO_SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-[#26B3FF]' : 'w-1.5 bg-white/40'}`}
+              className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-4 sm:w-6 bg-[#26B3FF]' : 'w-1 sm:w-1.5 bg-white/40'}`}
             />
           ))}
         </div>
