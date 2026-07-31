@@ -450,10 +450,6 @@ export const Home = () => {
                           alt={CATS[catFlipIndex].label}
                           className="absolute inset-0 w-full h-full object-cover object-top"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
-                          <span className="block text-white text-[17px] font-black uppercase tracking-widest leading-tight drop-shadow-md">{CATS[catFlipIndex].label}</span>
-                        </div>
                       </Link>
                     </motion.div>
                   </AnimatePresence>
