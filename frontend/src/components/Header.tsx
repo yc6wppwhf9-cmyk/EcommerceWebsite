@@ -128,14 +128,13 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
-    : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/logo.png');
+    : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/nav bar.png');
 
   const shouldBeBlackNav = isPremiumTheme;
 
   // The main catalogue nav is light (bone) so the Premium collection's black
   // still reads as a step up — that hierarchy is the whole point of Premium, and
-  // a dark nav everywhere flattened it. The wordmark only ships as a white PNG,
-  // so `brightness-0` inverts it to ink for the light bar.
+  // a dark nav everywhere flattened it.
   const isLightNav = !shouldBeBlackNav && !isJunior;
 
   return (
@@ -156,7 +155,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300`}
+              className={`${isJunior ? 'h-9 w-auto' : 'h-9 sm:h-10 w-auto'} object-contain transition-all duration-300`}
             />
           </Link>
         </div>

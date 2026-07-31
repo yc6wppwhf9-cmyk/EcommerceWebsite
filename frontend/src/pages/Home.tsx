@@ -147,7 +147,7 @@ const HeroSlider = () => {
     // its top and bottom edges. 100dvh (not vh) so mobile browser chrome collapsing
     // does not reintroduce the clipping.
     <section
-      className="relative w-full bg-transparent overflow-hidden aspect-[1866/843] sm:aspect-auto sm:h-[calc(100vh-4rem)] max-h-[280px] xs:max-h-[360px] sm:max-h-[620px] lg:max-h-[760px] min-h-[160px] sm:min-h-[480px]"
+      className="relative w-full bg-white overflow-hidden aspect-[16/9] sm:aspect-auto sm:h-[calc(100vh-4rem)] sm:max-h-[620px] sm:min-h-[480px] lg:max-h-[760px]"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
