@@ -155,7 +155,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'w-[120px]' : 'w-[140px] md:w-[165px]'} h-auto transition-all duration-300`}
+              className={`${isJunior ? 'w-[120px]' : 'w-[140px] md:w-[165px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
             />
           </Link>
         </div>
