@@ -138,9 +138,12 @@ const HeroSlider = () => {
             src={HERO_SLIDES[current].src}
             loading="eager"
           />
-          {/* Dual Overlay Gradient for high contrast legibility & premium aesthetic */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/25" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
+          {/* The creatives are finished banners — they carry their own headline and
+              colour. The heavy dual gradient existed to make an overlaid headline
+              legible; with that headline gone it only muddied the artwork (the
+              luggage banner's yellow read as olive). A light foot gradient is all
+              that remains, so the CTA and slide controls stay readable. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
         </motion.div>
       </AnimatePresence>
 
@@ -155,16 +158,9 @@ const HeroSlider = () => {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="max-w-2xl text-left"
           >
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-white bg-white/15 backdrop-blur-md border border-white/20 mb-3 sm:mb-4 shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-[#26B3FF] animate-pulse" />
-              {HERO_SLIDES[current].badge}
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-black uppercase tracking-[0.06em] text-white leading-[1.08] drop-shadow-lg mb-3 sm:mb-4">
-              {HERO_SLIDES[current].title}
-            </h2>
-            <p className="text-sm sm:text-base text-gray-200 font-normal leading-relaxed max-w-xl mb-6 sm:mb-8 drop-shadow">
-              {HERO_SLIDES[current].subtitle}
-            </p>
+            {/* No badge / headline / subtitle here: each creative already has its
+                own headline baked in, so overlaying more type printed two
+                competing titles on the same slide. Only the CTA sits on top. */}
             <div className="flex items-center gap-4">
               <Link
                 to={HERO_SLIDES[current].to}
@@ -374,39 +370,8 @@ export const Home = () => {
       />
       <HeroSlider />
 
-      {/* Trust Feature Bar */}
-      <section className="bg-white border-b border-line py-5 px-4 sm:px-8">
-        <div className="max-w-[1720px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center divide-x-0 sm:divide-x divide-line/60">
-          <div className="flex items-center justify-center gap-3 px-2 py-1">
-            <Truck className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
-            <div className="text-left">
-              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Fast Amazon Delivery</p>
-              <p className="text-[10px] text-gray-500">Prime 1-2 Day Shipping</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-3 px-2 py-1">
-            <ShieldCheck className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
-            <div className="text-left">
-              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Official Warranty</p>
-              <p className="text-[10px] text-gray-500">100% Genuine Quality</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-3 px-2 py-1">
-            <CreditCard className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
-            <div className="text-left">
-              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Secure Amazon Checkout</p>
-              <p className="text-[10px] text-gray-500">UPI, Cards & COD Available</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-3 px-2 py-1">
-            <PackageCheck className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
-            <div className="text-left">
-              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Hassle-Free Returns</p>
-              <p className="text-[10px] text-gray-500">7-Day Amazon Policy</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* The trust strip that sat here duplicated the "Why Shop With Us" section
+          further down the page, which carries the same four promises. */}
       <>
       <section className="md:hidden py-8 px-4 text-center">
         <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-6">Shop By Category</h2>
