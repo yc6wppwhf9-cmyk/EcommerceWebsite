@@ -263,10 +263,10 @@ export const CategoryPage = () => {
   }) => {
     const isOpen = openFilters.includes(id);
     return (
-      <div className="border-b border-gray-100 py-3">
+      <div className="border-b border-line py-3">
         <button
           onClick={() => toggleFilterSection(id)}
-          className="w-full flex justify-between items-center text-[10px] sm:text-[11px] font-black uppercase tracking-[0.1em] text-gray-900"
+          className="w-full flex justify-between items-center text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.16em] text-ink"
         >
           {title}
           <ChevronDown
@@ -412,7 +412,7 @@ export const CategoryPage = () => {
 
   return (
     <>
-      <main className="bg-white min-h-screen font-outfit pt-10 md:pt-16 selection:bg-black selection:text-white">
+      <main className="bg-bone min-h-screen font-outfit pt-10 md:pt-16 selection:bg-ink selection:text-white">
         <SEO
           title={currentCategory?.title || pageTitle}
           description={`Shop ${pageTitle} at Priority Bags. Browse our premium collection with fast delivery across India.`}
@@ -424,7 +424,7 @@ export const CategoryPage = () => {
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-2xl md:text-3xl font-black text-center uppercase tracking-[0.2em] text-[#111]"
+            className="text-2xl md:text-3xl font-normal text-center uppercase tracking-[0.28em] text-ink"
           >
             {pageTitle}
           </motion.h1>
@@ -435,13 +435,13 @@ export const CategoryPage = () => {
           <div className="flex items-center justify-between mb-8 md:mb-12 gap-3">
             <div className="lg:hidden flex items-center gap-2">
               <button
-                className="flex items-center gap-2 px-3 py-2 border border-gray-200 text-[10px] font-black uppercase tracking-widest hover:border-gray-900 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 border border-line bg-white text-[10px] font-medium uppercase tracking-[0.18em] hover:border-ink transition-colors duration-300"
                 onClick={() => setMobileFilterOpen(true)}
               >
                 <SlidersHorizontal size={13} />
                 Filters
                 {activeFilterCount > 0 && (
-                  <span className="ml-1 bg-black text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="ml-1 bg-marine text-white text-[9px] font-medium w-4 h-4 rounded-full flex items-center justify-center">
                     {activeFilterCount}
                   </span>
                 )}
@@ -464,18 +464,18 @@ export const CategoryPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 hover:border-gray-900 transition-colors ml-auto">
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-700 hidden sm:block">
+            <div className="flex items-center gap-3 bg-white border border-line px-4 py-2.5 hover:border-ink transition-colors duration-300 ml-auto">
+              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-graphite hidden sm:block">
                 {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
               </span>
               <span className="text-gray-200 hidden sm:block select-none">|</span>
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate">
                 Sort:
               </span>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="bg-transparent text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer"
+                className="bg-transparent text-[10px] font-medium uppercase tracking-[0.18em] outline-none cursor-pointer"
               >
                 <option value="newest">Newest First</option>
                 <option value="rating">Highest Rated</option>
@@ -505,7 +505,7 @@ export const CategoryPage = () => {
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-                  className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[88vh] flex flex-col"
+                  className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[88vh] flex flex-col"
                 >
                   {/* Drag handle */}
                   <div className="flex justify-center pt-3 pb-1 shrink-0">
@@ -513,13 +513,13 @@ export const CategoryPage = () => {
                   </div>
 
                   {/* Header */}
-                  <div className="flex justify-between items-center px-5 py-3 border-b border-gray-100 shrink-0">
+                  <div className="flex justify-between items-center px-5 py-3 border-b border-line shrink-0">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-[12px] font-black uppercase tracking-[0.2em]">
+                      <h2 className="text-[12px] font-medium uppercase tracking-[0.24em]">
                         Filters
                       </h2>
                       {activeFilterCount > 0 && (
-                        <span className="bg-black text-white text-[9px] font-black px-2 py-0.5 rounded-full">
+                        <span className="bg-marine text-white text-[9px] font-medium px-2 py-0.5 rounded-full">
                           {activeFilterCount} Active
                         </span>
                       )}
@@ -538,17 +538,17 @@ export const CategoryPage = () => {
                   </div>
 
                   {/* Footer: Clear All + Apply */}
-                  <div className="px-5 py-4 border-t border-gray-100 shrink-0 flex gap-3">
+                  <div className="px-5 py-4 border-t border-line shrink-0 flex gap-3">
                     <button
                       onClick={clearAllFilters}
                       disabled={activeFilterCount === 0}
-                      className="flex-1 py-3.5 border border-gray-200 text-[11px] font-black uppercase tracking-widest hover:border-gray-900 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="flex-1 py-3.5 border border-line text-[11px] font-medium uppercase tracking-[0.18em] hover:border-ink transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       Clear All
                     </button>
                     <button
                       onClick={() => setMobileFilterOpen(false)}
-                      className="flex-[2] bg-black text-white py-3.5 text-[11px] font-black uppercase tracking-widest hover:bg-gray-900 transition-colors"
+                      className="flex-[2] bg-ink text-white py-3.5 text-[11px] font-medium uppercase tracking-[0.18em] hover:bg-marine transition-colors duration-300"
                     >
                       Show {filteredProducts.length} Result{filteredProducts.length !== 1 ? 's' : ''}
                     </button>
@@ -563,11 +563,11 @@ export const CategoryPage = () => {
             <aside className="hidden lg:block lg:w-56 shrink-0">
               <div className="sticky top-32">
                 <div className="flex justify-between items-center mb-6 border-b border-gray-900 pb-2">
-                  <h2 className="text-[12px] font-black uppercase tracking-[0.2em]">Filters</h2>
+                  <h2 className="text-[12px] font-medium uppercase tracking-[0.24em]">Filters</h2>
                   {activeFilterCount > 0 && (
                     <button
                       onClick={clearAllFilters}
-                      className="text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+                      className="text-[9px] font-medium uppercase tracking-[0.18em] text-slate hover:text-marine transition-colors"
                     >
                       Clear All ({activeFilterCount})
                     </button>
@@ -586,7 +586,7 @@ export const CategoryPage = () => {
                     className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10 md:gap-y-14`}
                   >
                     {[...Array(6)].map((_, i) => (
-                      <div key={i} className="aspect-[4/5] bg-gray-50 animate-pulse rounded" />
+                      <div key={i} className="aspect-[4/5] bg-white border border-line animate-pulse rounded-sm" />
                     ))}
                   </div>
                 ) : filteredProducts.length > 0 ? (
@@ -608,14 +608,14 @@ export const CategoryPage = () => {
                     ))}
                   </motion.div>
                 ) : (
-                  <div key="empty" className="py-40 text-center border-t border-gray-100">
-                    <p className="text-gray-400 font-black uppercase tracking-widest text-[10px]">
+                  <div key="empty" className="py-40 text-center border-t border-line">
+                    <p className="text-slate font-medium uppercase tracking-[0.18em] text-[10px]">
                       No results found.
                     </p>
                     {activeFilterCount > 0 && (
                       <button
                         onClick={clearAllFilters}
-                        className="mt-4 text-[10px] font-black uppercase tracking-widest text-black underline underline-offset-4"
+                        className="mt-4 text-[10px] font-medium uppercase tracking-[0.18em] text-marine underline underline-offset-4"
                       >
                         Clear All Filters
                       </button>
@@ -630,7 +630,7 @@ export const CategoryPage = () => {
                   <button
                     onClick={loadMore}
                     disabled={isLoadingMore}
-                    className="px-10 py-4 border border-gray-900 text-[11px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-12 py-4 border border-ink text-[11px] font-medium uppercase tracking-[0.2em] hover:bg-ink hover:text-white transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {isLoadingMore ? 'Loading...' : 'Load More'}
                   </button>

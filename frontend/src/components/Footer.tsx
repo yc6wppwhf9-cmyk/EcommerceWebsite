@@ -36,20 +36,24 @@ export const Footer = () => {
   const queryParams = new URLSearchParams(location.search);
   const isPremium = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
   const isJunior = location.pathname.startsWith('/junior') || queryParams.get('theme') === 'junior';
-  const isHome = location.pathname === '/';
 
   const isDreamy = location.pathname === '/junior/dreamy';
   const isPower = location.pathname === '/junior/power';
 
-  const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-blue';
+  // Quiet palette: the main footer was a second full-bleed cyan slab. Ink lets
+  // the page end quietly instead of shouting one last time. Junior keeps its
+  // colours; Premium keeps its black.
+  const footerBg = isPremium
+    ? 'premium-bg-black border-t border-white/5'
+    : isJunior
+    ? ''
+    : 'bg-ink border-t border-white/5';
   const footerStyle = isDreamy
     ? { backgroundColor: '#A368FB', color: '#FFFFFF' }
     : isPower
     ? { backgroundColor: '#3E92E6', color: '#FFFFFF' }
     : isJunior
     ? { backgroundColor: '#5652bc', color: '#FFFFFF' }
-    : isHome
-    ? { backgroundColor: '#26B3FF', color: '#FFFFFF' }
     : {};
 
   return (

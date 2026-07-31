@@ -11,9 +11,12 @@ interface ProductCardProps {
   product?: Product;
   id?: string;
   theme?: string;
-  /** Quiet palette pilot. Styling only — deliberately does not affect the
-   *  product link, so it stays scoped to the page that opts in. */
-  variant?: 'quiet';
+  /**
+   * Quiet palette is now the default for the main catalogue. Junior and Premium
+   * pass their own `theme` and keep their louder treatment, so this resolves to
+   * false for them. Styling only — it never affects the product link.
+   */
+  variant?: 'quiet' | 'loud';
 }
 
 export const ProductCard: React.FC<ProductCardProps> = (props) => {
@@ -41,7 +44,10 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
     : 0;
 
   const isWishlisted = isInWishlist(product.id);
-  const quiet = props.variant === 'quiet';
+  // Quiet unless a themed surface (junior / premium) opts out.
+  const quiet = props.variant === 'loud'
+    ? false
+    : props.variant === 'quiet' || (props.theme !== 'junior' && props.theme !== 'premium');
   const rating = product.rating ?? 0;
   const reviews = (product as any).reviews ?? 0;
   const hasRating = rating > 0;
