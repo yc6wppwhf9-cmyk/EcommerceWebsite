@@ -297,7 +297,7 @@ export const ProductDetail = () => {
   const hasFeatures = product.features.length > 0;
 
   return (
-    <main className={`min-h-screen font-outfit pt-4 md:pt-8 overflow-x-hidden relative pb-24 md:pb-0 ${themeKey === 'default' ? 'bg-bone' : 'bg-white'}`}>
+    <main className={`min-h-screen font-outfit pt-2 md:pt-4 overflow-x-hidden relative pb-24 md:pb-0 ${themeKey === 'default' ? 'bg-bone' : 'bg-white'}`}>
       <SEO
         title={product.name}
         description={productDesc}
@@ -314,7 +314,7 @@ export const ProductDetail = () => {
           slug: product.slug || product.id,
         }}
       />
-      <div className="container mx-auto px-4 md:px-8 py-6 md:py-16 relative">
+      <div className="container mx-auto px-4 md:px-8 py-3 md:py-6 relative">
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
           {/* Left Column: Gallery */}

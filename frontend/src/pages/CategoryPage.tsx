@@ -412,7 +412,7 @@ export const CategoryPage = () => {
 
   return (
     <>
-      <main className="bg-bone min-h-screen font-outfit pt-10 md:pt-16 selection:bg-ink selection:text-white">
+      <main className="bg-bone min-h-screen font-outfit pt-3 md:pt-6 selection:bg-ink selection:text-white">
         <SEO
           title={currentCategory?.title || pageTitle}
           description={`Shop ${pageTitle} at Priority Bags. Browse our premium collection with fast delivery across India.`}
@@ -420,7 +420,7 @@ export const CategoryPage = () => {
         />
 
         {/* Title */}
-        <div className="w-full px-6 md:px-12 mb-8 md:mb-12">
+        <div className="w-full px-6 md:px-12 mb-4 md:mb-6">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -432,7 +432,7 @@ export const CategoryPage = () => {
 
         <div className="w-full px-4 md:px-8 pb-24">
           {/* Top bar: mobile filter button + sort */}
-          <div className="flex items-center justify-between mb-8 md:mb-12 gap-3">
+          <div className="flex items-center justify-between mb-4 md:mb-6 gap-3">
             <div className="lg:hidden flex items-center gap-2">
               <button
                 className="flex items-center gap-2 px-4 py-2.5 border border-line bg-white text-[10px] font-medium uppercase tracking-[0.18em] hover:border-ink transition-colors duration-300"
