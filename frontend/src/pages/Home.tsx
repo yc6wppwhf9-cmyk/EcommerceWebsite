@@ -147,12 +147,7 @@ const HeroSlider = () => {
     // its top and bottom edges. 100dvh (not vh) so mobile browser chrome collapsing
     // does not reintroduce the clipping.
     <section
-      className="relative mx-auto bg-black overflow-hidden"
-      style={{
-        ['--hero-h' as string]: `min(${((HERO_H / HERO_W) * 100).toFixed(4)}vw, calc(100dvh - 4rem), 760px)`,
-        height: 'var(--hero-h)',
-        width: `min(100%, calc(var(--hero-h) * ${HERO_W} / ${HERO_H}))`,
-      } as React.CSSProperties}
+      className="relative w-full bg-black overflow-hidden h-[calc(100vh-4rem)] max-h-[720px] min-h-[480px] sm:min-h-[550px] lg:max-h-[760px]"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
