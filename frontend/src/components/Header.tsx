@@ -128,7 +128,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
-    : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/nav bar.png');
+    : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/logo.png');
 
   const shouldBeBlackNav = isPremiumTheme;
 
@@ -155,7 +155,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'h-9 w-auto' : 'h-9 sm:h-10 w-auto'} object-contain transition-all duration-300`}
+              className={`${isJunior ? 'w-[120px]' : 'w-[140px] md:w-[165px]'} h-auto transition-all duration-300`}
             />
           </Link>
         </div>
