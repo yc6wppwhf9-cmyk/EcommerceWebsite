@@ -326,7 +326,11 @@ export const ProductDetail = () => {
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
-                      className={`w-20 h-20 md:w-24 md:h-24 rounded-sm border transition-all p-2 md:p-3 shrink-0 bg-white ${selectedImage === idx ? 'border-marine' : 'border-line hover:border-slate'}`}
+                      className={`w-[68px] h-[88px] md:w-[82px] md:h-[106px] rounded-[20px] transition-all p-2 shrink-0 bg-[#F4F4F6] flex items-center justify-center overflow-hidden ${
+                        selectedImage === idx
+                          ? 'border-2 border-marine shadow-sm scale-[1.02]'
+                          : 'border border-gray-300/80 hover:border-gray-400'
+                      }`}
                     >
                       <LazyImage src={img} alt="Thumb" className="w-full h-full object-contain" width={150} />
                     </button>
