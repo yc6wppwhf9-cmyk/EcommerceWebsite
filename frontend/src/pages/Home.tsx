@@ -16,9 +16,16 @@ const BACKPACK_TABS = [
   { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/Category/Travelling Bag.jpg',              to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
 ];
 
+// Native pixel size of the hero creatives. The slider is pinned to this ratio so
+// the banners — which carry their headline and layout baked in — are never
+// cropped. If the artwork is re-exported at a different size, change these two
+// numbers and nothing else: every hero measurement derives from them.
+const HERO_W = 2880;
+const HERO_H = 1621;
+
 const HERO_SLIDES = [
   {
-    src: '/Creatives/hero-main.jpg',
+    src: '/Creatives/1.png',
     badge: 'NEW 2026 COLLECTION',
     title: 'ENGINEERED FOR MODERN EXPLORERS',
     subtitle: 'Ergonomic backpacks & travel gear designed for university, work, and urban travel.',
@@ -26,7 +33,7 @@ const HERO_SLIDES = [
     to: '/college-backpacks'
   },
   {
-    src: '/Creatives/editorial-2.jpg',
+    src: '/Creatives/2.png',
     badge: 'JUNIOR & SCHOOL SERIES',
     title: 'LIGHTWEIGHT, VIBRANT & DURABLE',
     subtitle: 'Smart storage, waterproof fabrics & posture-support design for kids & juniors.',
@@ -34,7 +41,7 @@ const HERO_SLIDES = [
     to: '/junior'
   },
   {
-    src: '/Creatives/editorial-4.jpg',
+    src: '/Creatives/3.png',
     badge: 'PREMIUM TRAVEL GEAR',
     title: 'TRAVEL WITHOUT BOUNDARIES',
     subtitle: 'High-durability trolley bags & duffles built for effortless journeys.',
@@ -42,12 +49,20 @@ const HERO_SLIDES = [
     to: '/luggage'
   },
   {
-    src: '/Creatives/editorial-5.jpg',
+    src: '/Creatives/4.png',
     badge: 'EXECUTIVE LAPTOP SERIES',
     title: 'SLEEK PROTECTION FOR TECH',
     subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
     cta: 'Shop Laptop Bags',
     to: '/laptop-backpacks'
+  },
+  {
+    src: '/Creatives/5.png',
+    badge: 'URBAN ACCESSORIES',
+    title: 'STYLE & FUNCTION COMBINED',
+    subtitle: 'Premium travel accessories engineered for seamless organization on the go.',
+    cta: 'Explore Accessories',
+    to: '/accessories'
   },
 ];
 
@@ -121,7 +136,24 @@ const HeroSlider = () => {
   }, []);
 
   return (
-    <section className="relative w-full bg-black overflow-hidden h-[calc(100vh-4rem)] max-h-[720px] min-h-[480px] sm:min-h-[550px] lg:max-h-[760px]">
+    // These creatives are finished banners: headline, product and layout are all
+    // baked in at fixed positions, so cropping them damages the design. The box is
+    // therefore pinned to the artwork's own 16:9 and sized to fit the space under
+    // the header, which means it is never cropped and never below the fold.
+    //   height -> whichever is smallest: the 16:9 of the current width, the
+    //             viewport under the header, or 760px on very tall screens
+    //   width  -> that height back at 16:9, capped at the full width
+    // On short, wide screens the hero simply insets and centres rather than losing
+    // its top and bottom edges. 100dvh (not vh) so mobile browser chrome collapsing
+    // does not reintroduce the clipping.
+    <section
+      className="relative mx-auto bg-black overflow-hidden"
+      style={{
+        ['--hero-h' as string]: `min(${((HERO_H / HERO_W) * 100).toFixed(4)}vw, calc(100dvh - 4rem), 760px)`,
+        height: 'var(--hero-h)',
+        width: `min(100%, calc(var(--hero-h) * ${HERO_W} / ${HERO_H}))`,
+      } as React.CSSProperties}
+    >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={current}

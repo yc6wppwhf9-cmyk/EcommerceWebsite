@@ -583,7 +583,7 @@ export const CategoryPage = () => {
                 {isLoading ? (
                   <div
                     key="skeleton"
-                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10 md:gap-y-14`}
+                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 md:gap-y-10`}
                   >
                     {[...Array(6)].map((_, i) => (
                       <div key={i} className="aspect-[4/5] bg-white border border-line animate-pulse rounded-sm" />
@@ -593,7 +593,7 @@ export const CategoryPage = () => {
                   <motion.div
                     key="grid"
                     layout
-                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} sm:grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-10 md:gap-y-16 lg:gap-y-20`}
+                    className={`grid ${mobileGridCols === 1 ? 'grid-cols-1' : 'grid-cols-2'} sm:grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-8 md:gap-y-10 lg:gap-y-12`}
                   >
                     {filteredProducts.map((product, idx) => (
                       <motion.div

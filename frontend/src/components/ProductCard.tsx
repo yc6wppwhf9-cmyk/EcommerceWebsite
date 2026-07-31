@@ -110,7 +110,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
       </Link>
 
       {/* Info */}
-      <div className="pt-3 space-y-1.5">
+      <div className="pt-3 space-y-1">
         {/* Color swatches */}
         {product.variants && product.variants.length > 0 && (
           <div className="flex gap-2">
@@ -127,13 +127,13 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
         {/* Name — fixed 2-line height so the buy button aligns across cards */}
         <Link to={productPath(product.slug || product.id)}>
-          <h3 className={`text-[16px] leading-snug line-clamp-2 min-h-[2.75rem] transition-colors ${quiet ? 'font-normal text-graphite hover:text-marine' : 'font-semibold text-[#000000]'} ${props.theme === 'premium' ? 'hover:text-red-600' : quiet ? '' : 'hover:text-priority-blue'}`}>
+          <h3 className={`text-[15px] leading-snug line-clamp-2 min-h-[2.35rem] transition-colors ${quiet ? 'font-normal text-graphite hover:text-marine' : 'font-semibold text-[#000000]'} ${props.theme === 'premium' ? 'hover:text-red-600' : quiet ? '' : 'hover:text-priority-blue'}`}>
             {product.name}
           </h3>
         </Link>
 
         {/* Stars + reviews — only when we have a real Amazon rating */}
-        <div className="flex items-center gap-2 min-h-[18px]">
+        <div className="flex items-center gap-2 min-h-[16px]">
           {hasRating ? (
             <>
               <div className="flex gap-0.5">
