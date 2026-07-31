@@ -200,7 +200,7 @@ export const ChatBot = () => {
       {/* Floating button */}
       <button
         onClick={() => setOpen(v => !v)}
-        className="fixed bottom-6 right-6 z-[80] w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-gray-800 transition-all duration-300 hover:scale-110"
+        className="fixed bottom-16 right-4 lg:bottom-6 lg:right-6 z-[110] w-12 h-12 sm:w-14 sm:h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-gray-800 transition-all duration-300 hover:scale-110"
         aria-label="Chat with us"
       >
         {open ? <X size={22} /> : <Headset size={22} />}
@@ -209,7 +209,7 @@ export const ChatBot = () => {
       {/* Chat drawer */}
       {open && (
         <div
-          className="fixed bottom-24 right-6 z-[79] w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
+          className="fixed bottom-28 right-4 left-4 sm:left-auto sm:right-6 z-[115] w-auto sm:w-[380px] max-h-[75vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
           style={{ height: '540px' }}
         >
           {/* Header */}
