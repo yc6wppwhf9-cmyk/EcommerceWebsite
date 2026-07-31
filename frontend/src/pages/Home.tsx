@@ -5,7 +5,8 @@ import { ChevronRight, ChevronLeft, ArrowRight, Truck, CreditCard, ShieldCheck, 
 import { CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
 import type { Product } from '../types';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { fadeUp, stagger, revealProps } from '../lib/motion';
 import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 
@@ -16,10 +17,38 @@ const BACKPACK_TABS = [
 ];
 
 const HERO_SLIDES = [
-  { src: '/Creatives/hero-main.jpg', cta: 'Shop Campus Picks', to: '/college-backpacks' },
-  { src: '/Creatives/editorial-2.jpg', cta: 'Shop Junior Collection', to: '/junior' },
-  { src: '/Creatives/editorial-4.jpg', cta: 'Shop Luggage', to: '/luggage' },
-  { src: '/Creatives/editorial-5.jpg', cta: 'Shop Laptop Bags', to: '/laptop-backpacks' },
+  {
+    src: '/Creatives/hero-main.jpg',
+    badge: 'NEW 2026 COLLECTION',
+    title: 'ENGINEERED FOR MODERN EXPLORERS',
+    subtitle: 'Ergonomic backpacks & travel gear designed for university, work, and urban travel.',
+    cta: 'Explore Campus Picks',
+    to: '/college-backpacks'
+  },
+  {
+    src: '/Creatives/editorial-2.jpg',
+    badge: 'JUNIOR & SCHOOL SERIES',
+    title: 'LIGHTWEIGHT, VIBRANT & DURABLE',
+    subtitle: 'Smart storage, waterproof fabrics & posture-support design for kids & juniors.',
+    cta: 'Shop Junior Collection',
+    to: '/junior'
+  },
+  {
+    src: '/Creatives/editorial-4.jpg',
+    badge: 'PREMIUM TRAVEL GEAR',
+    title: 'TRAVEL WITHOUT BOUNDARIES',
+    subtitle: 'High-durability trolley bags & duffles built for effortless journeys.',
+    cta: 'Shop Luggage',
+    to: '/luggage'
+  },
+  {
+    src: '/Creatives/editorial-5.jpg',
+    badge: 'EXECUTIVE LAPTOP SERIES',
+    title: 'SLEEK PROTECTION FOR TECH',
+    subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
+    cta: 'Shop Laptop Bags',
+    to: '/laptop-backpacks'
+  },
 ];
 
 const CATS = [
@@ -33,10 +62,49 @@ const IMG = {
   refPoster: '/Category/ref.png',
 };
 
+// Primary editorial banner CTA — always present, regardless of gender tagging.
+const BANNER_CTA = { to: '/luggage', label: 'Shop Now' };
+
+// Secondary editorial banner CTAs. Each is shown only if its gender query returns
+// stock, so a button never navigates to an empty product grid.
+const GENDER_LINKS = [
+  { gender: 'women', to: '/women', label: 'Shop Women' },
+  { gender: 'men', to: '/men', label: 'Shop Men' },
+];
+
+// Desktop column counts per width tier. Wider screens get more products rather
+// than bigger cards — the cards render their image `object-contain` inside a
+// padded square, so inflating them just grows the white space around the photo.
+// Classes are written out in full because Tailwind cannot see interpolated names.
+const COLUMN_TIERS = [
+  { min: 0,    tabs: 3, tabsClass: 'grid-cols-3', best: 4, bestClass: 'grid-cols-4' },
+  { min: 1280, tabs: 4, tabsClass: 'grid-cols-4', best: 5, bestClass: 'grid-cols-5' },
+  { min: 1536, tabs: 5, tabsClass: 'grid-cols-5', best: 6, bestClass: 'grid-cols-6' },
+];
+
+// Tracks which tier the viewport is in. Needed in JS (not just CSS) because the
+// grids are paginated — the slice size has to agree with the column count.
+const useColumnTier = () => {
+  const [tier, setTier] = useState(COLUMN_TIERS[0]);
+
+  useEffect(() => {
+    const queries = COLUMN_TIERS.slice(1).map(t => ({ t, mq: window.matchMedia(`(min-width: ${t.min}px)`) }));
+    const update = () => {
+      const matched = queries.filter(q => q.mq.matches).map(q => q.t);
+      setTier(matched.length ? matched[matched.length - 1] : COLUMN_TIERS[0]);
+    };
+    update();
+    queries.forEach(q => q.mq.addEventListener('change', update));
+    return () => queries.forEach(q => q.mq.removeEventListener('change', update));
+  }, []);
+
+  return tier;
+};
+
 const heroVariants = {
-  enter: { opacity: 0, scale: 1.03 },
+  enter: { opacity: 0, scale: 1.04 },
   center: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.97 },
+  exit: { opacity: 0, scale: 0.96 },
 };
 
 const HeroSlider = () => {
@@ -45,40 +113,101 @@ const HeroSlider = () => {
   const next = () => setCurrent((p) => (p + 1) % HERO_SLIDES.length);
   const prev = () => setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      next();
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section className="relative w-full bg-black overflow-hidden aspect-[16/9] md:aspect-[2.2/1] lg:aspect-[16/9]">
-      <AnimatePresence mode="sync" initial={false}>
+    <section className="relative w-full bg-black overflow-hidden h-[calc(100vh-4rem)] max-h-[720px] min-h-[480px] sm:min-h-[550px] lg:max-h-[760px]">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={current}
           variants={heroVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.75, ease: 'easeInOut' }}
-          className="absolute inset-0"
+          transition={{ duration: 0.6, ease: 'easeInOut' }}
+          className="absolute inset-0 z-0"
         >
           <img
-            alt="Priority Collection"
-            className="w-full h-full object-cover"
+            alt={HERO_SLIDES[current].title}
+            className="w-full h-full object-cover object-center"
             src={HERO_SLIDES[current].src}
             loading="eager"
           />
-          <div className="absolute inset-x-0 bottom-0 h-28 md:h-32 bg-gradient-to-t from-black/5 to-transparent" />
+          {/* Dual Overlay Gradient for high contrast legibility & premium aesthetic */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/25" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
-      <button onClick={prev} className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-14 h-14 border border-white/30 rounded-full items-center justify-center hover:bg-white hover:text-gray-900 backdrop-blur-sm transition-all duration-300 text-white group shadow-xl">
-        <ChevronLeft size={26} className="group-hover:-translate-x-0.5 transition-transform" />
+      {/* Content Overlay */}
+      <div className="relative z-20 h-full max-w-[1720px] mx-auto px-6 sm:px-12 lg:px-16 flex flex-col justify-end pb-12 sm:pb-16 lg:pb-20">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="max-w-2xl text-left"
+          >
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-white bg-white/15 backdrop-blur-md border border-white/20 mb-3 sm:mb-4 shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-[#26B3FF] animate-pulse" />
+              {HERO_SLIDES[current].badge}
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-black uppercase tracking-[0.06em] text-white leading-[1.08] drop-shadow-lg mb-3 sm:mb-4">
+              {HERO_SLIDES[current].title}
+            </h2>
+            <p className="text-sm sm:text-base text-gray-200 font-normal leading-relaxed max-w-xl mb-6 sm:mb-8 drop-shadow">
+              {HERO_SLIDES[current].subtitle}
+            </p>
+            <div className="flex items-center gap-4">
+              <Link
+                to={HERO_SLIDES[current].to}
+                className="inline-flex items-center gap-3 bg-white text-black px-7 py-3.5 sm:px-8 sm:py-4 rounded-sm text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.2em] shadow-2xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
+              >
+                {HERO_SLIDES[current].cta}
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Navigation Arrows */}
+      <button
+        onClick={prev}
+        aria-label="Previous Slide"
+        className="hidden sm:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 border border-white/20 rounded-full items-center justify-center bg-black/40 hover:bg-white hover:text-gray-900 backdrop-blur-md transition-all duration-300 text-white group"
+      >
+        <ChevronLeft size={22} className="group-hover:-translate-x-0.5 transition-transform" />
       </button>
-      <button onClick={next} className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-14 h-14 border border-white/30 rounded-full items-center justify-center hover:bg-white hover:text-gray-900 backdrop-blur-sm transition-all duration-300 text-white group shadow-xl">
-        <ChevronRight size={26} className="group-hover:translate-x-0.5 transition-transform" />
+      <button
+        onClick={next}
+        aria-label="Next Slide"
+        className="hidden sm:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 border border-white/20 rounded-full items-center justify-center bg-black/40 hover:bg-white hover:text-gray-900 backdrop-blur-md transition-all duration-300 text-white group"
+      >
+        <ChevronRight size={22} className="group-hover:translate-x-0.5 transition-transform" />
       </button>
 
-      {/* Dots — mobile & desktop */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-        {HERO_SLIDES.map((_, i) => (
-          <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-1.5 bg-white/40'}`} />
-        ))}
+      {/* Dots & Slide Counter */}
+      <div className="absolute bottom-6 right-6 sm:right-12 z-30 flex items-center gap-3 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/15">
+        <span className="text-[11px] font-bold tracking-widest text-white/80">0{current + 1} / 0{HERO_SLIDES.length}</span>
+        <div className="w-px h-3 bg-white/20" />
+        <div className="flex gap-1.5">
+          {HERO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-[#26B3FF]' : 'w-1.5 bg-white/40'}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -93,18 +222,18 @@ const BestSellerCard = ({ product }: { product: Product }) => {
   return (
     <Link 
       to={`/product/${product.slug || product.id}`} 
-      className="flex flex-col bg-white group junior-glass-card magnetic-shadow rounded-2xl p-2 md:p-3 overflow-hidden"
+      className="flex flex-col bg-white group border border-line rounded-sm p-2 md:p-3 overflow-hidden transition-transform duration-500 ease-out hover:-translate-y-1"
     >
-      <div className="overflow-hidden bg-[#F9F9F9]" style={{ aspectRatio: '1 / 1' }}>
+      <div className="overflow-hidden bg-white" style={{ aspectRatio: '1 / 1' }}>
         <LazyImage
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-contain p-5 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           width={400}
         />
       </div>
       <div className="pt-3 space-y-1">
-        <h3 className="font-outfit font-bold text-[13px] md:text-[15px] text-black uppercase tracking-wide leading-snug line-clamp-1">
+        <h3 className="font-outfit font-normal text-[13px] md:text-[15px] text-graphite leading-snug line-clamp-1">
           {product.name}
         </h3>
       </div>
@@ -125,17 +254,28 @@ const prefetchHomeData = (() => {
         return api.getProducts(params as any).catch(() => {});
       }),
       api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' }).catch(() => {}),
+      api.getProducts({ limit: '1' }).catch(() => {}),
+      ...GENDER_LINKS.map(link =>
+        api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' }).catch(() => {})
+      ),
     ];
     Promise.all(fetches).catch(() => {});
   };
 })();
 
 export const Home = () => {
+  const reduceMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState<string>('college-backpacks');
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
   const [tabLoading, setTabLoading] = useState(true);
   const [tabPage, setTabPage] = useState(0);
+  const columns = useColumnTier();
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  // null = still checking. Drives the editorial banner: real "New Arrival" copy once
+  // the catalogue has anything in it, "Launching Soon" while it's empty.
+  const [hasProducts, setHasProducts] = useState<boolean | null>(null);
+  // null = still checking. Holds only the gender CTAs that have stock behind them.
+  const [genderStock, setGenderStock] = useState<typeof GENDER_LINKS | null>(null);
   const tabCategory = CATEGORIES.find((c) => c.slug === activeTab);
   const activeTabConfig = BACKPACK_TABS.find(t => t.id === activeTab) || BACKPACK_TABS[0];
 
@@ -159,8 +299,6 @@ export const Home = () => {
     prefetchHomeData(); // fire all API calls in parallel on first render
   }, []);
 
-  const bestSellersRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     setTabLoading(true);
     setTabProducts([]);
@@ -182,6 +320,50 @@ export const Home = () => {
     }).catch(() => { });
   }, []);
 
+  useEffect(() => {
+    // Cheapest possible existence check — one row is enough to know the store is live.
+    api.getProducts({ limit: '1' })
+      .then(res => setHasProducts((res.products?.length ?? 0) > 0))
+      .catch(() => setHasProducts(false));
+  }, []);
+
+  useEffect(() => {
+    // Ask the exact queries the CTAs navigate to. A product only counts here once
+    // it is tagged women/men — everything tagged `unisex` answers neither, which is
+    // why the buttons stay hidden until the catalogue is actually gendered.
+    Promise.all(
+      GENDER_LINKS.map(link =>
+        api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' })
+          .then(res => (res.products?.length ?? 0) > 0)
+          .catch(() => false)
+      )
+    ).then(results => setGenderStock(GENDER_LINKS.filter((_, i) => results[i])));
+  }, []);
+
+  const tabPageCount = Math.max(1, Math.ceil(tabProducts.length / columns.tabs));
+
+  useEffect(() => {
+    // Widening the window fits more per page, which can strand tabPage past the end.
+    setTabPage(p => Math.min(p, tabPageCount - 1));
+  }, [tabPageCount]);
+
+  // Banner copy follows the catalogue: a live store gets the real "New Arrival"
+  // pitch, an empty one gets an honest holding message with a CTA that goes
+  // somewhere real instead of an empty product grid.
+  const banner = hasProducts
+    ? {
+        heading: 'New Arrival',
+        subheading: 'Ready For Your Journey',
+        imageTo: '/backpacks' as string | null,
+        // Only the genders that actually have stock. Empty until products are tagged.
+        links: (genderStock ?? []).map(({ to, label }) => ({ to, label })),
+      }
+    : {
+        heading: 'Launching Soon',
+        subheading: 'Ready For Your Journey',
+        imageTo: null as string | null,
+        links: [{ to: '/contact', label: 'Notify Me' }],
+      };
 
   return (
     <main className="font-outfit">
@@ -190,13 +372,44 @@ export const Home = () => {
         description="Shop Priority Bags for premium backpacks, travel luggage, and accessories. Free shipping across India. Trusted by thousands of travellers."
         url="https://prioritybags.in"
       />
-      <h1 className="sr-only">Priority Bags — Quality Backpacks & Premium Luggage Online</h1>
       <HeroSlider />
 
-      {/* Categories section — hidden for now (change `false` to `true` to restore) */}
-      {false && (<>
+      {/* Trust Feature Bar */}
+      <section className="bg-white border-b border-line py-5 px-4 sm:px-8">
+        <div className="max-w-[1720px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center divide-x-0 sm:divide-x divide-line/60">
+          <div className="flex items-center justify-center gap-3 px-2 py-1">
+            <Truck className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
+            <div className="text-left">
+              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Fast Amazon Delivery</p>
+              <p className="text-[10px] text-gray-500">Prime 1-2 Day Shipping</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-3 px-2 py-1">
+            <ShieldCheck className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
+            <div className="text-left">
+              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Official Warranty</p>
+              <p className="text-[10px] text-gray-500">100% Genuine Quality</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-3 px-2 py-1">
+            <CreditCard className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
+            <div className="text-left">
+              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Secure Amazon Checkout</p>
+              <p className="text-[10px] text-gray-500">UPI, Cards & COD Available</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-3 px-2 py-1">
+            <PackageCheck className="w-5 h-5 text-[#26B3FF] flex-shrink-0" />
+            <div className="text-left">
+              <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-graphite">Hassle-Free Returns</p>
+              <p className="text-[10px] text-gray-500">7-Day Amazon Policy</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <>
       <section className="md:hidden py-8 px-4 text-center">
-        <h2 className="text-[12px] font-black uppercase tracking-[0.35em] text-gray-400 mb-6">Shop By Category</h2>
+        <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-6">Shop By Category</h2>
         <div className="md:hidden px-2">
           {(() => {
             const total = CATS.length;
@@ -244,7 +457,7 @@ export const Home = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.97 }}
                       transition={{ duration: 0.4, ease: 'easeInOut' }}
-                      className="w-full rounded-2xl overflow-hidden shadow-xl"
+                      className="w-full rounded-sm overflow-hidden border border-line"
                     >
                       <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '120%' }}>
                         <img
@@ -268,7 +481,7 @@ export const Home = () => {
                   </button>
                   <div className="flex gap-2">
                     {CATS.map((_, i) => (
-                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-[#26B3FF]' : 'w-1.5 bg-gray-200'}`} />
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === catFlipIndex ? 'w-6 bg-ink' : 'w-1.5 bg-line'}`} />
                     ))}
                   </div>
                   <button onClick={() => goNextCat(total)} className="p-2 text-gray-400 transition-opacity">
@@ -281,65 +494,95 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="hidden md:block container mx-auto px-6 lg:px-8 pt-12 pb-10 lg:pt-16 lg:pb-16">
-        <div className="grid grid-cols-3 gap-6 lg:gap-10">
+      <section className="hidden md:block max-w-[1720px] mx-auto px-8 lg:px-12 pt-12 pb-10 lg:pt-16 lg:pb-14">
+        <motion.div
+          className="grid grid-cols-3 gap-6 lg:gap-10"
+          variants={stagger(0.09)}
+          {...revealProps(reduceMotion)}
+        >
           {CATS.map((cat) => (
-            <Link key={cat.label} to={cat.to} className="group relative rounded-[5px] overflow-hidden transition-all duration-700 hover:-translate-y-3 shadow-2xl bg-gray-100">
-              <LazyImage src={cat.img} alt={cat.label} className="w-full h-auto block transition-transform duration-[1.5s] group-hover:scale-110" width={600} />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
-              <div className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                <ArrowRight size={24} className="text-gray-900" />
-              </div>
-            </Link>
+            <motion.div key={cat.label} variants={fadeUp}>
+              <Link to={cat.to} className="group relative block rounded-sm overflow-hidden transition-transform duration-700 ease-out hover:-translate-y-1.5 border border-line bg-white">
+                <LazyImage src={cat.img} alt={cat.label} className="w-full h-auto block transition-transform duration-[1.6s] ease-out group-hover:scale-[1.03]" width={600} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
+                <div className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-white flex items-center justify-center border border-line translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <ArrowRight size={22} className="text-ink" />
+                </div>
+              </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
-      </>)}
+      </>
 
-      {/* Editorial Banner (Keeping same as previous per customer screenshot) */}
-      <section className="relative bg-banner-blue">
+      {/* Editorial Banner (Keeping same as previous per customer screenshot).
+          Hidden until the product check resolves so the copy never flips mid-view. */}
+      {hasProducts !== null && genderStock !== null && (
+      <section className="relative bg-ink">
         {/* Mobile version */}
         <div className="md:hidden relative w-full overflow-hidden">
-          <img src={IMG.banner} alt="New Arrival" className="w-full h-auto object-cover block" />
+          <img src={IMG.banner} alt={banner.heading} className="w-full h-auto object-cover block" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
-            <h2 className="text-[14px] font-black uppercase tracking-[0.4em] text-white mb-2">New Arrival</h2>
-            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 mb-6 select-none">Ready For Your Journey</p>
-            <div className="flex gap-6">
-              <Link to="/women" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Women</Link>
-              <Link to="/men" className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">Shop Men</Link>
-            </div>
+            <h2 className="text-[13px] font-medium uppercase tracking-[0.35em] text-white mb-2">{banner.heading}</h2>
+            <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 select-none mb-6">{banner.subheading}</p>
+            {banner.links.length > 0 && (
+              <div className="flex gap-6 mb-6">
+                {banner.links.map((link) => (
+                  <Link key={link.to} to={link.to} className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1">{link.label}</Link>
+                ))}
+              </div>
+            )}
+            <Link to={BANNER_CTA.to} className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3.5 text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
+              {BANNER_CTA.label}
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
 
         {/* Desktop version - Exactly as shown in screenshot */}
-        <div className="hidden md:block text-white relative py-12">
-          <div className="container mx-auto px-8 relative z-10 flex flex-row items-center gap-16">
-            <Link to="/backpacks" className="w-1/2 relative z-30 rounded-[3rem] overflow-hidden shadow-2xl -mt-20 -mb-20 block group">
-              <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
-            </Link>
-            <div className="w-1/2 text-left">
-              <h2 className="text-7xl font-black uppercase tracking-[0.12em] text-white mb-6">New Arrival</h2>
-              <p className="text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-10">Ready For Your Journey</p>
-              <div className="flex gap-8">
-                <Link to="/women" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Women</Link>
-                <Link to="/men" className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">Shop Men</Link>
+        <div className="hidden md:block text-white relative py-10 lg:py-12">
+          <div className="max-w-[1720px] mx-auto px-8 lg:px-12 relative z-10 flex flex-row items-center gap-12 lg:gap-20">
+            {banner.imageTo ? (
+              <Link to={banner.imageTo} className="w-[46%] relative z-30 rounded-sm overflow-hidden -mt-16 -mb-16 block group">
+                <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
+              </Link>
+            ) : (
+              <div className="w-[46%] relative z-30 rounded-sm overflow-hidden -mt-16 -mb-16 block">
+                <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
               </div>
+            )}
+            <div className="flex-1 text-left py-5">
+              <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-brass mb-5">Fresh picks for every trip</p>
+              <h2 className="text-5xl lg:text-6xl font-normal uppercase tracking-[0.14em] text-white mb-6">{banner.heading}</h2>
+              <p className={`text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none ${banner.links.length ? 'mb-10' : ''}`}>{banner.subheading}</p>
+              {banner.links.length > 0 && (
+                <div className="flex gap-8">
+                  {banner.links.map((link) => (
+                    <Link key={link.to} to={link.to} className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">{link.label}</Link>
+                  ))}
+                </div>
+              )}
+              <Link to={BANNER_CTA.to} className="inline-flex items-center gap-2.5 rounded-sm bg-white px-9 py-4 mt-8 text-[12px] font-medium uppercase tracking-[0.2em] text-ink transition-transform duration-500 hover:-translate-y-0.5">
+                {BANNER_CTA.label}
+                <ArrowRight size={16} />
+              </Link>
             </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* Product Tabs Section */}
-      <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-10 lg:px-14">
+      <section className="pt-10 md:pt-20 pb-12 md:pb-16 bg-bone">
+        <div className="max-w-[1720px] mx-auto px-4 md:px-10 lg:px-14">
           <div className="relative">
-            <div className="flex gap-1.5 md:gap-3 border border-gray-100 bg-gray-50 p-1.5 rounded-xl mb-7 md:mb-10">
+            <div className="flex gap-1.5 md:gap-3 border border-line bg-white p-1.5 rounded-sm mb-7 md:mb-10">
               {BACKPACK_TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex-1 h-11 px-2 md:px-5 rounded-lg text-[11px] md:text-[13px] font-black uppercase tracking-[0.1em] md:tracking-[0.14em] transition-all whitespace-nowrap text-center ${
+                  className={`relative flex-1 h-11 px-2 md:px-5 rounded-sm text-[11px] md:text-[12px] font-medium uppercase tracking-[0.16em] md:tracking-[0.18em] transition-colors whitespace-nowrap text-center ${
                     activeTab === tab.id
                       ? 'text-white'
                       : 'text-gray-500 hover:text-black'
@@ -348,7 +591,7 @@ export const Home = () => {
                   {activeTab === tab.id && (
                     <motion.div
                       layoutId="homeActiveTab"
-                      className="absolute inset-0 bg-priority-blue rounded-lg shadow-lg"
+                      className="absolute inset-0 bg-ink rounded-sm"
                       transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
                     />
                   )}
@@ -372,8 +615,8 @@ export const Home = () => {
                 />
               </div>
               <div className="text-white font-outfit min-w-0">
-                <p className="font-black uppercase text-[10px] tracking-widest opacity-80">Featured</p>
-                <p className="font-black uppercase text-lg leading-tight truncate">{activeTabConfig.label}</p>
+                <p className="font-medium uppercase text-[10px] tracking-[0.24em] text-brass">Featured</p>
+                <p className="font-normal uppercase text-[17px] tracking-[0.06em] leading-tight truncate">{activeTabConfig.label}</p>
               </div>
             </div>
           )}
@@ -381,48 +624,48 @@ export const Home = () => {
           <div className="grid md:grid-cols-[260px_minmax(0,1fr)] lg:grid-cols-[330px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
             <Link
               to={activeTabConfig.to}
-              className="hidden md:flex flex-col h-auto overflow-hidden relative group rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+              className="hidden md:flex flex-col h-auto overflow-hidden relative group rounded-sm bg-white border border-line transition-transform duration-500 ease-out hover:-translate-y-1"
             >
               {/* Image section with border frame */}
-              <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4" style={{ aspectRatio: '1/1.1' }}>
-                <div className="absolute inset-0 border-[10px] border-[#F8BE57] rounded-lg z-10" />
+              <div className="relative overflow-hidden bg-white flex items-center justify-center p-4" style={{ aspectRatio: '1/1.1' }}>
+                <div className="absolute inset-0 border border-line z-10" />
                 <LazyImage
                   src={activeTabConfig.image}
                   alt={activeTabConfig.label}
-                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   width={520}
                 />
               </div>
               
               {/* Text section below */}
-              <div className="px-5 py-4 bg-[#F8BE57] flex items-center justify-between">
+              <div className="px-5 py-4 bg-ink flex items-center justify-between">
                 <div>
-                  <p className="font-black uppercase tracking-[0.14em] leading-none text-[12px] text-white opacity-90 mb-1">Trendy</p>
-                  <p className="font-black uppercase tracking-tight leading-snug text-[16px] lg:text-[18px] text-white max-w-[220px]">
+                  <p className="font-medium uppercase tracking-[0.24em] leading-none text-[10px] text-brass mb-2">Trendy</p>
+                  <p className="font-normal uppercase tracking-[0.06em] leading-snug text-[15px] lg:text-[16px] text-white max-w-[220px]">
                     {activeTabConfig.label}
                   </p>
                 </div>
-                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#F8BE57] shadow-md transition-transform group-hover:translate-x-1 flex-shrink-0">
+                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink transition-transform duration-500 group-hover:translate-x-1 flex-shrink-0">
                   <ArrowRight size={16} />
                 </div>
               </div>
             </Link>
 
             <div className="min-w-0 relative">
-              {tabProducts.length > 3 && (
+              {tabProducts.length > columns.tabs && (
                 <>
                   <button
                     onClick={() => setTabPage(p => Math.max(0, p - 1))}
                     disabled={tabPage === 0}
-                    className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
+                    className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-ink hover:text-white items-center justify-center transition-colors duration-300 z-30 rounded-full border border-line disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
                     aria-label="Previous products"
                   >
                     <ChevronLeft size={20} />
                   </button>
                   <button
-                    onClick={() => setTabPage(p => Math.min(Math.ceil(tabProducts.length / 3) - 1, p + 1))}
-                    disabled={tabPage >= Math.ceil(tabProducts.length / 3) - 1}
-                    className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-[#26B3FF] hover:text-white items-center justify-center transition-all z-30 rounded-full shadow-lg border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
+                    onClick={() => setTabPage(p => Math.min(tabPageCount - 1, p + 1))}
+                    disabled={tabPage >= tabPageCount - 1}
+                    className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-ink hover:text-white items-center justify-center transition-colors duration-300 z-30 rounded-full border border-line disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
                     aria-label="Next products"
                   >
                     <ChevronRight size={20} />
@@ -441,8 +684,8 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="hidden md:grid grid-cols-3 gap-6">
-                    {[1, 2, 3].map(n => (
+                  <div className={`hidden md:grid gap-6 ${columns.tabsClass}`}>
+                    {Array.from({ length: columns.tabs }, (_, n) => (
                       <div key={n}>
                         <div className="aspect-[300/307] bg-gray-100 animate-pulse rounded-lg" />
                         <div className="mt-4 h-4 w-4/5 bg-gray-100 animate-pulse rounded" />
@@ -462,9 +705,9 @@ export const Home = () => {
                       </div>
                     ))}
                   </div>
-                  {/* Desktop: paginated 3-up grid (no overflow → never a clipped card) */}
-                  <div className="hidden md:grid grid-cols-3 gap-6">
-                    {tabProducts.slice(tabPage * 3, tabPage * 3 + 3).map(p => (
+                  {/* Desktop: paginated grid, one page per row (no overflow → never a clipped card) */}
+                  <div className={`hidden md:grid gap-6 ${columns.tabsClass}`}>
+                    {tabProducts.slice(tabPage * columns.tabs, tabPage * columns.tabs + columns.tabs).map(p => (
                       <div key={p.id} className="min-w-0">
                         <ProductCard product={p} />
                       </div>
@@ -472,10 +715,10 @@ export const Home = () => {
                   </div>
                 </>
               ) : (
-                <div className="w-full min-h-[320px] rounded-lg border border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center text-center px-6">
-                  <PackageCheck size={34} className="text-[#26B3FF] mb-4" />
-                  <p className="text-sm font-black uppercase tracking-[0.2em] text-[#14052b] mb-2">Fresh stock coming soon</p>
-                  <Link to={activeTabConfig.to} className="mt-4 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#26B3FF]">
+                <div className="w-full min-h-[320px] rounded-sm border border-dashed border-line bg-white flex flex-col items-center justify-center text-center px-6">
+                  <PackageCheck size={30} className="text-marine mb-4" />
+                  <p className="text-sm font-medium uppercase tracking-[0.2em] text-ink mb-2">Fresh stock coming soon</p>
+                  <Link to={activeTabConfig.to} className="mt-4 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-marine">
                     View category <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -487,7 +730,7 @@ export const Home = () => {
 
       {/* Best Sellers Section */}
       <section className="pb-16 pt-10 md:pt-20 bg-white border-t border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-14">
+        <div className="max-w-[1720px] mx-auto px-4 md:px-14">
           <div className="text-center mb-12">
             <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em] uppercase">Shop Best Sellers</h2>
           </div>
@@ -498,28 +741,17 @@ export const Home = () => {
             ))}
           </div>
 
-          {/* Desktop: horizontal scroll */}
-          <div className="hidden md:block relative group">
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: -400, behavior: 'smooth' })} className="absolute left-[-40px] top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-r-lg">
-              <ChevronLeft size={20} className="text-gray-600" />
-            </button>
-            <button onClick={() => bestSellersRef.current?.scrollBy({ left: 400, behavior: 'smooth' })} className="absolute right-[-40px] top-1/2 -translate-y-1/2 w-10 h-16 bg-[#F3F3F3] hover:bg-gray-200 flex items-center justify-center transition-colors z-30 rounded-l-lg">
-              <ChevronRight size={20} className="text-gray-600" />
-            </button>
-            <div ref={bestSellersRef} className="flex gap-10 overflow-x-auto no-scrollbar pb-10 px-1">
-              {bestSellers.map(p => (
-                <div key={p.id} className="w-[260px] lg:w-[290px] shrink-0">
-                  <BestSellerCard product={p} />
-                </div>
-              ))}
-            </div>
+          <div className={`hidden md:grid gap-6 lg:gap-8 ${columns.bestClass}`}>
+            {bestSellers.slice(0, columns.best).map(p => (
+              <BestSellerCard key={p.id} product={p} />
+            ))}
           </div>
         </div>
       </section>
 
       {/* Why Shop With Us */}
       <section className="py-7 md:py-9 bg-[#F9F9F9] border-t border-gray-100 font-outfit">
-        <div className="container mx-auto px-5 md:px-8">
+        <div className="max-w-[1720px] mx-auto px-5 md:px-8">
           <div className="flex flex-col items-center mb-5 md:mb-7">
             <p className="text-[14px] md:text-[15px] font-semibold text-[#14052b] uppercase tracking-[0.2em] font-outfit">Why Shop With Us</p>
           </div>

@@ -36,25 +36,29 @@ export const Footer = () => {
   const queryParams = new URLSearchParams(location.search);
   const isPremium = location.pathname.includes('/premium') || location.pathname.includes('/traworld') || queryParams.get('theme') === 'premium';
   const isJunior = location.pathname.startsWith('/junior') || queryParams.get('theme') === 'junior';
-  const isHome = location.pathname === '/';
 
   const isDreamy = location.pathname === '/junior/dreamy';
   const isPower = location.pathname === '/junior/power';
 
-  const footerBg = isPremium ? 'premium-bg-black border-t border-white/5' : (isJunior || isHome) ? '' : 'bg-priority-blue';
+  // Quiet palette: the main footer was a second full-bleed cyan slab. Ink lets
+  // the page end quietly instead of shouting one last time. Junior keeps its
+  // colours; Premium keeps its black.
+  const footerBg = isPremium
+    ? 'premium-bg-black border-t border-white/5'
+    : isJunior
+    ? ''
+    : 'bg-ink border-t border-white/5';
   const footerStyle = isDreamy
     ? { backgroundColor: '#A368FB', color: '#FFFFFF' }
     : isPower
     ? { backgroundColor: '#3E92E6', color: '#FFFFFF' }
     : isJunior
     ? { backgroundColor: '#5652bc', color: '#FFFFFF' }
-    : isHome
-    ? { backgroundColor: '#26B3FF', color: '#FFFFFF' }
     : {};
 
   return (
     <footer className={`${footerBg} ${isPremium ? 'text-gray-300' : '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white'} py-10 md:py-12 pb-28 lg:pb-12 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
-      <div className="container mx-auto px-5 md:px-10">
+      <div className="max-w-[1720px] mx-auto px-5 md:px-10">
         {/* Brand — always visible */}
         <div className="mb-8 md:mb-0 md:hidden">
           <Link to="/" className="mb-4 block">
@@ -123,7 +127,7 @@ export const Footer = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-5 md:px-10 mt-8 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-6">
+      <div className="max-w-[1720px] mx-auto px-5 md:px-10 mt-8 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-6">
         <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-left">&copy; {new Date().getFullYear()} High Spirit Commercial Ventures Pvt. Ltd.</p>
         <div className="flex items-center gap-6 md:gap-8">
           <a href="https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors text-[10px] font-semibold uppercase tracking-widest">Instagram</a>

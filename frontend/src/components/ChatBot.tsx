@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, X, Send, Package, ShoppingBag } from 'lucide-react';
+import { Headset, X, Send, Package, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 // Renders a small subset of markdown: **bold**, *italic*, bullet lists, line breaks
@@ -203,7 +203,7 @@ export const ChatBot = () => {
         className="fixed bottom-6 right-6 z-[80] w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-gray-800 transition-all duration-300 hover:scale-110"
         aria-label="Chat with us"
       >
-        {open ? <X size={22} /> : <MessageCircle size={22} />}
+        {open ? <X size={22} /> : <Headset size={22} />}
       </button>
 
       {/* Chat drawer */}

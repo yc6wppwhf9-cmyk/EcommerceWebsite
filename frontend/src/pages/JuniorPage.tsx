@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
+import { AmazonLink } from '../components/AmazonLink';
 
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', age: '30-36 months', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
@@ -113,15 +114,6 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const displayImage = !isTouchDevice && isHovered ? secondaryImage : product.image;
 
   const amazonUrl = (product as any).amazon_url;
-  const handleBuyOnAmazon = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (amazonUrl) {
-      api.trackAmazonClick(product.id);
-      window.open(amazonUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   // Mobile-friendly tap to swap
   const handleTap = () => {
     if (isTouchDevice) {
@@ -183,12 +175,13 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
         {/* Buy on Amazon */}
         {amazonUrl ? (
-          <button
-            onClick={handleBuyOnAmazon}
-            className="mt-auto w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
+          <AmazonLink
+            url={amazonUrl}
+            productId={product.id}
+            className="mt-auto flex items-center justify-center w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
           >
             Buy on Amazon
-          </button>
+          </AmazonLink>
         ) : (
           <button
             disabled

@@ -26,6 +26,7 @@ import { ProductCard } from '../components/ProductCard';
 import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { AmazonLink } from '../components/AmazonLink';
 
 const THEMES = {
   junior: {
@@ -48,15 +49,17 @@ const THEMES = {
     accordionActive: 'text-[#b80000]',
     shadow: 'shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)]',
   },
+  // Quiet palette pilot — marine accent on a bone ground, no shadow glow.
+  // Junior and premium keep their own identity above.
   default: {
-    btn: 'bg-[#26B3FF] hover:bg-[#0fa0ee] text-white tracking-[0.2em] font-bold',
-    btnOutline: 'border-2 border-[#14052b] text-[#14052b] hover:bg-[#14052b] hover:text-white tracking-[0.2em] font-bold',
-    price: 'text-[#14052b]',
-    badge: 'bg-[#26B3FF] text-white',
-    wishlistActive: 'border-[#26B3FF] bg-[#26B3FF]/10 text-[#26B3FF]',
-    wishlistHover: 'hover:border-[#26B3FF]',
-    accordionActive: 'text-[#26B3FF]',
-    shadow: 'shadow-[0_20px_40px_-10px_rgba(38,179,255,0.25)]',
+    btn: 'bg-marine hover:bg-marine-deep text-white tracking-[0.2em] font-semibold',
+    btnOutline: 'border border-ink text-ink hover:bg-ink hover:text-white tracking-[0.2em] font-semibold',
+    price: 'text-ink',
+    badge: 'bg-marine text-white',
+    wishlistActive: 'border-marine bg-marine/10 text-marine',
+    wishlistHover: 'hover:border-marine',
+    accordionActive: 'text-marine',
+    shadow: '',
   },
 } as const;
 
@@ -85,7 +88,7 @@ interface AccordionProps {
 const AccordionItem = ({ id, title, children, openAccordion, setOpenAccordion, accordionActiveClass }: AccordionProps) => {
   const isOpen = openAccordion === id;
   return (
-    <div className="border-b border-gray-100 last:border-0 font-outfit">
+    <div className="border-b border-line last:border-0 font-outfit">
       <button
         onClick={() => setOpenAccordion(isOpen ? null : id)}
         className="w-full py-6 flex justify-between items-center"
@@ -95,7 +98,7 @@ const AccordionItem = ({ id, title, children, openAccordion, setOpenAccordion, a
         </span>
         <ChevronDown
           size={16}
-          className={`transition-transform duration-300 ${isOpen ? `rotate-180 ${accordionActiveClass}` : 'text-gray-300'}`}
+          className={`transition-transform duration-300 ${isOpen ? `rotate-180 ${accordionActiveClass}` : 'text-slate'}`}
         />
       </button>
       <AnimatePresence>
@@ -260,13 +263,6 @@ export const ProductDetail = () => {
 
   const amazonUrl = (product as any).amazon_url;
 
-  const handleBuyOnAmazon = () => {
-    if (amazonUrl) {
-      api.trackAmazonClick(product.id);
-      window.open(amazonUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   const handleToggleWishlist = () => {
     if (product) toggleWishlist(product);
   };
@@ -301,7 +297,7 @@ export const ProductDetail = () => {
   const hasFeatures = product.features.length > 0;
 
   return (
-    <main className="bg-white min-h-screen font-outfit pt-4 md:pt-8 overflow-x-hidden relative pb-24 md:pb-0">
+    <main className={`min-h-screen font-outfit pt-4 md:pt-8 overflow-x-hidden relative pb-24 md:pb-0 ${themeKey === 'default' ? 'bg-bone' : 'bg-white'}`}>
       <SEO
         title={product.name}
         description={productDesc}
@@ -330,7 +326,7 @@ export const ProductDetail = () => {
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
-                      className={`w-20 h-20 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 transition-all p-2 md:p-3 shrink-0 bg-white ${selectedImage === idx ? 'border-priority-blue shadow-lg' : 'border-gray-50 hover:border-gray-200'}`}
+                      className={`w-20 h-20 md:w-24 md:h-24 rounded-sm border transition-all p-2 md:p-3 shrink-0 bg-white ${selectedImage === idx ? 'border-marine' : 'border-line hover:border-slate'}`}
                     >
                       <LazyImage src={img} alt="Thumb" className="w-full h-full object-contain" width={150} />
                     </button>
@@ -342,7 +338,7 @@ export const ProductDetail = () => {
                 key={`${selectedVariantIndex}-${selectedImage}`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full lg:flex-1 max-w-[660px] aspect-square bg-white border border-gray-50 rounded-2xl md:rounded-[3rem] p-6 md:p-12 flex items-center justify-center relative shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] md:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)]"
+                className="w-full lg:flex-1 max-w-[660px] aspect-square bg-white border border-line rounded-sm p-6 md:p-12 flex items-center justify-center relative"
               >
                 <LazyImage
                   src={displayImages[selectedImage] || product.image}
@@ -353,7 +349,7 @@ export const ProductDetail = () => {
                 />
                 <button
                   onClick={handleToggleWishlist}
-                  className={`absolute top-4 right-4 md:top-10 md:right-10 p-3 md:p-4 bg-white shadow-xl rounded-full transition-all border border-gray-50 ${isWishlisted ? 'text-red-500 scale-110' : 'text-gray-300 hover:text-red-500'}`}
+                  className={`absolute top-4 right-4 md:top-10 md:right-10 p-3 md:p-4 bg-white rounded-full transition-all border border-line ${isWishlisted ? 'text-marine' : 'text-slate hover:text-marine'}`}
                 >
                   <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} />
                 </button>
@@ -364,7 +360,7 @@ export const ProductDetail = () => {
           {/* Right Column: Info */}
           <div className="lg:col-span-4 space-y-6">
             {/* Product Name */}
-            <h1 className="font-outfit font-medium text-[28.58px] leading-snug tracking-normal text-[#190101] uppercase">{product.name}</h1>
+            <h1 className="font-outfit font-normal text-[30px] leading-tight tracking-tight text-ink">{product.name}</h1>
 
             {/* Stars — only when there is a real Amazon rating */}
             {product.rating > 0 ? (
@@ -374,43 +370,40 @@ export const ProductDetail = () => {
                     <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
                   ))}
                 </div>
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate">
                   {product.rating.toFixed(1)}{product.reviews > 0 ? ` · ${product.reviews} reviews` : ''}
                 </span>
               </div>
             ) : (
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-300">New Arrival</span>
+              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate">New Arrival</span>
             )}
 
 
-            {/* Low stock / out of stock */}
+            {/* Availability — stated, not shouted. The scarcity counters
+                ("only N left!", live viewer count) read as discount-store
+                urgency, so they are off in the quiet palette. */}
             {inStock && product.stock <= 5 && (
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-orange-500">Only {product.stock} left in stock!</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate">Low stock</p>
             )}
             {!inStock && (
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-red-500">Out of Stock</p>
-            )}
-            {viewerCount > 1 && (
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-red-500">
-                🔥 {viewerCount} people are viewing this right now
-              </p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">Out of stock</p>
             )}
 
             {/* Quantity */}
             <div className="flex items-center gap-5">
-              <span className="font-outfit font-medium text-[15px] text-[#190101]">Quantity : {quantity}</span>
-              <div className="flex items-center border border-gray-200 rounded-md overflow-hidden">
+              <span className="font-outfit font-normal text-[15px] text-graphite">Quantity : {quantity}</span>
+              <div className="flex items-center border border-line rounded-sm overflow-hidden">
                 <button
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors"
+                  className="w-10 h-10 bg-ink text-white flex items-center justify-center hover:bg-graphite transition-colors"
                 >
                   <Minus size={14} />
                 </button>
-                <span className="w-10 text-center font-outfit font-semibold text-[15px] text-[#190101]">{quantity}</span>
+                <span className="w-10 text-center font-outfit font-medium text-[15px] text-ink">{quantity}</span>
                 <button
                   onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
                   disabled={quantity >= product.stock}
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-30"
+                  className="w-10 h-10 bg-ink text-white flex items-center justify-center hover:bg-graphite transition-colors disabled:opacity-30"
                 >
                   <Plus size={14} />
                 </button>
@@ -420,7 +413,7 @@ export const ProductDetail = () => {
             {/* Color / Variant Selector */}
             {product.variants && product.variants.length > 0 && (
               <div className="space-y-3">
-                <span className="font-outfit font-medium text-[15px] text-[#190101] uppercase tracking-wide">
+                <span className="font-outfit font-normal text-[13px] text-slate uppercase tracking-[0.18em]">
                   COLOR : <span className="font-semibold">{activeVariant?.color}</span>
                 </span>
                 <div className="flex flex-wrap gap-3">
@@ -428,7 +421,7 @@ export const ProductDetail = () => {
                     <button
                       key={idx}
                       onClick={() => { setSelectedVariantIndex(idx); setSelectedImage(0); }}
-                      className={`w-10 h-10 rounded-full border-2 transition-all p-0.5 flex items-center justify-center ${selectedVariantIndex === idx ? 'border-black scale-110' : 'border-gray-200 hover:border-gray-400'}`}
+                      className={`w-10 h-10 rounded-full border-2 transition-all p-0.5 flex items-center justify-center ${selectedVariantIndex === idx ? 'border-ink' : 'border-line hover:border-slate'}`}
                     >
                       <div className="w-full h-full rounded-full" style={{ backgroundColor: variant.colorCode }} />
                     </button>
@@ -441,35 +434,35 @@ export const ProductDetail = () => {
             <div className="space-y-3 pt-2">
               {/* Buy on Amazon */}
               {amazonUrl ? (
-                <button onClick={handleBuyOnAmazon} className={`w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md transition-colors ${theme.btn}`}>
+                <AmazonLink url={amazonUrl} productId={product.id} className={`block text-center w-full font-outfit text-[15px] tracking-[0.2em] py-4 rounded-sm transition-colors ${theme.btn}`}>
                   BUY ON AMAZON
-                </button>
+                </AmazonLink>
               ) : (
-                <button disabled className="w-full font-outfit font-semibold text-[20.11px] py-4 rounded-md bg-gray-100 text-gray-400 cursor-not-allowed">
+                <button disabled className="w-full font-outfit text-[15px] tracking-[0.2em] py-4 rounded-sm bg-line text-slate cursor-not-allowed">
                   COMING SOON
                 </button>
               )}
             </div>
 
             {/* Trust badges */}
-            <div className="flex items-start justify-between gap-4 border-t border-gray-100 pt-6">
+            <div className="flex items-start justify-between gap-4 border-t border-line pt-6">
               <div className="flex flex-col items-center gap-2 text-center flex-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-marine" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                 </svg>
-                <span className="font-outfit text-[11px] font-medium text-gray-600 leading-snug">PAN-India delivery<br/>in 2–12 business days</span>
+                <span className="font-outfit text-[11px] font-normal text-slate leading-snug">PAN-India delivery<br/>in 2–12 business days</span>
               </div>
               <div className="flex flex-col items-center gap-2 text-center flex-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-marine" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>
-                <span className="font-outfit text-[11px] font-medium text-gray-600 leading-snug">7-day eligible<br/>returns</span>
+                <span className="font-outfit text-[11px] font-normal text-slate leading-snug">7-day eligible<br/>returns</span>
               </div>
               <div className="flex flex-col items-center gap-2 text-center flex-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-marine" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                 </svg>
-                <span className="font-outfit text-[11px] font-medium text-gray-600 leading-snug">12-month<br/>warranty</span>
+                <span className="font-outfit text-[11px] font-normal text-slate leading-snug">12-month<br/>warranty</span>
               </div>
             </div>
 
@@ -480,12 +473,12 @@ export const ProductDetail = () => {
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-4 pt-4">
                     {featureItems.map((h, i) => (
                       <li key={i} className="flex gap-4 group">
-                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-priority-blue group-hover:bg-[#ae9efd] group-hover:text-white transition-all shrink-0">
+                        <div className="w-10 h-10 rounded-sm bg-bone flex items-center justify-center text-marine transition-all shrink-0">
                           <h.Icon size={18} strokeWidth={1.5} />
                         </div>
                         <div className="space-y-0.5 py-0.5">
                           <h4 className="font-black text-[#14052b] uppercase text-[10px] tracking-widest leading-none">{h.title}</h4>
-                          {h.desc && <p className="text-[11px] text-gray-400 leading-tight">{h.desc}</p>}
+                          {h.desc && <p className="text-[11px] text-slate leading-tight">{h.desc}</p>}
                         </div>
                       </li>
                     ))}
@@ -501,10 +494,10 @@ export const ProductDetail = () => {
 
               <AccordionItem id="reviews" title={`Customer Reviews (${product.reviews})`} {...accordionProps}>
                 <div className="space-y-10 pt-4 mb-8">
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-gray-50 pb-8">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-line pb-8">
                     <div className="text-center sm:text-left">
                       <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">{product.rating > 0 ? `${product.rating.toFixed(1)} / 5.0` : 'No ratings yet'}</h4>
-                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1">{product.reviews > 0 ? `Join ${product.reviews} verified owners` : 'Be the first to review'}</p>
+                      <p className="text-[11px] font-medium text-slate uppercase tracking-[0.18em] mt-1">{product.reviews > 0 ? `Join ${product.reviews} verified owners` : 'Be the first to review'}</p>
                     </div>
                     <button
                       onClick={() => setShowReviewForm(!showReviewForm)}
@@ -520,11 +513,11 @@ export const ProductDetail = () => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="bg-gray-50 p-6 sm:p-10 rounded-[2.5rem] space-y-6 border border-gray-100 shadow-2xl shadow-gray-200/50"
+                        className="bg-white p-6 sm:p-10 rounded-sm space-y-6 border border-line"
                       >
                         <div className="space-y-2">
                           <h4 className="text-lg font-black uppercase tracking-tighter text-[#14052b]">Share Your Journey</h4>
-                          <p className="text-xs text-gray-400 font-medium">How was your experience with the {product.name}?</p>
+                          <p className="text-xs text-slate font-normal">How was your experience with the {product.name}?</p>
                         </div>
 
                         <div className="flex gap-3">
@@ -541,7 +534,7 @@ export const ProductDetail = () => {
                         <textarea
                           value={reviewText}
                           onChange={(e) => setReviewText(e.target.value)}
-                          className="w-full bg-white border border-gray-100 rounded-[1.5rem] p-5 text-sm focus:outline-none focus:ring-4 focus:ring-priority-blue/5 transition-all placeholder:text-gray-300 min-h-[120px]"
+                          className="w-full bg-white border border-line rounded-sm p-5 text-[16px] sm:text-sm focus:outline-none focus:border-marine focus:ring-4 focus:ring-marine/10 transition-all placeholder:text-slate min-h-[120px]"
                           placeholder="What adventures did you take this bag on?..."
                         />
 
@@ -557,7 +550,7 @@ export const ProductDetail = () => {
                   </AnimatePresence>
 
                   {product.reviews === 0 && (
-                    <p className="text-[12px] text-gray-400 font-medium text-center py-6">No reviews yet. Be the first to review this product!</p>
+                    <p className="text-[12px] text-slate font-normal text-center py-6">No reviews yet. Be the first to review this product!</p>
                   )}
                 </div>
               </AccordionItem>
@@ -566,8 +559,8 @@ export const ProductDetail = () => {
                 <AccordionItem id="size" title="Technical Specs" {...accordionProps}>
                   <div className="grid grid-cols-2 gap-4">
                     {Object.entries(product.specifications).map(([key, val]) => (
-                      <div key={key} className="p-4 bg-gray-50 rounded-xl">
-                        <span className="block text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">{key}</span>
+                      <div key={key} className="p-4 bg-white border border-line rounded-sm">
+                        <span className="block text-[10px] font-medium uppercase text-slate tracking-[0.18em] mb-1">{key}</span>
                         <span className="block text-[13px] font-bold text-[#14052b]">{val as string}</span>
                       </div>
                     ))}
@@ -580,33 +573,40 @@ export const ProductDetail = () => {
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <div className="mt-16 md:mt-40 pt-10 md:pt-20 border-t border-gray-100 pb-20 md:pb-0">
+          <div className="mt-16 md:mt-40 pt-10 md:pt-20 border-t border-line pb-20 md:pb-0">
             <div className="flex justify-between items-end mb-8 md:mb-16">
-              <h2 className={`text-xl md:text-4xl font-black uppercase tracking-tighter ${themeKey === 'premium' ? 'text-black' : themeKey === 'junior' ? 'text-[#755FF1]' : 'text-[#14052b]'}`}>
+              <h2 className={`text-xl md:text-3xl tracking-tight ${themeKey === 'premium' ? 'font-black uppercase tracking-tighter text-black' : themeKey === 'junior' ? 'font-black uppercase tracking-tighter text-[#755FF1]' : 'font-normal text-ink'}`}>
                 You May Also Like
               </h2>
               <Link
                 to={`/${product.category}${themeKey !== 'default' ? `?theme=${themeKey}` : ''}`}
-                className={`text-[10px] md:text-[11px] font-black uppercase tracking-widest pb-1 border-b-2 transition-all whitespace-nowrap ml-4 ${themeKey === 'premium' ? 'text-black border-black hover:text-[#b80000] hover:border-[#b80000]' : themeKey === 'junior' ? 'text-[#755FF1] border-[#755FF1]' : 'text-[#14052b] border-[#14052b] hover:text-[#ae9efd] hover:border-[#ae9efd]'}`}
+                className={`text-[10px] md:text-[11px] uppercase pb-1 border-b transition-all whitespace-nowrap ml-4 ${themeKey === 'premium' ? 'font-black tracking-widest border-b-2 text-black border-black hover:text-[#b80000] hover:border-[#b80000]' : themeKey === 'junior' ? 'font-black tracking-widest border-b-2 text-[#755FF1] border-[#755FF1]' : 'font-medium tracking-[0.18em] text-marine border-marine hover:text-ink hover:border-ink'}`}
               >
                 View All
               </Link>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
-              {relatedProducts.map(p => <ProductCard key={p.id} product={p} theme={themeKey !== 'default' ? themeKey : undefined} />)}
+              {relatedProducts.map(p => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  theme={themeKey !== 'default' ? themeKey : undefined}
+                  variant={themeKey === 'default' ? 'quiet' : undefined}
+                />
+              ))}
             </div>
           </div>
         )}
       </div>
 
       {/* Mobile sticky bottom bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-4 py-3 shadow-2xl">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-bone/95 backdrop-blur-sm border-t border-line px-4 py-3">
         {amazonUrl ? (
-          <button onClick={handleBuyOnAmazon} className={`w-full h-12 text-[11px] uppercase rounded-xl ${theme.btn} transition-all font-black tracking-wider`}>
+          <AmazonLink url={amazonUrl} productId={product.id} className={`flex items-center justify-center w-full h-12 text-[11px] uppercase rounded-sm ${theme.btn} transition-all tracking-[0.2em]`}>
             BUY ON AMAZON
-          </button>
+          </AmazonLink>
         ) : (
-          <button disabled className="w-full h-12 text-[11px] uppercase rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed font-black tracking-wider">
+          <button disabled className="w-full h-12 text-[11px] uppercase rounded-sm bg-line text-slate cursor-not-allowed font-medium tracking-[0.2em]">
             COMING SOON
           </button>
         )}

@@ -29,7 +29,14 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
   useEffect(() => {
     if (query.length >= 2) {
       api.getProducts({ search: query }).then(res => {
-        setResults((res.products as Product[]).slice(0, 8));
+        // The API returns the joined `categories` object, not a flat `category`
+        // string — casting the raw row straight to Product left category
+        // undefined and threw on `.replace()` while rendering results.
+        const products = (res.products as any[]).map(raw => ({
+          ...raw,
+          category: raw.categories?.slug ?? raw.sub_category ?? '',
+        })) as Product[];
+        setResults(products.slice(0, 8));
       }).catch(() => {});
     } else {
       setResults([]);

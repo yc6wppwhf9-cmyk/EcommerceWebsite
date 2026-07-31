@@ -25,7 +25,7 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
   return (
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <Link
-        className="h-16 flex items-center gap-1.5 px-4 text-[16px] font-semibold font-outfit tracking-[0.15em] hover:opacity-70 transition-all duration-300 relative border-b-4 border-transparent hover:border-current uppercase"
+        className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
         to={getThemeTo(to)}
       >
         {title}
@@ -35,16 +35,17 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
       <AnimatePresence>
         {isOpen && items && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute top-[90%] left-0 w-max min-w-[240px] max-w-[90vw] bg-white dark:bg-[#111] shadow-2xl z-50 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 p-2"
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute top-[90%] left-0 w-max min-w-[240px] max-w-[90vw] bg-white dark:bg-[#111] shadow-lg shadow-black/5 z-50 rounded-sm overflow-hidden border border-line dark:border-white/5 p-2"
           >
             {items.map((item) => (
               <Link
                 key={item.slug}
                 to={getThemeTo(`/${item.slug}`)}
-                className="block px-5 py-3 text-[16px] font-semibold font-outfit tracking-widest text-priority-blue dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-all uppercase"
+                className="block px-5 py-3 text-[14px] font-medium font-outfit tracking-[0.14em] text-graphite dark:text-gray-300 hover:text-marine dark:hover:text-white hover:bg-bone dark:hover:bg-white/5 rounded-sm transition-colors duration-300 uppercase"
               >
                 {item.label}
               </Link>
@@ -131,23 +132,31 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
   const shouldBeBlackNav = isPremiumTheme;
 
+  // The main catalogue nav is light (bone) so the Premium collection's black
+  // still reads as a step up — that hierarchy is the whole point of Premium, and
+  // a dark nav everywhere flattened it. The wordmark only ships as a white PNG,
+  // so `brightness-0` inverts it to ink for the light bar.
+  const isLightNav = !shouldBeBlackNav && !isJunior;
+
   return (
     <>
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300 ${shouldBeBlackNav
+      className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-500 ${shouldBeBlackNav
           ? 'premium-bg-black border-b border-white/10'
-          : `${isJunior ? 'bg-junior-orange' : 'bg-priority-blue'} shadow-xl border-b border-white/10`
+          : isJunior
+            ? 'bg-junior-orange shadow-xl border-b border-white/10'
+            : `bg-bone/90 backdrop-blur-md border-b ${isScrolled ? 'border-line' : 'border-transparent'}`
         }`}
-      style={{ color: 'white' }}
+      style={{ color: isLightNav ? '#0F1417' : 'white' }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
+      <div className="max-w-[1720px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center lg:static lg:translate-x-0 lg:flex-1">
           <Link to="/" className="flex items-center">
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300`}
+              className={`${isJunior ? 'w-[120px]' : 'w-[140px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
             />
           </Link>
         </div>
@@ -160,11 +169,11 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         <div className="flex-1 flex items-center justify-end font-outfit">
           {/* Icon group — all same size, equal gap */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1">
             {/* Search */}
             <button
               onClick={onSearchOpen}
-              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06]"
             >
               <Search size={20} />
             </button>
@@ -172,7 +181,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Wishlist */}
             <Link
               to="/wishlist"
-              className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 ${location.pathname === '/wishlist' ? 'bg-white/20' : ''}`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06] ${location.pathname === '/wishlist' ? 'bg-ink/[0.08]' : ''}`}
             >
               <Heart size={20} fill={location.pathname === '/wishlist' ? 'currentColor' : 'none'} />
             </Link>
@@ -181,14 +190,14 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {isAuthenticated ? (
               <Link
                 to={user?.role === 'admin' ? '/admin' : '/account'}
-                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
+                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06]"
               >
                 <User size={20} className="text-current" />
               </Link>
             ) : (
               <Link
                 to="/login"
-                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 ${location.pathname === '/login' ? 'bg-white/20' : ''}`}
+                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06] ${location.pathname === '/login' ? 'bg-white/20' : ''}`}
               >
                 <User size={20} />
               </Link>
@@ -198,7 +207,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {isAuthenticated && (
               <button
                 onClick={logout}
-                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 active:scale-95"
+                className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06] active:scale-95"
                 title="Logout"
               >
                 <LogOut size={20} />
@@ -209,7 +218,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Mobile: hamburger only — cart is in bottom nav */}
         <div className="lg:hidden flex items-center">
-          <button className="p-2 text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="p-2" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>

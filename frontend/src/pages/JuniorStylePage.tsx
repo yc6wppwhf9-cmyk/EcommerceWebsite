@@ -5,6 +5,7 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft } from 'lucide-react';
+import { AmazonLink } from '../components/AmazonLink';
 
 const BURST_COLORS = ['#F69245', '#A368FB', '#FFBB5A', '#FF6B6B', '#FFD700', '#4ECDC4', '#FF69B4', '#fff'];
 
@@ -118,13 +119,14 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
           )}
         </div>
         {(product as any).amazon_url ? (
-          <button
-            onClick={e => { e.preventDefault(); window.open((product as any).amazon_url, '_blank', 'noopener,noreferrer'); }}
-            className="w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
+          <AmazonLink
+            url={(product as any).amazon_url}
+            productId={product.id}
+            className="block text-center w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
             style={{ backgroundColor: accent }}
           >
             Buy on Amazon
-          </button>
+          </AmazonLink>
         ) : (
           <button
             disabled
