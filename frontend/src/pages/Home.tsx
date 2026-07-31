@@ -522,31 +522,31 @@ export const Home = () => {
         </div>
 
         {/* Desktop version - Exactly as shown in screenshot */}
-        <div className="hidden md:block text-white relative py-10 lg:py-12">
-          <div className="max-w-[1720px] mx-auto px-8 lg:px-12 relative z-10 flex flex-row items-center gap-12 lg:gap-20">
+        <div className="hidden md:block text-white relative py-4 lg:py-6">
+          <div className="max-w-[1720px] mx-auto px-8 lg:px-12 relative z-10 flex flex-row items-center gap-10 lg:gap-16">
             {banner.imageTo ? (
-              <Link to={banner.imageTo} className="w-[46%] relative z-30 rounded-sm overflow-hidden -mt-16 -mb-16 block group">
+              <Link to={banner.imageTo} className="w-[42%] lg:w-[40%] relative z-30 rounded-sm overflow-hidden -mt-8 -mb-8 block group">
                 <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" />
               </Link>
             ) : (
-              <div className="w-[46%] relative z-30 rounded-sm overflow-hidden -mt-16 -mb-16 block">
+              <div className="w-[42%] lg:w-[40%] relative z-30 rounded-sm overflow-hidden -mt-8 -mb-8 block">
                 <img src={IMG.banner} alt="Style" className="w-full h-auto object-cover" />
               </div>
             )}
-            <div className="flex-1 text-left py-5">
-              <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-brass mb-5">Fresh picks for every trip</p>
-              <h2 className="text-5xl lg:text-6xl font-normal uppercase tracking-[0.14em] text-white mb-6">{banner.heading}</h2>
-              <p className={`text-[16px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none ${banner.links.length ? 'mb-10' : ''}`}>{banner.subheading}</p>
+            <div className="flex-1 text-left py-2">
+              <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-brass mb-2">Fresh picks for every trip</p>
+              <h2 className="text-3xl lg:text-5xl font-normal uppercase tracking-[0.14em] text-white mb-3">{banner.heading}</h2>
+              <p className={`text-[14px] lg:text-[15px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none ${banner.links.length ? 'mb-4' : ''}`}>{banner.subheading}</p>
               {banner.links.length > 0 && (
-                <div className="flex gap-8">
+                <div className="flex gap-6">
                   {banner.links.map((link) => (
                     <Link key={link.to} to={link.to} className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all">{link.label}</Link>
                   ))}
                 </div>
               )}
-              <Link to={BANNER_CTA.to} className="inline-flex items-center gap-2.5 rounded-sm bg-white px-9 py-4 mt-8 text-[12px] font-medium uppercase tracking-[0.2em] text-ink transition-transform duration-500 hover:-translate-y-0.5">
+              <Link to={BANNER_CTA.to} className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3 mt-4 text-[11px] font-medium uppercase tracking-[0.2em] text-ink transition-transform duration-500 hover:-translate-y-0.5">
                 {BANNER_CTA.label}
-                <ArrowRight size={16} />
+                <ArrowRight size={15} />
               </Link>
             </div>
           </div>
