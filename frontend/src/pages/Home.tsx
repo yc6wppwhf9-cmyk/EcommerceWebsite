@@ -422,7 +422,7 @@ export const Home = () => {
                         transformOrigin: 'right center',
                       }}
                     >
-                      <div className="relative w-full" style={{ paddingBottom: '100%' }}>
+                      <div className="relative w-full" style={{ paddingBottom: '125%' }}>
                         <img
                           src={CATS[idx]?.img || ''}
                           alt=""
@@ -444,7 +444,7 @@ export const Home = () => {
                       transition={{ duration: 0.4, ease: 'easeInOut' }}
                       className="w-full rounded-sm overflow-hidden border border-line shadow-md"
                     >
-                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '100%' }}>
+                      <Link to={CATS[catFlipIndex].to} className="block w-full relative" style={{ paddingBottom: '125%' }}>
                         <img
                           src={CATS[catFlipIndex].img}
                           alt={CATS[catFlipIndex].label}
