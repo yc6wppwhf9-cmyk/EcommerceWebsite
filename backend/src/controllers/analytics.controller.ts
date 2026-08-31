@@ -34,20 +34,29 @@ export const getProductViewCount = (req: Request, res: Response) => {
   res.json({ count });
 };
 
-// Persistent "Buy on Amazon" click counter — drives the Best Sellers ranking.
-export const trackAmazonClick = async (req: Request, res: Response) => {
-  const { product_id } = req.params;
+// Persistent "Buy on <marketplace>" click counter — drives the Best Sellers ranking.
+const MARKETPLACE_CLICK_COLUMNS: Record<string, string> = {
+  amazon: 'amazon_clicks',
+  flipkart: 'flipkart_clicks',
+  myntra: 'myntra_clicks',
+  ajio: 'ajio_clicks',
+};
+
+export const trackMarketplaceClick = async (req: Request, res: Response) => {
+  const { product_id, marketplace } = req.params;
+  const column = MARKETPLACE_CLICK_COLUMNS[marketplace];
+  if (!column) return res.status(400).json({ error: 'Unknown marketplace' });
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('amazon_clicks')
+      .select(column)
       .eq('id', product_id)
       .maybeSingle();
     if (error) throw error;
     if (!data) return res.status(404).json({ error: 'Product not found' });
     await supabase
       .from('products')
-      .update({ amazon_clicks: (data.amazon_clicks || 0) + 1 })
+      .update({ [column]: ((data as any)[column] || 0) + 1 })
       .eq('id', product_id);
     res.json({ ok: true });
   } catch (err: any) {

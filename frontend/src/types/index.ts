@@ -60,6 +60,9 @@ export interface Product {
   images?: string[];
   amazonUrl?: string;
   amazon_url?: string;
+  flipkart_url?: string;
+  myntra_url?: string;
+  ajio_url?: string;
   variants?: ProductVariant[];
   colors?: Array<{ name?: string; color?: string; code?: string; colorCode?: string; images?: string[] }>;
   features?: string[];

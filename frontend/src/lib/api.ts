@@ -201,10 +201,10 @@ export const api = {
   },
   getProduct: (slug: string) =>
     cacheGet(`/api/products/${slug}`, () => request<any>(`/api/products/${slug}`)),
-  // Fire-and-forget: records a "Buy on Amazon" click to rank Best Sellers by demand.
-  trackAmazonClick: (productId: string) => {
+  // Fire-and-forget: records a "Buy on <marketplace>" click to rank Best Sellers by demand.
+  trackMarketplaceClick: (productId: string, marketplace: 'amazon' | 'flipkart' | 'myntra' | 'ajio') => {
     if (!productId) return;
-    const url = `${BASE}/api/analytics/amazon-click/${productId}`;
+    const url = `${BASE}/api/analytics/click/${productId}/${marketplace}`;
     try {
       if (typeof navigator !== 'undefined' && navigator.sendBeacon) navigator.sendBeacon(url);
       else fetch(url, { method: 'POST', keepalive: true }).catch(() => {});

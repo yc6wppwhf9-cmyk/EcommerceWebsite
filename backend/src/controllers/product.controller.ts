@@ -79,7 +79,8 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       'price-desc': { column: 'price', ascending: false },
       'rating': { column: 'rating', ascending: false },
       'newest': { column: 'created_at', ascending: false },
-      'bestseller': { column: 'amazon_clicks', ascending: false },
+      // total_clicks is a generated column (amazon + flipkart + myntra + ajio clicks combined) — see migration.
+      'bestseller': { column: 'total_clicks', ascending: false },
     };
     const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
     query = query.order(s.column, { ascending: s.ascending });
@@ -166,7 +167,10 @@ export const createProduct = async (req: Request, res: Response) => {
       sub_category: body.sub_category || '',
       junior_style: body.junior_style || null,
       is_active: body.is_active !== undefined ? body.is_active : true,
-      amazon_url: body.amazon_url || null
+      amazon_url: body.amazon_url || null,
+      flipkart_url: body.flipkart_url || null,
+      myntra_url: body.myntra_url || null,
+      ajio_url: body.ajio_url || null
     };
 
     if (!productData.category_id) {
@@ -199,7 +203,8 @@ export const updateProduct = async (req: Request, res: Response) => {
     'name', 'slug', 'description', 'price', 'original_price', 'stock',
     'is_active', 'is_new', 'is_highlighted', 'image', 'images',
     'colors', 'features', 'category_id', 'is_premium', 'gender',
-    'size', 'age_range', 'sub_category', 'junior_style', 'amazon_url'
+    'size', 'age_range', 'sub_category', 'junior_style', 'amazon_url',
+    'flipkart_url', 'myntra_url', 'ajio_url'
   ];
   
   const updates: any = {};
@@ -365,6 +370,9 @@ export const bulkUpload = async (req: MulterRequest, res: Response) => {
         sku,
         features: (p.features || p.Features || '').toString().split('|').map((value: string) => value.trim()).filter(Boolean),
         amazon_url: (p.amazon_url || p.Amazon_URL || '').toString().trim() || null,
+        flipkart_url: (p.flipkart_url || p.Flipkart_URL || '').toString().trim() || null,
+        myntra_url: (p.myntra_url || p.Myntra_URL || '').toString().trim() || null,
+        ajio_url: (p.ajio_url || p.Ajio_URL || '').toString().trim() || null,
         // Imported products remain drafts until their content and links are reviewed.
         is_active: false,
       });

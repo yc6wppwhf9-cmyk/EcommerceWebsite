@@ -5,7 +5,7 @@ import { getProductById } from '../constants/products';
 import { Star, Heart } from 'lucide-react';
 import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
-import { AmazonLink } from './AmazonLink';
+import { MarketplaceLink, type Marketplace } from './MarketplaceLink';
 
 interface ProductCardProps {
   product?: Product;
@@ -52,7 +52,13 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const reviews = (product as any).reviews ?? 0;
   const hasRating = rating > 0;
 
-  const amazonUrl = (product as any).amazon_url;
+  const allMarketplaceLinks: Array<{ marketplace: Marketplace; url: string; label: string }> = [
+    { marketplace: 'amazon', url: (product as any).amazon_url, label: 'Buy on Amazon' },
+    { marketplace: 'flipkart', url: (product as any).flipkart_url, label: 'Buy on Flipkart' },
+    { marketplace: 'myntra', url: (product as any).myntra_url, label: 'Buy on Myntra' },
+    { marketplace: 'ajio', url: (product as any).ajio_url, label: 'Buy on Ajio' },
+  ];
+  const marketplaceLinks = allMarketplaceLinks.filter((link) => link.url);
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -154,11 +160,21 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           )}
         </div>
 
-        {/* Buy on Amazon */}
-        {amazonUrl ? (
-          <AmazonLink url={amazonUrl} productId={product.id} className={`block text-center w-full py-2.5 text-white text-[11px] uppercase transition-all rounded-sm mt-1 ${quiet ? 'font-medium tracking-[0.2em] bg-marine hover:bg-marine-deep' : 'font-bold tracking-[0.15em]'} ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : quiet ? '' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}>
-            Buy on Amazon
-          </AmazonLink>
+        {/* Buy on Amazon / Flipkart / Myntra */}
+        {marketplaceLinks.length > 0 ? (
+          <div className="flex flex-col gap-1 mt-1">
+            {marketplaceLinks.map((link) => (
+              <MarketplaceLink
+                key={link.marketplace}
+                marketplace={link.marketplace}
+                url={link.url}
+                productId={product.id}
+                className={`block text-center w-full py-2.5 text-white text-[11px] uppercase transition-all rounded-sm ${quiet ? 'font-medium tracking-[0.2em] bg-marine hover:bg-marine-deep' : 'font-bold tracking-[0.15em]'} ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : quiet ? '' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
+              >
+                {link.label}
+              </MarketplaceLink>
+            ))}
+          </div>
         ) : (
           <button disabled className={`w-full py-2.5 text-[11px] uppercase rounded-sm mt-1 cursor-not-allowed ${quiet ? 'font-medium tracking-[0.2em] bg-line text-slate' : 'font-bold tracking-[0.15em] bg-gray-100 text-gray-400'}`}>
             Coming Soon

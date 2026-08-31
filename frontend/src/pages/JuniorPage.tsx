@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
-import { AmazonLink } from '../components/AmazonLink';
+import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
 
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', age: '30-36 months', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
@@ -113,7 +113,13 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   const displayImage = !isTouchDevice && isHovered ? secondaryImage : product.image;
 
-  const amazonUrl = (product as any).amazon_url;
+  const allMarketplaceLinks: Array<{ marketplace: Marketplace; url: string; label: string }> = [
+    { marketplace: 'amazon', url: (product as any).amazon_url, label: 'Buy on Amazon' },
+    { marketplace: 'flipkart', url: (product as any).flipkart_url, label: 'Buy on Flipkart' },
+    { marketplace: 'myntra', url: (product as any).myntra_url, label: 'Buy on Myntra' },
+    { marketplace: 'ajio', url: (product as any).ajio_url, label: 'Buy on Ajio' },
+  ];
+  const marketplaceLinks = allMarketplaceLinks.filter((link) => link.url);
   // Mobile-friendly tap to swap
   const handleTap = () => {
     if (isTouchDevice) {
@@ -173,15 +179,21 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
         )}
 
 
-        {/* Buy on Amazon */}
-        {amazonUrl ? (
-          <AmazonLink
-            url={amazonUrl}
-            productId={product.id}
-            className="mt-auto flex items-center justify-center w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
-          >
-            Buy on Amazon
-          </AmazonLink>
+        {/* Buy on Amazon / Flipkart / Myntra / Ajio */}
+        {marketplaceLinks.length > 0 ? (
+          <div className="mt-auto flex flex-col gap-1.5 w-full">
+            {marketplaceLinks.map((link) => (
+              <MarketplaceLink
+                key={link.marketplace}
+                marketplace={link.marketplace}
+                url={link.url}
+                productId={product.id}
+                className="flex items-center justify-center w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
+              >
+                {link.label}
+              </MarketplaceLink>
+            ))}
+          </div>
         ) : (
           <button
             disabled

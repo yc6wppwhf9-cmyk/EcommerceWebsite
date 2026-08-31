@@ -64,7 +64,7 @@ const BLANK_FORM = (): Partial<Product> => ({
   name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
   gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
-  size: '', juniorStyle: '', amazon_url: '',
+  size: '', juniorStyle: '', amazon_url: '', flipkart_url: '', myntra_url: '', ajio_url: '',
   isNew: false, highlighted: false, // highlighted used for best seller
 });
 
@@ -253,12 +253,13 @@ export const AdminDashboard = () => {
     { id: 'overview', label: 'Stats', icon: LayoutDashboard },
     { id: 'inventory', label: 'Products', icon: Box },
     { id: 'bulk', label: 'Add Many', icon: FileSpreadsheet },
-    { id: 'orders', label: 'Orders', icon: Truck },
+    // 'orders' tab hidden — first-party checkout/orders is disabled now that the storefront
+    // redirects to Amazon/Flipkart/Myntra/Ajio. Content block kept intact below to re-enable easily.
     { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'jobs', label: 'Jobs', icon: Briefcase },
     { id: 'applications', label: 'Applications', icon: FileText },
     { id: 'customers', label: 'Users', icon: Users },
-    { id: 'coupons', label: 'Coupons', icon: Tag },
+    // 'coupons' tab hidden — same reason as 'orders' above.
   ];
 
   const handleSaveJob = async (e: React.FormEvent) => {
@@ -397,6 +398,9 @@ export const AdminDashboard = () => {
         images: (formData.images || []).filter(Boolean),
         colors: variants.filter(v => v.color.trim()).map(v => ({ name: v.color, code: v.colorCode, images: (v.images || []).filter(Boolean) })),
         amazon_url: (formData as any).amazon_url || null,
+        flipkart_url: (formData as any).flipkart_url || null,
+        myntra_url: (formData as any).myntra_url || null,
+        ajio_url: (formData as any).ajio_url || null,
       };
 
       // Only generate a new slug if it doesn't exist (for new products)
@@ -867,7 +871,22 @@ export const AdminDashboard = () => {
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Amazon Product URL</label>
                           <input type="url" value={(formData as any).amazon_url || ''} onChange={(e) => setFormData({ ...formData, amazon_url: e.target.value } as any)} placeholder="https://www.amazon.in/dp/..." className={inputCls} />
-                          <p className="text-[9px] text-gray-400 ml-1">When set, the buy button redirects customers to Amazon instead of cart.</p>
+                          <p className="text-[9px] text-gray-400 ml-1">Any marketplace URL set here shows as a "Buy on ..." button on the product page.</p>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Flipkart Product URL</label>
+                          <input type="url" value={(formData as any).flipkart_url || ''} onChange={(e) => setFormData({ ...formData, flipkart_url: e.target.value } as any)} placeholder="https://www.flipkart.com/..." className={inputCls} />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Myntra Product URL</label>
+                          <input type="url" value={(formData as any).myntra_url || ''} onChange={(e) => setFormData({ ...formData, myntra_url: e.target.value } as any)} placeholder="https://www.myntra.com/..." className={inputCls} />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Ajio Product URL</label>
+                          <input type="url" value={(formData as any).ajio_url || ''} onChange={(e) => setFormData({ ...formData, ajio_url: e.target.value } as any)} placeholder="https://www.ajio.com/..." className={inputCls} />
                         </div>
 
                         <div className="pt-8 flex gap-4 border-t border-gray-100">
@@ -1003,6 +1022,9 @@ export const AdminDashboard = () => {
                                         isNew: (p as any).is_new ?? p.isNew ?? false,
                                         juniorStyle: (p as any).junior_style || '',
                                         amazon_url: (p as any).amazon_url || '',
+                                        flipkart_url: (p as any).flipkart_url || '',
+                                        myntra_url: (p as any).myntra_url || '',
+                                        ajio_url: (p as any).ajio_url || '',
                                         images: Array.isArray((p as any).images) ? (p as any).images : [],
                                       });
                                       setVariants(((p as any).colors || p.variants || []).map((v: any) => ({

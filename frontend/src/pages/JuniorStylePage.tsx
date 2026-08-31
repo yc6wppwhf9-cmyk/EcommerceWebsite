@@ -5,7 +5,7 @@ import { api } from '../lib/api';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft } from 'lucide-react';
-import { AmazonLink } from '../components/AmazonLink';
+import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
 
 const BURST_COLORS = ['#F69245', '#A368FB', '#FFBB5A', '#FF6B6B', '#FFD700', '#4ECDC4', '#FF69B4', '#fff'];
 
@@ -87,6 +87,13 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
   const discount = originalPrice > product.price
     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
     : 0;
+  const allMarketplaceLinks: Array<{ marketplace: Marketplace; url: string; label: string }> = [
+    { marketplace: 'amazon', url: (product as any).amazon_url, label: 'Buy on Amazon' },
+    { marketplace: 'flipkart', url: (product as any).flipkart_url, label: 'Buy on Flipkart' },
+    { marketplace: 'myntra', url: (product as any).myntra_url, label: 'Buy on Myntra' },
+    { marketplace: 'ajio', url: (product as any).ajio_url, label: 'Buy on Ajio' },
+  ];
+  const marketplaceLinks = allMarketplaceLinks.filter((link) => link.url);
 
   return (
     <div className="flex flex-col font-outfit bg-white">
@@ -118,15 +125,21 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
             <span className="text-[10px] text-gray-300 font-medium uppercase tracking-widest">New Arrival</span>
           )}
         </div>
-        {(product as any).amazon_url ? (
-          <AmazonLink
-            url={(product as any).amazon_url}
-            productId={product.id}
-            className="block text-center w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md mt-1"
-            style={{ backgroundColor: accent }}
-          >
-            Buy on Amazon
-          </AmazonLink>
+        {marketplaceLinks.length > 0 ? (
+          <div className="flex flex-col gap-1 mt-1">
+            {marketplaceLinks.map((link) => (
+              <MarketplaceLink
+                key={link.marketplace}
+                marketplace={link.marketplace}
+                url={link.url}
+                productId={product.id}
+                className="block text-center w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md"
+                style={{ backgroundColor: accent }}
+              >
+                {link.label}
+              </MarketplaceLink>
+            ))}
+          </div>
         ) : (
           <button
             disabled

@@ -11,8 +11,8 @@ export const BulkUpload = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const downloadTemplate = () => {
-    const headers = ['name', 'sku', 'price', 'original_price', 'category_id', 'stock', 'description', 'features', 'image_url', 'amazon_url'];
-    const example = ['Priority Backpack', 'PB-EXAMPLE-001', '1999', '2499', '', '25', 'Replace this row with the complete product description', 'Padded laptop sleeve|Water-resistant fabric', 'https://', ''];
+    const headers = ['name', 'sku', 'price', 'original_price', 'category_id', 'stock', 'description', 'features', 'image_url', 'amazon_url', 'flipkart_url', 'myntra_url', 'ajio_url'];
+    const example = ['Priority Backpack', 'PB-EXAMPLE-001', '1999', '2499', '', '25', 'Replace this row with the complete product description', 'Padded laptop sleeve|Water-resistant fabric', 'https://', '', '', '', ''];
     const csv = `${headers.join(',')}\n${example.map((value) => `"${value.replace(/"/g, '""')}"`).join(',')}\n`;
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a');
@@ -204,7 +204,7 @@ export const BulkUpload = () => {
         <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
           <p className="text-[10px] font-black uppercase tracking-widest text-[#14052b] mb-4">Optional Fields</p>
           <div className="grid grid-cols-2 gap-2">
-            {['description', 'features', 'image_url', 'amazon_url', 'is_premium', 'original_price'].map(col => (
+            {['description', 'features', 'image_url', 'amazon_url', 'flipkart_url', 'myntra_url', 'ajio_url', 'is_premium', 'original_price'].map(col => (
                <div key={col} className="flex items-center gap-2">
                  <div className="w-1 h-1 bg-gray-300 rounded-full" />
                  <span className="text-[10px] font-medium text-gray-400">{col}</span>

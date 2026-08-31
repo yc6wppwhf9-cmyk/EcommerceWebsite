@@ -26,7 +26,7 @@ import { ProductCard } from '../components/ProductCard';
 import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { AmazonLink } from '../components/AmazonLink';
+import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
 
 const THEMES = {
   junior: {
@@ -261,7 +261,13 @@ export const ProductDetail = () => {
         }))
       : FALLBACK_HIGHLIGHTS;
 
-  const amazonUrl = (product as any).amazon_url;
+  const allMarketplaceLinks: Array<{ marketplace: Marketplace; url: string; label: string }> = [
+    { marketplace: 'amazon', url: (product as any).amazon_url, label: 'Buy on Amazon' },
+    { marketplace: 'flipkart', url: (product as any).flipkart_url, label: 'Buy on Flipkart' },
+    { marketplace: 'myntra', url: (product as any).myntra_url, label: 'Buy on Myntra' },
+    { marketplace: 'ajio', url: (product as any).ajio_url, label: 'Buy on Ajio' },
+  ];
+  const marketplaceLinks = allMarketplaceLinks.filter((link) => link.url);
 
   const handleToggleWishlist = () => {
     if (product) toggleWishlist(product);
@@ -436,11 +442,21 @@ export const ProductDetail = () => {
 
             {/* Actions */}
             <div className="space-y-3 pt-2">
-              {/* Buy on Amazon */}
-              {amazonUrl ? (
-                <AmazonLink url={amazonUrl} productId={product.id} className={`block text-center w-full font-outfit text-[15px] tracking-[0.2em] py-4 rounded-sm transition-colors ${theme.btn}`}>
-                  BUY ON AMAZON
-                </AmazonLink>
+              {/* Buy on Amazon / Flipkart / Myntra / Ajio */}
+              {marketplaceLinks.length > 0 ? (
+                <div className="space-y-3">
+                  {marketplaceLinks.map((link) => (
+                    <MarketplaceLink
+                      key={link.marketplace}
+                      marketplace={link.marketplace}
+                      url={link.url}
+                      productId={product.id}
+                      className={`block text-center w-full font-outfit text-[15px] tracking-[0.2em] py-4 rounded-sm transition-colors ${theme.btn}`}
+                    >
+                      {link.label.toUpperCase()}
+                    </MarketplaceLink>
+                  ))}
+                </div>
               ) : (
                 <button disabled className="w-full font-outfit text-[15px] tracking-[0.2em] py-4 rounded-sm bg-line text-slate cursor-not-allowed">
                   COMING SOON
@@ -603,12 +619,12 @@ export const ProductDetail = () => {
         )}
       </div>
 
-      {/* Mobile sticky bottom bar */}
+      {/* Mobile sticky bottom bar — leads with the primary marketplace; the full set of buttons lives in the Actions section above */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-bone/95 backdrop-blur-sm border-t border-line px-4 py-3">
-        {amazonUrl ? (
-          <AmazonLink url={amazonUrl} productId={product.id} className={`flex items-center justify-center w-full h-12 text-[11px] uppercase rounded-sm ${theme.btn} transition-all tracking-[0.2em]`}>
-            BUY ON AMAZON
-          </AmazonLink>
+        {marketplaceLinks.length > 0 ? (
+          <MarketplaceLink marketplace={marketplaceLinks[0].marketplace} url={marketplaceLinks[0].url} productId={product.id} className={`flex items-center justify-center w-full h-12 text-[11px] uppercase rounded-sm ${theme.btn} transition-all tracking-[0.2em]`}>
+            {marketplaceLinks[0].label.toUpperCase()}
+          </MarketplaceLink>
         ) : (
           <button disabled className="w-full h-12 text-[11px] uppercase rounded-sm bg-line text-slate cursor-not-allowed font-medium tracking-[0.2em]">
             COMING SOON

@@ -38,6 +38,9 @@ export const productSchema = z.object({
     ageRange: z.string().optional(),
     size: z.string().optional(),
     amazon_url: z.string().optional(),
+    flipkart_url: z.string().optional(),
+    myntra_url: z.string().optional(),
+    ajio_url: z.string().optional(),
   }).passthrough(),
 });
 

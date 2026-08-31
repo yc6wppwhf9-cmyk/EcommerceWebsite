@@ -3,10 +3,12 @@
 E-commerce storefront for [Priority Bags](https://prioritybags.in) — backpacks, luggage and travel
 accessories by High Spirit Commercial Ventures Pvt. Ltd.
 
-Products are browsed and compared on this site, then purchased on Amazon: each product links out to
-its Amazon listing, and outbound clicks are tracked to drive bestseller ranking. The codebase also
-carries a full first-party checkout (cart, coupons, Razorpay, order lifecycle) which is built and
-tested but not the primary path today.
+Products are browsed and compared on this site, then purchased on a marketplace: each product links
+out to its Amazon / Flipkart / Myntra / Ajio listing (whichever are set), and outbound clicks are
+tracked per marketplace to drive bestseller ranking. The codebase also carries a full first-party
+checkout (cart, coupons, Razorpay, order lifecycle) — it's built and tested, but currently **disabled**
+(routers unmounted in `backend/src/index.ts`, Orders/Coupons tabs hidden in the admin UI) rather than
+removed, so it can be switched back on without redoing the work.
 
 ---
 
@@ -147,9 +149,9 @@ Commit as `admin@hscvpl.com`.
 - **Never cast raw API rows to `Product`.** Supabase returns a joined `categories: { slug, title }`
   object, not a flat `category` string. Casting hides the difference from the compiler and it fails
   at runtime instead — map the row (`categories?.slug ?? sub_category ?? ''`) as `ProductDetail` does.
-- **Amazon CTAs must be real anchors**, not `window.open()`. iOS Universal Links and Android App
-  Links only hand off to the installed Amazon app on a genuine user-initiated navigation; a tab
-  opened from script stays in the browser. Use the `AmazonLink` component.
+- **Marketplace CTAs must be real anchors**, not `window.open()`. iOS Universal Links and Android App
+  Links only hand off to the installed marketplace app on a genuine user-initiated navigation; a tab
+  opened from script stays in the browser. Use the `MarketplaceLink` component.
 - **Form inputs need 16px on mobile**, or iOS Safari zooms on focus.
 - **Product imagery carries baked-in text** in some creatives (category tiles, some hero slides).
   Those words cannot be removed in code — they need the artwork re-exported.

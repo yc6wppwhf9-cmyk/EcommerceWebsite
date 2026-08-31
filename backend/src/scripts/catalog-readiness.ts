@@ -16,6 +16,9 @@ type Product = {
   price?: number;
   stock?: number;
   amazon_url?: string | null;
+  flipkart_url?: string | null;
+  myntra_url?: string | null;
+  ajio_url?: string | null;
   is_active?: boolean;
 };
 
@@ -50,14 +53,20 @@ for (const product of products) {
   if (product.sku && (skuCounts.get(product.sku) || 0) > 1) issues.push('duplicate SKU');
   if (product.slug && (slugCounts.get(product.slug) || 0) > 1) issues.push('duplicate slug');
   if (/\b(demo|placeholder|test product)\b/i.test(`${product.name || ''} ${product.description || ''}`)) issues.push('placeholder copy');
+  if (!product.amazon_url && !product.flipkart_url && !product.myntra_url && !product.ajio_url) issues.push('no marketplace link (amazon/flipkart/myntra/ajio)');
   if (issues.length) failures.push({ id: product.id, name: product.name || 'Unnamed product', issues });
 }
 
-const externalLinks = products.filter((product) => product.amazon_url).map((product) => ({
-  id: product.id,
-  name: product.name,
-  amazon_url: product.amazon_url,
-}));
+const externalLinks = products
+  .filter((product) => product.amazon_url || product.flipkart_url || product.myntra_url || product.ajio_url)
+  .map((product) => ({
+    id: product.id,
+    name: product.name,
+    amazon_url: product.amazon_url,
+    flipkart_url: product.flipkart_url,
+    myntra_url: product.myntra_url,
+    ajio_url: product.ajio_url,
+  }));
 
 console.log(JSON.stringify({
   api: apiBase,

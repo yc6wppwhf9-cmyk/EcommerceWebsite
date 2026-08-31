@@ -31,6 +31,9 @@ export interface Product {
   is_highlighted: boolean;
   is_active: boolean;
   amazon_url?: string;
+  flipkart_url?: string;
+  myntra_url?: string;
+  ajio_url?: string;
   created_at: string;
   updated_at: string;
 }

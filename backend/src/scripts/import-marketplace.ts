@@ -152,7 +152,15 @@ const buildFeatures = (type: string): string[] => {
   return base;
 };
 
-type Row = { sku: string; name: string; family: string; amazon_url: string | null };
+type Row = {
+  sku: string;
+  name: string;
+  family: string;
+  amazon_url: string | null;
+  flipkart_url: string | null;
+  myntra_url: string | null;
+  ajio_url: string | null;
+};
 
 // ── Read Excel ───────────────────────────────────────────────────────────────
 if (!fs.existsSync(EXCEL_PATH)) {
@@ -166,6 +174,9 @@ const iSku = col('sku');
 const iName = col('ITEM_NAME');
 const iFamily = col('Family');
 const iAmazon = col('Amazon link');
+const iFlipkart = col('Flipkart link');
+const iMyntra = col('Myntra link');
+const iAjio = col('Ajio link');
 
 let rows: Row[] = sheet
   .map((r) => ({
@@ -173,6 +184,9 @@ let rows: Row[] = sheet
     name: String(r[iName] ?? '').replace(/\s+/g, ' ').trim(),
     family: String(r[iFamily] ?? '').trim(),
     amazon_url: String(r[iAmazon] ?? '').trim() || null,
+    flipkart_url: String(r[iFlipkart] ?? '').trim() || null,
+    myntra_url: String(r[iMyntra] ?? '').trim() || null,
+    ajio_url: String(r[iAjio] ?? '').trim() || null,
   }))
   .filter((r) => r.sku && r.name);
 
@@ -290,6 +304,9 @@ for (const row of rows) {
       sub_category: subCat,
       is_active: true,
       amazon_url: row.amazon_url,
+      flipkart_url: row.flipkart_url,
+      myntra_url: row.myntra_url,
+      ajio_url: row.ajio_url,
     };
 
     if (exists) {

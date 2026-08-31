@@ -7,7 +7,12 @@ const router = Router();
 
 router.post('/view/:product_id', AnalyticsController.trackProductView);
 router.get('/view/:product_id', AnalyticsController.getProductViewCount);
-router.post('/amazon-click/:product_id', AnalyticsController.trackAmazonClick);
+router.post('/click/:product_id/:marketplace', AnalyticsController.trackMarketplaceClick);
+// Back-compat for any cached frontend bundle still hitting the old Amazon-only endpoint.
+router.post('/amazon-click/:product_id', (req, res) => {
+  (req.params as any).marketplace = 'amazon';
+  AnalyticsController.trackMarketplaceClick(req, res);
+});
 router.post('/abandoned-cart', authenticateToken, requireAdmin, validateCsrf, AnalyticsController.sendAbandonedCartEmails);
 
 export default router;
