@@ -6,18 +6,15 @@ const INSTAGRAM_URL = 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0
 /**
  * "#ExplorePriorityBags" — a strip that showcases the brand's Instagram feed.
  *
- * Tiles use existing on-site lifestyle/product creatives as stand-ins for the
- * latest posts; every tile (and the CTA) opens the Priority Bags Instagram
- * profile in a new tab. Swap `POSTS[i].img` for real post thumbnails and set
- * each `href` to the specific post URL when the feed is wired up.
+ * Each tile links to a real Priority Bags reel. The thumbnails use on-site
+ * creatives as stand-ins (Instagram post images can't be hot-linked); swap
+ * `POSTS[i].img` for a matching still if you export one per reel.
  */
-const POSTS: { img: string; alt: string }[] = [
-  { img: '/Category/Backpack.jpg',      alt: 'Priority backpacks on Instagram' },
-  { img: '/Creatives/5.png',            alt: 'Campus styling on Instagram' },
-  { img: '/Category/Travelling Bag.jpg', alt: 'Priority luggage on Instagram' },
-  { img: '/Creatives/4.png',            alt: 'Everyday journeys on Instagram' },
-  { img: '/Category/Accessories.jpg',   alt: 'Travel accessories on Instagram' },
-  { img: '/junior/junior hero.png',     alt: 'Priority Junior on Instagram' },
+const POSTS: { img: string; alt: string; href: string }[] = [
+  { img: '/Category/Backpack.jpg',       alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/DcgZ4RKs6sF/' },
+  { img: '/Creatives/5.png',             alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/DcOa_A0Mq0_/' },
+  { img: '/Category/Travelling Bag.jpg', alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/Dbs3pehsDVz/' },
+  { img: '/Creatives/4.png',             alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/DbbJMcSsArC/' },
 ];
 
 export const InstagramShowcase = () => (
@@ -37,11 +34,11 @@ export const InstagramShowcase = () => (
       </div>
 
       {/* Post grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3">
         {POSTS.map((post) => (
           <a
-            key={post.img}
-            href={INSTAGRAM_URL}
+            key={post.href}
+            href={post.href}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative block aspect-square overflow-hidden rounded-sm bg-gray-100"
