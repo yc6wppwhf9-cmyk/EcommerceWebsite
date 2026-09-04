@@ -164,7 +164,7 @@ export const Footer = () => {
 
       <div className="max-w-[1720px] mx-auto px-5 md:px-10 mt-8 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-6">
         <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-left">&copy; {new Date().getFullYear()} High Spirit Commercial Ventures Pvt. Ltd. All Rights Reserved.</p>
-        <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-right">Made in India · Crafted for the journey</p>
+        <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-right">Designed &amp; Developed by Himanshu Thakur</p>
       </div>
     </footer>
   );
