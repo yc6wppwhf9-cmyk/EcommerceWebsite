@@ -1,21 +1,53 @@
+import { useState } from 'react';
 import { Instagram } from 'lucide-react';
-import { LazyImage } from '../LazyImage';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3';
 
 /**
- * "#ExplorePriorityBags" — a strip that showcases the brand's Instagram feed.
+ * "#ExplorePriorityBags" — showcases real Priority Bags reels as clean portrait
+ * tiles (no Instagram chrome).
  *
- * Each tile links to a real Priority Bags reel. The thumbnails use on-site
- * creatives as stand-ins (Instagram post images can't be hot-linked); swap
- * `POSTS[i].img` for a matching still if you export one per reel.
+ * Each tile shows a self-hosted cover from `public/instagram/` and links to its
+ * reel. Drop the four covers in as `reel1.jpg`…`reel4.jpg` (pre-cropped so the
+ * Instagram view-count bar isn't included). Until a file exists the tile falls
+ * back to an on-site creative via `onError`, so the section never shows a broken
+ * image.
  */
-const POSTS: { img: string; alt: string; href: string }[] = [
-  { img: '/Category/Backpack.jpg',       alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/DcgZ4RKs6sF/' },
-  { img: '/Creatives/5.png',             alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/DcOa_A0Mq0_/' },
-  { img: '/Category/Travelling Bag.jpg', alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/Dbs3pehsDVz/' },
-  { img: '/Creatives/4.png',             alt: 'Priority Bags reel', href: 'https://www.instagram.com/priority.bags/reel/DbbJMcSsArC/' },
+const POSTS = [
+  { img: '/instagram/reel1.jpg', fallback: '/Category/Backpack.jpg',       href: 'https://www.instagram.com/reel/DcgZ4RKs6sF/', alt: 'Priority Junior reel' },
+  { img: '/instagram/reel2.jpg', fallback: '/Creatives/2.png',             href: 'https://www.instagram.com/reel/DcOa_A0Mq0_/', alt: 'Priority Junior reel' },
+  { img: '/instagram/reel3.jpg', fallback: '/Category/Travelling Bag.jpg', href: 'https://www.instagram.com/reel/Dbs3pehsDVz/', alt: 'Priority Junior reel' },
+  { img: '/instagram/reel4.jpg', fallback: '/junior/junior hero.png',      href: 'https://www.instagram.com/reel/DbbJMcSsArC/', alt: 'Priority Junior reel' },
 ];
+
+const ReelTile = ({ img, fallback, href, alt }: (typeof POSTS)[number]) => {
+  const [src, setSrc] = useState(img);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative block aspect-[3/4] overflow-hidden rounded-lg bg-gray-100"
+      aria-label={alt}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onError={() => src !== fallback && setSrc(fallback)}
+        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+      />
+      {/* Hover overlay */}
+      <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-colors duration-300">
+        <Instagram
+          size={30}
+          className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          strokeWidth={2}
+        />
+      </div>
+    </a>
+  );
+};
 
 export const InstagramShowcase = () => (
   <section className="bg-white border-t border-gray-100 font-outfit py-14 md:py-20" aria-label="Explore Priority Bags on Instagram">
@@ -33,32 +65,10 @@ export const InstagramShowcase = () => (
         </p>
       </div>
 
-      {/* Post grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3">
+      {/* Reel tiles */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 max-w-[1120px] mx-auto">
         {POSTS.map((post) => (
-          <a
-            key={post.href}
-            href={post.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative block aspect-square overflow-hidden rounded-sm bg-gray-100"
-            aria-label={post.alt}
-          >
-            <LazyImage
-              src={post.img}
-              alt={post.alt}
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              width={400}
-            />
-            {/* Hover overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-colors duration-300">
-              <Instagram
-                size={26}
-                className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                strokeWidth={2}
-              />
-            </div>
-          </a>
+          <ReelTile key={post.href} {...post} />
         ))}
       </div>
 
