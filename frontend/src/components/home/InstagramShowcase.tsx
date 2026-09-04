@@ -58,10 +58,10 @@ export const InstagramShowcase = () => {
           </p>
         </div>
 
-        {/* Embedded reels — 1 col on mobile, 2 on tablet, 4 on wide desktop.
-            Each Instagram blockquote needs ~326px min width, so we only go to
-            4-up at 2xl where the columns stay comfortably above that. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 md:gap-5 justify-items-center">
+        {/* Embedded reels — 1 col on mobile, 2 on desktop. Instagram caps each
+            card at 540px, so a tighter 2-up column keeps them large and centred
+            rather than stranded in a wide 4-across row. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 justify-items-center max-w-[1120px] mx-auto">
           {REELS.map((url) => (
             <blockquote
               key={url}
