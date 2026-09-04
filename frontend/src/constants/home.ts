@@ -17,46 +17,50 @@ export interface HeroSlide {
   to: string;
 }
 
+// NOTE: Each slide's CTA must match the headline baked into its creative image
+// (the artwork carries its own "TRAVEL LUGGAGE BAGS" / "TREKKING BACKPACKS" /
+// "EXPLORE CAMPUS PICKS" text), so the button label and destination are kept in
+// step with the banner it sits on.
 export const HERO_SLIDES: HeroSlide[] = [
   {
-    src: '/Creatives/1.png',
-    badge: 'NEW 2026 COLLECTION',
-    title: 'ENGINEERED FOR MODERN EXPLORERS',
-    subtitle: 'Ergonomic backpacks & travel gear designed for university, work, and urban travel.',
-    cta: 'Explore Campus Picks',
-    to: '/college-backpacks',
+    src: '/Creatives/1.png', // "WHERE STYLE MEETS THE COMFORT — TRAVEL LUGGAGE BAGS"
+    badge: 'PREMIUM TRAVEL GEAR',
+    title: 'WHERE STYLE MEETS THE COMFORT',
+    subtitle: 'High-durability trolley bags & luggage built for effortless journeys.',
+    cta: 'Shop Luggage Bags',
+    to: '/luggage',
   },
   {
-    src: '/Creatives/2.png',
+    src: '/Creatives/2.png', // "READY FOR EVERY SCHOOL DAY — EXPLORE 2026 COLLECTION"
     badge: 'JUNIOR & SCHOOL SERIES',
-    title: 'LIGHTWEIGHT, VIBRANT & DURABLE',
+    title: 'READY FOR EVERY SCHOOL DAY',
     subtitle: 'Smart storage, waterproof fabrics & posture-support design for kids & juniors.',
     cta: 'Shop Junior Collection',
     to: '/junior',
   },
   {
-    src: '/Creatives/3.png',
-    badge: 'PREMIUM TRAVEL GEAR',
-    title: 'TRAVEL WITHOUT BOUNDARIES',
-    subtitle: 'High-durability trolley bags & duffles built for effortless journeys.',
-    cta: 'Shop Luggage',
-    to: '/luggage',
+    src: '/Creatives/3.png', // "EXPLORE BEYOND THE LIMITS — TREKKING BACKPACKS"
+    badge: 'TREKKING & OUTDOOR',
+    title: 'EXPLORE BEYOND THE LIMITS',
+    subtitle: 'Rugged, high-capacity trekking rucksacks built to go the distance.',
+    cta: 'Shop Trekking Bags',
+    to: '/trekking-backpacks',
   },
   {
-    src: '/Creatives/4.png',
+    src: '/Creatives/4.png', // "BUILT FOR EVERY JOURNEY" — laptop series
     badge: 'EXECUTIVE LAPTOP SERIES',
-    title: 'SLEEK PROTECTION FOR TECH',
+    title: 'BUILT FOR EVERY JOURNEY',
     subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
     cta: 'Shop Laptop Bags',
     to: '/laptop-backpacks',
   },
   {
-    src: '/Creatives/5.png',
-    badge: 'URBAN ACCESSORIES',
-    title: 'STYLE & FUNCTION COMBINED',
-    subtitle: 'Premium travel accessories engineered for seamless organization on the go.',
-    cta: 'Explore Accessories',
-    to: '/accessories',
+    src: '/Creatives/5.png', // "CARRY THE STYLE YOUR WAY — EXPLORE CAMPUS PICKS"
+    badge: 'CAMPUS COLLECTION',
+    title: 'CARRY THE STYLE YOUR WAY',
+    subtitle: 'Ergonomic college backpacks designed for campus, commute and everyday carry.',
+    cta: 'Explore Campus Picks',
+    to: '/college-backpacks',
   },
 ];
 

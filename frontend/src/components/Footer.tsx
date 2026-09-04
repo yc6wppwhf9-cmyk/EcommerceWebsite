@@ -1,8 +1,40 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ChevronDown } from 'lucide-react';
+import { Mail, Phone, MapPin, ChevronDown, Instagram, Facebook, Youtube } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
+
+// Social handles — rendered as branded icon buttons ("social handles with logos").
+const SOCIALS = [
+  { label: 'Instagram', href: 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3', Icon: Instagram },
+  { label: 'Facebook',  href: 'https://www.facebook.com/share/16nwvio56J/?mibextid=wwXIfr',      Icon: Facebook },
+  { label: 'YouTube',   href: 'https://youtube.com/@prioritybags?si=MvAj7X6_M2L_-ago',            Icon: Youtube },
+];
+
+// Marketplaces where Priority Bags products are available ("All Ecom homepages").
+const MARKETPLACES = [
+  { label: 'Amazon',   href: 'https://www.amazon.in' },
+  { label: 'Flipkart', href: 'https://www.flipkart.com' },
+  { label: 'Myntra',   href: 'https://www.myntra.com' },
+  { label: 'Ajio',     href: 'https://www.ajio.com' },
+];
+
+const SocialIcons = () => (
+  <div className="flex items-center gap-3">
+    {SOCIALS.map(({ label, href, Icon }) => (
+      <a
+        key={label}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        className="w-9 h-9 flex items-center justify-center rounded-full border border-white/15 hover:bg-white/10 transition-colors"
+      >
+        <Icon size={16} />
+      </a>
+    ))}
+  </div>
+);
 
 const FooterSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,29 +89,25 @@ export const Footer = () => {
     : {};
 
   return (
-    <footer className={`${footerBg} ${isPremium ? 'text-gray-300' : '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white'} py-10 md:py-12 pb-28 lg:pb-12 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
+    <footer className={`${footerBg} ${isPremium ? 'text-gray-300' : '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white'} py-10 md:py-12 pb-28 lg:pb-24 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
       <div className="max-w-[1720px] mx-auto px-5 md:px-10">
         {/* Brand — always visible */}
         <div className="mb-8 md:mb-0 md:hidden">
-          <Link to="/" className="mb-4 block">
+          <Link to="/" className="mb-5 block">
             <img src="/logo.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
           </Link>
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-3">Be First</p>
-          <p className="text-xs text-gray-400 leading-relaxed font-medium">
-            Premium bags and luggage for every journey. Quality craftsmanship since 1999.
-          </p>
+          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase mb-3">Follow Us</p>
+          <SocialIcons />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-0 md:gap-10 lg:gap-12">
           {/* Brand — desktop */}
           <div className="hidden md:block col-span-1 break-inside-avoid">
             <Link to="/" className="mb-8 block">
               <img src="/logo.png" alt="Priority Bags" className="h-8 w-auto brightness-0 invert" />
             </Link>
-            <p className="text-[10px] font-semibold tracking-[0.3em] text-[#ae9efd] uppercase mb-4">Be First</p>
-            <p className="text-xs text-gray-400 leading-relaxed font-medium">
-              Premium bags and luggage for every journey. Quality craftsmanship since 1999. Engineered for movement.
-            </p>
+            <p className="text-white font-semibold mb-4 uppercase text-[10px] tracking-[0.2em]">Follow Us</p>
+            <SocialIcons />
           </div>
 
           <FooterSection title="Quick Links">
@@ -95,6 +123,23 @@ export const Footer = () => {
             <ul className="space-y-3">
               <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/careers">Careers</Link></li>
               <li className="hidden md:block"><Link className="hover:text-white transition-colors text-xs font-medium" to={isAuthenticated ? (user?.role === 'admin' ? "/admin" : "/account") : "/login"}>Account</Link></li>
+            </ul>
+          </FooterSection>
+
+          <FooterSection title="Also Available On">
+            <ul className="space-y-3">
+              {MARKETPLACES.map((m) => (
+                <li key={m.label}>
+                  <a
+                    className="hover:text-white transition-colors text-xs font-medium"
+                    href={m.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {m.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </FooterSection>
 
@@ -128,12 +173,8 @@ export const Footer = () => {
       </div>
 
       <div className="max-w-[1720px] mx-auto px-5 md:px-10 mt-8 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-6">
-        <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-left">&copy; {new Date().getFullYear()} High Spirit Commercial Ventures Pvt. Ltd.</p>
-        <div className="flex items-center gap-6 md:gap-8">
-          <a href="https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors text-[10px] font-semibold uppercase tracking-widest">Instagram</a>
-          <a href="https://www.facebook.com/share/16nwvio56J/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors text-[10px] font-semibold uppercase tracking-widest">Facebook</a>
-          <a href="https://youtube.com/@prioritybags?si=MvAj7X6_M2L_-ago" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors text-[10px] font-semibold uppercase tracking-widest">YouTube</a>
-        </div>
+        <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-left">&copy; {new Date().getFullYear()} High Spirit Commercial Ventures Pvt. Ltd. All Rights Reserved.</p>
+        <p className="text-[9px] md:text-[10px] text-gray-500 font-semibold uppercase tracking-widest text-center sm:text-right">Made in India · Crafted for the journey</p>
       </div>
     </footer>
   );
