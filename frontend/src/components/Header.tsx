@@ -4,13 +4,22 @@ import { Search, User, ChevronDown, Menu, X, Heart, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
 
+type HighlightVariant = 'premium' | 'junior';
+
+// Pill styles per highlighted nav item. Written out in full so Tailwind's
+// scanner can see the class names (it can't resolve interpolated strings).
+const PILL_CLASS: Record<HighlightVariant, string> = {
+  premium: 'bg-[#26B3FF] shadow-[#26B3FF]/30 hover:bg-[#1A7FB5]',
+  junior: 'bg-[#F69245] shadow-[#F69245]/30 hover:bg-[#e07d30]',
+};
+
 interface NavItemProps {
   key?: React.Key;
   title: string;
   to: string;
   items?: { label: string; slug: string }[];
   /** Renders the item as a filled accent pill so it stands out from the rest. */
-  highlight?: boolean;
+  highlight?: HighlightVariant;
 }
 
 const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
@@ -31,7 +40,7 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
           className="h-16 flex items-center px-2.5 text-[13px] font-outfit uppercase"
           to={getThemeTo(to)}
         >
-          <span className="inline-flex items-center gap-1.5 bg-[#26B3FF] text-white font-bold tracking-[0.16em] px-3.5 py-1.5 rounded-full shadow-sm shadow-[#26B3FF]/30 transition-all duration-300 hover:bg-[#1A7FB5] hover:shadow-md">
+          <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-3.5 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
             {title}
             {items && <ChevronDown size={12} className={`opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
           </span>
@@ -117,8 +126,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         { label: 'Tote Bag', slug: 'tote-bag' },
       ]
     },
-    { title: 'JUNIOR', to: '/junior' },
-    { title: 'PREMIUM', to: '/premium', highlight: true },
+    { title: 'JUNIOR', to: '/junior', highlight: 'junior' },
+    { title: 'PREMIUM', to: '/premium', highlight: 'premium' },
   ];
 
   const premiumNavData = [
@@ -176,7 +185,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         <nav className="hidden lg:block">
           <ul className="flex items-center">
-            {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: boolean }).highlight} />)}
+            {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
         </nav>
 
@@ -267,7 +276,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {'highlight' in nav && nav.highlight ? (
-                        <span className="inline-block bg-[#26B3FF] text-white px-3 py-1 rounded-full text-[13px] tracking-[0.12em]">
+                        <span className={`inline-block text-white px-3 py-1 rounded-full text-[13px] tracking-[0.12em] ${PILL_CLASS[nav.highlight as HighlightVariant]}`}>
                           {nav.title}
                         </span>
                       ) : (
