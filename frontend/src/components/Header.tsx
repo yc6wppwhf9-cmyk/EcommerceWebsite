@@ -9,7 +9,7 @@ type HighlightVariant = 'premium' | 'junior';
 // Pill styles per highlighted nav item. Written out in full so Tailwind's
 // scanner can see the class names (it can't resolve interpolated strings).
 const PILL_CLASS: Record<HighlightVariant, string> = {
-  premium: 'bg-[#26B3FF] shadow-[#26B3FF]/30 hover:bg-[#1A7FB5]',
+  premium: 'bg-black shadow-black/30 hover:bg-[#1f1f1f]',
   junior: 'bg-[#F69245] shadow-[#F69245]/30 hover:bg-[#e07d30]',
 };
 
