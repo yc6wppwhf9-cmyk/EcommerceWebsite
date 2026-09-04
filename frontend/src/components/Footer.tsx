@@ -100,7 +100,7 @@ export const Footer = () => {
           <SocialIcons />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-0 md:gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-0 md:gap-10 lg:gap-12">
           {/* Brand — desktop */}
           <div className="hidden md:block col-span-1 break-inside-avoid">
             <Link to="/" className="mb-8 block">
@@ -140,16 +140,6 @@ export const Footer = () => {
                   </a>
                 </li>
               ))}
-            </ul>
-          </FooterSection>
-
-          <FooterSection title="Policies">
-            <ul className="space-y-3">
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/shipping">Shipping Policy</Link></li>
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/returns">Returns & Refunds</Link></li>
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/privacy">Privacy Notice</Link></li>
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/terms">Terms of Service</Link></li>
-              <li><Link className="hover:text-white transition-colors text-xs font-medium" to="/warranty">Claim Warranty</Link></li>
             </ul>
           </FooterSection>
 
