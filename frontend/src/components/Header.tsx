@@ -9,9 +9,11 @@ interface NavItemProps {
   title: string;
   to: string;
   items?: { label: string; slug: string }[];
+  /** Renders the item as a filled accent pill so it stands out from the rest. */
+  highlight?: boolean;
 }
 
-const NavItem = ({ title, to, items }: NavItemProps) => {
+const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const isPremiumTheme = location.pathname === '/premium' || new URLSearchParams(location.search).get('theme') === 'premium';
@@ -24,13 +26,25 @@ const NavItem = ({ title, to, items }: NavItemProps) => {
 
   return (
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
-      <Link
-        className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
-        to={getThemeTo(to)}
-      >
-        {title}
-        {items && <ChevronDown size={12} className={`opacity-40 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
-      </Link>
+      {highlight ? (
+        <Link
+          className="h-16 flex items-center px-2.5 text-[13px] font-outfit uppercase"
+          to={getThemeTo(to)}
+        >
+          <span className="inline-flex items-center gap-1.5 bg-[#26B3FF] text-white font-bold tracking-[0.16em] px-3.5 py-1.5 rounded-full shadow-sm shadow-[#26B3FF]/30 transition-all duration-300 hover:bg-[#1A7FB5] hover:shadow-md">
+            {title}
+            {items && <ChevronDown size={12} className={`opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
+          </span>
+        </Link>
+      ) : (
+        <Link
+          className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
+          to={getThemeTo(to)}
+        >
+          {title}
+          {items && <ChevronDown size={12} className={`opacity-40 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
+        </Link>
+      )}
 
       <AnimatePresence>
         {isOpen && items && (
@@ -104,7 +118,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       ]
     },
     { title: 'JUNIOR', to: '/junior' },
-    { title: 'PREMIUM', to: '/premium' },
+    { title: 'PREMIUM', to: '/premium', highlight: true },
   ];
 
   const premiumNavData = [
@@ -162,7 +176,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         <nav className="hidden lg:block">
           <ul className="flex items-center">
-            {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} />)}
+            {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: boolean }).highlight} />)}
           </ul>
         </nav>
 
@@ -252,7 +266,13 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                       className="flex-1 py-4 text-[15px] font-bold uppercase tracking-[0.12em] text-black"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {nav.title}
+                      {'highlight' in nav && nav.highlight ? (
+                        <span className="inline-block bg-[#26B3FF] text-white px-3 py-1 rounded-full text-[13px] tracking-[0.12em]">
+                          {nav.title}
+                        </span>
+                      ) : (
+                        nav.title
+                      )}
                     </Link>
                     {nav.items && (
                       <button

@@ -18,6 +18,7 @@ const prefetchHomeData = (() => {
         return api.getProducts(params).catch(() => {});
       }),
       api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' }).catch(() => {}),
+      api.getProducts({ sort: 'newest', limit: '12', isPremium: 'false' }).catch(() => {}),
       api.getProducts({ limit: '1' }).catch(() => {}),
       ...GENDER_LINKS.map((link) =>
         api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' }).catch(() => {})
@@ -33,6 +34,7 @@ interface HomeData {
   tabProducts: Product[];
   tabLoading: boolean;
   bestSellers: Product[];
+  newArrivals: Product[];
   /** `null` while checking, then `true`/`false`. */
   hasProducts: boolean | null;
   /** `null` while checking, then the subset of GENDER_LINKS that have stock. */
@@ -43,6 +45,7 @@ export function useHomeData(activeTab: string): HomeData {
   const [tabProducts, setTabProducts] = useState<Product[]>([]);
   const [tabLoading, setTabLoading] = useState(true);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [hasProducts, setHasProducts] = useState<boolean | null>(null);
   const [genderStock, setGenderStock] = useState<GenderLink[] | null>(null);
 
@@ -78,6 +81,18 @@ export function useHomeData(activeTab: string): HomeData {
       .catch(() => {});
   }, []);
 
+  // New arrivals — most recently added catalogue items (excludes junior + premium)
+  useEffect(() => {
+    api.getProducts({ sort: 'newest', limit: '12', isPremium: 'false' })
+      .then((res) => {
+        const filtered = (res.products as Product[]).filter(
+          (p) => p.categories?.slug !== 'junior'
+        );
+        setNewArrivals(filtered.slice(0, 8));
+      })
+      .catch(() => {});
+  }, []);
+
   // Cheapest possible existence check — one row is enough to know the store is live
   useEffect(() => {
     api.getProducts({ limit: '1' })
@@ -99,5 +114,5 @@ export function useHomeData(activeTab: string): HomeData {
     });
   }, []);
 
-  return { tabProducts, tabLoading, bestSellers, hasProducts, genderStock };
+  return { tabProducts, tabLoading, bestSellers, newArrivals, hasProducts, genderStock };
 }

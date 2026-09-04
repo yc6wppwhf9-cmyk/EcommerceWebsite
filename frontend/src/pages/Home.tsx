@@ -6,7 +6,9 @@ import { CategoryShowcase } from '../components/home/CategoryShowcase';
 import { EditorialBanner } from '../components/home/EditorialBanner';
 import { BackpackTabs } from '../components/home/BackpackTabs';
 import { BestSellers } from '../components/home/BestSellers';
-import { WhyShopWithUs } from '../components/home/WhyShopWithUs';
+import { NewArrivals } from '../components/home/NewArrivals';
+import { BagsSoldCountdown } from '../components/home/BagsSoldCountdown';
+import { InstagramShowcase } from '../components/home/InstagramShowcase';
 import { SEO } from '../components/SEO';
 import type { ColumnTier } from '../constants/home';
 
@@ -38,7 +40,7 @@ const useColumnTier = (): ColumnTier => {
 export const Home = () => {
   const [activeTab, setActiveTab] = useState('college-backpacks');
   const columns = useColumnTier();
-  const { tabProducts, tabLoading, bestSellers, hasProducts, genderStock } = useHomeData(activeTab);
+  const { tabProducts, tabLoading, bestSellers, newArrivals, hasProducts, genderStock } = useHomeData(activeTab);
 
   // Ensure we're on the light theme (Junior / Premium pages toggle dark)
   useEffect(() => {
@@ -66,7 +68,9 @@ export const Home = () => {
       />
 
       <BestSellers products={bestSellers} columns={columns} />
-      <WhyShopWithUs />
+      <NewArrivals products={newArrivals} columns={columns} />
+      <BagsSoldCountdown />
+      <InstagramShowcase />
     </main>
   );
 };
