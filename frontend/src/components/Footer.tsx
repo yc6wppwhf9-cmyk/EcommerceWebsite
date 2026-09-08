@@ -21,14 +21,14 @@ const PinterestIcon = ({ size = 15, className }: { size?: number; className?: st
 const SOCIALS = [
   { label: 'Instagram', href: 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3', Icon: Instagram },
   { label: 'Facebook',  href: 'https://www.facebook.com/share/16nwvio56J/?mibextid=wwXIfr',      Icon: Facebook },
-  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/hscvpl',                   Icon: Linkedin },
-  { label: 'Pinterest', href: 'https://in.pinterest.com/PriorityBagsOnline/',                           Icon: PinterestIcon },
+  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/hscvpl',                         Icon: Linkedin },
+  { label: 'Pinterest', href: 'https://in.pinterest.com/PriorityBagsOnline/',                     Icon: PinterestIcon },
   { label: 'YouTube',   href: 'https://youtube.com/@prioritybags?si=MvAj7X6_M2L_-ago',            Icon: Youtube },
 ];
 
 // Marketplaces where Priority Bags products are available ("All Ecom homepages").
 const MARKETPLACES = [
-  { label: 'Amazon',   href: 'https://www.amazon.in/stores/page/4A4ABBE6-8F05-4B5B-9009-2E847AC3EDC0?ingress=0&visitId=aa56f99d-d371-4740-aecc-19c6fb832f6d&ref_=ast_bln },
+  { label: 'Amazon',   href: 'https://www.amazon.in/stores/page/4A4ABBE6-8F05-4B5B-9009-2E847AC3EDC0?ingress=0&visitId=aa56f99d-d371-4740-aecc-19c6fb832f6d&ref_=ast_bln' },
   { label: 'Flipkart', href: 'https://www.flipkart.com/store/priority' },
   { label: 'Myntra',   href: 'https://www.myntra.com/priority' },
   { label: 'Ajio',     href: 'https://www.ajio.com/b/priority' },
@@ -92,12 +92,6 @@ export const Footer = () => {
     ? '/junior/junior logo.png'
     : (isPremium ? '/Traworld/nav bar logo.png' : '/logo.png');
 
-  const logoImgClass = isJunior
-    ? 'w-[140px] md:w-[170px] h-auto object-contain'
-    : isPremium
-    ? 'w-[140px] md:w-[180px] h-auto brightness-0 invert object-contain'
-    : 'w-[170px] md:w-[220px] h-auto brightness-0 invert object-contain';
-
   // Quiet palette: the main footer was a second full-bleed cyan slab. Ink lets
   // the page end quietly instead of shouting one last time. Junior keeps its
   // colours; Premium keeps its black.
@@ -120,7 +114,15 @@ export const Footer = () => {
         {/* Priority Brand Logo — Perfectly left-aligned & prominent */}
         <div className="mb-8 md:mb-10 text-left">
           <Link to="/" className="inline-block">
-            <img src={logoSrc} alt="Priority Bags" className={logoImgClass} />
+            <img
+              src={logoSrc}
+              alt="Priority Bags"
+              className={isJunior ? 'w-[140px] md:w-[170px] h-auto object-contain' : isPremium ? 'w-[140px] md:w-[180px] h-auto object-contain' : 'w-[180px] md:w-[220px] h-auto object-contain'}
+              style={{
+                filter: isJunior ? 'none' : 'brightness(0) invert(1)',
+                WebkitFilter: isJunior ? 'none' : 'brightness(0) invert(1)',
+              }}
+            />
           </Link>
         </div>
 
