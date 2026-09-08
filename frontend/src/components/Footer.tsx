@@ -90,7 +90,7 @@ export const Footer = () => {
 
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
-    : (isPremium ? '/Traworld/nav bar logo.png' : '/logo.png');
+    : (isPremium ? '/Traworld/nav bar logo.png' : '/logo-white.png');
 
   // Quiet palette: the main footer was a second full-bleed cyan slab. Ink lets
   // the page end quietly instead of shouting one last time. Junior keeps its
@@ -117,7 +117,7 @@ export const Footer = () => {
             <img
               src={logoSrc}
               alt="Priority Bags"
-              className={`${isJunior ? 'h-8 md:h-9' : 'h-8 md:h-9'} w-auto ${isJunior ? '' : 'brightness-0 invert'}`}
+              className={`${isJunior ? 'h-8 md:h-9' : 'h-7 md:h-8'} w-auto object-contain`}
             />
           </Link>
         </div>
