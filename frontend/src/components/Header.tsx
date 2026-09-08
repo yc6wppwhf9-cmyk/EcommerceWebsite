@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Search, User, ChevronDown, Menu, X, Heart, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
+import { BrandToggle } from './BrandToggle';
 
 type HighlightVariant = 'premium' | 'junior';
 
@@ -127,7 +128,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       ]
     },
     { title: 'JUNIOR', to: '/junior', highlight: 'junior' },
-    { title: 'PREMIUM', to: '/premium', highlight: 'premium' },
   ];
 
   const premiumNavData = [
@@ -183,10 +183,15 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
-        <nav className="hidden lg:block">
+        <nav className="hidden lg:flex items-center">
           <ul className="flex items-center">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
+          {!isJunior && (
+            <div className="ml-5 pl-5 border-l border-black/10 dark:border-white/10 flex items-center">
+              <BrandToggle />
+            </div>
+          )}
         </nav>
 
         <div className="flex-1 flex items-center justify-end font-outfit">
@@ -239,7 +244,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         </div>
 
         {/* Mobile: hamburger only — cart is in bottom nav */}
-        <div className="lg:hidden flex items-center">
+        <div className="lg:hidden flex items-center gap-2">
+          {!isJunior && <BrandToggle size="sm" />}
           <button className="p-2" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -264,6 +270,13 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 <X size={20} />
               </button>
             </div>
+
+            {/* Mobile Brand Switcher */}
+            {!isJunior && (
+              <div className="px-5 py-3 border-b border-gray-100 flex justify-center bg-gray-50/70">
+                <BrandToggle />
+              </div>
+            )}
 
             {/* Scrollable nav area */}
             <nav className="flex-1 overflow-y-auto px-5 py-3">

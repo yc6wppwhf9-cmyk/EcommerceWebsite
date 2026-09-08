@@ -6,6 +6,7 @@ import { api } from '../lib/api';
 import type { Product } from '../types';
 import { ChevronDown, Search, ShoppingBag, User } from 'lucide-react';
 import { SearchModal } from '../components/SearchModal';
+import { BrandToggle } from '../components/BrandToggle';
 
 const collectionLinks = [
   { label: 'LUGGAGES', slug: '/luggage?theme=premium' },
@@ -59,7 +60,10 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
-        <div className="flex items-center gap-5 flex-1 justify-end">
+        <div className="flex items-center gap-4 flex-1 justify-end">
+          <div className="hidden md:flex items-center mr-2">
+            <BrandToggle size="sm" />
+          </div>
           <button
             onClick={onSearchOpen}
             className="hidden md:block text-white hover:opacity-70 transition-opacity"
@@ -69,17 +73,20 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           <Link to="/account" className="hidden md:block text-white hover:opacity-70 transition-opacity">
             <User size={18} strokeWidth={1.5} />
           </Link>
-          <button
-            className="md:hidden text-white hover:opacity-70 transition-opacity"
-            onClick={() => setMobileMenuOpen(v => !v)}
-            aria-label="Menu"
-          >
-            <div className="flex flex-col gap-[5px]">
-              <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
-              <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
-              <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
-            </div>
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <BrandToggle size="sm" />
+            <button
+              className="text-white hover:opacity-70 transition-opacity p-1"
+              onClick={() => setMobileMenuOpen(v => !v)}
+              aria-label="Menu"
+            >
+              <div className="flex flex-col gap-[5px]">
+                <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+                <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+                <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+              </div>
+            </button>
+          </div>
         </div>
       </nav>
 

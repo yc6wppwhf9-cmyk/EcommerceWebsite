@@ -111,17 +111,13 @@ export const Footer = () => {
   return (
     <footer className={`${footerBg} ${isPremium ? 'text-gray-300' : '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white'} py-10 md:py-14 pb-28 lg:pb-24 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
       <div className="max-w-[1720px] mx-auto px-5 md:px-10">
-        {/* Priority Brand Logo — Perfectly left-aligned & prominent */}
+        {/* Priority Brand Logo */}
         <div className="mb-8 md:mb-10 text-left">
           <Link to="/" className="inline-block">
             <img
               src={logoSrc}
               alt="Priority Bags"
-              className={isJunior ? 'w-[140px] md:w-[170px] h-auto object-contain' : isPremium ? 'w-[140px] md:w-[180px] h-auto object-contain' : 'w-[180px] md:w-[220px] h-auto object-contain'}
-              style={{
-                filter: isJunior ? 'none' : 'brightness(0) invert(1)',
-                WebkitFilter: isJunior ? 'none' : 'brightness(0) invert(1)',
-              }}
+              className={`${isJunior ? 'h-8 md:h-9' : 'h-8 md:h-9'} w-auto ${isJunior ? '' : 'brightness-0 invert'}`}
             />
           </Link>
         </div>
