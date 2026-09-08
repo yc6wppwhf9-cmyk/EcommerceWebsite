@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Sparkles } from 'lucide-react';
 
 interface BrandToggleProps {
   className?: string;
@@ -75,10 +74,12 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           />
         )}
         <span className="relative z-10 flex items-center gap-1.5">
-          <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-black text-white text-[8px] font-black leading-none">
-            P
-          </span>
-          <span>Priority</span>
+          <img
+            src="/priority-icon.png"
+            alt="Priority"
+            className={`${isSmall ? 'w-3 h-3' : 'w-3.5 h-3.5'} object-contain`}
+          />
+          <span>PRIORITY</span>
         </span>
       </button>
 
@@ -102,8 +103,12 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           />
         )}
         <span className="relative z-10 flex items-center gap-1.5">
-          <Sparkles size={isSmall ? 10 : 12} className={isPremium ? 'text-amber-400' : 'text-current opacity-70'} />
-          <span>Traworld</span>
+          <img
+            src={isPremium ? '/traworld-icon.png' : '/traworld-icon-dark.png'}
+            alt="Traworld"
+            className={`${isSmall ? 'w-3.5 h-3.5' : 'w-4 h-4'} object-contain`}
+          />
+          <span>TRAWORLD</span>
         </span>
       </button>
     </div>
