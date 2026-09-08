@@ -90,7 +90,7 @@ export const Footer = () => {
 
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
-    : (isPremium ? '/Traworld/nav bar logo.png' : '/logo-white.png');
+    : (isPremium ? '/Traworld/nav bar logo.png' : '/logo.png');
 
   // Quiet palette: the main footer was a second full-bleed cyan slab. Ink lets
   // the page end quietly instead of shouting one last time. Junior keeps its
@@ -111,13 +111,13 @@ export const Footer = () => {
   return (
     <footer className={`${footerBg} ${isPremium ? 'text-gray-300' : '[&_*]:!text-white [&_a:hover]:!opacity-70 [&_button]:!text-white'} py-10 md:py-14 pb-28 lg:pb-24 text-sm font-outfit transition-colors duration-500`} style={footerStyle}>
       <div className="max-w-[1720px] mx-auto px-5 md:px-10">
-        {/* Priority Brand Logo */}
+        {/* Priority Brand Logo — Aligned with text below */}
         <div className="mb-8 md:mb-10 text-left">
-          <Link to="/" className="inline-block">
+          <Link to="/" className="inline-block overflow-visible">
             <img
               src={logoSrc}
               alt="Priority Bags"
-              className={`${isJunior ? 'h-8 md:h-9' : 'h-7 md:h-8'} w-auto object-contain`}
+              className={`${isJunior ? 'h-8 md:h-9' : 'h-8 md:h-9 -translate-x-[19.2%]'} w-auto ${isJunior ? '' : 'brightness-0 invert'}`}
             />
           </Link>
         </div>
