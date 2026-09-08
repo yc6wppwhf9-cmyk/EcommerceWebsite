@@ -28,7 +28,7 @@ const SOCIALS = [
 
 // Marketplaces where Priority Bags products are available ("All Ecom homepages").
 const MARKETPLACES = [
-  { label: 'Amazon',   href: 'https://www.amazon.in/stores/page/8944F6C4-05A0-4D26-A25D-B68B0B5772CD?ingress=0&visitId=ee788e5a-2a3b-4f95-ab89-316389616837&ref_=ast_bln' },
+  { label: 'Amazon',   href: 'https://www.amazon.in/stores/page/4A4ABBE6-8F05-4B5B-9009-2E847AC3EDC0?ingress=0&visitId=aa56f99d-d371-4740-aecc-19c6fb832f6d&ref_=ast_bln },
   { label: 'Flipkart', href: 'https://www.flipkart.com/store/priority' },
   { label: 'Myntra',   href: 'https://www.myntra.com/priority' },
   { label: 'Ajio',     href: 'https://www.ajio.com/b/priority' },
