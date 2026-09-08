@@ -21,8 +21,8 @@ const PinterestIcon = ({ size = 15, className }: { size?: number; className?: st
 const SOCIALS = [
   { label: 'Instagram', href: 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3', Icon: Instagram },
   { label: 'Facebook',  href: 'https://www.facebook.com/share/16nwvio56J/?mibextid=wwXIfr',      Icon: Facebook },
-  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/prioritybags',                   Icon: Linkedin },
-  { label: 'Pinterest', href: 'https://in.pinterest.com/prioritybags',                           Icon: PinterestIcon },
+  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/hscvpl',                   Icon: Linkedin },
+  { label: 'Pinterest', href: 'https://in.pinterest.com/PriorityBagsOnline/',                           Icon: PinterestIcon },
   { label: 'YouTube',   href: 'https://youtube.com/@prioritybags?si=MvAj7X6_M2L_-ago',            Icon: Youtube },
 ];
 
