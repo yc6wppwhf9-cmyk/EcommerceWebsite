@@ -9,9 +9,9 @@ import { SearchModal } from '../components/SearchModal';
 import { BrandToggle } from '../components/BrandToggle';
 
 const collectionLinks = [
-  { label: 'LUGGAGES', slug: '/luggage?theme=premium' },
-  { label: 'BACKPACKS', slug: '/backpacks?theme=premium' },
-  { label: 'DUFFELS', slug: '/duffle?theme=premium' },
+  { label: 'LUGGAGE', slug: '/luggage?theme=premium' },
+  { label: 'BACKPACK', slug: '/backpacks?theme=premium' },
+  { label: 'DUFFLE', slug: '/duffle?theme=premium' },
 ];
 
 const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
@@ -133,9 +133,9 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
 // Banner → category filter mapping
 const seriesHighlights = [
-  { title: 'LUGGAGES', image: '/Traworld/luggage.png', category: 'luggage', viewAll: '/luggage?theme=premium' },
-  { title: 'BACKPACKS', image: '/Traworld/Bcakpack.png', category: 'backpacks', viewAll: '/backpacks?theme=premium' },
-  { title: 'DUFFELS', image: '/Traworld/Duffle.png', category: 'duffle', viewAll: '/duffle?theme=premium' },
+  { title: 'LUGGAGE', image: '/Traworld/luggage.png', category: 'luggage', viewAll: '/luggage?theme=premium' },
+  { title: 'BACKPACK', image: '/Traworld/Bcakpack.png', category: 'backpacks', viewAll: '/backpacks?theme=premium' },
+  { title: 'DUFFLE', image: '/Traworld/Duffle.png', category: 'duffle', viewAll: '/duffle?theme=premium' },
 ];
 
 // Default fallback if setting hasn't been configured yet

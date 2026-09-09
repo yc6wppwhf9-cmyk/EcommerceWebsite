@@ -136,9 +136,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       title: 'COLLECTION',
       to: '/premium',
       items: [
-        { label: 'Luggages', slug: 'luggage' },
-        { label: 'Backpacks', slug: 'backpacks' },
-        { label: 'Duffels', slug: 'duffle' },
+        { label: 'Luggage', slug: 'luggage' },
+        { label: 'Backpack', slug: 'backpacks' },
+        { label: 'Duffle', slug: 'duffle' },
       ],
     },
   ];

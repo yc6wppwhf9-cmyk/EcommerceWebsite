@@ -120,8 +120,8 @@ export const AdminDashboard = () => {
   // Banner settings state
   const BANNER_OPTIONS = [
     { value: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' },
-    { value: 'backpacks', label: 'Backpacks', url: '/backpacks?theme=premium' },
-    { value: 'duffle', label: 'Duffels', url: '/duffle?theme=premium' },
+    { value: 'backpacks', label: 'Backpack', url: '/backpacks?theme=premium' },
+    { value: 'duffle', label: 'Duffle', url: '/duffle?theme=premium' },
   ];
   const [editorialBanner, setEditorialBanner] = useState({ category: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' });
   const [bannerSaving, setBannerSaving] = useState(false);
