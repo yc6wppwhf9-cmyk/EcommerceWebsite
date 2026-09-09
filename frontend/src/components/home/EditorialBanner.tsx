@@ -109,19 +109,6 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
           <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 select-none mb-6">
             {banner.subheading}
           </p>
-          {banner.links.length > 0 && (
-            <div className="flex gap-6 mb-6">
-              {banner.links.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="text-[12px] font-bold uppercase tracking-widest border-b-2 border-white text-white pb-1"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          )}
           <div className="flex items-center justify-between">
             <Link
               to={BANNER_CTA.to}
@@ -181,27 +168,10 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
             <h2 className="text-3xl lg:text-5xl font-normal uppercase tracking-[0.14em] text-white mb-3">
               {banner.heading}
             </h2>
-            <p
-              className={`text-[14px] lg:text-[15px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none ${
-                banner.links.length ? 'mb-4' : ''
-              }`}
-            >
+            <p className="text-[14px] lg:text-[15px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-6">
               {banner.subheading}
             </p>
-            {banner.links.length > 0 && (
-              <div className="flex gap-6 mb-4">
-                {banner.links.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="text-xs font-bold uppercase tracking-widest border-b-2 border-white pb-1 hover:opacity-70 transition-all"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-            <div className="flex items-center gap-4 mt-4">
+            <div className="flex items-center gap-4 mt-2">
               <Link
                 to={BANNER_CTA.to}
                 className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3 text-[11px] font-medium uppercase tracking-[0.2em] text-ink transition-transform duration-500 hover:-translate-y-0.5"

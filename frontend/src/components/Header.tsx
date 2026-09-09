@@ -173,7 +173,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     >
       <div className="max-w-[1720px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
-        <div className="flex items-center lg:flex-1">
+        {/* Desktop Logo */}
+        <div className="hidden lg:flex items-center lg:flex-1">
           <Link to="/" className="flex items-center">
             <img
               src={logoSrc}
@@ -183,6 +184,25 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
+        {/* Mobile Navbar: Toggle switch only (or Junior logo if Junior theme) + Menu button */}
+        <div className="flex lg:hidden items-center justify-between w-full">
+          {!isJunior ? (
+            <BrandToggle size="sm" />
+          ) : (
+            <Link to="/" className="flex items-center">
+              <img
+                src={logoSrc}
+                alt="Junior"
+                className="w-[100px] sm:w-[120px] h-auto transition-all duration-300"
+              />
+            </Link>
+          )}
+          <button className="p-2" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center">
           <ul className="flex items-center">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
@@ -194,9 +214,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           )}
         </nav>
 
-        <div className="flex-1 flex items-center justify-end font-outfit">
-          {/* Icon group — all same size, equal gap */}
-          <div className="hidden lg:flex items-center gap-1">
+        {/* Desktop Action Icons */}
+        <div className="hidden lg:flex flex-1 items-center justify-end font-outfit">
+          <div className="flex items-center gap-1">
             {/* Search */}
             <button
               onClick={onSearchOpen}
@@ -241,14 +261,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               </button>
             )}
           </div>
-        </div>
-
-        {/* Mobile: hamburger only — cart is in bottom nav */}
-        <div className="lg:hidden flex items-center gap-2">
-          {!isJunior && <BrandToggle size="sm" />}
-          <button className="p-2" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
       </div>
 

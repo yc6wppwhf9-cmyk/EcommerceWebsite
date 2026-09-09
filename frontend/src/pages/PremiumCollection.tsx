@@ -20,43 +20,36 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center justify-between px-4 sm:px-6 md:px-12">
-        {/* Left: Mobile Logo & Desktop Nav Links */}
-        <div className="flex items-center gap-8">
-          <div className="md:hidden flex items-center">
-            <Link to="/premium">
-              <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-5 sm:h-6 w-auto" />
-            </Link>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
-              HOME
-            </Link>
-            <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-              <button className="flex items-center gap-1.5 text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
-                COLLECTION <ChevronDown size={13} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
-              </button>
-              <AnimatePresence>
-                {open && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
-                  >
-                    {collectionLinks.map(item => (
-                      <Link
-                        key={item.slug}
-                        to={item.slug}
-                        className="block px-5 py-3 text-[13px] font-semibold tracking-[0.12em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+        {/* Desktop Left Nav Links */}
+        <div className="hidden md:flex items-center gap-8">
+          <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
+            HOME
+          </Link>
+          <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+            <button className="flex items-center gap-1.5 text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
+              COLLECTION <ChevronDown size={13} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {open && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
+                >
+                  {collectionLinks.map(item => (
+                    <Link
+                      key={item.slug}
+                      to={item.slug}
+                      className="block px-5 py-3 text-[13px] font-semibold tracking-[0.12em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -67,34 +60,36 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
-        {/* Right: BrandToggle + Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 justify-end">
-          <div className="hidden md:flex items-center mr-2">
+        {/* Mobile: Toggle Switch on Left, Menu Button on Right */}
+        <div className="flex md:hidden items-center justify-between w-full">
+          <BrandToggle size="sm" />
+          <button
+            className="text-white hover:opacity-70 transition-opacity p-2"
+            onClick={() => setMobileMenuOpen(v => !v)}
+            aria-label="Menu"
+          >
+            <div className="flex flex-col gap-[5px]">
+              <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+              <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+              <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+            </div>
+          </button>
+        </div>
+
+        {/* Desktop Right Actions */}
+        <div className="hidden md:flex items-center gap-3 md:gap-4 justify-end">
+          <div className="flex items-center mr-2">
             <BrandToggle size="sm" />
           </div>
           <button
             onClick={onSearchOpen}
-            className="hidden md:block text-white hover:opacity-70 transition-opacity"
+            className="text-white hover:opacity-70 transition-opacity"
           >
             <Search size={18} strokeWidth={1.5} />
           </button>
-          <Link to="/account" className="hidden md:block text-white hover:opacity-70 transition-opacity">
+          <Link to="/account" className="text-white hover:opacity-70 transition-opacity">
             <User size={18} strokeWidth={1.5} />
           </Link>
-          <div className="md:hidden flex items-center gap-2">
-            <BrandToggle size="sm" />
-            <button
-              className="text-white hover:opacity-70 transition-opacity p-1"
-              onClick={() => setMobileMenuOpen(v => !v)}
-              aria-label="Menu"
-            >
-              <div className="flex flex-col gap-[5px]">
-                <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
-                <span className={`block w-5 h-[1.5px] bg-white transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
-                <span className={`block w-5 h-[1.5px] bg-white transition-transform duration-300 origin-center ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
-              </div>
-            </button>
-          </div>
         </div>
       </nav>
 

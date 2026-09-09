@@ -135,13 +135,13 @@ export const BestReviewedShowcase: React.FC = () => {
         </div>
 
         {/* Carousel Outer Wrapper */}
-        <div className="relative max-w-[1020px] mx-auto flex items-center justify-center">
+        <div className="relative max-w-[1060px] mx-auto flex items-center justify-center pl-2 sm:pl-6 md:pl-8 pr-12 sm:pr-16 md:pr-20">
 
           {/* Left Arrow */}
           <button
             onClick={handlePrev}
             aria-label="Previous Review"
-            className="absolute -left-3 md:-left-7 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#8E8E93]/60 hover:bg-[#8E8E93] text-white flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute -left-2 sm:-left-4 md:-left-6 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#8E8E93]/80 hover:bg-[#8E8E93] text-white flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
           >
             <ChevronLeft size={22} strokeWidth={2.5} />
           </button>
@@ -149,26 +149,41 @@ export const BestReviewedShowcase: React.FC = () => {
           {/* Stacked Deck Container */}
           <div className="relative w-full">
 
-            {/* Background Stacked Card Layer 2 (Backmost) */}
+            {/* Background Stacked Card Layer 3 (Farthest Back) */}
             <div
-              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white/40 dark:bg-white/5 border border-black/5 dark:border-white/5 pointer-events-none shadow-sm hidden sm:block"
+              onClick={handleNext}
+              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white dark:bg-[#1c2126] border border-black/10 dark:border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-300"
               style={{
-                transform: 'translateX(24px) scale(0.96)',
+                transform: 'translateX(36px) scaleY(0.92)',
+                transformOrigin: 'left center',
                 zIndex: 1,
               }}
             />
 
-            {/* Background Stacked Card Layer 1 (Middle) */}
+            {/* Background Stacked Card Layer 2 (Middle Behind) */}
             <div
-              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white/70 dark:bg-white/10 border border-black/5 dark:border-white/10 pointer-events-none shadow-md hidden sm:block"
+              onClick={handleNext}
+              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white dark:bg-[#181c20] border border-black/10 dark:border-white/10 shadow-[0_8px_25px_rgba(0,0,0,0.07)] cursor-pointer transition-all duration-300"
               style={{
-                transform: 'translateX(12px) scale(0.98)',
+                transform: 'translateX(24px) scaleY(0.96)',
+                transformOrigin: 'left center',
                 zIndex: 2,
               }}
             />
 
+            {/* Background Stacked Card Layer 1 (Closest Behind Front) */}
+            <div
+              onClick={handleNext}
+              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white dark:bg-[#14181B] border border-black/10 dark:border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer transition-all duration-300"
+              style={{
+                transform: 'translateX(12px) scaleY(0.99)',
+                transformOrigin: 'left center',
+                zIndex: 3,
+              }}
+            />
+
             {/* Main Active Card (Front) */}
-            <div className="relative z-10 w-full bg-white dark:bg-[#14181B] rounded-2xl md:rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/10 overflow-hidden min-h-[380px] md:min-h-[420px] flex items-center">
+            <div className="relative z-10 w-full bg-white dark:bg-[#14181B] rounded-2xl md:rounded-[28px] shadow-[0_14px_45px_rgba(0,0,0,0.09)] dark:shadow-[0_14px_45px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/10 overflow-hidden min-h-[380px] md:min-h-[420px] flex items-center">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={current.id}
@@ -254,7 +269,7 @@ export const BestReviewedShowcase: React.FC = () => {
           <button
             onClick={handleNext}
             aria-label="Next Review"
-            className="absolute -right-3 md:-right-7 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black text-white hover:bg-neutral-800 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute -right-1 sm:-right-2 md:-right-4 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black text-white hover:bg-neutral-800 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
           >
             <ChevronRight size={22} strokeWidth={2.5} />
           </button>
