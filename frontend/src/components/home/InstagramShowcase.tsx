@@ -214,6 +214,64 @@ export const InstagramShowcase = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [cards, setCards] = useState<InstagramCardData[]>(INSTA_CARDS);
+  const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+
+  // Live Auto-Sync: Fetch from Instagram Feed API if configured
+  useEffect(() => {
+    const feedUrl =
+      import.meta.env.VITE_INSTAGRAM_FEED_URL ||
+      (import.meta.env.VITE_BEHOLD_FEED_ID
+        ? `https://feeds.behold.so/${import.meta.env.VITE_BEHOLD_FEED_ID}`
+        : null);
+
+    if (!feedUrl) return;
+
+    let isMounted = true;
+    setIsLoadingFeed(true);
+
+    fetch(feedUrl)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted || !data) return;
+        const postsList = Array.isArray(data) ? data : data.data || [];
+        if (postsList.length === 0) return;
+
+        const liveCards: InstagramCardData[] = postsList.slice(0, 8).map((item: any, idx: number) => {
+          const img = item.thumbnailUrl || item.thumbnail_url || item.mediaUrl || item.media_url || INSTA_CARDS[idx % INSTA_CARDS.length].img;
+          const href = item.permalink || item.url || INSTAGRAM_URL;
+          const caption = item.caption ? item.caption.split('\n')[0] : 'Explore new journeys with Priority Bags';
+          const handle = item.username || 'priority.bags';
+
+          return {
+            handle: handle.startsWith('@') ? handle.substring(1) : handle,
+            avatar: '/priority-icon.png',
+            avatarFallback: '/Priority Logo-02.png',
+            posts: '3,644',
+            followers: '183K',
+            following: '96',
+            img,
+            fallback: INSTA_CARDS[idx % INSTA_CARDS.length].fallback,
+            href,
+            caption: caption.length > 80 ? caption.substring(0, 77) + '...' : caption,
+          };
+        });
+
+        if (liveCards.length > 0) {
+          setCards(liveCards);
+        }
+      })
+      .catch((err) => {
+        console.warn('Instagram live feed load error, using cached posts:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoadingFeed(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const checkScroll = () => {
     if (!scrollRef.current) return;
@@ -226,7 +284,7 @@ export const InstagramShowcase = () => {
     checkScroll();
     window.addEventListener('resize', checkScroll);
     return () => window.removeEventListener('resize', checkScroll);
-  }, []);
+  }, [cards]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
@@ -283,8 +341,8 @@ export const InstagramShowcase = () => {
             onScroll={checkScroll}
             className="flex items-stretch gap-4 md:gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory py-4 px-2 md:px-4"
           >
-            {INSTA_CARDS.map((card) => (
-              <InstagramCard key={card.handle + card.img} card={card} />
+            {cards.map((card) => (
+              <InstagramCard key={card.handle + card.img + card.caption} card={card} />
             ))}
           </div>
         </div>
