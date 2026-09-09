@@ -23,6 +23,30 @@ export interface HeroSlide {
 // step with the banner it sits on.
 export const HERO_SLIDES: HeroSlide[] = [
   {
+    src: '/Creatives/5.png', // "CARRY THE STYLE YOUR WAY — EXPLORE CAMPUS PICKS"
+    badge: 'CAMPUS COLLECTION',
+    title: 'CARRY THE STYLE YOUR WAY',
+    subtitle: 'Ergonomic college backpacks designed for campus, commute and everyday carry.',
+    cta: 'Explore Campus Picks',
+    to: '/college-backpacks',
+  },
+  {
+    src: '/Creatives/4.png', // "BUILT FOR EVERY JOURNEY" — laptop series
+    badge: 'EXECUTIVE LAPTOP SERIES',
+    title: 'BUILT FOR EVERY JOURNEY',
+    subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
+    cta: 'Shop Laptop Bags',
+    to: '/laptop-backpacks',
+  },
+  {
+    src: '/Creatives/3.png', // "EXPLORE BEYOND THE LIMITS — TREKKING BACKPACKS"
+    badge: 'TREKKING & OUTDOOR',
+    title: 'EXPLORE BEYOND THE LIMITS',
+    subtitle: 'Rugged, high-capacity trekking rucksacks built to go the distance.',
+    cta: 'Shop Trekking Bags',
+    to: '/trekking-backpacks',
+  },
+  {
     src: '/Creatives/1.png', // "WHERE STYLE MEETS THE COMFORT — TRAVEL LUGGAGE BAGS"
     badge: 'PREMIUM TRAVEL GEAR',
     title: 'WHERE STYLE MEETS THE COMFORT',
@@ -37,30 +61,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     subtitle: 'Smart storage, waterproof fabrics & posture-support design for kids & juniors.',
     cta: 'Shop Junior Collection',
     to: '/junior',
-  },
-  {
-    src: '/Creatives/3.png', // "EXPLORE BEYOND THE LIMITS — TREKKING BACKPACKS"
-    badge: 'TREKKING & OUTDOOR',
-    title: 'EXPLORE BEYOND THE LIMITS',
-    subtitle: 'Rugged, high-capacity trekking rucksacks built to go the distance.',
-    cta: 'Shop Trekking Bags',
-    to: '/trekking-backpacks',
-  },
-  {
-    src: '/Creatives/4.png', // "BUILT FOR EVERY JOURNEY" — laptop series
-    badge: 'EXECUTIVE LAPTOP SERIES',
-    title: 'BUILT FOR EVERY JOURNEY',
-    subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
-    cta: 'Shop Laptop Bags',
-    to: '/laptop-backpacks',
-  },
-  {
-    src: '/Creatives/5.png', // "CARRY THE STYLE YOUR WAY — EXPLORE CAMPUS PICKS"
-    badge: 'CAMPUS COLLECTION',
-    title: 'CARRY THE STYLE YOUR WAY',
-    subtitle: 'Ergonomic college backpacks designed for campus, commute and everyday carry.',
-    cta: 'Explore Campus Picks',
-    to: '/college-backpacks',
   },
 ];
 
