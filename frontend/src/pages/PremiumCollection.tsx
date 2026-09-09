@@ -19,8 +19,14 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center px-6 md:px-12">
-        <div className="flex-1 flex items-center gap-8">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center justify-between px-4 sm:px-6 md:px-12">
+        {/* Left: Mobile Logo & Desktop Nav Links */}
+        <div className="flex items-center gap-8">
+          <div className="md:hidden flex items-center">
+            <Link to="/premium">
+              <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-5 sm:h-6 w-auto" />
+            </Link>
+          </div>
           <div className="hidden md:flex items-center gap-8">
             <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
               HOME
@@ -54,13 +60,15 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </div>
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2">
+        {/* Center: Desktop-only Logo */}
+        <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
           <Link to="/premium">
             <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
           </Link>
         </div>
 
-        <div className="flex items-center gap-4 flex-1 justify-end">
+        {/* Right: BrandToggle + Actions */}
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 justify-end">
           <div className="hidden md:flex items-center mr-2">
             <BrandToggle size="sm" />
           </div>

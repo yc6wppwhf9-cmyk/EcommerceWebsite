@@ -173,12 +173,12 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     >
       <div className="max-w-[1720px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center lg:static lg:translate-x-0 lg:flex-1">
+        <div className="flex items-center lg:flex-1">
           <Link to="/" className="flex items-center">
             <img
               src={logoSrc}
               alt="Priority"
-              className={`${isJunior ? 'w-[120px]' : 'w-[140px] md:w-[165px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
+              className={`${isJunior ? 'w-[100px] sm:w-[120px]' : 'w-[110px] sm:w-[140px] md:w-[165px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
             />
           </Link>
         </div>
