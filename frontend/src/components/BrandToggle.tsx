@@ -77,7 +77,7 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           <img
             src="/priority-icon.png"
             alt="Priority"
-            className={`${isSmall ? 'w-3 h-3' : 'w-3.5 h-3.5'} object-contain`}
+            className={`${isSmall ? 'w-3.5 h-3.5' : 'w-4 h-4'} object-contain flex-shrink-0`}
           />
           <span>PRIORITY</span>
         </span>
@@ -106,7 +106,7 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           <img
             src={isPremium ? '/traworld-icon.png' : '/traworld-icon-dark.png'}
             alt="Traworld"
-            className={`${isSmall ? 'w-3.5 h-3.5' : 'w-4 h-4'} object-contain`}
+            className={`${isSmall ? 'w-4 h-3.5' : 'w-4.5 h-4'} object-contain flex-shrink-0`}
           />
           <span>TRAWORLD</span>
         </span>
