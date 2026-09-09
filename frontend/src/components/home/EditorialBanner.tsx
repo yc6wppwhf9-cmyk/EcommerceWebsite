@@ -34,65 +34,11 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
   const [currentSlide, setCurrentSlide] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  if (hasProducts === null || genderStock === null) return null;
-
-  const slides: EditorialSlide[] = hasProducts
-    ? [
-        {
-          id: 'luggage-trip',
-          image: IMG.banner,
-          badge: 'Fresh picks for every trip',
-          heading: 'New Arrival',
-          subheading: 'Ready For Your Journey',
-          links: genderStock.length > 0 ? genderStock.map(({ to, label }) => ({ to, label })) : [
-            { to: '/women', label: 'Shop Women' },
-            { to: '/men', label: 'Shop Men' },
-          ],
-          cta: { to: BANNER_CTA.to, label: BANNER_CTA.label },
-          imageTo: '/luggage',
-        },
-        {
-          id: 'backpacks-urban',
-          image: '/Category/Backpack.jpg',
-          badge: 'Ergonomic Commute & Campus',
-          heading: 'New Arrival',
-          subheading: 'Engineered For Modern Lifestyles',
-          links: [
-            { to: '/college-backpacks', label: 'College' },
-            { to: '/laptop-backpacks', label: 'Laptop' },
-            { to: '/trekking-backpacks', label: 'Trekking' },
-          ],
-          cta: { to: '/backpacks', label: 'Explore Backpacks' },
-          imageTo: '/backpacks',
-        },
-        {
-          id: 'junior-school',
-          image: IMG.refPoster,
-          badge: '2026 School & Junior Series',
-          heading: 'New Arrival',
-          subheading: 'Smart Storage, Lightweight Comfort',
-          links: [
-            { to: '/junior', label: 'Junior Collection' },
-            { to: '/junior/3to5', label: 'Ages 3-5' },
-          ],
-          cta: { to: '/junior', label: 'Shop Junior' },
-          imageTo: '/junior',
-        },
-        {
-          id: 'traworld-luxe',
-          image: '/Traworld/section 2.png',
-          badge: 'Traworld Luxury Hardshell',
-          heading: 'New Arrival',
-          subheading: 'Unmatched Luxury & Silent Gliding',
-          links: [
-            { to: '/premium', label: 'Traworld Luxe' },
-            { to: '/luggage', label: 'All Luggage' },
-          ],
-          cta: { to: '/premium', label: 'Discover Luxe' },
-          imageTo: '/premium',
-        },
-      ]
-    : [
+  // Compute slides unconditionally so hook count never changes between renders
+  const slides: EditorialSlide[] = React.useMemo(() => {
+    const isStoreReady = hasProducts !== false;
+    if (!isStoreReady) {
+      return [
         {
           id: 'launching-soon',
           image: IMG.banner,
@@ -104,6 +50,69 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
           imageTo: '/contact',
         },
       ];
+    }
+
+    const validGenderLinks =
+      genderStock && genderStock.length > 0
+        ? genderStock.map(({ to, label }) => ({ to, label }))
+        : [
+            { to: '/women', label: 'Shop Women' },
+            { to: '/men', label: 'Shop Men' },
+          ];
+
+    return [
+      {
+        id: 'luggage-trip',
+        image: IMG.banner,
+        badge: 'Fresh picks for every trip',
+        heading: 'New Arrival',
+        subheading: 'Ready For Your Journey',
+        links: validGenderLinks,
+        cta: { to: BANNER_CTA.to, label: BANNER_CTA.label },
+        imageTo: '/luggage',
+      },
+      {
+        id: 'backpacks-urban',
+        image: '/Category/Backpack.jpg',
+        badge: 'Ergonomic Commute & Campus',
+        heading: 'New Arrival',
+        subheading: 'Engineered For Modern Lifestyles',
+        links: [
+          { to: '/college-backpacks', label: 'College' },
+          { to: '/laptop-backpacks', label: 'Laptop' },
+          { to: '/trekking-backpacks', label: 'Trekking' },
+        ],
+        cta: { to: '/backpacks', label: 'Explore Backpacks' },
+        imageTo: '/backpacks',
+      },
+      {
+        id: 'junior-school',
+        image: IMG.refPoster,
+        badge: '2026 School & Junior Series',
+        heading: 'New Arrival',
+        subheading: 'Smart Storage, Lightweight Comfort',
+        links: [
+          { to: '/junior', label: 'Junior Collection' },
+          { to: '/junior/3to5', label: 'Ages 3-5' },
+        ],
+        cta: { to: '/junior', label: 'Shop Junior' },
+        imageTo: '/junior',
+      },
+      {
+        id: 'traworld-luxe',
+        image: '/Traworld/section 2.png',
+        badge: 'Traworld Luxury Hardshell',
+        heading: 'New Arrival',
+        subheading: 'Unmatched Luxury & Silent Gliding',
+        links: [
+          { to: '/premium', label: 'Traworld Luxe' },
+          { to: '/luggage', label: 'All Luggage' },
+        ],
+        cta: { to: '/premium', label: 'Discover Luxe' },
+        imageTo: '/premium',
+      },
+    ];
+  }, [hasProducts, genderStock]);
 
   const total = slides.length;
 
@@ -140,7 +149,7 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
     };
   }, [startAutoPlay]);
 
-  const active = slides[currentSlide];
+  const active = slides[currentSlide] || slides[0];
 
   return (
     <section className="relative bg-ink overflow-hidden" aria-label={active.heading}>
