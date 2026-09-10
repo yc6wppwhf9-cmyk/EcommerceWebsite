@@ -1,3 +1,5 @@
+import { PRODUCTS, getProductBySlug, getProductById } from '../constants/products';
+
 // Keep browser auth cookies first-party in production. Vercel rewrites /api/*
 // to the backend, while local development can still use VITE_API_URL if needed.
 const BASE = import.meta.env.DEV ? (import.meta.env.VITE_API_URL || '') : '';
@@ -143,6 +145,231 @@ async function request<T>(path: string, options: RequestInit = {}, allowRetry = 
   }
 }
 
+function formatProductResponse(p: any) {
+  const images = Array.isArray(p.images) && p.images.length > 0 ? p.images : p.image ? [p.image] : [];
+  const primaryImage = images[0] || p.image || '';
+  const price = typeof p.price === 'number' ? p.price : 0;
+  const origPrice = typeof (p.originalPrice ?? p.original_price) === 'number' ? (p.originalPrice ?? p.original_price) : price;
+
+  return {
+    ...p,
+    id: p.id,
+    sku: p.sku || p.id,
+    slug: p.slug || p.id,
+    name: p.name,
+    description: p.description || '',
+    price: price,
+    originalPrice: origPrice,
+    original_price: origPrice,
+    category: p.category || 'backpacks',
+    sub_category: p.subcategory || p.sub_category || p.category || 'college-backpacks',
+    subcategory: p.subcategory || p.sub_category || p.category || 'college-backpacks',
+    categories: { slug: p.category || 'backpacks', title: p.category || 'backpacks' },
+    gender: p.gender || 'unisex',
+    age_range: p.ageRange || p.age_range,
+    ageRange: p.ageRange || p.age_range,
+    junior_style: p.juniorStyle || p.junior_style,
+    juniorStyle: p.juniorStyle || p.junior_style,
+    image: primaryImage,
+    images: images,
+    rating: p.rating ?? 4.5,
+    reviews: p.reviews ?? p.review_count ?? 12,
+    stock: p.stock ?? 50,
+    inStock: true,
+    is_premium: !!(p.isPremium || p.is_premium),
+    isPremium: !!(p.isPremium || p.is_premium),
+    is_new: !!(p.isNew || p.is_new),
+    isNew: !!(p.isNew || p.is_new),
+    is_highlighted: !!(p.isBestSeller || p.highlighted || p.is_highlighted),
+    highlighted: !!(p.isBestSeller || p.highlighted || p.is_highlighted),
+    isBestSeller: !!(p.isBestSeller || p.highlighted || p.is_highlighted),
+    myntra_url: p.myntraUrl || p.myntra_url || (p.myntraStyleId ? `https://www.myntra.com/${p.myntraStyleId}` : undefined),
+    amazon_url: p.amazonUrl || p.amazon_url,
+    flipkart_url: p.flipkartUrl || p.flipkart_url,
+    ajio_url: p.ajioUrl || p.ajio_url,
+    myntraStyleId: p.myntraStyleId,
+    family: p.family,
+    variants: Array.isArray(p.variants) && p.variants.length > 0 ? p.variants : [
+      {
+        color: p.family || 'Standard',
+        colorCode: '#111111',
+        images: images,
+      }
+    ],
+    colors: Array.isArray(p.colors) && p.colors.length > 0 ? p.colors : [
+      {
+        name: p.family || 'Standard',
+        code: '#111111',
+        images: images,
+      }
+    ],
+    features: Array.isArray(p.features) && p.features.length > 0 ? p.features : [
+      'Ergonomic padded shoulder straps with breathable mesh',
+      'Multi-compartment organization with dedicated sleeves',
+      'Water-resistant heavy-duty exterior fabric',
+      'Reinforced seams and premium smooth-glide zippers',
+    ],
+    specifications: p.specifications && Object.keys(p.specifications).length > 0 ? p.specifications : {
+      'Brand': 'Priority',
+      'Material': 'Durable High-Grade Polyester',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Country of Origin': 'India',
+      'Model': p.name,
+      'SKU': p.sku || p.id,
+      'Closure Type': 'Zipper',
+    },
+  };
+}
+
+function getProductsLocal(params?: Record<string, string>) {
+  let list = [...PRODUCTS];
+
+  if (params) {
+    const {
+      category,
+      sub_category,
+      gender,
+      isPremium,
+      junior_style,
+      age_range,
+      min_price,
+      max_price,
+      search,
+      sort,
+      page = '1',
+      limit = '20',
+    } = params;
+
+    if (category && category !== 'premium') {
+      const catLower = category.toLowerCase();
+      if (catLower === 'backpacks') {
+        list = list.filter(p => p.category === 'backpacks' || p.category.includes('backpack') || (p.subcategory && p.subcategory.includes('backpack')));
+      } else if (catLower === 'travel' || catLower === 'luggage') {
+        list = list.filter(p => p.category === 'luggage' || p.subcategory === 'premium-luggage' || p.category === 'travel');
+      } else if (catLower === 'junior') {
+        list = list.filter(p => p.category === 'junior' || p.subcategory === 'kids-trolley' || p.ageRange);
+      } else if (catLower === 'men') {
+        list = list.filter(p => !p.gender || p.gender === 'men' || p.gender === 'unisex' || p.subcategory === 'college-backpacks' || p.subcategory === 'laptop-backpacks' || p.category === 'luggage');
+      } else if (catLower === 'women') {
+        list = list.filter(p => !p.gender || p.gender === 'women' || p.gender === 'unisex' || p.subcategory === 'school-backpacks' || p.subcategory === 'college-backpacks' || p.category === 'duffle' || p.category === 'luggage');
+      } else if (catLower === 'kids') {
+        list = list.filter(p => p.category === 'junior' || p.subcategory === 'kids-trolley' || p.subcategory === 'school-backpacks');
+      } else {
+        list = list.filter(p =>
+          p.category?.toLowerCase() === catLower ||
+          p.subcategory?.toLowerCase() === catLower ||
+          p.slug?.toLowerCase().includes(catLower)
+        );
+      }
+    }
+
+    if (sub_category) {
+      const subLower = sub_category.toLowerCase();
+      list = list.filter(p =>
+        p.subcategory?.toLowerCase() === subLower ||
+        p.category?.toLowerCase() === subLower
+      );
+    }
+
+    if (gender) {
+      const gLower = gender.toLowerCase();
+      if (gLower === 'men') {
+        list = list.filter(p => !p.gender || p.gender === 'men' || p.gender === 'unisex' || p.subcategory === 'college-backpacks' || p.subcategory === 'laptop-backpacks' || p.category === 'luggage');
+      } else if (gLower === 'women') {
+        list = list.filter(p => !p.gender || p.gender === 'women' || p.gender === 'unisex' || p.subcategory === 'school-backpacks' || p.subcategory === 'college-backpacks' || p.category === 'duffle' || p.category === 'luggage');
+      } else if (gLower === 'kids') {
+        list = list.filter(p => p.category === 'junior' || p.subcategory === 'kids-trolley' || p.subcategory === 'school-backpacks');
+      }
+    }
+
+    if (isPremium === 'true' || category === 'premium') {
+      list = list.filter(p => p.isPremium);
+    } else if (isPremium === 'false') {
+      list = list.filter(p => !p.isPremium);
+    }
+
+    if (junior_style) {
+      const styleLower = junior_style.toLowerCase();
+      list = list.filter(p => p.juniorStyle?.toLowerCase() === styleLower || p.category === 'junior');
+    }
+
+    if (age_range) {
+      list = list.filter(p => !p.ageRange || p.ageRange.toLowerCase().includes(age_range.toLowerCase()));
+    }
+
+    if (min_price) {
+      list = list.filter(p => p.price >= Number(min_price));
+    }
+    if (max_price) {
+      list = list.filter(p => p.price <= Number(max_price));
+    }
+
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q) ||
+        p.sku?.toLowerCase().includes(q) ||
+        p.family?.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.subcategory?.toLowerCase().includes(q)
+      );
+    }
+
+    if (sort) {
+      if (sort === 'price-asc') {
+        list.sort((a, b) => a.price - b.price);
+      } else if (sort === 'price-desc') {
+        list.sort((a, b) => b.price - a.price);
+      } else if (sort === 'rating') {
+        list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+      } else if (sort === 'bestseller') {
+        list.sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0) || (b.rating ?? 0) - (a.rating ?? 0));
+      } else if (sort === 'newest') {
+        list.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+      }
+    }
+
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 20;
+    const offset = (pageNum - 1) * limitNum;
+    const paginated = list.slice(offset, offset + limitNum);
+
+    return {
+      products: paginated.map(formatProductResponse),
+      page: pageNum,
+      limit: limitNum,
+      total: list.length,
+    };
+  }
+
+  return {
+    products: list.slice(0, 20).map(formatProductResponse),
+    page: 1,
+    limit: 20,
+    total: PRODUCTS.length,
+  };
+}
+
+function getProductLocal(slugOrId: string) {
+  const normalized = (slugOrId || '').trim().toLowerCase();
+  const p = PRODUCTS.find(x =>
+    x.slug?.toLowerCase() === normalized ||
+    x.id?.toLowerCase() === normalized ||
+    x.sku?.toLowerCase() === normalized ||
+    x.myntraStyleId?.toString() === normalized
+  );
+  if (p) return formatProductResponse(p);
+  return null;
+}
+
+function getSettingLocal(key: string) {
+  if (key === 'premium_editorial_banner') {
+    return { category: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' };
+  }
+  return {};
+}
+
 export const api = {
   // Auth
   login: (email: string, password: string) =>
@@ -196,11 +423,36 @@ export const api = {
   getProducts: (params?: Record<string, string>, skipCache = false) => {
     const qs = params ? '?' + new URLSearchParams(params).toString() : '';
     const url = `/api/products${qs}`;
-    if (skipCache) return request<{ products: any[]; page: number; limit: number }>(url);
-    return cacheGet(url, () => request<{ products: any[]; page: number; limit: number }>(url));
+    const fetcher = async () => {
+      try {
+        const res = await request<{ products: any[]; page: number; limit: number }>(url);
+        if (res && Array.isArray(res.products) && res.products.length > 0) {
+          return res;
+        }
+      } catch {
+        // Fallback to local catalog
+      }
+      return getProductsLocal(params);
+    };
+    if (skipCache) return fetcher();
+    return cacheGet(url, fetcher);
   },
-  getProduct: (slug: string) =>
-    cacheGet(`/api/products/${slug}`, () => request<any>(`/api/products/${slug}`)),
+  getProduct: (slug: string) => {
+    const fetcher = async () => {
+      try {
+        const res = await request<any>(`/api/products/${slug}`);
+        if (res && (res.id || res.name)) {
+          return res;
+        }
+      } catch {
+        // Fallback to local catalog
+      }
+      const local = getProductLocal(slug);
+      if (local) return local;
+      throw new Error('Product not found');
+    };
+    return cacheGet(`/api/products/${slug}`, fetcher);
+  },
   // Fire-and-forget: records a "Buy on <marketplace>" click to rank Best Sellers by demand.
   trackMarketplaceClick: (productId: string, marketplace: 'amazon' | 'flipkart' | 'myntra' | 'ajio') => {
     if (!productId) return;
@@ -287,7 +539,8 @@ export const api = {
     request<any>(`/api/jobs/applications/${appId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
 
   // Site Settings
-  getSetting: (key: string) => request<any>(`/api/settings/${key}`),
+  getSetting: (key: string) =>
+    request<any>(`/api/settings/${key}`).catch(() => getSettingLocal(key)),
   updateSetting: (key: string, value: object) =>
     request<any>(`/api/settings/${key}`, { method: 'PUT', body: JSON.stringify(value) }),
 
