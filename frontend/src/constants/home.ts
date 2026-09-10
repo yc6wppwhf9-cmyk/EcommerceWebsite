@@ -81,10 +81,10 @@ export interface BackpackTab {
 }
 
 export const BACKPACK_TABS: BackpackTab[] = [
-  { id: 'college-backpacks',  label: 'College Backpack',  image: '/Category/Backpack.jpg',               to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
-  { id: 'laptop-backpacks',   label: 'Laptop Backpack',   image: '/junior/Drift Sky Blue_ Hero 1.png',   to: '/laptop-backpacks',   apiParams: { category: 'laptop-backpacks' } },
-  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/Category/Travelling Bag.jpg',         to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
-  { id: 'duffle',             label: 'Duffle Bag',        image: '/Traworld/Duffle.png',                 to: '/duffle',             apiParams: { category: 'duffle' } },
+  { id: 'college-backpacks',  label: 'College Backpack',  image: '/New Arrival/Artboard 1@2x.png',         to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
+  { id: 'laptop-backpacks',   label: 'Laptop Backpack',   image: '/New Arrival/Artboard 3 copy 5@2x.png', to: '/laptop-backpacks',   apiParams: { category: 'laptop-backpacks' } },
+  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/New Arrival/Artboard 3 copy 7@2x.png', to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
+  { id: 'duffle',             label: 'Duffle Bag',        image: '/New Arrival/Artboard 3 copy 6@2x.png', to: '/duffle',             apiParams: { category: 'duffle' } },
 ];
 
 // ─── Category Cards ──────────────────────────────────────────────────────────
@@ -104,8 +104,8 @@ export const CATS: CategoryCard[] = [
 // ─── Editorial Banner ────────────────────────────────────────────────────────
 
 export const IMG = {
-  banner: '/New Arrival/Artboard 1@2x.png',
-  refPoster: '/New Arrival/Artboard 3 copy 5@2x.png',
+  banner: '/Category/Artboard 1 1.png',
+  refPoster: '/Category/ref.png',
 };
 
 /** Primary editorial banner CTA — always present, regardless of gender tagging. */
