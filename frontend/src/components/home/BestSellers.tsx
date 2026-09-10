@@ -70,8 +70,8 @@ export const BestSellers: React.FC<BestSellersProps> = ({ products, columns }) =
     <section className="pb-16 pt-10 md:pt-20 bg-white border-t border-gray-100" aria-label="Best sellers">
       <div className="max-w-[1720px] mx-auto px-4 md:px-14 relative">
         <div className="text-center mb-12">
-          <p className="text-[10px] font-semibold text-brass uppercase tracking-[0.3em] mb-2">
-            Top Rated & Most Loved
+          <p className="text-[10px] font-semibold text-[#26B3FF] uppercase tracking-[0.3em] mb-2">
+            Top Picks
           </p>
           <h2 className="font-outfit font-semibold text-[16px] text-[#030014] tracking-[0.1em] uppercase">
             Best Sellers

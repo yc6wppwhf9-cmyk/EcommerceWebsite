@@ -6,7 +6,6 @@ import { CategoryShowcase } from '../components/home/CategoryShowcase';
 import { EditorialBanner } from '../components/home/EditorialBanner';
 import { BackpackTabs } from '../components/home/BackpackTabs';
 import { BestSellers } from '../components/home/BestSellers';
-import { NewArrivals } from '../components/home/NewArrivals';
 import { BestReviewedShowcase } from '../components/home/BestReviewedShowcase';
 import { BagsSoldCountdown } from '../components/home/BagsSoldCountdown';
 import { InstagramShowcase } from '../components/home/InstagramShowcase';
@@ -68,7 +67,6 @@ export const Home = () => {
         columns={columns}
       />
 
-      <NewArrivals products={newArrivals} columns={columns} />
       <BestSellers products={bestSellers} columns={columns} />
       <BestReviewedShowcase />
       <BagsSoldCountdown />

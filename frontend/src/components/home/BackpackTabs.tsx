@@ -118,29 +118,16 @@ export const BackpackTabs = ({
             className="hidden md:flex flex-col h-auto overflow-hidden relative group rounded-sm bg-white border border-line transition-transform duration-500 ease-out hover:-translate-y-1"
           >
             <div
-              className="relative overflow-hidden bg-white flex items-center justify-center p-4"
+              className="relative overflow-hidden bg-white flex items-center justify-center"
               style={{ aspectRatio: '1/1.1' }}
             >
               <div className="absolute inset-0 border border-line z-10" />
               <LazyImage
                 src={activeTabConfig.image}
                 alt={activeTabConfig.label}
-                className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 width={520}
               />
-            </div>
-            <div className="px-5 py-4 bg-ink flex items-center justify-between">
-              <div>
-                <p className="font-medium uppercase tracking-[0.24em] leading-none text-[10px] text-brass mb-2">
-                  {tabCategory?.title || 'Trendy'}
-                </p>
-                <p className="font-normal uppercase tracking-[0.06em] leading-snug text-[15px] lg:text-[16px] text-white max-w-[220px]">
-                  {activeTabConfig.label}
-                </p>
-              </div>
-              <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink transition-transform duration-500 group-hover:translate-x-1 flex-shrink-0">
-                <ArrowRight size={16} />
-              </div>
             </div>
           </Link>
 
