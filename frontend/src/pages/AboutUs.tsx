@@ -4,341 +4,616 @@ import {
   Building2,
   TrendingUp,
   Heart,
-  Factory,
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
-  Gift,
-  Sparkles,
   MapPin,
   Linkedin,
-  Globe,
+  Mail,
   FileText,
   Download,
   ExternalLink,
   X,
+  ChevronDown,
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
-export const AboutUs = () => {
+export const AboutUs: React.FC = () => {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const pdfUrl = '/HSCVPL_Profile_2026.pdf';
 
   const stats = [
-    { value: '1999', label: 'Established', sub: '25+ Years of Industry Expertise' },
-    { value: '18M+', label: 'Annual Capacity', sub: 'Bags produced per year' },
-    { value: '50,000+', label: 'Delivered Daily', sub: 'Across nationwide distribution' },
-    { value: '3,500+', label: 'Machines', sub: 'Robust infrastructure network' },
-    { value: '8,400+', label: 'Workforce', sub: '1,400+ employees & 7,000+ workers' },
-    { value: '60%', label: 'Women Workforce', sub: 'Empowering local communities' },
+    { value: '1999', label: 'Established' },
+    { value: '25+', label: 'Years of industry expertise' },
+    { value: '50,000+', label: 'Bags delivered every day' },
+    { value: '18M+', label: 'Annual production capacity' },
+    { value: '3,500+', label: 'Machines' },
   ];
 
-  const missionPoints = [
-    {
-      num: '01',
-      title: 'Every Indian Covered',
-      desc: 'To design durable, functional, and affordable bags for every Indian.',
-    },
-    {
-      num: '02',
-      title: 'Scalable Ecosystems',
-      desc: 'To build scalable and efficient manufacturing ecosystems across India.',
-    },
-    {
-      num: '03',
-      title: 'Empowerment & Livelihoods',
-      desc: 'To create sustainable livelihoods and empower women through meaningful employment.',
-    },
-    {
-      num: '04',
-      title: 'Responsible Growth',
-      desc: 'To grow responsibly while strengthening the communities we operate in.',
-    },
+  const mfgStats = [
+    { strong: 'Muzaffarpur & Fatuha', span: 'Production units' },
+    { strong: '53 days', span: 'Facility establishment' },
+    { strong: '1,400+ employees', span: 'Growing workforce' },
+    { strong: '7,000+ workers', span: 'Across the workforce ecosystem' },
+    { strong: '50,000+ bags', span: 'Delivered every day' },
+    { strong: '18M+ bags', span: 'Annual production capacity' },
   ];
 
-  const productCategories = [
-    'School Bags',
-    'College Backpacks',
-    'Laptop Bags & Cases',
-    'Duffle Bags',
-    'Messenger Bags',
-    'Trekking & Travel Backpacks',
-    'Trolley Luggage',
-  ];
-
-  const partners = [
-    'Amazon', 'Flipkart', 'Myntra', 'Ajio', 'Reliance Retail', 'D-Mart', 'Blinkit',
-    'Tata CLiQ', 'BigBasket', 'Lifestyle', 'Bata', 'FirstCry', 'MR. D.I.Y.',
-    'Lee Cooper', 'Faber-Castell', 'Carrefour', 'Provogue', 'Vishal Mega Mart', 'Metro', 'Citykart'
-  ];
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
-    <main className="font-outfit bg-white text-ink min-h-screen">
+    <main className="font-outfit bg-white text-[#172022] min-h-screen selection:bg-[#0aa6b5] selection:text-white">
       <SEO
         title="About Us — High Spirit Commercial Ventures (HSCVPL) & Priority Bags"
         description="Learn about HSCVPL, one of India's largest backpack manufacturers with 25+ years of excellence, powering Priority and Traworld brands."
         url="https://prioritybags.in/about"
       />
 
+      {/* ─── In-Page Secondary Sticky Navigation ─────────────────────────── */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#dfe6e4] transition-all">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/about/15_highspirit_logo.png"
+              alt="High Spirit Commercial Ventures"
+              className="h-7 w-auto object-contain"
+            />
+            <span className="hidden sm:inline-block text-[11px] font-semibold text-gray-400 tracking-wider uppercase border-l border-gray-200 pl-3">
+              About Us
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-5 text-xs font-semibold uppercase tracking-wider text-[#667174]">
+            <button
+              onClick={() => scrollToSection('story')}
+              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden md:inline-block"
+            >
+              Our Story
+            </button>
+            <button
+              onClick={() => scrollToSection('brands')}
+              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden sm:inline-block"
+            >
+              Brands
+            </button>
+            <button
+              onClick={() => scrollToSection('products')}
+              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden sm:inline-block"
+            >
+              Products
+            </button>
+            <button
+              onClick={() => scrollToSection('manufacturing')}
+              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden md:inline-block"
+            >
+              Manufacturing
+            </button>
+            <button
+              onClick={() => scrollToSection('impact')}
+              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden lg:inline-block"
+            >
+              Impact
+            </button>
+            <button
+              onClick={() => scrollToSection('partners')}
+              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden md:inline-block"
+            >
+              Partners
+            </button>
+
+            <button
+              onClick={() => setShowPdfModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#0aa6b5] text-[#0aa6b5] hover:bg-[#0aa6b5] hover:text-white transition-all text-[11px] font-bold cursor-pointer"
+            >
+              <FileText size={13} />
+              <span>PDF Profile</span>
+            </button>
+
+            <button
+              onClick={() => scrollToSection('contact')}
+              className="px-4 py-1.5 rounded-full bg-[#101617] text-white hover:bg-[#0aa6b5] transition-colors text-[11px] font-bold cursor-pointer"
+            >
+              Contact
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* ─── Hero Section ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-ink text-white py-20 md:py-28">
-        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#26B3FF_1px,transparent_1px)] [background-size:24px_24px]" />
-        <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+      <header className="relative min-h-[640px] md:min-h-[740px] flex items-end overflow-hidden bg-[#141919]">
+        {/* Background Image with Gradient Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-100"
+          style={{
+            backgroundImage: "linear-gradient(90deg, rgba(5,20,22,0.92) 0%, rgba(7,20,22,0.65) 45%, rgba(7,12,13,0.35) 100%), url('/about/01_aerial_factory_1.png')",
+          }}
+        />
+
+        {/* Diagonal Teal-Green Accent Polygon */}
+        <div
+          className="absolute -left-[6%] -bottom-[16%] w-[75%] md:w-[62%] h-[75%] opacity-75 pointer-events-none"
+          style={{
+            background: 'linear-gradient(120deg, rgba(0,166,181,0.88), rgba(105,211,74,0.78))',
+            clipPath: 'polygon(0 12%, 100% 0, 83% 100%, 0 100%)',
+          }}
+        />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-28 text-white">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#26B3FF] text-xs font-semibold uppercase tracking-[0.2em] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#69d34a] text-xs font-bold uppercase tracking-[0.22em] mb-6">
               <Building2 size={14} />
               High Spirit Commercial Ventures Pvt. Ltd.
             </div>
-            <h1 className="text-4xl md:text-6xl font-normal uppercase tracking-tight leading-none mb-6">
-              Elevating <span className="text-[#26B3FF]">Everyday</span> Journeys
+
+            <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-[-0.05em] leading-[0.92] mb-7">
+              Elevating <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0aa6b5] via-[#26B3FF] to-[#69d34a]">
+                Everyday
+              </span> <br />
+              Journeys.
             </h1>
-            <p className="text-lg md:text-xl text-white/70 leading-relaxed font-light mb-8">
-              We don&apos;t just manufacture bags, we build scale, reliability, and long-term partnerships.
+
+            <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light leading-relaxed max-w-2xl mb-9">
+              We don&apos;t just manufacture bags. We build scale, reliability, and long-term partnerships.
             </p>
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link
-                to="/backpacks"
-                className="inline-flex items-center gap-2 rounded-sm bg-[#26B3FF] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white hover:bg-[#1fa0e6] transition-colors"
+
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={() => scrollToSection('story')}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-[#111] hover:bg-[#0aa6b5] hover:text-white transition-all text-xs font-black uppercase tracking-[0.16em] cursor-pointer shadow-lg"
               >
-                Explore Products <ArrowRight size={16} />
-              </Link>
+                Explore Highspirit <ChevronDown size={15} />
+              </button>
+
               <button
                 onClick={() => setShowPdfModal(true)}
-                className="inline-flex items-center gap-2 rounded-sm bg-white/10 hover:bg-white/20 px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white border border-white/20 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white transition-all text-xs font-bold uppercase tracking-[0.16em] cursor-pointer backdrop-blur-sm"
               >
                 <FileText size={15} /> View Corporate PDF
               </button>
+
+              <a
+                href={pdfUrl}
+                download="HSCVPL_Profile_2026.pdf"
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-transparent hover:bg-white/10 text-white/80 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider"
+              >
+                <Download size={14} /> Download PDF
+              </a>
             </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* ─── Stats Banner ─────────────────────────────────────────────────── */}
-      <section className="bg-bone border-y border-line py-12">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {stats.map((stat, i) => (
-              <div key={i} className="bg-white p-5 rounded-sm border border-line flex flex-col justify-between">
-                <div>
-                  <p className="text-2xl md:text-3xl font-bold text-ink tracking-tight mb-1">
-                    {stat.value}
-                  </p>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate">
-                    {stat.label}
-                  </p>
-                </div>
-                <p className="text-[11px] text-gray-500 mt-3 border-t border-gray-100 pt-2 leading-tight">
-                  {stat.sub}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Company Overview ─────────────────────────────────────────────── */}
-      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 md:px-8">
+      {/* ─── Story Section ────────────────────────────────────────────────── */}
+      <section id="story" className="py-20 md:py-28 max-w-7xl mx-auto px-4 md:px-8 scroll-mt-14">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#26B3FF] mb-3">
-              Our Origins & Growth
-            </p>
-            <h2 className="text-3xl md:text-4xl font-normal uppercase tracking-[0.08em] text-ink mb-6 leading-tight">
-              Powering Possibilities, Building Brands
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+              We, Highspirit
+            </span>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-[1.0] mb-6">
+              Powering possibilities. <br />
+              Building brands.
             </h2>
-            <div className="space-y-4 text-gray-600 text-sm md:text-base leading-relaxed">
-              <p>
-                At <strong>High Spirit Commercial Ventures Pvt. Ltd. (HSCVPL)</strong>, we began with bags — but what we truly carry are possibilities. Possibilities for journeys, aspirations, and communities to thrive.
-              </p>
-              <p>
-                Founded in <strong>1999 in Surat, Gujarat</strong> as M.S. Trading by a visionary father–son duo, the company was built on a simple yet powerful vision: to create affordable, durable, and thoughtfully designed bags for every Indian. What started as a modest trading venture steadily evolved into a trusted powerhouse in India’s luggage and backpack industry.
-              </p>
-              <p>
-                In <strong>2012–2013</strong>, the company was formally incorporated as High Spirit Commercial Ventures Pvt. Ltd. with corporate headquarters established in Chembur, Mumbai. Today, HSCVPL stands as one of the country&apos;s largest manufacturers, delivering over 50,000 bags every single day.
-              </p>
-            </div>
+            <p className="text-base sm:text-lg text-[#667174] leading-relaxed mb-6 font-normal">
+              Established in 1999, with over 25 years of industry expertise, HSCVPL has grown into one of India’s largest backpack manufacturers, trusted by retailers, key partners and consumers.
+            </p>
+            <p className="text-sm text-[#667174] leading-relaxed">
+              From our modern manufacturing hubs to grassroots women-led production networks, we combine massive scale with strict quality assurance to deliver superior bags for every walk of life.
+            </p>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-[#FAF8F5] border border-line p-8 rounded-sm">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-brass mb-3 flex items-center gap-2">
-                <TrendingUp size={16} /> Rapid Manufacturing Scale
-              </h3>
-              <p className="text-sm text-graphite leading-relaxed">
-                In 2022, HSCVPL strategically established large-scale manufacturing facilities in <strong>Muzaffarpur and Fatuha</strong> within a record 53 days, complemented by extensive job-worker networks in <strong>East Champaran</strong>.
-              </p>
-            </div>
-
-            <div className="bg-ink text-white p-8 rounded-sm">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#26B3FF] mb-3 flex items-center gap-2">
-                <Sparkles size={16} /> Millions of Daily Journeys
-              </h3>
-              <p className="text-sm text-white/80 leading-relaxed font-light">
-                From a young child stepping into school for the first time to corporate professionals traveling across borders — with every zipper closed and every journey begun, our products become a meaningful part of everyday life.
-              </p>
-            </div>
+          <div className="h-[380px] sm:h-[480px] lg:h-[540px] rounded-lg overflow-hidden shadow-xl border border-[#dfe6e4] group">
+            <img
+              src="/about/02_aerial_factory_2.png"
+              alt="Highspirit manufacturing landscape"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
           </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border border-[#dfe6e4] rounded-lg overflow-hidden mt-16 bg-[#f4f7f6] shadow-sm">
+          {stats.map((stat, i) => (
+            <div
+              key={i}
+              className={`p-6 sm:p-8 bg-white border-[#dfe6e4] flex flex-col justify-center ${
+                i !== stats.length - 1 ? 'border-r sm:border-r' : ''
+              } ${i === stats.length - 1 ? 'col-span-2 sm:col-span-1 border-t sm:border-t-0' : ''}`}
+            >
+              <strong className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-[-0.04em] block bg-clip-text text-transparent bg-gradient-to-r from-[#08a6b5] to-[#67d44b]">
+                {stat.value}
+              </strong>
+              <span className="text-xs sm:text-sm text-[#667174] mt-2 block font-medium">
+                {stat.label}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ─── Our Brands ───────────────────────────────────────────────────── */}
-      <section className="bg-bone py-16 md:py-24 border-y border-line">
+      {/* ─── Origins & Growth Section ─────────────────────────────────────── */}
+      <section className="bg-[#f4f7f6] py-20 md:py-28 border-y border-[#dfe6e4]">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#26B3FF] mb-3">
-              Brand Portfolio
-            </p>
-            <h2 className="text-3xl md:text-4xl font-normal uppercase tracking-[0.08em] text-ink mb-4">
-              Our Brands
-            </h2>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              HSCVPL owns and manages a portfolio of brands designed to cater to diverse consumer segments, representing our commitment to design, quality, and value.
-            </p>
-          </div>
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="h-[380px] sm:h-[480px] lg:h-[560px] rounded-lg overflow-hidden shadow-lg border border-[#dfe6e4] order-2 md:order-1 group">
+              <img
+                src="/about/03_aerial_factory_3.png"
+                alt="Highspirit manufacturing facility"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Priority Brand */}
-            <div className="bg-white border border-line p-8 md:p-10 rounded-sm flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-black tracking-tight text-ink uppercase flex items-center gap-2">
-                    <span className="w-2.5 h-6 bg-[#26B3FF] inline-block rounded-xs" />
-                    Priority™
-                  </h3>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] bg-blue-50 text-[#26B3FF] px-3 py-1 rounded-full">
-                    Flagship Brand
+            <div className="order-1 md:order-2">
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+                Our Origins · Growth & Expansion
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-[1.05] mb-6">
+                From a trading venture to a trusted industry name.
+              </h2>
+              <p className="text-base sm:text-lg text-[#667174] leading-relaxed mb-8">
+                At HSCVPL, we began with bags — but what we truly carry are possibilities for journeys, aspirations, and communities to thrive.
+              </p>
+
+              {/* Timeline */}
+              <div className="border-l-2 border-[#cbd5d3] pl-6 space-y-8 ml-2">
+                <div className="relative group">
+                  <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-[#0aa6b5] ring-4 ring-[#f4f7f6]" />
+                  <span className="text-[11px] font-extrabold tracking-[0.14em] uppercase text-[#0aa6b5] block mb-1">
+                    1999 · SURAT, GUJARAT
                   </span>
+                  <h3 className="text-xl font-bold text-[#172022] mb-1.5">M.S. Trading begins</h3>
+                  <p className="text-sm text-[#667174] leading-relaxed">
+                    Founded by a visionary father–son duo to create affordable, durable and thoughtfully designed bags for every Indian.
+                  </p>
                 </div>
-                <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-6">
-                  Our flagship brand, <strong>Priority</strong>, represents affordability, reliability, and accessibility. Designed for everyday use, Priority bags are widely trusted by students, working professionals, and families across India.
-                </p>
-                <ul className="space-y-2.5 text-xs text-graphite mb-8">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-[#26B3FF]" /> College, School & Everyday Backpacks
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-[#26B3FF]" /> Rugged Trekking & Travel Gear
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-[#26B3FF]" /> Ergonomic Laptop Series & Pouches
-                  </li>
-                </ul>
-              </div>
-              <Link
-                to="/backpacks"
-                className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#26B3FF] hover:text-ink transition-colors"
-              >
-                Shop Priority Collection <ArrowRight size={14} />
-              </Link>
-            </div>
 
-            {/* Traworld Brand */}
-            <div className="bg-ink text-white border border-ink p-8 md:p-10 rounded-sm flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-black tracking-tight text-white uppercase flex items-center gap-2">
-                    <span className="w-2.5 h-6 bg-brass inline-block rounded-xs" />
-                    Traworld
-                  </h3>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] bg-white/10 text-brass px-3 py-1 rounded-full border border-white/20">
-                    Premium Travel
+                <div className="relative group">
+                  <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-[#0aa6b5] ring-4 ring-[#f4f7f6]" />
+                  <span className="text-[11px] font-extrabold tracking-[0.14em] uppercase text-[#0aa6b5] block mb-1">
+                    2012–2013 · MUMBAI
                   </span>
+                  <h3 className="text-xl font-bold text-[#172022] mb-1.5">HSCVPL incorporated</h3>
+                  <p className="text-sm text-[#667174] leading-relaxed">
+                    Formally incorporated as High Spirit Commercial Ventures Pvt. Ltd., with corporate headquarters established in Chembur, Mumbai.
+                  </p>
                 </div>
-                <p className="text-sm md:text-base text-white/80 leading-relaxed font-light mb-6">
-                  Positioned in the premium travel segment, <strong>Traworld</strong> offers sophisticated luggage, duffles, and executive travel gear engineered for durability, effortless convenience, and timeless elegance.
-                </p>
-                <ul className="space-y-2.5 text-xs text-white/70 mb-8 font-light">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-brass" /> Hard & Soft Trolley Luggage
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-brass" /> Premium Duffle & Gym Carriers
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-brass" /> Executive Business Travel Organizers
-                  </li>
-                </ul>
-              </div>
-              <Link
-                to="/premium"
-                className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brass hover:text-white transition-colors"
-              >
-                Explore Traworld Premium <ArrowRight size={14} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ─── Vision & Mission ─────────────────────────────────────────────── */}
-      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 md:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#26B3FF] mb-3">
-            Driven By Purpose
-          </p>
-          <h2 className="text-3xl md:text-4xl font-normal uppercase tracking-[0.08em] text-ink mb-4">
-            Vision & Mission
-          </h2>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8 items-stretch">
-          {/* Vision Card */}
-          <div className="lg:col-span-1 bg-[#FAF8F5] border border-line p-8 rounded-sm flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-ink border border-line mb-6">
-                <ShieldCheck size={22} />
-              </div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brass mb-3">
-                Our Vision
-              </p>
-              <h3 className="text-xl md:text-2xl font-normal uppercase tracking-tight text-ink mb-4 leading-snug">
-                India&apos;s Most Trusted Bags Company
-              </h3>
-              <p className="text-sm text-graphite leading-relaxed">
-                To become India&apos;s most trusted and accessible bags and luggage company, delivering quality products while creating meaningful economic opportunities for communities across the country.
-              </p>
-            </div>
-            <div className="pt-6 border-t border-line mt-6">
-              <p className="text-[11px] font-medium text-slate uppercase tracking-wider">
-                Reliability • Scale • Social Value
-              </p>
-            </div>
-          </div>
-
-          {/* Mission 4 Pillars */}
-          <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
-            {missionPoints.map((item, idx) => (
-              <div key={idx} className="bg-white border border-line p-6 rounded-sm flex flex-col justify-between">
-                <div>
-                  <span className="text-xs font-black text-[#26B3FF] uppercase tracking-widest block mb-2">
-                    {item.num}
+                <div className="relative group">
+                  <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-[#67d44b] ring-4 ring-[#f4f7f6]" />
+                  <span className="text-[11px] font-extrabold tracking-[0.14em] uppercase text-[#67d44b] block mb-1">
+                    TODAY · INDIA
                   </span>
-                  <h4 className="text-base font-semibold uppercase tracking-tight text-ink mb-2">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
-                    {item.desc}
+                  <h3 className="text-xl font-bold text-[#172022] mb-1.5">Built for everyday journeys</h3>
+                  <p className="text-sm text-[#667174] leading-relaxed">
+                    Our products accompany millions of people across India — from school journeys to corporate professional travel.
                   </p>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── Social Impact & Women Empowerment ────────────────────────────── */}
-      <section className="bg-ink text-white py-16 md:py-24 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      {/* ─── Vision & Mission (Dark Section) ──────────────────────────────── */}
+      <section className="bg-[#101718] text-white py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="max-w-2xl mb-12">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+              Driven by Purpose
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] leading-tight">
+              A vision built around quality, <br />
+              <span className="text-[#69d34a]">access and opportunity.</span>
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+            {/* Vision Box */}
+            <div className="lg:col-span-5 p-8 md:p-10 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xs flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-[#0aa6b5]/10 border border-[#0aa6b5]/30 text-[#0aa6b5] flex items-center justify-center mb-6">
+                  <ShieldCheck size={24} />
+                </div>
+                <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-4">
+                  Our Vision
+                </h3>
+                <p className="text-base text-[#bfc9c8] leading-relaxed font-light">
+                  To become India’s most trusted and accessible bags and luggage company, delivering quality products while creating meaningful economic opportunities for communities across the country.
+                </p>
+              </div>
+              <div className="pt-6 border-t border-white/10 mt-8 flex items-center gap-2 text-xs font-bold text-[#0aa6b5] uppercase tracking-wider">
+                <CheckCircle2 size={14} /> Reliability · Scale · Community
+              </div>
+            </div>
+
+            {/* Mission Box */}
+            <div className="lg:col-span-7 p-8 md:p-10 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xs flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-[#69d34a]/10 border border-[#69d34a]/30 text-[#69d34a] flex items-center justify-center mb-6">
+                  <TrendingUp size={24} />
+                </div>
+                <h3 className="text-2xl font-black uppercase tracking-tight text-white mb-4">
+                  Our Mission
+                </h3>
+                <ol className="space-y-4">
+                  {[
+                    'To design durable, functional, and affordable bags for every Indian.',
+                    'To build scalable and efficient manufacturing ecosystems across India.',
+                    'To create sustainable livelihoods and empower women through meaningful employment.',
+                    'To grow responsibly while strengthening the communities we operate in.',
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-4 text-sm sm:text-base text-[#bfc9c8] font-light">
+                      <span className="shrink-0 w-6 h-6 rounded-full bg-white/10 text-[#69d34a] flex items-center justify-center text-xs font-bold mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Brands Section ───────────────────────────────────────────────── */}
+      <section id="brands" className="py-20 md:py-28 max-w-7xl mx-auto px-4 md:px-8 scroll-mt-14">
+        <div className="max-w-2xl mb-14">
+          <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+            Our Brands
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-tight mb-4">
+            Design. Quality. Value.
+          </h2>
+          <p className="text-base text-[#667174]">
+            HSCVPL owns and manages a portfolio of market-leading brands designed to cater to diverse consumer segments with distinct needs.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Priority Brand */}
+          <div className="p-8 sm:p-10 rounded-2xl bg-[#f4f6f5] border border-[#dfe6e4] flex flex-col justify-between hover:shadow-lg transition-shadow">
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-brass mb-4">
+              <div className="flex items-center justify-between mb-6">
+                <img
+                  src="/about/13_priority_logo.png"
+                  alt="Priority Logo"
+                  className="h-10 w-auto object-contain"
+                />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] bg-[#0aa6b5]/10 text-[#0aa6b5] px-3 py-1 rounded-full border border-[#0aa6b5]/20">
+                  Flagship Brand
+                </span>
+              </div>
+              <h3 className="text-3xl font-black uppercase tracking-tight text-[#172022] mb-3">
+                Priority
+              </h3>
+              <p className="text-sm sm:text-base text-[#667174] leading-relaxed mb-6">
+                Our flagship brand, representing affordability, reliability, and accessibility. Designed for everyday use and trusted by students, professionals and families across India.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-8">
+                {['School & College', 'Laptop Backpacks', 'Trekking & Travel', 'Everyday Carriers'].map(
+                  (tag, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 rounded bg-white text-[11px] font-semibold text-[#172022] border border-[#dfe6e4]"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+            <Link
+              to="/backpacks"
+              className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#0aa6b5] hover:text-[#172022] transition-colors"
+            >
+              Shop Priority Collection <ArrowRight size={15} />
+            </Link>
+          </div>
+
+          {/* Traworld Brand */}
+          <div className="p-8 sm:p-10 rounded-2xl bg-[#101718] text-white border border-[#101718] flex flex-col justify-between hover:shadow-lg transition-shadow">
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <img
+                  src="/about/14_traworld_logo.png"
+                  alt="Traworld Logo"
+                  className="h-10 w-auto object-contain brightness-0 invert"
+                />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] bg-white/10 text-[#69d34a] px-3 py-1 rounded-full border border-white/20">
+                  Premium Travel
+                </span>
+              </div>
+              <h3 className="text-3xl font-black uppercase tracking-tight text-white mb-3">
+                Traworld
+              </h3>
+              <p className="text-sm sm:text-base text-white/75 leading-relaxed mb-6 font-light">
+                Positioned in the premium travel segment, Traworld offers sophisticated luggage and travel gear built for durability, effortless convenience, and modern elegance.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-8">
+                {['Hard & Soft Trolleys', 'Executive Organizers', 'Premium Duffels', 'Cabin Luggage'].map(
+                  (tag, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 rounded bg-white/10 text-[11px] font-semibold text-white/90 border border-white/15"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+            <Link
+              to="/premium"
+              className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#69d34a] hover:text-white transition-colors"
+            >
+              Explore Traworld Premium <ArrowRight size={15} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Product Portfolio ────────────────────────────────────────────── */}
+      <section id="products" className="bg-[#f4f7f6] py-20 md:py-28 border-y border-[#dfe6e4] scroll-mt-14">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="max-w-2xl mb-12">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+              Product Portfolio
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-tight mb-4">
+              Made for every kind of journey.
+            </h2>
+            <p className="text-base text-[#667174]">
+              HSCVPL offers a comprehensive range of bags and travel accessories designed to meet diverse lifestyles.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-6">
+            {/* Main Feature Card */}
+            <div className="lg:col-span-7 h-[420px] sm:h-[520px] relative rounded-xl overflow-hidden shadow-md group bg-white border border-[#dfe6e4]">
+              <img
+                src="/about/12_product_collection_cutout.png"
+                alt="Bags and luggage collection"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute left-6 bottom-6 bg-white/95 backdrop-blur-md px-5 py-3 rounded-lg shadow-md border border-[#dfe6e4]">
+                <span className="text-xs font-black uppercase tracking-wider text-[#172022]">
+                  School Bags · Backpacks · Luggage
+                </span>
+              </div>
+            </div>
+
+            {/* Side Cards */}
+            <div className="lg:col-span-5 grid sm:grid-cols-2 lg:grid-cols-1 gap-6">
+              <div className="h-[240px] lg:h-[247px] relative rounded-xl overflow-hidden shadow-md group bg-white border border-[#dfe6e4]">
+                <img
+                  src="/about/11_product_collection.png"
+                  alt="Travel and lifestyle collection"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute left-5 bottom-5 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-lg shadow-md border border-[#dfe6e4]">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#172022]">
+                    Travel & Lifestyle
+                  </span>
+                </div>
+              </div>
+
+              <div className="h-[240px] lg:h-[247px] relative rounded-xl overflow-hidden shadow-md group bg-white border border-[#dfe6e4]">
+                <img
+                  src="/about/04_backpack_manufacturing_closeup.png"
+                  alt="Backpack manufacturing close-up"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute left-5 bottom-5 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-lg shadow-md border border-[#dfe6e4]">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#172022]">
+                    Built with Care & Precision
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Manufacturing Excellence ─────────────────────────────────────── */}
+      <section id="manufacturing" className="bg-[#edf4f1] py-20 md:py-28 scroll-mt-14">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+                Manufacturing Excellence
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-[1.05] mb-6">
+                Speed. Scale. <br />
+                Operational excellence.
+              </h2>
+              <p className="text-base sm:text-lg text-[#667174] leading-relaxed mb-8">
+                In 2022, HSCVPL strategically established large-scale manufacturing facilities in <strong>Muzaffarpur and Fatuha within 53 days</strong>, complemented by extensive job-worker ecosystems across Bihar.
+              </p>
+
+              {/* Manufacturing Stats Table */}
+              <div className="grid sm:grid-cols-2 border border-[#d7e2df] rounded-xl overflow-hidden bg-white shadow-sm">
+                {mfgStats.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-5 border-[#d7e2df] ${idx % 2 === 0 ? 'sm:border-r' : ''} ${
+                      idx < mfgStats.length - 2 ? 'border-b' : ''
+                    }`}
+                  >
+                    <strong className="text-lg font-black text-[#172022] block">
+                      {item.strong}
+                    </strong>
+                    <span className="text-xs text-[#667174] mt-1 block">
+                      {item.span}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="h-[360px] sm:h-[460px] rounded-xl overflow-hidden shadow-lg border border-[#d7e2df] group">
+                <img
+                  src="/about/08_factory_floor_wide_1.png"
+                  alt="High Spirit manufacturing floor"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+
+              {/* Auxiliary mini-gallery */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="h-36 rounded-lg overflow-hidden border border-[#d7e2df] group">
+                  <img
+                    src="/about/10_manufacturing_facility_building.png"
+                    alt="Facility Exterior"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="h-36 rounded-lg overflow-hidden border border-[#d7e2df] group">
+                  <img
+                    src="/about/05_sewing_machine_closeup.png"
+                    alt="Industrial Sewing Machine"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Social Impact Section ────────────────────────────────────────── */}
+      <section
+        id="impact"
+        className="relative py-20 md:py-28 text-white overflow-hidden bg-[#121717] scroll-mt-14"
+      >
+        {/* Background photo with deep dark gradient overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-40"
+          style={{
+            backgroundImage: "linear-gradient(90deg, rgba(5,12,13,0.95) 0%, rgba(5,12,13,0.75) 50%, rgba(5,12,13,0.5) 100%), url('/about/06_woman_working_factory.png')",
+          }}
+        />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em] text-[#69d34a] mb-4">
                 <Heart size={16} /> Social Impact
               </div>
-              <h2 className="text-3xl md:text-5xl font-normal uppercase tracking-tight leading-tight mb-6">
-                &ldquo;We don&apos;t just stitch bags, <br />
-                <span className="text-[#26B3FF]">We stitch families together.</span>&rdquo;
+              <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight leading-tight mb-6">
+                &ldquo;We don&apos;t just stitch bags. <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0aa6b5] to-[#69d34a]">
+                  We stitch families together.&rdquo;
+                </span>
               </h2>
-              <div className="space-y-4 text-white/80 text-sm md:text-base font-light leading-relaxed">
+              <div className="space-y-4 text-[#d0d8d7] text-base sm:text-lg font-light leading-relaxed mb-8">
                 <p>
                   At HSCVPL, business growth goes hand in hand with social impact. Nearly <strong>60% of our total workforce comprises women</strong>, reflecting our deep commitment to women&apos;s empowerment and financial independence.
                 </p>
@@ -346,140 +621,109 @@ export const AboutUs = () => {
                   Through formal employment and work-from-home opportunities in regions such as <strong>Champaran</strong>, we enable women to earn sustainable monthly incomes often exceeding <strong>₹15,000 per month</strong>, allowing them to support their families while maintaining work-life balance.
                 </p>
               </div>
+
+              {/* 4 Pillars Grid */}
+              <div className="grid sm:grid-cols-2 gap-4 border-t border-white/20 pt-6">
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#0aa6b5] block mb-1">
+                    Creating
+                  </span>
+                  <p className="text-base font-bold text-white">Sustainable Livelihoods</p>
+                  <p className="text-xs text-white/60 mt-1">Financial independence for women</p>
+                </div>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#69d34a] block mb-1">
+                    Empowering
+                  </span>
+                  <p className="text-base font-bold text-white">Grassroots Communities</p>
+                  <p className="text-xs text-white/60 mt-1">Local economic revitalization</p>
+                </div>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#69d34a] block mb-1">
+                    Supporting
+                  </span>
+                  <p className="text-base font-bold text-white">Family Welfare</p>
+                  <p className="text-xs text-white/60 mt-1">Education & healthcare stability</p>
+                </div>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#0aa6b5] block mb-1">
+                    Carrying
+                  </span>
+                  <p className="text-base font-bold text-white">Dreams Forward</p>
+                  <p className="text-xs text-white/60 mt-1">Building an equitable future</p>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/5 border border-white/10 p-6 rounded-sm">
-                <h4 className="text-xs font-semibold uppercase tracking-widest text-[#26B3FF] mb-2">Creating</h4>
-                <p className="text-lg font-bold text-white mb-1">Sustainable</p>
-                <p className="text-xs text-white/60">Livelihoods & independence</p>
-              </div>
-              <div className="bg-white/5 border border-white/10 p-6 rounded-sm">
-                <h4 className="text-xs font-semibold uppercase tracking-widest text-brass mb-2">Empowering</h4>
-                <p className="text-lg font-bold text-white mb-1">Communities</p>
-                <p className="text-xs text-white/60">Grassroots economic growth</p>
-              </div>
-              <div className="bg-white/5 border border-white/10 p-6 rounded-sm">
-                <h4 className="text-xs font-semibold uppercase tracking-widest text-brass mb-2">Supporting</h4>
-                <p className="text-lg font-bold text-white mb-1">Families</p>
-                <p className="text-xs text-white/60">Education & family security</p>
-              </div>
-              <div className="bg-white/5 border border-white/10 p-6 rounded-sm">
-                <h4 className="text-xs font-semibold uppercase tracking-widest text-[#26B3FF] mb-2">Carrying</h4>
-                <p className="text-lg font-bold text-white mb-1">Dreams</p>
-                <p className="text-xs text-white/60">Building a brighter future</p>
+            <div className="lg:col-span-5">
+              <div className="h-[420px] sm:h-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/20 group">
+                <img
+                  src="/about/06_woman_working_factory.png"
+                  alt="Women working at HSCVPL factory"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── Product Portfolio & Corporate Gifting ────────────────────────── */}
-      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 md:px-8">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Product Portfolio */}
-          <div className="bg-bone border border-line p-8 md:p-10 rounded-sm">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#26B3FF] mb-3">
-              <Factory size={16} /> Complete Range
-            </div>
-            <h3 className="text-2xl md:text-3xl font-normal uppercase tracking-tight text-ink mb-6">
-              Product Portfolio
-            </h3>
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-              HSCVPL offers a comprehensive range of bags and travel accessories designed to meet the demands of modern, dynamic lifestyles:
-            </p>
-            <div className="flex flex-wrap gap-2.5">
-              {productCategories.map((cat, i) => (
-                <span
-                  key={i}
-                  className="bg-white border border-line px-3.5 py-2 rounded-sm text-xs font-medium text-graphite uppercase tracking-wider shadow-xs"
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-          </div>
+      {/* ─── Partnership Philosophy ───────────────────────────────────────── */}
+      <section id="partners" className="py-20 md:py-28 max-w-7xl mx-auto px-4 md:px-8 scroll-mt-14">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+            Partnership Philosophy
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-tight mb-4">
+            Built on trust. Driven by growth.
+          </h2>
+          <p className="text-base text-[#667174] leading-relaxed">
+            We collaborate with partners who share our commitment to quality, reliability and long-term value creation. Whether working with distributors, corporate clients, government organizations or retail partners, we believe in relationships where value flows both ways.
+          </p>
+        </div>
 
-          {/* Corporate Gifting */}
-          <div className="bg-white border border-line p-8 md:p-10 rounded-sm flex flex-col justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-brass mb-3">
-                <Gift size={16} /> Bulk & Custom Solutions
-              </div>
-              <h3 className="text-2xl md:text-3xl font-normal uppercase tracking-tight text-ink mb-4">
-                Corporate Gifting Partner
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-6">
-                We work closely with organizations as a long-term gifting partner, providing customized bag solutions for employee onboarding, annual summits, corporate events, festive gifting, and promotional campaigns.
-              </p>
-            </div>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink hover:text-[#26B3FF] transition-colors"
-            >
-              Enquire for Bulk / Corporate Orders <ArrowRight size={14} />
-            </Link>
-          </div>
+        {/* Partner Logos Frame */}
+        <div className="bg-white border border-[#dfe6e4] rounded-2xl p-6 sm:p-10 shadow-lg max-w-5xl mx-auto">
+          <img
+            src="/about/partner_logos.png"
+            alt="HSCVPL Brand & Retail Partners: Amazon, Flipkart, Myntra, Ajio, Reliance, D-Mart, Blinkit, Bata, FirstCry and more"
+            className="w-full h-auto object-contain"
+          />
+          <p className="text-xs text-[#667174] text-center mt-6 pt-4 border-t border-[#dfe6e4]">
+            Selected partner and retail logos reproduced from the official HSCVPL corporate profile.
+          </p>
         </div>
       </section>
 
-      {/* ─── Retail & Brand Partners ──────────────────────────────────────── */}
-      <section className="bg-[#FAF8F5] py-16 border-y border-line">
+      {/* ─── Corporate PDF & Gifting Showcase ─────────────────────────────── */}
+      <section className="py-14 bg-[#f4f7f6] border-y border-[#dfe6e4]">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate mb-2">
-              Partnership Philosophy
-            </p>
-            <h3 className="text-2xl md:text-3xl font-normal uppercase tracking-tight text-ink mb-3">
-              Built on Trust. Driven by Growth.
-            </h3>
-            <p className="text-xs md:text-sm text-gray-600">
-              Trusted by leading national retail chains, online marketplaces, and enterprise clients across India.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4 max-w-5xl mx-auto">
-            {partners.map((partner, idx) => (
-              <span
-                key={idx}
-                className="px-4 py-2 bg-white border border-line rounded-sm text-xs font-semibold uppercase tracking-wider text-graphite shadow-2xs hover:border-[#26B3FF] transition-colors"
-              >
-                {partner}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Corporate PDF Showcase Card ──────────────────────────────────── */}
-      <section className="py-14 bg-bone border-b border-line">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="bg-white border border-line p-6 md:p-8 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs">
+          <div className="bg-white border border-[#dfe6e4] p-6 sm:p-8 rounded-2xl flex flex-col lg:flex-row items-center justify-between gap-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-sm bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
-                <FileText size={24} />
+              <div className="w-14 h-14 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100 shadow-xs">
+                <FileText size={28} />
               </div>
               <div>
-                <h4 className="text-base font-semibold uppercase tracking-tight text-ink">
+                <h4 className="text-base sm:text-lg font-black uppercase tracking-tight text-[#172022]">
                   HSCVPL Official Company Profile (2026)
                 </h4>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs sm:text-sm text-[#667174] mt-0.5">
                   Comprehensive document covering infrastructure, CSR, leadership, and partner networks.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center gap-3 w-full lg:w-auto">
               <button
                 onClick={() => setShowPdfModal(true)}
-                className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-ink hover:bg-black text-white text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer"
+                className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#101617] hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
               >
                 <ExternalLink size={14} /> Preview PDF
               </button>
               <a
                 href={pdfUrl}
                 download="HSCVPL_Profile_2026.pdf"
-                className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-[#26B3FF] hover:bg-[#1fa0e6] text-white text-xs font-semibold uppercase tracking-wider transition-colors"
+                className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0aa6b5] hover:bg-[#0895a3] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
               >
                 <Download size={14} /> Download PDF
               </a>
@@ -488,49 +732,86 @@ export const AboutUs = () => {
         </div>
       </section>
 
-      {/* ─── Corporate Office & Contact ───────────────────────────────────── */}
-      <section className="py-16 max-w-7xl mx-auto px-4 md:px-8">
-        <div className="bg-ink text-white p-8 md:p-12 rounded-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#26B3FF] mb-2">
-              Corporate Headquarters
+      {/* ─── Final CTA Section ────────────────────────────────────────────── */}
+      <section
+        id="contact"
+        className="relative py-24 md:py-32 text-white overflow-hidden bg-[#111] scroll-mt-14"
+      >
+        <div
+          className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-85"
+          style={{
+            backgroundImage: "linear-gradient(90deg, rgba(7,12,13,0.92) 0%, rgba(7,12,13,0.72) 100%), url('/about/final_cta_reference.jpg')",
+          }}
+        />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+          <div className="max-w-3xl">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#69d34a] block mb-4">
+              Highspirit
+            </span>
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-[-0.05em] leading-[0.92] mb-6">
+              LET’S BUILD THE <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0aa6b5] via-[#26B3FF] to-[#69d34a]">
+                FUTURE TOGETHER.
+              </span>
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-[#d0d7d6] font-light leading-relaxed mb-8">
+              We welcome opportunities to collaborate with corporate partners and brands. With strong manufacturing capabilities, reliable supply, and trusted partnership, High Spirit Commercial Ventures Pvt. Ltd. is ready to be your long-term business partner.
             </p>
-            <h4 className="text-xl md:text-2xl font-normal uppercase tracking-tight mb-3">
-              High Spirit Commercial Ventures Pvt. Ltd.
-            </h4>
-            <p className="text-xs md:text-sm text-white/70 max-w-xl flex items-start gap-2">
-              <MapPin size={16} className="text-[#26B3FF] shrink-0 mt-0.5" />
-              Universal Majestic Building, Ghatkopar-Mankhurd Link Road, Near RBK Kanakiya School, Chembur West, Mumbai 400043.
-            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#0aa6b5] hover:bg-[#0895a3] text-white text-xs font-black uppercase tracking-[0.16em] transition-colors shadow-xl"
+              >
+                Connect With Us <ArrowRight size={16} />
+              </Link>
+              <button
+                onClick={() => setShowPdfModal(true)}
+                className="inline-flex items-center gap-2 px-7 py-4 rounded-full border border-white/40 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-[0.16em] transition-colors cursor-pointer"
+              >
+                <FileText size={15} /> Company Profile
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <a
-              href="https://in.linkedin.com/company/highspirit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-sm text-xs font-semibold uppercase tracking-wider text-white transition-colors"
-            >
-              <Linkedin size={15} /> LinkedIn
-            </a>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 bg-[#26B3FF] hover:bg-[#1fa0e6] px-5 py-3 rounded-sm text-xs font-semibold uppercase tracking-wider text-white transition-colors"
-            >
-              <Globe size={15} /> Contact Us
-            </Link>
+          {/* Corporate Office Info */}
+          <div className="mt-16 pt-10 border-t border-white/15 grid md:grid-cols-2 gap-6 items-center">
+            <div className="flex items-start gap-3 text-sm text-white/80 font-light">
+              <MapPin size={18} className="text-[#0aa6b5] shrink-0 mt-1" />
+              <span>
+                <strong>Corporate HQ:</strong> Universal Majestic Building, Ghatkopar-Mankhurd Link Road, Near RBK Kanakiya School, Chembur West, Mumbai 400043.
+              </span>
+            </div>
+
+            <div className="flex items-center justify-start md:justify-end gap-4">
+              <a
+                href="https://in.linkedin.com/company/highspirit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold uppercase tracking-wider text-white transition-colors"
+              >
+                <Linkedin size={14} /> LinkedIn
+              </a>
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold uppercase tracking-wider text-white transition-colors"
+              >
+                <Mail size={14} /> Contact Team
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── PDF Modal Viewer ────────────────────────────────────────────── */}
+      {/* ─── Interactive PDF Modal Viewer ────────────────────────────────── */}
       {showPdfModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs p-4 md:p-8">
-          <div className="bg-ink text-white w-full max-w-6xl h-[90vh] rounded-sm flex flex-col overflow-hidden shadow-2xl border border-white/20">
-            <div className="p-4 bg-ink border-b border-white/10 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <FileText size={18} className="text-[#26B3FF]" />
-                <span className="text-xs md:text-sm font-semibold uppercase tracking-wider">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xs p-4 md:p-8">
+          <div className="bg-[#101718] text-white w-full max-w-6xl h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-white/20">
+            <div className="p-4 bg-[#101718] border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <FileText size={20} className="text-[#0aa6b5]" />
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">
                   HSCVPL Official Profile 2026
                 </span>
               </div>
@@ -538,16 +819,16 @@ export const AboutUs = () => {
                 <a
                   href={pdfUrl}
                   download="HSCVPL_Profile_2026.pdf"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#26B3FF] text-white text-xs font-medium rounded-sm hover:bg-[#1fa0e6]"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0aa6b5] text-white text-xs font-bold rounded-lg hover:bg-[#0895a3] transition-colors"
                 >
                   <Download size={13} /> Download
                 </a>
                 <button
                   onClick={() => setShowPdfModal(false)}
-                  className="p-1 hover:bg-white/10 rounded-sm text-white/80 hover:text-white cursor-pointer"
+                  className="p-1.5 hover:bg-white/10 rounded-lg text-white/80 hover:text-white transition-colors cursor-pointer"
                   aria-label="Close modal"
                 >
-                  <X size={20} />
+                  <X size={22} />
                 </button>
               </div>
             </div>
