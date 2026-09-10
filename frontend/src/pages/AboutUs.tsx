@@ -59,9 +59,9 @@ export const AboutUs: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
-              src="/about/15_highspirit_logo.png"
+              src="/about/highspirit_logo.png"
               alt="High Spirit Commercial Ventures"
-              className="h-7 w-auto object-contain"
+              className="h-8 w-auto object-contain"
             />
             <span className="hidden sm:inline-block text-[11px] font-semibold text-gray-400 tracking-wider uppercase border-l border-gray-200 pl-3">
               About Us
