@@ -81,9 +81,10 @@ export interface BackpackTab {
 }
 
 export const BACKPACK_TABS: BackpackTab[] = [
-  { id: 'college-backpacks',  label: 'College Backpack',  image: '/Category/ref.png',                    to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
+  { id: 'college-backpacks',  label: 'College Backpack',  image: '/Category/Backpack.jpg',               to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
   { id: 'laptop-backpacks',   label: 'Laptop Backpack',   image: '/junior/Drift Sky Blue_ Hero 1.png',   to: '/laptop-backpacks',   apiParams: { category: 'laptop-backpacks' } },
   { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/Category/Travelling Bag.jpg',         to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
+  { id: 'duffle',             label: 'Duffle Bag',        image: '/Traworld/Duffle.png',                 to: '/duffle',             apiParams: { category: 'duffle' } },
 ];
 
 // ─── Category Cards ──────────────────────────────────────────────────────────

@@ -68,8 +68,8 @@ export const Home = () => {
         columns={columns}
       />
 
-      <BestSellers products={bestSellers} columns={columns} />
       <NewArrivals products={newArrivals} columns={columns} />
+      <BestSellers products={bestSellers} columns={columns} />
       <BestReviewedShowcase />
       <BagsSoldCountdown />
       <InstagramShowcase />

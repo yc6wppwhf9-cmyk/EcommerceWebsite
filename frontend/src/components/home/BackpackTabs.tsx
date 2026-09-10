@@ -78,7 +78,7 @@ export const BackpackTabs = ({
                   />
                 )}
                 <span className="relative z-10">
-                  <span className="md:hidden">{tab.label.replace(/\s*backpack$/i, '')}</span>
+                  <span className="md:hidden">{tab.label.replace(/\s*(backpack|bag)$/i, '')}</span>
                   <span className="hidden md:inline">{tab.label}</span>
                 </span>
               </button>
@@ -88,7 +88,10 @@ export const BackpackTabs = ({
 
         {/* Mobile: featured card */}
         {tabCategory && (
-          <div className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-lg overflow-hidden bg-[#F8BE57]">
+          <div
+            className="md:hidden flex items-center gap-4 p-3 mb-5 rounded-lg overflow-hidden"
+            style={{ backgroundColor: tabCategory.bgColor || '#F8BE57' }}
+          >
             <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-white/30">
               <LazyImage
                 src={activeTabConfig.image}
@@ -98,7 +101,9 @@ export const BackpackTabs = ({
               />
             </div>
             <div className="text-white font-outfit min-w-0">
-              <p className="font-medium uppercase text-[10px] tracking-[0.24em] text-brass">Featured</p>
+              <p className="font-medium uppercase text-[10px] tracking-[0.24em] text-brass">
+                {tabCategory.title || 'Featured'}
+              </p>
               <p className="font-normal uppercase text-[17px] tracking-[0.06em] leading-tight truncate">
                 {activeTabConfig.label}
               </p>
@@ -127,7 +132,7 @@ export const BackpackTabs = ({
             <div className="px-5 py-4 bg-ink flex items-center justify-between">
               <div>
                 <p className="font-medium uppercase tracking-[0.24em] leading-none text-[10px] text-brass mb-2">
-                  Trendy
+                  {tabCategory?.title || 'Trendy'}
                 </p>
                 <p className="font-normal uppercase tracking-[0.06em] leading-snug text-[15px] lg:text-[16px] text-white max-w-[220px]">
                   {activeTabConfig.label}
