@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { IMG, BANNER_CTA } from '../../constants/home';
+import { BANNER_CTA } from '../../constants/home';
 import type { GenderLink } from '../../constants/home';
 
 interface EditorialBannerProps {
@@ -13,56 +13,45 @@ interface EditorialBannerProps {
 const EDITORIAL_SLIDES = [
   {
     id: 'slide-1',
-    image: IMG.banner,
+    image: '/New Arrival/Artboard 1@2x.png',
     to: '/luggage',
   },
   {
     id: 'slide-2',
-    image: IMG.refPoster,
+    image: '/New Arrival/Artboard 3 copy 5@2x.png',
     to: '/backpacks',
+  },
+  {
+    id: 'slide-3',
+    image: '/New Arrival/Artboard 3 copy 6@2x.png',
+    to: '/travel',
+  },
+  {
+    id: 'slide-4',
+    image: '/New Arrival/Artboard 3 copy 7@2x.png',
+    to: '/college-backpacks',
   },
 ];
 
 /**
- * Editorial banner section with 2 auto-cycling images in original styling.
+ * Editorial banner section with New Arrival graphics and manual slider controls.
  */
 export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, genderStock }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const total = EDITORIAL_SLIDES.length;
 
-  const startAutoPlay = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % total);
-    }, 5000);
-  }, [total]);
-
   const handleNext = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % total);
-    startAutoPlay();
-  }, [total, startAutoPlay]);
+  }, [total]);
 
   const handlePrev = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + total) % total);
-    startAutoPlay();
-  }, [total, startAutoPlay]);
+  }, [total]);
 
-  const handleSelect = useCallback(
-    (index: number) => {
-      setCurrentSlide(index);
-      startAutoPlay();
-    },
-    [startAutoPlay]
-  );
-
-  useEffect(() => {
-    startAutoPlay();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [startAutoPlay]);
+  const handleSelect = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
 
   const activeSlide = EDITORIAL_SLIDES[currentSlide] || EDITORIAL_SLIDES[0];
 

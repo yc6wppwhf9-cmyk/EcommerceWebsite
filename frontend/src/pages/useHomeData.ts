@@ -76,7 +76,7 @@ export function useHomeData(activeTab: string): HomeData {
         const filtered = (res.products as Product[]).filter(
           (p) => p.categories?.slug !== 'junior'
         );
-        setBestSellers(filtered.slice(0, 8));
+        setBestSellers(filtered.slice(0, 12));
       })
       .catch(() => {});
   }, []);
@@ -88,7 +88,7 @@ export function useHomeData(activeTab: string): HomeData {
         const filtered = (res.products as Product[]).filter(
           (p) => p.categories?.slug !== 'junior'
         );
-        setNewArrivals(filtered.slice(0, 8));
+        setNewArrivals(filtered.slice(0, 12));
       })
       .catch(() => {});
   }, []);

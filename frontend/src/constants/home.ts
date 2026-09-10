@@ -104,8 +104,8 @@ export const CATS: CategoryCard[] = [
 // ─── Editorial Banner ────────────────────────────────────────────────────────
 
 export const IMG = {
-  banner: '/Category/Artboard 1 1.png',
-  refPoster: '/Category/ref.png',
+  banner: '/New Arrival/Artboard 1@2x.png',
+  refPoster: '/New Arrival/Artboard 3 copy 5@2x.png',
 };
 
 /** Primary editorial banner CTA — always present, regardless of gender tagging. */

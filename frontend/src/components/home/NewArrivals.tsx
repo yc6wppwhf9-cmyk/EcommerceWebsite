@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -41,43 +41,21 @@ interface NewArrivalsProps {
 
 export const NewArrivals: React.FC<NewArrivalsProps> = ({ products, columns }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const desktopPageSize = columns.best;
   const totalPages = Math.max(1, Math.ceil(products.length / desktopPageSize));
 
-  const startAutoPlay = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (totalPages <= 1) return;
-    timerRef.current = setInterval(() => {
-      setCurrentPage((prev) => (prev + 1) % totalPages);
-    }, 6000);
-  }, [totalPages]);
-
   const handleNext = useCallback(() => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
-    startAutoPlay();
-  }, [totalPages, startAutoPlay]);
+  }, [totalPages]);
 
   const handlePrev = useCallback(() => {
     setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-    startAutoPlay();
-  }, [totalPages, startAutoPlay]);
+  }, [totalPages]);
 
-  const handleSelect = useCallback(
-    (page: number) => {
-      setCurrentPage(page);
-      startAutoPlay();
-    },
-    [startAutoPlay]
-  );
-
-  useEffect(() => {
-    startAutoPlay();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [startAutoPlay]);
+  const handleSelect = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
 
   // Handle window resizing
   useEffect(() => {
