@@ -382,7 +382,7 @@ export const AboutUs: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <img
-                  src="/about/13_priority_logo.png"
+                  src="/about/priority_logo.png"
                   alt="Priority Logo"
                   className="h-10 w-auto object-contain"
                 />
@@ -422,9 +422,9 @@ export const AboutUs: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <img
-                  src="/about/14_traworld_logo.png"
+                  src="/about/traworld_logo.png"
                   alt="Traworld Logo"
-                  className="h-10 w-auto object-contain brightness-0 invert"
+                  className="h-10 w-auto object-contain"
                 />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] bg-white/10 text-[#69d34a] px-3 py-1 rounded-full border border-white/20">
                   Premium Travel
