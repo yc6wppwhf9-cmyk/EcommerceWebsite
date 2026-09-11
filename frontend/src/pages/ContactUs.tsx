@@ -369,31 +369,6 @@ export const ContactUs = () => {
                 </div>
               </div>
 
-              {/* Self-serve links */}
-              <div className="rounded-2xl border border-gray-100 bg-gray-50/70 p-7">
-                <h3 className="font-outfit font-black uppercase tracking-wide text-[14px] text-[#0d1b2a] mb-1">Faster than writing in</h3>
-                <p className="text-[13px] text-gray-400 mb-5">These handle the most common requests instantly.</p>
-                <div className="space-y-2">
-                  {[
-                    { to: '/support-status', icon: Search, title: 'Track a request', copy: 'Check the status of a ticket you already raised' },
-                    { to: '/warranty', icon: ShieldCheck, title: 'Claim warranty', copy: '12-month cover on manufacturing defects' },
-                    { to: '/returns', icon: ArrowRight, title: 'Returns & refunds', copy: 'Eligibility, timelines, and how to start one' },
-                  ].map(({ to, icon: Icon, title, copy }) => (
-                    <Link
-                      key={to}
-                      to={to}
-                      className="group flex items-start gap-4 rounded-xl bg-white border border-transparent p-4 transition-all hover:border-gray-200 hover:shadow-sm"
-                    >
-                      <Icon className="w-5 h-5 text-priority-blue shrink-0 mt-0.5" />
-                      <div className="min-w-0">
-                        <p className="font-outfit font-bold text-[15px] text-[#0d1b2a]">{title}</p>
-                        <p className="text-[13px] text-gray-400 leading-snug">{copy}</p>
-                      </div>
-                      <ArrowUpRight className="w-4 h-4 text-gray-300 shrink-0 ml-auto transition-all group-hover:text-priority-blue group-hover:-translate-y-0.5" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
 
               {/* Hours */}
               <div className="rounded-2xl bg-[#0d1b2a] p-7 text-white">

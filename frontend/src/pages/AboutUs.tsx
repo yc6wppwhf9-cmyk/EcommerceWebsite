@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Building2,
@@ -15,12 +15,26 @@ import {
   ExternalLink,
   X,
   ChevronDown,
+  Layers,
+  Sparkles,
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
 export const AboutUs: React.FC = () => {
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [isNavDropdownOpen, setIsNavDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pdfUrl = '/HSCVPL_Profile_2026.pdf';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsNavDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const stats = [
     { value: '1999', label: 'Established' },
@@ -37,6 +51,52 @@ export const AboutUs: React.FC = () => {
     { strong: '7,000+ workers', span: 'Across the workforce ecosystem' },
     { strong: '50,000+ bags', span: 'Delivered every day' },
     { strong: '18M+ bags', span: 'Annual production capacity' },
+  ];
+
+  const navSections = [
+    { id: 'story', label: 'Our Story' },
+    { id: 'brands', label: 'Brands Portfolio' },
+    { id: 'products', label: 'Products & Scale' },
+    { id: 'manufacturing', label: 'Manufacturing Excellence' },
+    { id: 'impact', label: 'Social Impact' },
+    { id: 'partners', label: 'Brand & Retail Partners' },
+  ];
+
+  const partnerLogos = [
+    { name: 'D-Mart', src: '/about/partners/partner_01.png' },
+    { name: 'Reliance Retail', src: '/about/partners/partner_02.png' },
+    { name: 'Amazon', src: '/about/partners/partner_03.png' },
+    { name: 'V2 Retail', src: '/about/partners/partner_04.png' },
+    { name: 'Flipkart', src: '/about/partners/partner_05.png' },
+    { name: 'Bata', src: '/about/partners/partner_06.png' },
+    { name: 'Myntra', src: '/about/partners/partner_07.png' },
+    { name: 'Ajio', src: '/about/partners/partner_08.png' },
+    { name: 'MR D.I.Y', src: '/about/partners/partner_09.png' },
+    { name: 'Slikk', src: '/about/partners/partner_10.png' },
+    { name: 'BigBasket', src: '/about/partners/partner_11.png' },
+    { name: 'Lifestyle', src: '/about/partners/partner_12.png' },
+    { name: 'Baazar Kolkata', src: '/about/partners/partner_13.png' },
+    { name: 'Blinkit', src: '/about/partners/partner_14.png' },
+    { name: 'Tata CLiQ', src: '/about/partners/partner_15.png' },
+    { name: 'Lee Cooper', src: '/about/partners/partner_16.png' },
+    { name: 'FirstCry', src: '/about/partners/partner_17.png' },
+    { name: 'Faber-Castell', src: '/about/partners/partner_18.png' },
+    { name: 'Yousta', src: '/about/partners/partner_19.png' },
+    { name: 'Carrefour', src: '/about/partners/partner_20.png' },
+    { name: 'Bioworld International', src: '/about/partners/partner_21.png' },
+    { name: 'Champion', src: '/about/partners/partner_22.png' },
+    { name: 'LimeRoad', src: '/about/partners/partner_23.png' },
+    { name: 'Giordano', src: '/about/partners/partner_24.png' },
+    { name: 'Provogue', src: '/about/partners/partner_25.png' },
+    { name: "Siyaram's", src: '/about/partners/partner_26.png' },
+    { name: 'Citykart', src: '/about/partners/partner_27.png' },
+    { name: 'Scoobee Day', src: '/about/partners/partner_28.png' },
+    { name: 'Babyhug', src: '/about/partners/partner_29.png' },
+    { name: 'Saravana Stores', src: '/about/partners/partner_30.png' },
+    { name: 'Metro Retail', src: '/about/partners/partner_31.png' },
+    { name: 'Umbro', src: '/about/partners/partner_32.png' },
+    { name: 'Play Nation', src: '/about/partners/partner_33.png' },
+    { name: 'Vishal Mega Mart', src: '/about/partners/partner_34.png' },
   ];
 
   const scrollToSection = (id: string) => {
@@ -68,50 +128,52 @@ export const AboutUs: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-5 text-xs font-semibold uppercase tracking-wider text-[#667174]">
-            <button
-              onClick={() => scrollToSection('story')}
-              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden md:inline-block"
-            >
-              Our Story
-            </button>
-            <button
-              onClick={() => scrollToSection('brands')}
-              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden sm:inline-block"
-            >
-              Brands
-            </button>
-            <button
-              onClick={() => scrollToSection('products')}
-              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden sm:inline-block"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollToSection('manufacturing')}
-              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden md:inline-block"
-            >
-              Manufacturing
-            </button>
-            <button
-              onClick={() => scrollToSection('impact')}
-              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden lg:inline-block"
-            >
-              Impact
-            </button>
-            <button
-              onClick={() => scrollToSection('partners')}
-              className="hover:text-[#0aa6b5] transition-colors py-1 cursor-pointer hidden md:inline-block"
-            >
-              Partners
-            </button>
+          <div className="flex items-center gap-2 sm:gap-3 text-xs font-semibold">
+            {/* Sections Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsNavDropdownOpen(!isNavDropdownOpen)}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50/90 hover:bg-white text-[#172022] hover:text-[#0aa6b5] hover:border-[#0aa6b5]/50 transition-all text-xs font-bold uppercase tracking-wider cursor-pointer shadow-2xs"
+                aria-expanded={isNavDropdownOpen}
+              >
+                <span>Jump to Section</span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 text-[#0aa6b5] ${
+                    isNavDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {isNavDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-[#dfe6e4] py-1.5 z-40">
+                  <div className="px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-widest text-gray-400 border-b border-gray-100 mb-1">
+                    About HSCVPL
+                  </div>
+                  {navSections.map((section) => (
+                    <button
+                      key={section.id}
+                      onClick={() => {
+                        scrollToSection(section.id);
+                        setIsNavDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-[#edf4f1] hover:text-[#0aa6b5] flex items-center justify-between transition-colors cursor-pointer"
+                    >
+                      <span>{section.label}</span>
+                      <ArrowRight size={12} className="text-gray-300 opacity-60" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <button
               onClick={() => setShowPdfModal(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#0aa6b5] text-[#0aa6b5] hover:bg-[#0aa6b5] hover:text-white transition-all text-[11px] font-bold cursor-pointer"
             >
               <FileText size={13} />
-              <span>PDF Profile</span>
+              <span className="hidden sm:inline">PDF Profile</span>
+              <span className="sm:hidden">PDF</span>
             </button>
 
             <button
@@ -134,20 +196,17 @@ export const AboutUs: React.FC = () => {
           }}
         />
 
-        {/* Diagonal Teal-Green Accent Polygon */}
-        <div
-          className="absolute -left-[6%] -bottom-[16%] w-[75%] md:w-[62%] h-[75%] opacity-75 pointer-events-none"
-          style={{
-            background: 'linear-gradient(120deg, rgba(0,166,181,0.88), rgba(105,211,74,0.78))',
-            clipPath: 'polygon(0 12%, 100% 0, 83% 100%, 0 100%)',
-          }}
-        />
-
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-28 text-white">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#69d34a] text-xs font-bold uppercase tracking-[0.22em] mb-6">
-              <Building2 size={14} />
-              High Spirit Commercial Ventures Pvt. Ltd.
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-[0.16em] mb-6">
+              <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden shrink-0 shadow-xs">
+                <img
+                  src="/about/highspirit_logo.png"
+                  alt="High Spirit Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span className="text-white font-semibold">High Spirit Commercial Ventures Pvt. Ltd.</span>
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-[-0.05em] leading-[0.92] mb-7">
@@ -669,68 +728,52 @@ export const AboutUs: React.FC = () => {
       </section>
 
       {/* ─── Partnership Philosophy ───────────────────────────────────────── */}
-      <section id="partners" className="py-20 md:py-28 max-w-7xl mx-auto px-4 md:px-8 scroll-mt-14">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
-            Partnership Philosophy
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-tight mb-4">
-            Built on trust. Driven by growth.
-          </h2>
-          <p className="text-base text-[#667174] leading-relaxed">
-            We collaborate with partners who share our commitment to quality, reliability and long-term value creation. Whether working with distributors, corporate clients, government organizations or retail partners, we believe in relationships where value flows both ways.
-          </p>
+      <section id="partners" className="py-20 md:py-28 bg-[#fbfdfc] border-y border-[#dfe6e4] scroll-mt-14 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12">
+          <div className="text-center max-w-3xl mx-auto">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#0aa6b5] block mb-3">
+              Partnership Philosophy
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-[-0.04em] text-[#172022] leading-tight mb-4">
+              Built on trust. Driven by growth.
+            </h2>
+            <p className="text-base text-[#667174] leading-relaxed">
+              We collaborate with leading retail, e-commerce, and corporate partners across India and globally who share our commitment to quality, reliability, and long-term value creation.
+            </p>
+          </div>
         </div>
 
-        {/* Partner Logos Frame */}
-        <div className="bg-white border border-[#dfe6e4] rounded-2xl p-6 sm:p-10 shadow-lg max-w-5xl mx-auto">
-          <img
-            src="/about/partner_logos.png"
-            alt="HSCVPL Brand & Retail Partners: Amazon, Flipkart, Myntra, Ajio, Reliance, D-Mart, Blinkit, Bata, FirstCry and more"
-            className="w-full h-auto object-contain"
-          />
-          <p className="text-xs text-[#667174] text-center mt-6 pt-4 border-t border-[#dfe6e4]">
+        {/* Single-Line Moving Partner Logos Infinite Marquee */}
+        <div className="relative w-full py-4 overflow-hidden">
+          {/* Left & Right Edge Gradient Fade Masks */}
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 md:w-40 bg-gradient-to-r from-[#fbfdfc] to-transparent z-10" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 md:w-40 bg-gradient-to-l from-[#fbfdfc] to-transparent z-10" />
+
+          <div className="animate-marquee-infinite flex items-center gap-5 md:gap-7">
+            {[...partnerLogos, ...partnerLogos].map((partner, index) => (
+              <div
+                key={`${partner.name}-${index}`}
+                className="h-16 w-36 sm:h-20 sm:w-48 bg-white rounded-xl sm:rounded-2xl border border-gray-200/80 shadow-2xs hover:shadow-md hover:border-[#0aa6b5]/50 flex items-center justify-center p-3 shrink-0 transition-all duration-300 group cursor-pointer"
+                title={partner.name}
+              >
+                <img
+                  src={partner.src}
+                  alt={partner.name}
+                  className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-6">
+          <p className="text-xs text-[#667174] text-center">
             Selected partner and retail logos reproduced from the official HSCVPL corporate profile.
           </p>
         </div>
       </section>
 
-      {/* ─── Corporate PDF & Gifting Showcase ─────────────────────────────── */}
-      <section className="py-14 bg-[#f4f7f6] border-y border-[#dfe6e4]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="bg-white border border-[#dfe6e4] p-6 sm:p-8 rounded-2xl flex flex-col lg:flex-row items-center justify-between gap-6 shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100 shadow-xs">
-                <FileText size={28} />
-              </div>
-              <div>
-                <h4 className="text-base sm:text-lg font-black uppercase tracking-tight text-[#172022]">
-                  HSCVPL Official Company Profile (2026)
-                </h4>
-                <p className="text-xs sm:text-sm text-[#667174] mt-0.5">
-                  Comprehensive document covering infrastructure, CSR, leadership, and partner networks.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 w-full lg:w-auto">
-              <button
-                onClick={() => setShowPdfModal(true)}
-                className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#101617] hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-              >
-                <ExternalLink size={14} /> Preview PDF
-              </button>
-              <a
-                href={pdfUrl}
-                download="HSCVPL_Profile_2026.pdf"
-                className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0aa6b5] hover:bg-[#0895a3] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
-              >
-                <Download size={14} /> Download PDF
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ─── Final CTA Section ────────────────────────────────────────────── */}
       <section
