@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { IMG, BANNER_CTA } from '../../constants/home';
 import type { GenderLink } from '../../constants/home';
@@ -38,16 +38,6 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
       setCurrentSlide((prev) => (prev + 1) % total);
     }, 5000);
   }, [total]);
-
-  const handleNext = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % total);
-    startAutoPlay();
-  }, [total, startAutoPlay]);
-
-  const handlePrev = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + total) % total);
-    startAutoPlay();
-  }, [total, startAutoPlay]);
 
   const handleSelect = useCallback(
     (index: number) => {
@@ -179,24 +169,6 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
                 {BANNER_CTA.label}
                 <ArrowRight size={15} />
               </Link>
-
-              {/* Navigation Arrows */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handlePrev}
-                  aria-label="Previous slide"
-                  className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-ink transition-colors cursor-pointer text-white"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  onClick={handleNext}
-                  aria-label="Next slide"
-                  className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-ink transition-colors cursor-pointer text-white"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
             </div>
 
             {/* Slide Dots (2 slides) */}
