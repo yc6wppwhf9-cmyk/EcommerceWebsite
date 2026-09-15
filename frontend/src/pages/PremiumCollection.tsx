@@ -142,7 +142,7 @@ const seriesHighlights = [
 const DEFAULT_EDITORIAL = { category: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' };
 
 const SHOWCASE_LUGGAGE_SKUS = ['TRW-40709525', 'TRW-40709520', 'TRW-40709536', 'TRW-40709552'];
-const SHOWCASE_DUFFLE_SKUS = ['INV29597', 'INV29598', 'INV29596', 'INV33910'];
+const SHOWCASE_DUFFLE_SKUS = ['INV29561', 'INV29562', 'INV29563'];
 
 export const PremiumCollection = () => {
   const navigate = useNavigate();
@@ -157,28 +157,43 @@ export const PremiumCollection = () => {
     window.scrollTo(0, 0);
     sessionStorage.setItem('siteTheme', 'premium');
     Promise.all([
-      api.getProducts({ isPremium: 'true', limit: '50' }).catch(() => ({ products: [] })),
-      api.getProducts({ category: 'duffle', limit: '20' }).catch(() => ({ products: [] })),
+      api.getProducts({ isPremium: 'true', limit: '100' }).catch(() => ({ products: [] })),
       api.getSetting('premium_editorial_banner').catch(() => null),
-    ]).then(([premRes, duffleRes, bannerRes]) => {
+      api.getProducts({ search: 'Cult', limit: '10' }).catch(() => ({ products: [] })),
+    ]).then(([premRes, bannerRes, cultRes]) => {
       const prem = (premRes.products as Product[]) || [];
-      const duffles = (duffleRes.products as Product[]) || [];
+      const cults = (cultRes.products as Product[]) || [];
 
-      // Row 1: Luggage — Exact 4-color geometric series (Black, Mint Green, Blue, Tan)
+      // Row 1: Luggage — Exact 4-color geometric series (Black, Mint Green, Blue, Tan) from premium collection
+      const allLuggage = prem.filter(p => (p.category || '').toLowerCase().includes('luggage') || (p as any).sub_category?.includes('trolley'));
       const curatedLuggage = SHOWCASE_LUGGAGE_SKUS
-        .map(sku => prem.find(p => p.sku === sku || p.id === sku || (p as any).sku?.endsWith(sku.replace('TRW-', ''))))
+        .map(sku => allLuggage.find(p => p.sku === sku || p.id === sku || (p as any).sku?.endsWith(sku.replace('TRW-', ''))))
         .filter(Boolean) as Product[];
 
-      const remainingLuggage = prem.filter(p => !curatedLuggage.some(c => c.id === p.id));
+      const remainingLuggage = allLuggage.filter(p => !curatedLuggage.some(c => c.id === p.id));
       setLuggageProducts([...curatedLuggage, ...remainingLuggage].slice(0, 4));
 
-      // Row 2: Duffle — Curated premium leather & suede duffle series
-      const curatedDuffles = SHOWCASE_DUFFLE_SKUS
-        .map(sku => duffles.find(p => p.sku === sku || p.id === sku))
-        .filter(Boolean) as Product[];
+      // Row 2: Duffle — ONLY Cult series marked under premium
+      const allDufflesAndCults = [...prem, ...cults];
+      const premDuffles = allDufflesAndCults.filter(p => 
+        (p.name || '').toLowerCase().includes('cult') ||
+        ((p.category || '').toLowerCase().includes('duffle') && p.is_premium) ||
+        ((p as any).sub_category?.includes('duffle') && p.is_premium)
+      );
 
-      const remainingDuffles = duffles.filter(p => !curatedDuffles.some(c => c.id === p.id));
-      setDuffleProducts([...curatedDuffles, ...remainingDuffles].slice(0, 4));
+      const curatedDuffles = SHOWCASE_DUFFLE_SKUS
+        .map(sku => premDuffles.find(p => p.sku === sku || p.id === sku))
+        .filter(Boolean) as Product[];
+      
+      const uniqueDuffles = [...curatedDuffles, ...premDuffles].filter((item, index, self) => 
+        index === self.findIndex(t => t.id === item.id || t.sku === item.sku)
+      );
+
+      const finalCultDuffles = uniqueDuffles.filter(p => 
+        (p.name || '').toLowerCase().includes('cult') || SHOWCASE_DUFFLE_SKUS.includes(p.sku || '')
+      );
+
+      setDuffleProducts(finalCultDuffles.length > 0 ? finalCultDuffles.slice(0, 4) : uniqueDuffles.slice(0, 4));
 
       if (bannerRes?.category) setEditorialBanner(bannerRes);
       setIsLoading(false);
@@ -274,83 +289,49 @@ export const PremiumCollection = () => {
         </section>
       </div>
 
-      {/* 3. SHOWCASE SECTIONS: TWO ROWS (LUGGAGE & DUFFLE) */}
+      {/* 3. SHOWCASE SECTIONS: TWO CLEAN ROWS WITHOUT TEXT HEADERS */}
       <section ref={gridRef} className="bg-white text-black py-12 md:py-20 scroll-mt-16">
-        <div className="container mx-auto px-4 md:px-12 max-w-[1400px] space-y-16 md:space-y-24">
+        <div className="container mx-auto px-4 md:px-12 max-w-[1400px] space-y-12 md:space-y-16">
           
           {/* ROW 1: LUGGAGE */}
-          <div>
-            <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-black/10 pb-4">
-              <h2 className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.5em] text-[15px] md:text-[18px] text-[#111111]">
-                Luggage
-              </h2>
-              <Link
-                to="/luggage?theme=premium"
-                className="text-[11px] md:text-[12px] font-semibold tracking-[0.2em] uppercase text-[#111111] hover:text-red-600 transition-colors"
-              >
-                View All →
-              </Link>
+          {isLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+              {[1, 2, 3, 4].map(n => (
+                <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse rounded-sm" />
+              ))}
             </div>
-
-            {isLoading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                {[1, 2, 3, 4].map(n => (
-                  <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse rounded-sm" />
-                ))}
-              </div>
-            ) : luggageProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
-                {luggageProducts.map((product, pIdx) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: pIdx * 0.08 }}
-                  >
-                    <ProductCard product={product} theme="premium" />
-                  </motion.div>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          {/* ROW 2: DUFFLE */}
-          <div>
-            <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-black/10 pb-4">
-              <h2 className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.5em] text-[15px] md:text-[18px] text-[#111111]">
-                Duffle
-              </h2>
-              <Link
-                to="/duffle?theme=premium"
-                className="text-[11px] md:text-[12px] font-semibold tracking-[0.2em] uppercase text-[#111111] hover:text-red-600 transition-colors"
-              >
-                View All →
-              </Link>
+          ) : luggageProducts.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
+              {luggageProducts.map((product, pIdx) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: pIdx * 0.08 }}
+                >
+                  <ProductCard product={product} theme="premium" />
+                </motion.div>
+              ))}
             </div>
+          ) : null}
 
-            {isLoading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                {[1, 2, 3, 4].map(n => (
-                  <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse rounded-sm" />
-                ))}
-              </div>
-            ) : duffleProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
-                {duffleProducts.map((product, pIdx) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: pIdx * 0.08 }}
-                  >
-                    <ProductCard product={product} theme="premium" />
-                  </motion.div>
-                ))}
-              </div>
-            ) : null}
-          </div>
+          {/* ROW 2: DUFFLE (Strictly Premium) */}
+          {duffleProducts.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
+              {duffleProducts.map((product, pIdx) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: pIdx * 0.08 }}
+                >
+                  <ProductCard product={product} theme="premium" />
+                </motion.div>
+              ))}
+            </div>
+          )}
 
         </div>
       </section>

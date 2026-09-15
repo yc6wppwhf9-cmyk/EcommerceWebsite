@@ -167,7 +167,7 @@ ON CONFLICT (slug) DO UPDATE SET
 
 -- ─── 2. Products Upsert (191 Distinct Multi-Angle Products) ───────────────────────────
 
-INSERT INTO products (
+ (
   id, sku, slug, name, description, price, original_price, category_id,
   image, images, colors, features, specifications, rating, review_count,
   stock, is_new, is_highlighted, is_premium, gender, sub_category, myntra_url, is_active
@@ -5507,7 +5507,7 @@ INSERT INTO products (
   'Priority Textured Large Duffel Bag',
   449,
   449,
-  (SELECT id FROM categories WHERE slug = 'college-backpacks' LIMIT 1),
+  (SELECT id FROM categories WHERE slug = 'duffle' LIMIT 1),
   '/products/INV29562/INV29562 - 01 - Front View.jpg',
   '["/products/INV29562/INV29562 - 01 - Front View.jpg", "/products/INV29562/INV29562 - 02 - Side View.jpg", "/products/INV29562/INV29562 - 03 - Back & Straps.jpg", "/products/INV29562/INV29562 - 04 - Main Compartment.jpg", "/products/INV29562/INV29562 - 05 - Detail & Pockets.jpg", "/products/INV29562/INV29562 - 06 - Zippers & Hardware.jpg", "/products/INV29562/INV29562 - 07 - Bottom Base.jpg"]'::jsonb,
   '[{"name": "Cult", "code": "#111111", "images": ["/products/INV29562/INV29562 - 01 - Front View.jpg", "/products/INV29562/INV29562 - 02 - Side View.jpg", "/products/INV29562/INV29562 - 03 - Back & Straps.jpg", "/products/INV29562/INV29562 - 04 - Main Compartment.jpg", "/products/INV29562/INV29562 - 05 - Detail & Pockets.jpg", "/products/INV29562/INV29562 - 06 - Zippers & Hardware.jpg", "/products/INV29562/INV29562 - 07 - Bottom Base.jpg"]}]'::jsonb,
@@ -5518,9 +5518,9 @@ INSERT INTO products (
   50,
   false,
   false,
-  false,
+  true,
   'unisex',
-  'college-backpacks',
+  'duffle',
   'https://www.myntra.com/38073645',
   true
 )
@@ -5555,7 +5555,7 @@ INSERT INTO products (
   'Priority Textured Large Duffel Bag',
   449,
   449,
-  (SELECT id FROM categories WHERE slug = 'college-backpacks' LIMIT 1),
+  (SELECT id FROM categories WHERE slug = 'duffle' LIMIT 1),
   '/products/INV29561/INV29561 - 01 - Front View.jpg',
   '["/products/INV29561/INV29561 - 01 - Front View.jpg", "/products/INV29561/INV29561 - 02 - Side View.jpg", "/products/INV29561/INV29561 - 03 - Back & Straps.jpg", "/products/INV29561/INV29561 - 04 - Main Compartment.jpg", "/products/INV29561/INV29561 - 05 - Detail & Pockets.jpg", "/products/INV29561/INV29561 - 06 - Zippers & Hardware.jpg", "/products/INV29561/INV29561 - 07 - Bottom Base.jpg"]'::jsonb,
   '[{"name": "Cult", "code": "#111111", "images": ["/products/INV29561/INV29561 - 01 - Front View.jpg", "/products/INV29561/INV29561 - 02 - Side View.jpg", "/products/INV29561/INV29561 - 03 - Back & Straps.jpg", "/products/INV29561/INV29561 - 04 - Main Compartment.jpg", "/products/INV29561/INV29561 - 05 - Detail & Pockets.jpg", "/products/INV29561/INV29561 - 06 - Zippers & Hardware.jpg", "/products/INV29561/INV29561 - 07 - Bottom Base.jpg"]}]'::jsonb,
@@ -5566,9 +5566,9 @@ INSERT INTO products (
   50,
   false,
   false,
-  false,
+  true,
   'unisex',
-  'college-backpacks',
+  'duffle',
   'https://www.myntra.com/38073644',
   true
 )
@@ -5603,7 +5603,7 @@ INSERT INTO products (
   'Priority Textured Large Duffel Bag',
   449,
   449,
-  (SELECT id FROM categories WHERE slug = 'college-backpacks' LIMIT 1),
+  (SELECT id FROM categories WHERE slug = 'duffle' LIMIT 1),
   '/products/INV29563/INV29563 - 01 - Front View.jpg',
   '["/products/INV29563/INV29563 - 01 - Front View.jpg", "/products/INV29563/INV29563 - 02 - Side View.jpg", "/products/INV29563/INV29563 - 03 - Back & Straps.jpg", "/products/INV29563/INV29563 - 04 - Main Compartment.jpg", "/products/INV29563/INV29563 - 05 - Detail & Pockets.jpg", "/products/INV29563/INV29563 - 06 - Zippers & Hardware.jpg", "/products/INV29563/INV29563 - 07 - Bottom Base.jpg"]'::jsonb,
   '[{"name": "Cult", "code": "#111111", "images": ["/products/INV29563/INV29563 - 01 - Front View.jpg", "/products/INV29563/INV29563 - 02 - Side View.jpg", "/products/INV29563/INV29563 - 03 - Back & Straps.jpg", "/products/INV29563/INV29563 - 04 - Main Compartment.jpg", "/products/INV29563/INV29563 - 05 - Detail & Pockets.jpg", "/products/INV29563/INV29563 - 06 - Zippers & Hardware.jpg", "/products/INV29563/INV29563 - 07 - Bottom Base.jpg"]}]'::jsonb,
@@ -5614,9 +5614,9 @@ INSERT INTO products (
   50,
   false,
   false,
-  false,
+  true,
   'unisex',
-  'college-backpacks',
+  'duffle',
   'https://www.myntra.com/38073643',
   true
 )
