@@ -130,76 +130,78 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleTap}
-      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-3xl overflow-hidden shadow-lg md:shadow-none cursor-pointer"
+      className="flex h-full flex-col font-outfit junior-glass-card magnetic-shadow rounded-3xl overflow-hidden shadow-lg md:shadow-none cursor-pointer bg-white"
     >
-      {/* Image container with blue border */}
+      {/* Image container with fixed 1:1 aspect ratio and contained image */}
       <Link
         to={`/product/${product.slug || product.id}?theme=junior`}
-        className="relative block bg-white shrink-0"
-        style={{ aspectRatio: '300 / 307' }}
+        className="relative block w-full aspect-square bg-white shrink-0 overflow-hidden"
       >
-        <div className="w-full h-full flex items-center justify-center p-1.5 md:p-4">
+        <div className="absolute inset-0 flex items-center justify-center p-3 md:p-5">
           <img
             src={displayImage}
             alt={product.name}
-            className="w-full h-full object-contain transition-all duration-500"
+            className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
             loading="lazy"
             decoding="async"
             crossOrigin="anonymous"
           />
         </div>
         {product.isNew && (
-          <span className="absolute top-2 right-2 bg-[#8750DA] text-white text-[8px] md:text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">
+          <span className="absolute top-2 right-2 bg-[#8750DA] text-white text-[8px] md:text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full z-10">
             NEW
           </span>
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col p-3 md:p-4 pt-2 md:pt-3">
-        <Link to={`/product/${product.slug || product.id}?theme=junior`}>
-          <h3 className="min-h-[40px] text-[13px] md:text-[15px] font-black text-[#030014] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors">
-            {product.name}
-          </h3>
-        </Link>
+      <div className="flex flex-1 flex-col justify-between p-3.5 md:p-4 pt-2">
+        <div className="flex flex-col">
+          <Link to={`/product/${product.slug || product.id}?theme=junior`}>
+            <h3 className="h-11 md:h-12 text-[13px] md:text-[14px] font-black text-[#030014] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors flex items-start">
+              {product.name}
+            </h3>
+          </Link>
 
-        {/* Stars using Star 1.png — only shown when real review data exists */}
-        {(product as any).reviews > 0 && (
-          <div className="flex items-center gap-1.5 mt-2">
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />
-              ))}
+          {/* Stars using Star 1.png — only shown when real review data exists */}
+          {(product as any).reviews > 0 && (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <img key={i} src="/junior/Star 1.png" alt="★" className="h-3.5 w-3.5" />
+                ))}
+              </div>
+              <span className="text-[11px] text-gray-400 font-medium">
+                {(product as any).reviews} reviews
+              </span>
             </div>
-            <span className="text-[11px] text-gray-400 font-medium">
-              {(product as any).reviews} reviews
-            </span>
-          </div>
-        )}
-
+          )}
+        </div>
 
         {/* Buy on Amazon / Flipkart / Myntra / Ajio */}
-        {marketplaceLinks.length > 0 ? (
-          <div className="mt-auto flex flex-col gap-1.5 w-full">
-            {marketplaceLinks.map((link) => (
-              <MarketplaceLink
-                key={link.marketplace}
-                marketplace={link.marketplace}
-                url={link.url}
-                productId={product.id}
-                className="flex items-center justify-center w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
-              >
-                {link.label}
-              </MarketplaceLink>
-            ))}
-          </div>
-        ) : (
-          <button
-            disabled
-            className="mt-auto w-full h-10 md:h-11 bg-gray-100 text-gray-400 text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] rounded-md cursor-not-allowed"
-          >
-            Coming Soon
-          </button>
-        )}
+        <div className="mt-3 w-full">
+          {marketplaceLinks.length > 0 ? (
+            <div className="flex flex-col gap-1.5 w-full">
+              {marketplaceLinks.map((link) => (
+                <MarketplaceLink
+                  key={link.marketplace}
+                  marketplace={link.marketplace}
+                  url={link.url}
+                  productId={product.id}
+                  className="flex items-center justify-center w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
+                >
+                  {link.label}
+                </MarketplaceLink>
+              ))}
+            </div>
+          ) : (
+            <button
+              disabled
+              className="w-full h-10 md:h-11 bg-gray-100 text-gray-400 text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] rounded-md cursor-not-allowed"
+            >
+              Coming Soon
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -580,16 +582,16 @@ export const JuniorPage = () => {
                   </>
                 ) : products.length > 0 ? (
                   <>
-                    <div className="md:hidden grid grid-cols-2 gap-3 pb-8 px-4">
+                    <div className="md:hidden grid grid-cols-2 gap-3 pb-8 px-4 items-stretch">
                       {products.slice(0, 8).map((product, idx) => (
-                        <motion.div key={product.id} className="min-w-0" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
+                        <motion.div key={product.id} className="min-w-0 h-full flex flex-col" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}
                     </div>
-                    <div className="hidden md:grid grid-cols-3 gap-6">
+                    <div className="hidden md:grid grid-cols-3 gap-6 items-stretch">
                       {products.slice(tabPage * 3, tabPage * 3 + 3).map((product, idx) => (
-                        <motion.div key={product.id} className="min-w-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
+                        <motion.div key={product.id} className="min-w-0 h-full flex flex-col" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
                           <JuniorProductCard product={product} />
                         </motion.div>
                       ))}

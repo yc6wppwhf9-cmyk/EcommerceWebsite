@@ -1044,10 +1044,24 @@ export const AdminDashboard = () => {
                                       {(p as any).is_active === false ? <EyeOff size={11} /> : <Eye size={11} />}
                                       {(p as any).is_active === false ? 'Show' : 'Live'}
                                     </button>
-                                    <button onClick={() => { if (window.confirm('Delete this product?')) api.deleteProduct(p.id).then(() => { fetchData(); showToast('Product deleted'); }).catch(() => showToast('Delete failed', 'error')); }} className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1 ml-auto">
-                                      <Trash2 size={11} /> Delete
-                                    </button>
-                                  </div>
+                                     <button
+                                       onClick={async () => {
+                                         if (window.confirm(`Delete "${p.name || 'this product'}"?`)) {
+                                           try {
+                                             const res = await api.deleteProduct(p.id);
+                                             setProducts(prev => prev.filter(prod => prod.id !== p.id));
+                                             showToast(res.message || 'Product deleted');
+                                             fetchData();
+                                           } catch (err: any) {
+                                             showToast(err.message || 'Failed to delete product', 'error');
+                                           }
+                                         }
+                                       }}
+                                       className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1 ml-auto"
+                                     >
+                                       <Trash2 size={11} /> Delete
+                                     </button>
+                                   </div>
                                 </div>
                               </div>
                           ))}

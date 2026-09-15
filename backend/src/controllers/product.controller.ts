@@ -401,14 +401,42 @@ export const bulkUpload = async (req: MulterRequest, res: Response) => {
 
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const { error } = await supabase
+    const { id } = req.params;
+
+    // 1. Check if product is referenced in order_items
+    const { data: orderItem } = await supabase
+      .from('order_items')
+      .select('id')
+      .eq('product_id', id)
+      .limit(1)
+      .maybeSingle();
+
+    if (orderItem) {
+      // Product has order history: archive it (soft-delete) to preserve sales records and FK constraints
+      const { error: updateErr } = await supabase
+        .from('products')
+        .update({ is_active: false, stock: 0 })
+        .eq('id', id);
+
+      if (updateErr) throw updateErr;
+      return res.json({ message: 'Product archived (has order history)' });
+    }
+
+    // 2. Clean up any related child records before hard deleting
+    await supabase.from('wishlists').delete().eq('product_id', id);
+    await supabase.from('cart_items').delete().eq('product_id', id);
+    await supabase.from('reviews').delete().eq('product_id', id);
+
+    // 3. Delete the product
+    const { error: delErr } = await supabase
       .from('products')
       .delete()
-      .eq('id', req.params.id);
+      .eq('id', id);
 
-    if (error) throw error;
+    if (delErr) throw delErr;
     res.json({ message: 'Product deleted successfully' });
   } catch (err: any) {
+    console.error('❌ Delete Product Error:', err);
     res.status(500).json({ error: 'Failed to delete product', message: err.message });
   }
 };

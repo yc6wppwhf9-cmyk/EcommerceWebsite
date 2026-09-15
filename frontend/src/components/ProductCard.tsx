@@ -117,19 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
       {/* Info */}
       <div className="pt-3 space-y-1">
-        {/* Color swatches */}
-        {product.variants && product.variants.length > 0 && (
-          <div className="flex gap-2">
-            {product.variants.map((variant, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveVariantIndex(idx)}
-                className={`w-6 h-6 rounded-full border-2 transition-all ${activeVariantIndex === idx ? (quiet ? 'border-ink' : 'border-priority-blue scale-110') : (quiet ? 'border-line' : 'border-gray-200')}`}
-                style={{ backgroundColor: variant.colorCode || variant.color }}
-              />
-            ))}
-          </div>
-        )}
+
 
         {/* Name — fixed 2-line height so the buy button aligns across cards */}
         <Link to={productPath(product.slug || product.id)}>

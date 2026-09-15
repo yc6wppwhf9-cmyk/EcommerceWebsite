@@ -243,10 +243,12 @@ export const ProductDetail = () => {
     );
   }
 
-  const activeVariant = product.variants?.[selectedVariantIndex];
-  const variantImages = (activeVariant?.images || []).filter(Boolean);
-  const rawDisplayImages = variantImages.length > 0 ? variantImages : product.images;
-  const displayImages: string[] = rawDisplayImages?.length > 0 ? rawDisplayImages : product.image ? [product.image] : [];
+  const displayImages: string[] =
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images.filter(Boolean)
+      : product.image
+      ? [product.image]
+      : [];
   const inStock = product.stock > 0;
   const discount = product.originalPrice > product.price
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -420,25 +422,7 @@ export const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Color / Variant Selector */}
-            {product.variants && product.variants.length > 0 && (
-              <div className="space-y-3">
-                <span className="font-outfit font-normal text-[13px] text-slate uppercase tracking-[0.18em]">
-                  COLOR : <span className="font-semibold">{activeVariant?.color}</span>
-                </span>
-                <div className="flex flex-wrap gap-3">
-                  {product.variants.map((variant: any, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => { setSelectedVariantIndex(idx); setSelectedImage(0); }}
-                      className={`w-10 h-10 rounded-full border-2 transition-all p-0.5 flex items-center justify-center ${selectedVariantIndex === idx ? 'border-ink' : 'border-line hover:border-slate'}`}
-                    >
-                      <div className="w-full h-full rounded-full" style={{ backgroundColor: variant.colorCode }} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             {/* Actions */}
             <div className="space-y-3 pt-2">
