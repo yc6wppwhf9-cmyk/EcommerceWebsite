@@ -514,31 +514,29 @@ export const JuniorPage = () => {
 
 
           <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
-            {/* Left Banner — 3D Parallax Effect without restrictive inner borders */}
+            {/* Left Banner Card — Clean borderless framing */}
             <motion.div 
-              style={{ perspective: "1000px" }}
               className="hidden lg:block h-[500px] shrink-0"
             >
               <motion.div
-                whileHover={{ rotateY: 6, rotateX: -6, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 150, damping: 20 }}
-                className="h-full relative shrink-0 flex flex-col overflow-hidden rounded-3xl bg-[#FAC05C] shadow-2xl group cursor-pointer"
-                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ y: -6, scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                className="h-full relative shrink-0 flex flex-col overflow-hidden rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all group cursor-pointer border border-gray-100"
               >
                 <Link to={activeCategoryHref} className="absolute inset-0 z-20" />
-                <div className="flex-1 w-full overflow-hidden relative" style={{ transform: "translateZ(30px)" }}>
+                <div className="flex-1 w-full overflow-hidden relative bg-gray-50 flex items-center justify-center">
                   <img
                     src={activeCategory.image}
                     alt={activeTab}
-                    className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-105"
                     crossOrigin="anonymous"
                   />
                 </div>
-                <div className="mt-auto flex min-h-[84px] items-center justify-between gap-4 bg-[#F69245] px-7 py-4" style={{ transform: "translateZ(50px)" }}>
-                  <h3 className="font-protest text-white leading-none drop-shadow-lg" style={{ fontSize: 'clamp(22px, 2.2vw, 30px)' }}>
+                <div className="mt-auto flex min-h-[84px] items-center justify-between gap-4 bg-[#F69245] px-7 py-4 border-t-0">
+                  <h3 className="font-protest text-white leading-none drop-shadow-sm" style={{ fontSize: 'clamp(22px, 2.2vw, 30px)' }}>
                     {activeTab}
                   </h3>
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-2xl transition-transform group-hover:translate-x-2">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-md transition-transform group-hover:translate-x-2">
                     <ArrowRight size={20} />
                   </span>
                 </div>
