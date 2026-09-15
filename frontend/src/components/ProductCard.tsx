@@ -6,6 +6,7 @@ import { Star, Heart } from 'lucide-react';
 import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
 import { MarketplaceLink, type Marketplace } from './MarketplaceLink';
+import { getProductPrimaryImage, getProductSecondaryImage, getProductFallback } from '../utils/productImages';
 
 interface ProductCardProps {
   product?: Product;
@@ -31,12 +32,13 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   if (!product) return null;
 
   const activeVariant = product.variants?.[activeVariantIndex];
-  const primaryImage = activeVariant ? activeVariant.images[0] : product.image;
-  const secondaryImage = activeVariant ? activeVariant.images[1] : product.images?.[1];
+  const primaryImage = activeVariant ? activeVariant.images[0] : getProductPrimaryImage(product);
+  const secondaryImage = activeVariant ? activeVariant.images[1] : getProductSecondaryImage(product);
   
   // Only show secondary image on hover for non-touch devices
   const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   const displayImage = !isTouchDevice && isHovered && secondaryImage ? secondaryImage : primaryImage;
+  const fallbackSrc = getProductFallback(product, props.theme);
 
   const originalPrice = (product as any).original_price ?? product.originalPrice ?? product.price;
   const discount = originalPrice > product.price
@@ -80,7 +82,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           alt={product.name}
           className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] object-contain transition-opacity duration-300"
           src={displayImage}
-          fallbackSrc={props.theme === 'premium' ? '/Traworld/luggage.png' : '/Category/Backpack.jpg'}
+          fallbackSrc={fallbackSrc}
           width={400}
         />
 

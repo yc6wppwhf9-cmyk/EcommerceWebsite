@@ -75,17 +75,17 @@ export const CategoryPage = () => {
       };
       if (themeParam === 'premium') {
         params.isPremium = 'true';
-        const premiumSubCatMap: Record<string, string> = {
-          luggage: 'premium-luggage',
-          backpacks: 'premium-backpacks',
-          accessories: 'premium-accessories',
-          duffle: 'premium-duffle',
-          'premium-luggage': 'premium-luggage',
-          'premium-backpacks': 'premium-backpacks',
-          'premium-accessories': 'premium-accessories',
-          'premium-duffle': 'premium-duffle',
-        };
-        if (premiumSubCatMap[slug]) params.sub_category = premiumSubCatMap[slug];
+        if (slug === 'luggage' || slug === 'premium-luggage') {
+          params.category = 'luggage';
+        } else if (slug === 'backpacks' || slug === 'premium-backpacks') {
+          params.category = 'backpacks';
+        } else if (slug === 'accessories' || slug === 'premium-accessories') {
+          params.category = 'accessories';
+        } else if (slug === 'duffle' || slug === 'premium-duffle') {
+          params.category = 'duffle';
+        } else {
+          params.category = slug;
+        }
       } else if (themeParam === 'junior') {
         // Junior sub-pages: fetch by category=junior + sub_category=slug
         params.category = 'junior';
@@ -97,9 +97,6 @@ export const CategoryPage = () => {
         params.isPremium = 'false';
       } else if (isPremiumFilter) {
         params.isPremium = 'true';
-      } else if (slug === 'luggage') {
-        params.category = 'luggage';
-        // Allow all luggage items (both Priority and Traworld) to be visible on /luggage
       } else {
         params.category = slug;
         params.isPremium = 'false';
