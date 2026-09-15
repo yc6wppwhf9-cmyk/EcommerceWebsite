@@ -273,7 +273,7 @@ export const BestReviewedShowcase: React.FC = () => {
 
                     {/* Star Rating & Review Count */}
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="flex items-center gap-0.5 text-[#003884] dark:text-[#26B3FF]">
+                      <div className="flex items-center gap-0.5 text-[#E53E3E] dark:text-[#F56565]">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} size={18} fill="currentColor" stroke="none" />
                         ))}
