@@ -105,8 +105,6 @@ export const CategoryPage = () => {
         params.isPremium = 'false';
       }
 
-      if (ageParam) params.age_range = ageParam;
-
       try {
         const res = await api.getProducts(params);
         const products = res.products as unknown as Product[];
