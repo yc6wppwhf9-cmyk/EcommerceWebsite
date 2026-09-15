@@ -7,17 +7,11 @@ import { AuthRequest } from '../middleware/auth';
 const getPublishIssues = (product: Record<string, any>): string[] => {
   const images = [product.image, ...(Array.isArray(product.images) ? product.images : [])]
     .filter((value) => typeof value === 'string' && value.trim());
-  const features = Array.isArray(product.features)
-    ? product.features.filter((value) => typeof value === 'string' && value.trim())
-    : [];
   const issues: string[] = [];
-  if (!String(product.description || '').trim() || String(product.description).trim().length < 40) {
-    issues.push('a meaningful description of at least 40 characters');
-  }
   if (!images.length) issues.push('at least one product image');
-  if (!features.length) issues.push('at least one product feature');
-  if (!product.category_id) issues.push('a valid category');
+  if (!product.category_id && !product.category) issues.push('a valid category');
   if (!product.sku) issues.push('a SKU');
+  if (!product.name) issues.push('a product name');
   return issues;
 };
 
@@ -227,25 +221,11 @@ export const updateProduct = async (req: Request, res: Response) => {
     if (f === 'is_highlighted' && req.body.highlighted !== undefined) updates[f] = req.body.highlighted;
   });
 
-  if (!Object.keys(updates).length) return res.status(400).json({ error: 'No valid fields provided for update' });
-
-  if (updates.is_active === true) {
-    const { data: current, error: currentError } = await supabase
-      .from('products')
-      .select('name, description, image, images, features, category_id, sku')
-      .eq('id', req.params.id)
-      .maybeSingle();
-    if (currentError) return res.status(400).json({ error: currentError.message });
-    if (!current) return res.status(404).json({ error: 'Product not found' });
-    const publishIssues = getPublishIssues({ ...current, ...updates });
-    if (publishIssues.length) {
-      return res.status(400).json({
-        error: `Product cannot be published until it has ${publishIssues.join(', ')}.`,
-        code: 'PRODUCT_NOT_READY',
-        issues: publishIssues,
-      });
-    }
+  if (Array.isArray(updates.images) && updates.images.length > 0 && !updates.image) {
+    updates.image = updates.images[0];
   }
+
+  if (!Object.keys(updates).length) return res.status(400).json({ error: 'No valid fields provided for update' });
 
   const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select().single();
   if (error) {
