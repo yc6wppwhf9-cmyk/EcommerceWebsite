@@ -89,6 +89,9 @@ export const CategoryPage = () => {
         params.isPremium = 'false';
       } else if (isPremiumFilter) {
         params.isPremium = 'true';
+      } else if (slug === 'luggage') {
+        params.category = 'luggage';
+        // Allow all luggage items (both Priority and Traworld) to be visible on /luggage
       } else {
         params.category = slug;
         params.isPremium = 'false';
