@@ -25,8 +25,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-1',
     subtitle: 'GIRLS SCHOOL BACKPACK',
     productName: 'PRIORITY 16" PRINTED SCHOOL 24L',
-    price: '₹899.00',
-    image: '/products/INV21453/INV21453 - 01 - Front View.jpg',
+    price: '',
+    image: '/reviews/rev_1.jpg',
     rating: 5,
     reviewCount: 142,
     reviewTitle: 'VIBRANT PRINT & EXCEPTIONAL DURABILITY',
@@ -41,8 +41,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-2',
     subtitle: 'COLLEGE LAPTOP BACKPACK',
     productName: 'PRIORITY 18.5" COLORBLOCK LAPTOP 36L',
-    price: '₹1,299.00',
-    image: '/products/INV27343/INV27343 - 01 - Front View.jpg',
+    price: '',
+    image: '/reviews/rev_2.jpg',
     rating: 5,
     reviewCount: 236,
     reviewTitle: 'SPACIOUS WITH PADDED LAPTOP SLEEVE',
@@ -57,8 +57,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-3',
     subtitle: 'TRENDY CASUAL BACKPACK',
     productName: 'PRIORITY UNISEX COLOURBLOCKED BACKPACK',
-    price: '₹1,199.00',
-    image: '/products/INV27348/INV27348 - 01 - Front View.jpg',
+    price: '',
+    image: '/reviews/rev_3.jpg',
     rating: 5,
     reviewCount: 189,
     reviewTitle: 'TRENDY AESTHETIC & SOLID BUILD QUALITY',
@@ -73,8 +73,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-4',
     subtitle: 'ERGONOMIC TECH BACKPACK',
     productName: 'PRIORITY UNISEX LAPTOP BACKPACK (16")',
-    price: '₹1,599.00',
-    image: '/products/INV27608/INV27608 - 01 - Front View.jpg',
+    price: '',
+    image: '/reviews/rev_4.jpg',
     rating: 5,
     reviewCount: 310,
     reviewTitle: 'EXCELLENT FOR WORK & DAILY COMMUTE',
@@ -89,8 +89,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-5',
     subtitle: '360° ROTATION LUGGAGE SET',
     productName: 'PRIORITY HARD-SIDED TROLLEY SET OF 2',
-    price: '₹4,999.00',
-    image: '/products/INV34016/INV34016 - 01 - Front View.jpg',
+    price: '',
+    image: '/reviews/rev_5.jpg',
     rating: 5,
     reviewCount: 428,
     reviewTitle: 'SMOOTH SPINNER WHEELS & SOLID SHELL',
@@ -105,8 +105,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-6',
     subtitle: 'HARD SHELL COMBO SET 29L',
     productName: 'PRIORITY SCHOOL COMBO + TIFFIN POUCH (PINK)',
-    price: '₹1,499.00',
-    image: '/junior/Combo set.jpg',
+    price: '',
+    image: '/reviews/rev_6.jpg',
     rating: 5,
     reviewCount: 165,
     reviewTitle: 'COMPLETE ALL-IN-ONE SCHOOL SET',
@@ -121,8 +121,8 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     id: 'rev-7',
     subtitle: 'HARD SHELL COMBO SET 29L',
     productName: 'PRIORITY SCHOOL COMBO + TIFFIN POUCH (YELLOW)',
-    price: '₹1,499.00',
-    image: '/junior/Combo set.jpg',
+    price: '',
+    image: '/reviews/rev_7.jpg',
     rating: 5,
     reviewCount: 198,
     reviewTitle: 'SUPER ATTRACTIVE & STURDY FOR KIDS',
@@ -135,14 +135,14 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
   },
   {
     id: 'rev-8',
-    subtitle: 'COMFORT TRAVEL BACKPACK',
-    productName: 'PRIORITY LIGHTWEIGHT TRAVELLING BACKPACK',
-    price: '₹1,299.00',
-    image: '/products/INV27340/INV27340 - 01 - Front View.jpg',
+    subtitle: 'COMFORT TRAVEL DUFFLE',
+    productName: 'PRIORITY CULT 001 TRAVELLING DUFFLE BAG',
+    price: '',
+    image: '/reviews/rev_8.jpg',
     rating: 5,
     reviewCount: 345,
     reviewTitle: 'LIGHTWEIGHT, DURABLE & TRAVEL-READY',
-    reviewQuote: 'Extremely comfortable shoulder straps and lightweight yet very tough tear-resistant fabric. One of the best backpacks from Priority on Amazon!',
+    reviewQuote: 'Extremely comfortable shoulder straps and lightweight yet very tough tear-resistant fabric. One of the best duffles from Priority on Amazon!',
     reviewer: 'Deepak Rao',
     timeAgo: 'Submitted 3 days ago',
     marketplace: 'amazon',
@@ -254,12 +254,9 @@ export const BestReviewedShowcase: React.FC = () => {
                     <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
                       {current.subtitle}
                     </p>
-                    <h3 className="text-sm md:text-base font-extrabold text-ink dark:text-white uppercase tracking-wider mb-1.5">
+                    <h3 className="text-sm md:text-base font-extrabold text-ink dark:text-white uppercase tracking-wider">
                       {current.productName}
                     </h3>
-                    <p className="text-sm md:text-base font-black text-ink dark:text-white">
-                      {current.price}
-                    </p>
                   </div>
 
                   {/* Right Column: Review Details & CTA */}

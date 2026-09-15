@@ -12,6 +12,7 @@ interface InstagramCardData {
   following: string;
   img: string;
   fallback: string;
+  video?: string;
   href: string;
   caption: string;
 }
@@ -49,6 +50,7 @@ const INSTA_CARDS: InstagramCardData[] = [
     followers: '13.1K',
     following: '4',
     img: '/instagram/post_3.jpg',
+    video: '/instagram/post_3.mp4',
     fallback: '/Category/Travelling Bag.jpg',
     href: 'https://www.instagram.com/p/DcgZ4RKs6sF/',
     caption: 'Discover the "Snappy" backpack in every color. Fast, fresh & ready.',
@@ -61,6 +63,7 @@ const INSTA_CARDS: InstagramCardData[] = [
     followers: '13.1K',
     following: '4',
     img: '/instagram/post_4.jpg',
+    video: '/instagram/post_4.mp4',
     fallback: '/Category/ref.png',
     href: 'https://www.instagram.com/p/DbbJMcSsArC/',
     caption: 'Infused thermal lining & 1-swipe clean pockets. Upgrade your school game!',
@@ -82,12 +85,32 @@ const INSTA_CARDS: InstagramCardData[] = [
 const InstagramCard = ({ card }: { card: InstagramCardData }) => {
   const [imgSrc, setImgSrc] = useState(card.img);
   const [avatarSrc, setAvatarSrc] = useState(card.avatar);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (card.video && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (card.video && videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
 
   return (
     <a
       href={card.href}
       target="_blank"
       rel="noopener noreferrer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="group flex-shrink-0 w-[270px] sm:w-[290px] md:w-[310px] bg-white rounded-3xl border border-gray-100/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_14px_45px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden snap-start"
     >
       {/* Card Header: Profile Info & Stats */}
@@ -145,20 +168,46 @@ const InstagramCard = ({ card }: { card: InstagramCardData }) => {
         </div>
       </div>
 
-      {/* Main Post Image */}
-      <div className="relative w-full aspect-[4/5] bg-gray-100 overflow-hidden">
-        <img
-          src={imgSrc}
-          alt={card.caption}
-          loading="lazy"
-          onError={() => imgSrc !== card.fallback && setImgSrc(card.fallback)}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-        />
-        {/* Subtle Instagram hover badge */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 flex items-center justify-center">
-          <div className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-300 shadow-md">
-            <Instagram size={20} />
-          </div>
+      {/* Main Post Media (Image or Hover-to-Play Video) */}
+      <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
+        {card.video ? (
+          <>
+            <video
+              ref={videoRef}
+              src={card.video}
+              poster={imgSrc}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            {/* Reel / Video indicator badge when not hovered */}
+            {!isHovered && (
+              <div className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white pointer-events-none transition-opacity duration-300">
+                <svg className="w-3.5 h-3.5 fill-current ml-0.5" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            )}
+          </>
+        ) : (
+          <img
+            src={imgSrc}
+            alt={card.caption}
+            loading="lazy"
+            onError={() => imgSrc !== card.fallback && setImgSrc(card.fallback)}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        )}
+
+        {/* Subtle Instagram hover badge (for images or when video hover indicator) */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+          {!card.video && (
+            <div className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-300 shadow-md">
+              <Instagram size={20} />
+            </div>
+          )}
         </div>
       </div>
 
