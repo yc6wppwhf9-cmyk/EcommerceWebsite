@@ -917,7 +917,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356431',
   true
 )
@@ -965,7 +965,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356434',
   true
 )
@@ -1013,7 +1013,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356430',
   true
 )
@@ -1061,7 +1061,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357160',
   true
 )
@@ -1109,7 +1109,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357161',
   true
 )
@@ -1157,7 +1157,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356440',
   true
 )
@@ -1205,7 +1205,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356444',
   true
 )
@@ -1253,7 +1253,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356457',
   true
 )
@@ -1301,7 +1301,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356443',
   true
 )
@@ -1349,7 +1349,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356451',
   true
 )
@@ -1397,7 +1397,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356450',
   true
 )
@@ -1445,7 +1445,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357163',
   true
 )
@@ -1493,7 +1493,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357162',
   true
 )
@@ -1541,7 +1541,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356449',
   true
 )
@@ -1589,7 +1589,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356442',
   true
 )
@@ -1637,7 +1637,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356453',
   true
 )
@@ -1685,7 +1685,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356460',
   true
 )
@@ -1733,7 +1733,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356459',
   true
 )
@@ -1781,7 +1781,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356458',
   true
 )
@@ -1829,7 +1829,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357165',
   true
 )
@@ -1877,7 +1877,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357164',
   true
 )
@@ -1925,7 +1925,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356467',
   true
 )
@@ -1973,7 +1973,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356466',
   true
 )
@@ -2021,7 +2021,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356465',
   true
 )
@@ -2069,7 +2069,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356468',
   true
 )
@@ -2117,7 +2117,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356474',
   true
 )
@@ -2165,7 +2165,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356472',
   true
 )
@@ -2213,7 +2213,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357166',
   true
 )
@@ -2261,7 +2261,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357167',
   true
 )
@@ -2309,7 +2309,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356475',
   true
 )
@@ -2357,7 +2357,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356476',
   true
 )
@@ -2405,7 +2405,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356483',
   true
 )
@@ -2453,7 +2453,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356479',
   true
 )
@@ -2501,7 +2501,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356482',
   true
 )
@@ -2549,7 +2549,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357168',
   true
 )
@@ -2597,7 +2597,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356480',
   true
 )
@@ -2645,7 +2645,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357169',
   true
 )
@@ -2693,7 +2693,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36364605',
   true
 )
@@ -2741,7 +2741,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36364607',
   true
 )
@@ -2789,7 +2789,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36364606',
   true
 )
@@ -2837,7 +2837,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356487',
   true
 )
@@ -2885,7 +2885,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356488',
   true
 )
@@ -2933,7 +2933,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356489',
   true
 )
@@ -2981,7 +2981,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357170',
   true
 )
@@ -3029,7 +3029,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357171',
   true
 )
@@ -3077,7 +3077,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356491',
   true
 )
@@ -3125,7 +3125,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356493',
   true
 )
@@ -3173,7 +3173,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356496',
   true
 )
@@ -3221,7 +3221,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356439',
   true
 )
@@ -3269,7 +3269,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356435',
   true
 )
@@ -3317,7 +3317,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356498',
   true
 )
@@ -3365,7 +3365,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357172',
   true
 )
@@ -3413,7 +3413,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36357173',
   true
 )
@@ -3461,7 +3461,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356437',
   true
 )
@@ -3509,7 +3509,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356433',
   true
 )
@@ -3605,7 +3605,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356438',
   true
 )
@@ -4373,7 +4373,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356859',
   true
 )
@@ -4421,7 +4421,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356862',
   true
 )
@@ -4469,7 +4469,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356861',
   true
 )
@@ -4517,7 +4517,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356860',
   true
 )
@@ -4565,7 +4565,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356843',
   true
 )
@@ -4613,7 +4613,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356831',
   true
 )
@@ -4661,7 +4661,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356834',
   true
 )
@@ -4709,7 +4709,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356833',
   true
 )
@@ -4757,7 +4757,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356832',
   true
 )
@@ -4805,7 +4805,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356830',
   true
 )
@@ -4853,7 +4853,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356848',
   true
 )
@@ -4901,7 +4901,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356845',
   true
 )
@@ -4949,7 +4949,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356851',
   true
 )
@@ -4997,7 +4997,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/36356844',
   true
 )
@@ -8069,7 +8069,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427540',
   true
 )
@@ -8117,7 +8117,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427533',
   true
 )
@@ -8165,7 +8165,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427548',
   true
 )
@@ -8213,7 +8213,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427542',
   true
 )
@@ -8261,7 +8261,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427552',
   true
 )
@@ -8309,7 +8309,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427551',
   true
 )
@@ -8357,7 +8357,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427541',
   true
 )
@@ -8405,7 +8405,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427547',
   true
 )
@@ -8453,7 +8453,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427535',
   true
 )
@@ -8501,7 +8501,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427545',
   true
 )
@@ -8549,7 +8549,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427534',
   true
 )
@@ -8597,7 +8597,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427553',
   true
 )
@@ -8645,7 +8645,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427539',
   true
 )
@@ -8693,7 +8693,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427549',
   true
 )
@@ -8741,7 +8741,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427546',
   true
 )
@@ -8789,7 +8789,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427538',
   true
 )
@@ -8837,7 +8837,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427532',
   true
 )
@@ -8885,7 +8885,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427536',
   true
 )
@@ -8933,7 +8933,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427561',
   true
 )
@@ -8981,7 +8981,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427554',
   true
 )
@@ -9029,7 +9029,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427544',
   true
 )
@@ -9077,7 +9077,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427555',
   true
 )
@@ -9125,7 +9125,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427537',
   true
 )
@@ -9173,7 +9173,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427550',
   true
 )
@@ -9221,7 +9221,7 @@ INSERT INTO products (
   false,
   false,
   'unisex',
-  'premium-luggage',
+  'luggage',
   'https://www.myntra.com/43427543',
   true
 )
