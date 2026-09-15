@@ -126,17 +126,26 @@ export const getProductBySlug = async (req: Request, res: Response) => {
 export const createProduct = async (req: Request, res: Response) => {
   try {
     const body = { ...req.body };
-    const catName = body.category || 'backpacks';
+    const subSlug = (body.sub_category || body.subcategory || '').trim();
+    const mainSlug = (body.category || 'backpacks').trim();
 
-    // 1. Resolve Category ID — try slug first (exact), then name (case-insensitive)
+    // 1. Resolve Category ID — try sub_category slug first, then category slug, then name
     let catData: { id: string } | null = null;
-    const bySlug = await supabase.from('categories').select('id').eq('slug', catName).maybeSingle();
-    if (bySlug.data) {
-      catData = bySlug.data;
-    } else {
-      const byName = await supabase.from('categories').select('id').ilike('name', catName).maybeSingle();
-      catData = byName.data;
+    if (subSlug) {
+      const bySubSlug = await supabase.from('categories').select('id').eq('slug', subSlug).maybeSingle();
+      if (bySubSlug.data) catData = bySubSlug.data;
     }
+    if (!catData && mainSlug) {
+      const bySlug = await supabase.from('categories').select('id').eq('slug', mainSlug).maybeSingle();
+      if (bySlug.data) {
+        catData = bySlug.data;
+      } else {
+        const byName = await supabase.from('categories').select('id').ilike('name', mainSlug).maybeSingle();
+        catData = byName.data;
+      }
+    }
+
+    const isPrem = body.isPremium ?? body.is_premium ?? (mainSlug === 'premium' || subSlug.startsWith('premium-'));
 
     // 2. Clean up & Map
     const productData = {
@@ -144,22 +153,22 @@ export const createProduct = async (req: Request, res: Response) => {
       slug: body.slug || (body.name || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
       name: body.name,
       description: body.description || '',
-      price: body.price,
-      original_price: body.originalPrice || body.original_price || body.price,
+      price: Number(body.price),
+      original_price: Number(body.originalPrice || body.original_price || body.price),
       category_id: catData?.id || body.category_id,
       image: (Array.isArray(body.images) && body.images[0]) ? body.images[0] : (body.image || ''),
-      images: body.images || [],
+      images: Array.isArray(body.images) ? body.images.filter(Boolean) : (body.image ? [body.image] : []),
       colors: body.colors || [],
       features: body.features || [],
-      stock: body.stock || 0,
-      is_new: body.isNew || body.is_new || false,
-      is_highlighted: body.highlighted || body.is_highlighted || false,
-      is_premium: body.isPremium || body.is_premium || false,
+      stock: body.stock !== undefined ? Number(body.stock) : 0,
+      is_new: body.isNew ?? body.is_new ?? false,
+      is_highlighted: body.highlighted ?? body.is_highlighted ?? false,
+      is_premium: !!isPrem,
       gender: body.gender || 'unisex',
       size: body.size || '',
       age_range: body.ageRange || body.age_range || '',
-      sub_category: body.sub_category || '',
-      junior_style: body.junior_style || null,
+      sub_category: subSlug || '',
+      junior_style: body.junior_style || body.juniorStyle || null,
       is_active: body.is_active !== undefined ? body.is_active : true,
       amazon_url: body.amazon_url || null,
       flipkart_url: body.flipkart_url || null,
@@ -183,7 +192,7 @@ export const createProduct = async (req: Request, res: Response) => {
       }
     }
 
-    const { data, error } = await supabase.from('products').insert(productData).select().single();
+    const { data, error } = await supabase.from('products').insert(productData).select('*, categories(slug, title)').single();
     if (error) throw error;
     res.status(201).json(data);
   } catch (err: any) {
@@ -204,9 +213,25 @@ export const updateProduct = async (req: Request, res: Response) => {
   const updates: any = {};
   
   // 1. Resolve Category Slug to ID if provided
-  if (req.body.category) {
-    const { data: cat } = await supabase.from('categories').select('id').eq('slug', req.body.category).maybeSingle();
-    if (cat) updates.category_id = cat.id;
+  const subSlug = (req.body.sub_category || req.body.subcategory || '').trim();
+  const mainSlug = (req.body.category || '').trim();
+  
+  if (subSlug || mainSlug) {
+    let catData: { id: string } | null = null;
+    if (subSlug) {
+      const bySubSlug = await supabase.from('categories').select('id').eq('slug', subSlug).maybeSingle();
+      if (bySubSlug.data) catData = bySubSlug.data;
+    }
+    if (!catData && mainSlug) {
+      const bySlug = await supabase.from('categories').select('id').eq('slug', mainSlug).maybeSingle();
+      if (bySlug.data) {
+        catData = bySlug.data;
+      } else {
+        const byName = await supabase.from('categories').select('id').ilike('name', mainSlug).maybeSingle();
+        catData = byName.data;
+      }
+    }
+    if (catData) updates.category_id = catData.id;
   }
 
   // 2. Map fields and handle both camelCase and snake_case
@@ -219,15 +244,25 @@ export const updateProduct = async (req: Request, res: Response) => {
     if (f === 'age_range' && req.body.ageRange !== undefined) updates[f] = req.body.ageRange;
     if (f === 'is_new' && req.body.isNew !== undefined) updates[f] = req.body.isNew;
     if (f === 'is_highlighted' && req.body.highlighted !== undefined) updates[f] = req.body.highlighted;
+    if (f === 'junior_style' && req.body.juniorStyle !== undefined) updates[f] = req.body.juniorStyle;
   });
 
-  if (Array.isArray(updates.images) && updates.images.length > 0 && !updates.image) {
-    updates.image = updates.images[0];
+  if (mainSlug === 'premium' || subSlug.startsWith('premium-')) {
+    updates.is_premium = true;
+  } else if (req.body.isPremium !== undefined) {
+    updates.is_premium = !!req.body.isPremium;
+  }
+
+  if (Array.isArray(updates.images)) {
+    updates.images = updates.images.filter(Boolean);
+    if (updates.images.length > 0 && !updates.image) {
+      updates.image = updates.images[0];
+    }
   }
 
   if (!Object.keys(updates).length) return res.status(400).json({ error: 'No valid fields provided for update' });
 
-  const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select().single();
+  const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select('*, categories(slug, title)').single();
   if (error) {
     console.error('❌ Update DB Error:', error);
     return res.status(400).json({ error: error.message });

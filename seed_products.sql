@@ -73,6 +73,97 @@ ON CONFLICT (slug) DO UPDATE SET
   subtitle = EXCLUDED.subtitle,
   bg_color = EXCLUDED.bg_color,
   is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'travel', 'Travel Gear', 'Travel bags & luggage', '#a2d59b', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'accessories', 'Accessories', 'Pouches & daily carry', '#6aa5de', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'pouch', 'Pouches', 'Small essential pouches', '#6aa5de', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'lunch-bag', 'Lunch Bags', 'Insulated food & lunch bags', '#a2d59b', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'daypack', 'Daypacks', 'Lightweight everyday packs', '#f2c94c', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'tote-bag', 'Tote Bags', 'Chic & roomy totes', '#ff7675', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'trolley-backpacks', 'Trolley Backpacks', 'Rolling backpacks for kids', '#FFBB5A', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'combo-set', 'Combo Set', 'Backpack combo value packs', '#FFBB5A', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'premium', 'Premium Collection', 'Luxury travel & carry by Traworld', '#302a5e', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'premium-backpacks', 'Premium Backpacks', 'High-end designer backpacks', '#302a5e', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'premium-luggage', 'Premium Luggage', 'High-end hard-case trolley luggage', '#302a5e', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'premium-accessories', 'Premium Accessories', 'High-end luxury accessories', '#302a5e', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'premium-duffle', 'Premium Duffle', 'Luxury travel & gym duffles', '#302a5e', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
 
 -- ─── 2. Products Upsert (191 Distinct Multi-Angle Products) ───────────────────────────
 

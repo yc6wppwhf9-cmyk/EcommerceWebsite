@@ -55,7 +55,54 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
     { value: 'premium-backpacks', label: 'Premium Backpacks' },
     { value: 'premium-luggage', label: 'Premium Luggage' },
     { value: 'premium-accessories', label: 'Premium Accessories' },
+    { value: 'premium-duffle', label: 'Premium Duffle' },
   ],
+};
+
+export const resolveProductCategory = (p: any): { mainCat: string; subCat: string } => {
+  const isPrem = !!p.is_premium || !!p.isPremium;
+  const rawSub = (p.sub_category || p.subcategory || '').toLowerCase().trim();
+  const rawCatSlug = (p.categories?.slug || p.category || '').toLowerCase().trim();
+
+  if (isPrem || rawCatSlug === 'premium' || rawSub.startsWith('premium-')) {
+    let sub = rawSub;
+    if (!sub || !sub.startsWith('premium-')) {
+      if (sub === 'backpacks' || rawCatSlug.includes('backpack')) sub = 'premium-backpacks';
+      else if (sub === 'luggage' || rawCatSlug.includes('luggage')) sub = 'premium-luggage';
+      else if (sub === 'duffle' || rawCatSlug.includes('duffle')) sub = 'premium-duffle';
+      else if (sub === 'accessories' || rawCatSlug.includes('access')) sub = 'premium-accessories';
+      else sub = 'premium-backpacks';
+    }
+    return { mainCat: 'premium', subCat: sub };
+  }
+
+  // Junior
+  if (rawCatSlug === 'junior' || rawSub.includes('junior') || p.gender === 'kids' || ['trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'].includes(rawSub)) {
+    return { mainCat: 'junior', subCat: rawSub || 'school-backpacks' };
+  }
+
+  // Backpacks
+  const backpackSubs = ['college-backpacks', 'school-backpacks', 'laptop-backpacks', 'trekking-backpacks'];
+  if (backpackSubs.includes(rawSub) || backpackSubs.includes(rawCatSlug) || rawCatSlug === 'backpacks') {
+    const matchedSub = backpackSubs.includes(rawSub) ? rawSub : (backpackSubs.includes(rawCatSlug) ? rawCatSlug : 'college-backpacks');
+    return { mainCat: 'backpacks', subCat: matchedSub };
+  }
+
+  // Travel
+  const travelSubs = ['luggage', 'duffle'];
+  if (travelSubs.includes(rawSub) || travelSubs.includes(rawCatSlug) || rawCatSlug === 'travel') {
+    const matchedSub = travelSubs.includes(rawSub) ? rawSub : (travelSubs.includes(rawCatSlug) ? rawCatSlug : 'luggage');
+    return { mainCat: 'travel', subCat: matchedSub };
+  }
+
+  // Accessories
+  const accessSubs = ['pouch', 'lunch-bag', 'daypack', 'tote-bag'];
+  if (accessSubs.includes(rawSub) || accessSubs.includes(rawCatSlug) || rawCatSlug === 'accessories') {
+    const matchedSub = accessSubs.includes(rawSub) ? rawSub : (accessSubs.includes(rawCatSlug) ? rawCatSlug : 'pouch');
+    return { mainCat: 'accessories', subCat: matchedSub };
+  }
+
+  return { mainCat: 'backpacks', subCat: rawSub || 'college-backpacks' };
 };
 
 type ColorVariant = { color: string; colorCode: string; images: string[] };
@@ -378,6 +425,9 @@ export const AdminDashboard = () => {
         return;
       }
 
+      const filteredImages = (formData.images || []).filter(Boolean);
+      const mainImage = filteredImages[0] || formData.image || '';
+
       // 1. Build a clean payload — avoid sending extra joined objects or internal IDs
       const cleanPayload: any = {
         name: formData.name,
@@ -393,9 +443,10 @@ export const AdminDashboard = () => {
         junior_style: formData.juniorStyle || formData.junior_style || null,
         isNew: !!formData.isNew,
         highlighted: !!formData.highlighted,
-        isPremium: !!formData.isPremium || formData.category === 'premium',
+        isPremium: formData.category === 'premium' || !!formData.isPremium,
         features: Array.isArray(formData.features) ? formData.features : [],
-        images: (formData.images || []).filter(Boolean),
+        image: mainImage,
+        images: filteredImages,
         colors: variants.filter(v => v.color.trim()).map(v => ({ name: v.color, code: v.colorCode, images: (v.images || []).filter(Boolean) })),
         amazon_url: (formData as any).amazon_url || null,
         flipkart_url: (formData as any).flipkart_url || null,
@@ -423,6 +474,7 @@ export const AdminDashboard = () => {
       setEditingProduct(null);
       setFormData(BLANK_FORM());
       setVariants([]);
+      fetchData();
     } catch (err: any) {
       console.error('Save Error:', err);
       showToast(err.message || 'Check required fields', 'error');
@@ -1012,20 +1064,32 @@ export const AdminDashboard = () => {
                                   <div className="flex gap-4 mt-3 pt-3 border-t border-gray-50">
                                     <button onClick={() => {
                                       setEditingProduct(p);
+                                      const { mainCat, subCat } = resolveProductCategory(p);
+                                      const rawImgs = Array.isArray((p as any).images) && (p as any).images.length > 0
+                                        ? (p as any).images.filter(Boolean)
+                                        : (p as any).image ? [(p as any).image] : [];
                                       setFormData({
                                         ...p,
-                                        originalPrice: p.originalPrice || (p as any).original_price || 0,
-                                        category: (p as any).categories?.slug || p.category || '',
-                                        subcategory: (p as any).sub_category || p.subcategory || '',
-                                        isPremium: (p as any).is_premium ?? p.isPremium ?? false,
+                                        name: p.name || '',
+                                        price: p.price ?? 0,
+                                        originalPrice: p.originalPrice || (p as any).original_price || p.price || 0,
+                                        category: mainCat,
+                                        subcategory: subCat,
+                                        stock: p.stock ?? 50,
+                                        isPremium: mainCat === 'premium' || !!((p as any).is_premium ?? p.isPremium),
                                         highlighted: (p as any).is_highlighted ?? p.highlighted ?? false,
                                         isNew: (p as any).is_new ?? p.isNew ?? false,
-                                        juniorStyle: (p as any).junior_style || '',
+                                        gender: p.gender || 'unisex',
+                                        size: p.size || '',
+                                        ageRange: (p as any).age_range || p.ageRange || '',
+                                        juniorStyle: (p as any).junior_style || (p as any).juniorStyle || '',
+                                        description: p.description || '',
+                                        features: Array.isArray(p.features) ? p.features : [],
                                         amazon_url: (p as any).amazon_url || '',
                                         flipkart_url: (p as any).flipkart_url || '',
                                         myntra_url: (p as any).myntra_url || '',
                                         ajio_url: (p as any).ajio_url || '',
-                                        images: Array.isArray((p as any).images) ? (p as any).images : [],
+                                        images: rawImgs,
                                       });
                                       setVariants(((p as any).colors || p.variants || []).map((v: any) => ({
                                         color: v.name || v.color || '',

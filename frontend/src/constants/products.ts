@@ -174,6 +174,15 @@ export const CATEGORIES: CategoryInfo[] = [
     bgColor: '#302a5e',
     parentCategory: 'premium',
   },
+  {
+    id: 'premium-duffle',
+    title: 'Premium Duffle',
+    subtitle: 'Premium Duffle',
+    slug: 'premium-duffle',
+    image: '',
+    bgColor: '#302a5e',
+    parentCategory: 'premium',
+  },
 ];
 
 export const PRODUCTS: Product[] = [];

@@ -76,6 +76,11 @@ export const CategoryPage = () => {
           luggage: 'premium-luggage',
           backpacks: 'premium-backpacks',
           accessories: 'premium-accessories',
+          duffle: 'premium-duffle',
+          'premium-luggage': 'premium-luggage',
+          'premium-backpacks': 'premium-backpacks',
+          'premium-accessories': 'premium-accessories',
+          'premium-duffle': 'premium-duffle',
         };
         if (premiumSubCatMap[slug]) params.sub_category = premiumSubCatMap[slug];
       } else if (themeParam === 'junior') {
@@ -407,9 +412,14 @@ export const CategoryPage = () => {
     </div>
   );
 
-  // Page title — fix "ALL LUGGAGES" grammar
+  // Page title — fix "ALL LUGGAGES" grammar & premium category names
   const pageTitle = (() => {
-    if (slug === 'luggage') return 'ALL LUGGAGE';
+    if (slug === 'luggage') return themeParam === 'premium' ? 'PREMIUM LUGGAGE' : 'ALL LUGGAGE';
+    if (themeParam === 'premium') {
+      if (slug === 'backpacks') return 'PREMIUM BACKPACKS';
+      if (slug === 'duffle') return 'PREMIUM DUFFLE';
+      if (slug === 'accessories') return 'PREMIUM ACCESSORIES';
+    }
     return currentCategory?.subtitle || slug.replace(/-/g, ' ').toUpperCase();
   })();
 
