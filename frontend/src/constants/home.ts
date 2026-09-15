@@ -104,7 +104,7 @@ export const CATS: CategoryCard[] = [
 // ─── Editorial Banner ────────────────────────────────────────────────────────
 
 export const IMG = {
-  banner: '/Category/Artboard 1 1.png',
+  banner: '/Category/New Arrival.jpg',
   refPoster: '/New Arrival/Artboard 3 copy 3@2x.png',
 };
 

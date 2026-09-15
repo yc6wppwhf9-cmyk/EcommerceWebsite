@@ -14,9 +14,9 @@ const AGE_GROUPS = [
 ];
 
 const CATEGORIES = [
-  { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/backapck.jpg' },
-  { label: 'Combo Set', filter: 'combo-set', image: '/junior/Combo set.jpg' },
-  { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Speedo_ Hero 1.png' },
+  { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/School.jpg' },
+  { label: 'Combo Set', filter: 'combo-set', image: '/junior/Combo.jpg' },
+  { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Trolly.jpg' },
 ];
 
 const AgeGroupCarousel = () => {

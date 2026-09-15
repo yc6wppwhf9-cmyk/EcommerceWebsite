@@ -504,7 +504,7 @@ export const AboutUs: React.FC = () => {
           <div className="relative rounded-2xl overflow-hidden shadow-lg border border-[#dfe6e4] bg-white group">
             <div className="w-full h-[320px] sm:h-[460px] lg:h-[560px] bg-gradient-to-b from-[#eef5f8] via-[#f4f9fb] to-[#e6f1f6] flex items-center justify-center p-4 sm:p-8">
               <img
-                src="/about/11_product_collection.png"
+                src="/about/About Us.jpg"
                 alt="High Spirit Product Collection - Travel & Lifestyle"
                 className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-700 select-none"
               />
