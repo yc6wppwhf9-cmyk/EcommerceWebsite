@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { IMG, BANNER_CTA } from '../../constants/home';
 import type { GenderLink } from '../../constants/home';
@@ -38,6 +38,16 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
       setCurrentSlide((prev) => (prev + 1) % total);
     }, 5000);
   }, [total]);
+
+  const handleNext = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % total);
+    startAutoPlay();
+  }, [total, startAutoPlay]);
+
+  const handlePrev = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + total) % total);
+    startAutoPlay();
+  }, [total, startAutoPlay]);
 
   const handleSelect = useCallback(
     (index: number) => {
@@ -128,8 +138,8 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
       {/* ─── Desktop ────────────────────────────────────────────────────── */}
       <div className="hidden md:block text-white relative py-4 lg:py-6">
         <div className="max-w-[1720px] mx-auto px-8 lg:px-12 relative z-10 flex flex-row items-center gap-10 lg:gap-16">
-          {/* Left Poster Image */}
-          <div className="w-[42%] lg:w-[40%] relative z-30 rounded-sm overflow-hidden my-0 block group">
+          {/* Left Poster Image (2-slide animated container extending -mt-8 -mb-8) */}
+          <div className="w-[42%] lg:w-[40%] relative z-30 rounded-sm overflow-hidden -mt-8 -mb-8 block group">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSlide.id}
@@ -169,6 +179,24 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
                 {BANNER_CTA.label}
                 <ArrowRight size={15} />
               </Link>
+
+              {/* Navigation Arrows */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrev}
+                  aria-label="Previous slide"
+                  className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-ink transition-colors cursor-pointer text-white"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  onClick={handleNext}
+                  aria-label="Next slide"
+                  className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-ink transition-colors cursor-pointer text-white"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             </div>
 
             {/* Slide Dots (2 slides) */}
