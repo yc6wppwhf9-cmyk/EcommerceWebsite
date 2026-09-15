@@ -46,7 +46,7 @@ export const HeroSlider = () => {
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured collections"
-      className="relative w-full bg-white overflow-hidden aspect-[16/9] sm:aspect-auto sm:h-[calc(100vh-4rem)] sm:max-h-[620px] sm:min-h-[480px] lg:max-h-[760px]"
+      className="relative w-full bg-white overflow-hidden aspect-[1920/860] sm:aspect-auto sm:h-[calc(100vh-4rem)] sm:max-h-[620px] sm:min-h-[480px] lg:max-h-[760px]"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
@@ -60,17 +60,17 @@ export const HeroSlider = () => {
         >
           <img
             alt={slide.title}
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-center"
             src={slide.src}
             loading="eager"
           />
           {/* Light gradient so controls stay readable over baked-in artwork */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
         </motion.div>
       </AnimatePresence>
 
       {/* Content Overlay */}
-      <div className="relative z-20 h-full max-w-[1720px] mx-auto px-4 sm:px-12 lg:px-16 flex flex-col justify-end pb-3 sm:pb-16 lg:pb-20">
+      <div className="relative z-20 h-full max-w-[1720px] mx-auto px-3 sm:px-12 lg:px-16 flex flex-col justify-end pb-2 sm:pb-16 lg:pb-20">
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -86,10 +86,10 @@ export const HeroSlider = () => {
             <div className="flex items-center gap-4">
               <Link
                 to={slide.to}
-                className="inline-flex items-center gap-2 sm:gap-3 bg-white text-black px-3.5 py-2 sm:px-8 sm:py-4 rounded-sm text-[9.5px] sm:text-[12px] font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] shadow-xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
+                className="inline-flex items-center gap-1.5 sm:gap-3 bg-white text-black px-2.5 py-1.5 sm:px-8 sm:py-4 rounded-md sm:rounded-sm text-[8px] sm:text-[12px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.2em] shadow-xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
               >
                 {slide.cta}
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={12} className="sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </motion.div>
@@ -97,11 +97,11 @@ export const HeroSlider = () => {
       </div>
 
       {/* Dots & Slide Counter */}
-      <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-12 z-30 flex items-center gap-2 sm:gap-3 bg-black/60 backdrop-blur-md px-3 py-1 sm:px-4 sm:py-2 rounded-full border border-white/15">
-        <span className="text-[9px] sm:text-[11px] font-bold tracking-widest text-white/90">
+      <div className="absolute bottom-2 right-2 sm:bottom-6 sm:right-12 z-30 flex items-center gap-1.5 sm:gap-3 bg-black/60 backdrop-blur-md px-2 sm:px-4 py-0.5 sm:py-2 rounded-full border border-white/15">
+        <span className="text-[8px] sm:text-[11px] font-bold tracking-widest text-white/90">
           {String(current + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
         </span>
-        <div className="w-px h-2.5 sm:h-3 bg-white/20" />
+        <div className="w-px h-2 sm:h-3 bg-white/20" />
         <div className="flex gap-1 sm:gap-1.5" role="tablist" aria-label="Slide indicators">
           {HERO_SLIDES.map((_, i) => (
             <button
@@ -111,7 +111,7 @@ export const HeroSlider = () => {
               aria-selected={i === current}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 ${
-                i === current ? 'w-4 sm:w-6 bg-[#26B3FF]' : 'w-1 sm:w-1.5 bg-white/40'
+                i === current ? 'w-3 sm:w-6 bg-[#26B3FF]' : 'w-1 sm:w-1.5 bg-white/40'
               }`}
             />
           ))}

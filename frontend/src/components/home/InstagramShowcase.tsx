@@ -111,7 +111,7 @@ const InstagramCard = ({ card }: { card: InstagramCardData }) => {
       rel="noopener noreferrer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="group flex-shrink-0 w-[270px] sm:w-[290px] md:w-[310px] bg-white rounded-3xl border border-gray-100/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_14px_45px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden snap-start"
+      className="group flex-shrink-0 w-[280px] sm:w-[310px] md:w-[330px] bg-white rounded-3xl border border-gray-100/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_14px_45px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden snap-start"
     >
       {/* Card Header: Profile Info & Stats */}
       <div className="p-4 pb-3">
@@ -168,15 +168,15 @@ const InstagramCard = ({ card }: { card: InstagramCardData }) => {
         </div>
       </div>
 
-      {/* Main Post Media (Cover Image + Smooth Video Playback on Hover) */}
-      <div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+      {/* Main Post Media (Tall 3:4 Container to show full creative without cropping) */}
+      <div className="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden">
         {/* Crisp static cover image — always visible when idle */}
         <img
           src={imgSrc}
           alt={card.caption}
           loading="lazy"
           onError={() => imgSrc !== card.fallback && setImgSrc(card.fallback)}
-          className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
+          className={`w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
             card.video && isHovered ? 'opacity-0' : 'opacity-100'
           }`}
         />
