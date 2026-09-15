@@ -116,7 +116,7 @@ export const Careers = () => {
 
       <div className="max-w-6xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center mb-16">
-          <h1 className="text-3xl md:text-5xl font-outfit font-black uppercase tracking-tighter mb-4">JOIN OUR HSCVPL FAM</h1>
+          <h1 className="text-3xl md:text-5xl font-outfit font-black uppercase tracking-tighter mb-4">JOIN OUR HSCVPL  FAM</h1>
           <p className="text-gray-500 max-w-xl mx-auto">Help us redefine travel gear for the next generation.</p>
         </motion.div>
 
