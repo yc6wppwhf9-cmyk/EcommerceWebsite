@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LazyImage } from '../LazyImage';
 import type { Product } from '../../types';
@@ -45,14 +44,6 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({ products, columns }) =
   const desktopPageSize = columns.best;
   const totalPages = Math.max(1, Math.ceil(products.length / desktopPageSize));
 
-  const handleNext = useCallback(() => {
-    setCurrentPage((prev) => (prev + 1) % totalPages);
-  }, [totalPages]);
-
-  const handlePrev = useCallback(() => {
-    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-  }, [totalPages]);
-
   const handleSelect = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
@@ -80,26 +71,6 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({ products, columns }) =
             New Arrivals
           </h2>
         </div>
-
-        {/* Desktop Navigation Arrows */}
-        {totalPages > 1 && (
-          <>
-            <button
-              onClick={handlePrev}
-              aria-label="Previous new arrivals"
-              className="hidden md:flex absolute left-4 top-[60%] -translate-y-1/2 z-30 w-11 h-11 bg-white hover:bg-ink hover:text-white items-center justify-center transition-all duration-300 rounded-full border border-line shadow-md cursor-pointer"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              onClick={handleNext}
-              aria-label="Next new arrivals"
-              className="hidden md:flex absolute right-4 top-[60%] -translate-y-1/2 z-30 w-11 h-11 bg-white hover:bg-ink hover:text-white items-center justify-center transition-all duration-300 rounded-full border border-line shadow-md cursor-pointer"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </>
-        )}
 
         {/* Mobile: 2-column grid */}
         <div className="md:hidden grid grid-cols-2 gap-x-4 gap-y-6">
