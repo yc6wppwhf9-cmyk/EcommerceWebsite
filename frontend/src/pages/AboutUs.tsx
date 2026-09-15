@@ -1,30 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Building2,
-  TrendingUp,
   Heart,
-  ShieldCheck,
-  CheckCircle2,
   ArrowRight,
   MapPin,
   Linkedin,
   Mail,
-  FileText,
-  Download,
-  ExternalLink,
-  X,
   ChevronDown,
-  Layers,
-  Sparkles,
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 
 export const AboutUs: React.FC = () => {
-  const [showPdfModal, setShowPdfModal] = useState(false);
   const [isNavDropdownOpen, setIsNavDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const pdfUrl = '/HSCVPL_Profile_2026.pdf';
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -168,15 +156,6 @@ export const AboutUs: React.FC = () => {
             </div>
 
             <button
-              onClick={() => setShowPdfModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#0aa6b5] text-[#0aa6b5] hover:bg-[#0aa6b5] hover:text-white transition-all text-[11px] font-bold cursor-pointer"
-            >
-              <FileText size={13} />
-              <span className="hidden sm:inline">PDF Profile</span>
-              <span className="sm:hidden">PDF</span>
-            </button>
-
-            <button
               onClick={() => scrollToSection('contact')}
               className="px-4 py-1.5 rounded-full bg-[#101617] text-white hover:bg-[#0aa6b5] transition-colors text-[11px] font-bold cursor-pointer"
             >
@@ -224,25 +203,10 @@ export const AboutUs: React.FC = () => {
             <div className="flex flex-wrap items-center gap-4">
               <button
                 onClick={() => scrollToSection('story')}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-[#111] hover:bg-[#0aa6b5] hover:text-white transition-all text-xs font-black uppercase tracking-[0.16em] cursor-pointer shadow-lg"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white text-[#111] hover:bg-[#0aa6b5] hover:text-white transition-all text-xs font-black uppercase tracking-[0.16em] cursor-pointer shadow-lg"
               >
                 Explore Highspirit <ChevronDown size={15} />
               </button>
-
-              <button
-                onClick={() => setShowPdfModal(true)}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white transition-all text-xs font-bold uppercase tracking-[0.16em] cursor-pointer backdrop-blur-sm"
-              >
-                <FileText size={15} /> View Corporate PDF
-              </button>
-
-              <a
-                href={pdfUrl}
-                download="HSCVPL_Profile_2026.pdf"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-transparent hover:bg-white/10 text-white/80 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider"
-              >
-                <Download size={14} /> Download PDF
-              </a>
             </div>
           </div>
         </div>
@@ -533,48 +497,19 @@ export const AboutUs: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-6">
-            {/* Main Feature Card */}
-            <div className="lg:col-span-7 h-[420px] sm:h-[520px] relative rounded-xl overflow-hidden shadow-md group bg-white border border-[#dfe6e4]">
+          {/* Single Full-Width Showcase Banner */}
+          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-[#dfe6e4] bg-white group">
+            <div className="w-full h-[320px] sm:h-[460px] lg:h-[560px] bg-gradient-to-b from-[#eef5f8] via-[#f4f9fb] to-[#e6f1f6] flex items-center justify-center p-4 sm:p-8">
               <img
-                src="/about/12_product_collection_cutout.png"
-                alt="Bags and luggage collection"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                src="/about/11_product_collection.png"
+                alt="High Spirit Product Collection - Travel & Lifestyle"
+                className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-700 select-none"
               />
-              <div className="absolute left-6 bottom-6 bg-white/95 backdrop-blur-md px-5 py-3 rounded-lg shadow-md border border-[#dfe6e4]">
-                <span className="text-xs font-black uppercase tracking-wider text-[#172022]">
-                  School Bags · Backpacks · Luggage
-                </span>
-              </div>
             </div>
-
-            {/* Side Cards */}
-            <div className="lg:col-span-5 grid sm:grid-cols-2 lg:grid-cols-1 gap-6">
-              <div className="h-[240px] lg:h-[247px] relative rounded-xl overflow-hidden shadow-md group bg-white border border-[#dfe6e4]">
-                <img
-                  src="/about/11_product_collection.png"
-                  alt="Travel and lifestyle collection"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute left-5 bottom-5 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-lg shadow-md border border-[#dfe6e4]">
-                  <span className="text-xs font-black uppercase tracking-wider text-[#172022]">
-                    Travel & Lifestyle
-                  </span>
-                </div>
-              </div>
-
-              <div className="h-[240px] lg:h-[247px] relative rounded-xl overflow-hidden shadow-md group bg-white border border-[#dfe6e4]">
-                <img
-                  src="/about/04_backpack_manufacturing_closeup.png"
-                  alt="Backpack manufacturing close-up"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute left-5 bottom-5 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-lg shadow-md border border-[#dfe6e4]">
-                  <span className="text-xs font-black uppercase tracking-wider text-[#172022]">
-                    Built with Care & Precision
-                  </span>
-                </div>
-              </div>
+            <div className="absolute left-6 bottom-6 sm:left-8 sm:bottom-8 bg-white/95 backdrop-blur-md px-5 py-3 rounded-xl shadow-md border border-[#dfe6e4]">
+              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#172022]">
+                Travel & Lifestyle Collection
+              </span>
             </div>
           </div>
         </div>
@@ -809,12 +744,6 @@ export const AboutUs: React.FC = () => {
               >
                 Connect With Us <ArrowRight size={16} />
               </Link>
-              <button
-                onClick={() => setShowPdfModal(true)}
-                className="inline-flex items-center gap-2 px-7 py-4 rounded-full border border-white/40 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-[0.16em] transition-colors cursor-pointer"
-              >
-                <FileText size={15} /> Company Profile
-              </button>
             </div>
           </div>
 
@@ -846,45 +775,6 @@ export const AboutUs: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* ─── Interactive PDF Modal Viewer ────────────────────────────────── */}
-      {showPdfModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xs p-4 md:p-8">
-          <div className="bg-[#101718] text-white w-full max-w-6xl h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-white/20">
-            <div className="p-4 bg-[#101718] border-b border-white/10 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <FileText size={20} className="text-[#0aa6b5]" />
-                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">
-                  HSCVPL Official Profile 2026
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <a
-                  href={pdfUrl}
-                  download="HSCVPL_Profile_2026.pdf"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0aa6b5] text-white text-xs font-bold rounded-lg hover:bg-[#0895a3] transition-colors"
-                >
-                  <Download size={13} /> Download
-                </a>
-                <button
-                  onClick={() => setShowPdfModal(false)}
-                  className="p-1.5 hover:bg-white/10 rounded-lg text-white/80 hover:text-white transition-colors cursor-pointer"
-                  aria-label="Close modal"
-                >
-                  <X size={22} />
-                </button>
-              </div>
-            </div>
-            <div className="flex-1 w-full bg-[#525659]">
-              <iframe
-                src={`${pdfUrl}#toolbar=1&navpanes=1`}
-                title="HSCVPL PDF Modal"
-                className="w-full h-full border-0"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 };

@@ -184,38 +184,34 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
-        {/* Mobile Navbar: Toggle switch only (or Junior logo if Junior theme) + Menu button */}
+        {/* Mobile Navbar: Logo on left, BrandToggle + Menu button on right */}
         <div className="flex lg:hidden items-center justify-between w-full">
-          {!isJunior ? (
+          <Link to="/" className="flex items-center">
+            <img
+              src={logoSrc}
+              alt="Priority"
+              className={`${isJunior ? 'w-[95px] sm:w-[110px]' : 'w-[110px] sm:w-[130px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
+            />
+          </Link>
+          <div className="flex items-center gap-2">
             <BrandToggle size="sm" />
-          ) : (
-            <Link to="/" className="flex items-center">
-              <img
-                src={logoSrc}
-                alt="Junior"
-                className="w-[100px] sm:w-[120px] h-auto transition-all duration-300"
-              />
-            </Link>
-          )}
-          <button className="p-2" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            <button className="p-1.5" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation (Centered) */}
         <nav className="hidden lg:flex items-center">
           <ul className="flex items-center">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
-          {!isJunior && (
-            <div className="ml-5 pl-5 border-l border-black/10 dark:border-white/10 flex items-center">
-              <BrandToggle />
-            </div>
-          )}
         </nav>
 
-        {/* Desktop Action Icons */}
-        <div className="hidden lg:flex flex-1 items-center justify-end font-outfit">
+        {/* Desktop Action Icons & Fixed BrandToggle */}
+        <div className="hidden lg:flex flex-1 items-center justify-end font-outfit gap-3">
+          <BrandToggle />
+          <div className="h-5 w-px bg-black/15 dark:bg-white/20 mx-1" />
           <div className="flex items-center gap-1">
             {/* Search */}
             <button
@@ -284,11 +280,9 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             </div>
 
             {/* Mobile Brand Switcher */}
-            {!isJunior && (
-              <div className="px-5 py-3 border-b border-gray-100 flex justify-center bg-gray-50/70">
-                <BrandToggle />
-              </div>
-            )}
+            <div className="px-5 py-3 border-b border-gray-100 flex justify-center bg-gray-50/70">
+              <BrandToggle />
+            </div>
 
             {/* Scrollable nav area */}
             <nav className="flex-1 overflow-y-auto px-5 py-3">

@@ -17,7 +17,6 @@ const CATEGORIES = [
   { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/Drift Sky Blue_ Hero 1.png' },
   { label: 'Combo Set', filter: 'combo-set', image: '/junior/Rectangle 28.png' },
   { label: 'Pouches', filter: 'pouches', image: '/junior/Rectangle 29.png' },
-  { label: 'Lunch Bags', filter: 'lunch-bags', image: '/junior/Beautiful_ Hero 1.png' },
   { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Speedo_ Hero 1.png' },
 ];
 
@@ -379,7 +378,7 @@ export const JuniorPage = () => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
     sessionStorage.setItem('siteTheme', 'junior');
-    const juniorCategories = ['school-backpacks', 'trolley-backpacks', 'lunch-bags', 'combo-set', 'pouches'];
+    const juniorCategories = ['school-backpacks', 'trolley-backpacks', 'combo-set', 'pouches'];
     Promise.all(juniorCategories.map(cat => api.getProducts({ category: 'junior', sub_category: cat, sort: 'bestseller', limit: '4' })))
       .then(juniorResults => {
         const seen = new Set<string>();
@@ -524,7 +523,7 @@ export const JuniorPage = () => {
         />
         <div 
           className="absolute bottom-1/4 -right-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
-          style={{ backgroundColor: activeTab === 'Lunch Bags' ? '#4ECDC4' : '#F69245' }}
+          style={{ backgroundColor: activeTab === 'Trolley Backpacks' ? '#4ECDC4' : '#F69245' }}
         />
 
         <div className="absolute inset-0 junior-grid-bg opacity-[0.15] pointer-events-none" />
