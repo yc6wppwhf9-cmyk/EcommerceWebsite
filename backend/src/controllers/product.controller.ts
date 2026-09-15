@@ -15,6 +15,14 @@ const getPublishIssues = (product: Record<string, any>): string[] => {
   return issues;
 };
 
+const PARENT_CATEGORY_MAP: Record<string, string[]> = {
+  backpacks: ['backpacks', 'college-backpacks', 'school-backpacks', 'laptop-backpacks', 'trekking-backpacks'],
+  travel: ['travel', 'luggage', 'duffle'],
+  accessories: ['accessories', 'pouch', 'lunch-bag', 'daypack', 'tote-bag'],
+  junior: ['junior', 'school-backpacks', 'trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'],
+  premium: ['premium', 'premium-backpacks', 'premium-luggage', 'premium-accessories', 'premium-duffle'],
+};
+
 export const getProducts = async (req: AuthRequest, res: Response) => {
   const { category, sub_category, gender, isPremium, junior_style, age_range, sort, min_price, max_price, search, page = '1', limit = '20' } = req.query;
 
@@ -29,13 +37,31 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     }
 
     if (category && category !== 'premium') {
-      const { data: cat } = await supabase.from('categories').select('id').eq('slug', category).maybeSingle();
-      if (cat) {
-        // Match by direct category_id OR by sub_category (handles subcategory tab pages
-        // where products are stored under the parent category_id but tagged via sub_category)
-        query = query.or(`category_id.eq.${cat.id},sub_category.eq.${category}`);
+      const catSlug = String(category).trim();
+      const subSlugs = PARENT_CATEGORY_MAP[catSlug] || [catSlug];
+      
+      const { data: matchedCats } = await supabase
+        .from('categories')
+        .select('id, slug')
+        .in('slug', subSlugs);
+
+      const catIds = (matchedCats || []).map((c) => c.id);
+      
+      const orConditions: string[] = [];
+      if (catIds.length > 0) {
+        orConditions.push(`category_id.in.(${catIds.join(',')})`);
+      }
+      if (subSlugs.length > 0) {
+        orConditions.push(`sub_category.in.(${subSlugs.join(',')})`);
+      }
+      if (catSlug === 'junior') {
+        orConditions.push('gender.eq.kids');
+      }
+      
+      if (orConditions.length > 0) {
+        query = query.or(orConditions.join(','));
       } else {
-        query = query.eq('sub_category', category);
+        query = query.eq('sub_category', catSlug);
       }
     }
 
