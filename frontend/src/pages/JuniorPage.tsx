@@ -524,7 +524,7 @@ export const JuniorPage = () => {
                 className="h-full relative shrink-0 flex flex-col overflow-hidden rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all group cursor-pointer border border-gray-100"
               >
                 <Link to={activeCategoryHref} className="absolute inset-0 z-20" />
-                <div className="flex-1 w-full overflow-hidden relative bg-gray-50 flex items-center justify-center">
+                <div className="flex-1 w-full overflow-hidden relative bg-white flex items-center justify-center">
                   <img
                     src={activeCategory.image}
                     alt={activeTab}
