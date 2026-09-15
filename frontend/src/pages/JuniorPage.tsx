@@ -8,10 +8,42 @@ import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink
 import { resolveProductAgeRange } from '../utils/productFilters';
 
 const AGE_GROUPS = [
-  { label: 'Below 3 Years', slug: 'school-backpacks', age: 'Below 3 Years', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
-  { label: '3 to 5 Years', slug: 'school-backpacks', age: '3 to 5 Years', img: '/junior/Rectangle 29.png', color: '#A368FB' },
-  { label: '6 to 10 Years', slug: 'school-backpacks', age: '6 to 10 Years', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
-  { label: '11 Years & Above', slug: 'school-backpacks', age: '11 Years & Above', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
+  {
+    label: '30 to 36 Months',
+    stage: 'Nursery Play School',
+    size: '10–12 In (25–30 cm)',
+    slug: 'school-backpacks',
+    age: '30 to 36 Months',
+    img: '/junior/Rectangle 28.png',
+    color: '#FFBB5A'
+  },
+  {
+    label: '3 to 5 Years',
+    stage: 'LKG / UKG',
+    size: '14–15 In (36–38 cm)',
+    slug: 'school-backpacks',
+    age: '3 to 5 Years',
+    img: '/junior/Rectangle 29.png',
+    color: '#A368FB'
+  },
+  {
+    label: '6 to 10 Years',
+    stage: '1st Std to 3rd Std',
+    size: '16–17 Inch (41–44 cm)',
+    slug: 'school-backpacks',
+    age: '6 to 10 Years',
+    img: "/junior/Speedo_ Hero 1.png",
+    color: '#FFBB5A'
+  },
+  {
+    label: '11 Years & Above',
+    stage: '4th Std & Above',
+    size: '18–19 Inch (46–48 cm)',
+    slug: 'school-backpacks',
+    age: '11 Years & Above',
+    img: "/junior/Beautiful_ Hero 1.png",
+    color: '#FFBB5A'
+  },
 ];
 
 const CATEGORIES = [
@@ -55,7 +87,7 @@ const AgeGroupCarousel = () => {
                 transformOrigin: 'center right' 
               }}>
               <div className="relative w-full" style={{ paddingBottom: '140%' }}>
-                <img src={AGE_GROUPS[stackIdx].img} alt="" className="absolute inset-0 w-full h-full object-cover object-top opacity-80" />
+                <img src={AGE_GROUPS[stackIdx].img} alt="" className="absolute inset-0 w-full h-full object-cover object-top opacity-80" loading="lazy" />
               </div>
             </div>
           );
@@ -78,10 +110,21 @@ const AgeGroupCarousel = () => {
               className="w-full rounded-2xl overflow-hidden shadow-xl"
             >
               <Link to={`/${AGE_GROUPS[idx].slug}?theme=junior&age=${encodeURIComponent(AGE_GROUPS[idx].age)}`} className="block w-full relative" style={{ paddingBottom: '140%' }}>
-                <img src={AGE_GROUPS[idx].img} alt={AGE_GROUPS[idx].label} className="absolute inset-0 w-full h-full object-cover object-top" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
-                  <span className="block text-white text-[20px] font-black uppercase tracking-widest leading-tight drop-shadow-lg">{AGE_GROUPS[idx].label}</span>
+                <img src={AGE_GROUPS[idx].img} alt={AGE_GROUPS[idx].label} className="absolute inset-0 w-full h-full object-cover object-top" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                {/* Top Badge */}
+                <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+                  <span className="bg-white/95 backdrop-blur-md text-[#8750DA] text-[11px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full shadow-xs">
+                    {AGE_GROUPS[idx].stage}
+                  </span>
+                  <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                    {AGE_GROUPS[idx].size.split(' ')[0]}
+                  </span>
+                </div>
+                {/* Bottom info */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 text-left z-10">
+                  <span className="block text-white text-[20px] font-black uppercase tracking-wide leading-tight drop-shadow-lg">{AGE_GROUPS[idx].label}</span>
+                  <span className="block text-amber-200 text-xs font-semibold mt-1 drop-shadow">{AGE_GROUPS[idx].size}</span>
                 </div>
               </Link>
             </motion.div>
@@ -436,17 +479,41 @@ export const JuniorPage = () => {
           <AgeGroupCarousel />
 
           {/* Desktop: 4-column grid */}
-          <div className="hidden md:grid grid-cols-4 gap-8 lg:gap-10">
+          <div className="hidden md:grid grid-cols-4 gap-6 lg:gap-8">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
-                <Link to={`/${group.slug}?theme=junior&age=${encodeURIComponent(group.age)}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
-                  <div className="absolute inset-0 rounded-xl overflow-hidden"><img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /></div>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-center z-20 transition-colors duration-300 bg-[#FFBB5A] group-hover:bg-[#8750DA] h-[52px] rounded-tl-[40px]">
-                    <p className="relative z-10 text-[14px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-sm text-center px-1">{group.label}</p>
+                <Link to={`/${group.slug}?theme=junior&age=${encodeURIComponent(group.age)}`} className="group relative block rounded-2xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 overflow-hidden border border-gray-100" style={{ aspectRatio: '1/1.35' }}>
+                  <div className="absolute inset-0 overflow-hidden">
+                    <img src={group.img} alt={group.label} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  </div>
+                  {/* Top Badge: Stage / Grade */}
+                  <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-center">
+                    <span className="bg-white/95 backdrop-blur-md text-[#8750DA] text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-xs">
+                      {group.stage}
+                    </span>
+                    <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-xs">
+                      {group.size.split(' ')[0]}
+                    </span>
+                  </div>
+                  {/* Bottom Bar: Age Label & Size */}
+                  <div className="absolute bottom-0 inset-x-0 p-4 z-20 transition-colors duration-300">
+                    <p className="text-[16px] lg:text-[17px] font-outfit font-black uppercase tracking-tight text-white drop-shadow-md leading-tight">{group.label}</p>
+                    <p className="text-[11px] font-medium text-amber-200 mt-0.5 drop-shadow">{group.size}</p>
                   </div>
                 </Link>
               </motion.div>
             ))}
+          </div>
+
+          {/* Size Chart Feature Banner */}
+          <div className="mt-12 rounded-3xl overflow-hidden shadow-md border border-pink-100 bg-white group">
+            <img
+              src="/junior/size_chart.png"
+              alt="Pick the Right Size! Tiny Backpacks to Big Adventures — Priority Junior Size Chart"
+              className="w-full h-auto object-contain block select-none"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>

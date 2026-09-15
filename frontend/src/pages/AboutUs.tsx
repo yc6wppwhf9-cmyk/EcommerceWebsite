@@ -501,14 +501,12 @@ export const AboutUs: React.FC = () => {
           </div>
 
           {/* Single Full-Width Showcase Banner */}
-          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-[#dfe6e4] bg-white group">
-            <div className="w-full h-[320px] sm:h-[460px] lg:h-[560px] bg-gradient-to-b from-[#eef5f8] via-[#f4f9fb] to-[#e6f1f6] flex items-center justify-center p-4 sm:p-8">
-              <img
-                src="/about/About Us.jpg"
-                alt="High Spirit Product Collection - Travel & Lifestyle"
-                className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-700 select-none"
-              />
-            </div>
+          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-[#dfe6e4] bg-white group aspect-[16/10] sm:aspect-[16/8] lg:aspect-[21/9] min-h-[300px] sm:min-h-[420px] lg:min-h-[520px]">
+            <img
+              src="/about/About Us.jpg"
+              alt="High Spirit Product Collection - Travel & Lifestyle"
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 select-none block"
+            />
             <div className="absolute left-6 bottom-6 sm:left-8 sm:bottom-8 bg-white/95 backdrop-blur-md px-5 py-3 rounded-xl shadow-md border border-[#dfe6e4]">
               <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#172022]">
                 Travel & Lifestyle Collection

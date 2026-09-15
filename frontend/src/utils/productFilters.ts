@@ -29,10 +29,10 @@ export const COLOR_PALETTE: Record<string, { label: string; hex: string; border?
 };
 
 export const AGE_RANGE_OPTIONS = [
-  { id: 'below-3', label: 'Below 3 Years', detail: 'Playschool & Toddler (up to 30cm)' },
-  { id: '3-to-5', label: '3 to 5 Years', detail: 'Nursery & KG (14" - 15")' },
-  { id: '6-to-10', label: '6 to 10 Years', detail: 'Primary School (16" - 17")' },
-  { id: '11-plus', label: '11 Years & Above', detail: 'Middle, High School & College (18.5"+)' },
+  { id: '30-36-months', label: '30 to 36 Months', detail: 'Nursery Play School · 10–12 In (25–30 cm)' },
+  { id: '3-to-5-years', label: '3 to 5 Years', detail: 'LKG / UKG · 14–15 In (36–38 cm)' },
+  { id: '6-to-10-years', label: '6 to 10 Years', detail: '1st Std to 3rd Std · 16–17 Inch (41–44 cm)' },
+  { id: '11-plus-years', label: '11 Years & Above', detail: '4th Std & Above · 18–19 Inch (46–48 cm)' },
 ];
 
 /**
@@ -107,36 +107,52 @@ export function resolveProductColors(p: Product): ColorOption[] {
 }
 
 /**
- * Intelligent age range resolution for school & junior bags.
+ * Intelligent age & size range resolution for school & junior bags based on Priority Junior Size Chart:
+ * 1. Nursery Play School (10–12 In / 25–30 cm) -> 30 to 36 Months
+ * 2. LKG / UKG (14–15 In / 36–38 cm) -> 3 to 5 Years
+ * 3. 1st Std to 3rd Std (16–17 Inch / 41–44 cm) -> 6 to 10 Years
+ * 4. 4th Std & Above (18–19 Inch / 46–48 cm) -> 11 Years & Above
  */
 export function resolveProductAgeRange(p: Product): string {
   const text = `${p.name || ''} ${p.description || ''} ${(p as any).sub_category || ''} ${(p as any).category || ''} ${JSON.stringify(p.specifications || '')}`.toLowerCase();
 
-  // 1. Below 3 Years (Playgroup & Toddler)
+  // 1. Nursery Play School: 10–12 In (25–30 cm) -> 30 to 36 Months
   if (
+    text.includes('30 to 36') ||
+    text.includes('30-36') ||
     text.includes('below 3') ||
     text.includes('playgroup') ||
-    text.includes('toddler') ||
     text.includes('playschool') ||
+    text.includes('play school') ||
+    text.includes('nursery') ||
+    text.includes('toddler') ||
     text.includes('mini backpack') ||
+    text.includes('10 inch') ||
+    text.includes('10"') ||
+    text.includes('11 inch') ||
+    text.includes('11"') ||
     text.includes('12 inch') ||
     text.includes('12"') ||
-    text.includes('30-36 months')
+    text.includes('25 cm') ||
+    text.includes('28 cm') ||
+    text.includes('30 cm')
   ) {
-    return 'Below 3 Years';
+    return '30 to 36 Months';
   }
 
-  // 2. 3 to 5 Years (Nursery & KG)
+  // 2. LKG / UKG: 14–15 In (36–38 cm) -> 3 to 5 Years
   if (
     text.includes('3 to 5') ||
     text.includes('3-5') ||
-    text.includes('nursery') ||
+    text.includes('lkg') ||
+    text.includes('ukg') ||
     text.includes('kindergarten') ||
-    text.includes('kg') ||
     text.includes('14 inch') ||
     text.includes('14"') ||
     text.includes('15 inch') ||
     text.includes('15"') ||
+    text.includes('36 cm') ||
+    text.includes('38 cm') ||
     text.includes('combo set') ||
     text.includes('dreamy') ||
     text.includes('tiffin pouch')
@@ -144,17 +160,25 @@ export function resolveProductAgeRange(p: Product): string {
     return '3 to 5 Years';
   }
 
-  // 3. 6 to 10 Years (Primary School)
+  // 3. 1st Std to 3rd Std: 16–17 Inch (41–44 cm) -> 6 to 10 Years
   if (
     text.includes('6 to 10') ||
     text.includes('6-10') ||
+    text.includes('1st std') ||
+    text.includes('2nd std') ||
+    text.includes('3rd std') ||
     text.includes('primary') ||
     text.includes('16 inch') ||
     text.includes('16"') ||
+    text.includes('17 inch') ||
+    text.includes('17"') ||
+    text.includes('41 cm') ||
+    text.includes('44 cm') ||
     text.includes('precious') ||
     text.includes('drift') ||
     text.includes('junior') ||
     text.includes('speedo') ||
+    text.includes('funky') ||
     text.includes('school bag') ||
     text.includes('school backpack') ||
     (p.gender === 'kids')
@@ -162,6 +186,6 @@ export function resolveProductAgeRange(p: Product): string {
     return '6 to 10 Years';
   }
 
-  // 4. 11 Years & Above (Middle/High School, College, Adult)
+  // 4. 4th Std & Above: 18–19 Inch (46–48 cm) -> 11 Years & Above
   return '11 Years & Above';
 }
