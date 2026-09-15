@@ -131,7 +131,9 @@ async function request<T>(path: string, options: RequestInit = {}, allowRetry = 
         if (refreshed) return request<T>(path, options, false);
         throw new Error(getFriendlyErrorMessage('token expired'));
       }
-      const rawMsg = data.error || data.message || `Request failed (${res.status})`;
+      const rawMsg = Array.isArray(data.details) && data.details.length > 0
+        ? `Validation error: ${data.details.map((d: any) => `${d.path ? d.path.replace(/^body\./, '') : 'field'}: ${d.message}`).join(', ')}`
+        : (data.error || data.message || `Request failed (${res.status})`);
       throw new Error(getFriendlyErrorMessage(rawMsg));
     }
     return data as T;

@@ -3,7 +3,7 @@ import * as ProductController from '../controllers/product.controller';
 import { authenticateToken, optionalAuthenticate, requireAdmin } from '../middleware/auth';
 import { validateCsrf } from '../middleware/csrf';
 import { validate } from '../middleware/validate';
-import { productSchema } from '../types/schemas';
+import { productSchema, productUpdateSchema } from '../types/schemas';
 import multer from 'multer';
 
 const router = Router();
@@ -27,7 +27,7 @@ const uploadCatalogue = multer({
 router.get('/', optionalAuthenticate, ProductController.getProducts);
 router.get('/:slug', ProductController.getProductBySlug);
 router.post('/', authenticateToken, requireAdmin, validateCsrf, validate(productSchema), ProductController.createProduct);
-router.put('/:id', authenticateToken, requireAdmin, validateCsrf, validate(productSchema.partial()), ProductController.updateProduct);
+router.put('/:id', authenticateToken, requireAdmin, validateCsrf, validate(productUpdateSchema), ProductController.updateProduct);
 
 // New: Image Upload and Bulk Upload
 router.post('/upload-image', authenticateToken, requireAdmin, validateCsrf, uploadImage.single('image'), ProductController.uploadImage);

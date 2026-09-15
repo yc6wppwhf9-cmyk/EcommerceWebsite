@@ -16,32 +16,48 @@ export const loginSchema = z.object({
   }),
 });
 
+const productBodySchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  price: z.coerce.number().nonnegative(),
+  originalPrice: z.coerce.number().nonnegative().nullable().optional(),
+  original_price: z.coerce.number().nonnegative().nullable().optional(),
+  stock: z.coerce.number().int().nonnegative().default(0),
+  category: z.string().nullable().optional(),
+  category_id: z.string().nullable().optional(),
+  sub_category: z.string().nullable().optional(),
+  subcategory: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  sku: z.string().nullable().optional(),
+  slug: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
+  images: z.array(z.any()).nullable().optional(),
+  colors: z.array(z.any()).nullable().optional(),
+  features: z.array(z.any()).nullable().optional(),
+  isNew: z.boolean().nullable().optional(),
+  is_new: z.boolean().nullable().optional(),
+  highlighted: z.boolean().nullable().optional(),
+  is_highlighted: z.boolean().nullable().optional(),
+  isPremium: z.boolean().nullable().optional(),
+  is_premium: z.boolean().nullable().optional(),
+  is_active: z.boolean().nullable().optional(),
+  gender: z.string().nullable().optional(),
+  ageRange: z.string().nullable().optional(),
+  age_range: z.string().nullable().optional(),
+  size: z.string().nullable().optional(),
+  junior_style: z.string().nullable().optional(),
+  juniorStyle: z.string().nullable().optional(),
+  amazon_url: z.string().nullable().optional(),
+  flipkart_url: z.string().nullable().optional(),
+  myntra_url: z.string().nullable().optional(),
+  ajio_url: z.string().nullable().optional(),
+}).passthrough();
+
 export const productSchema = z.object({
-  body: z.object({
-    name: z.string().min(1, 'Name is required'),
-    price: z.number().nonnegative(),
-    originalPrice: z.number().nonnegative().optional(),
-    original_price: z.number().nonnegative().optional(),
-    stock: z.number().int().nonnegative(),
-    category_id: z.string().optional(),
-    sub_category: z.string().optional(),
-    description: z.string().optional(),
-    sku: z.string().optional(),
-    slug: z.string().optional(),
-    images: z.array(z.any()).optional(),
-    colors: z.array(z.any()).optional(),
-    features: z.array(z.any()).optional(),
-    isNew: z.boolean().optional(),
-    highlighted: z.boolean().optional(),
-    isPremium: z.boolean().optional(),
-    gender: z.string().optional(),
-    ageRange: z.string().optional(),
-    size: z.string().optional(),
-    amazon_url: z.string().optional(),
-    flipkart_url: z.string().optional(),
-    myntra_url: z.string().optional(),
-    ajio_url: z.string().optional(),
-  }).passthrough(),
+  body: productBodySchema,
+});
+
+export const productUpdateSchema = z.object({
+  body: productBodySchema.partial(),
 });
 
 export const orderSchema = z.object({
