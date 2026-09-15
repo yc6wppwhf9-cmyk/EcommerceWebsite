@@ -7,6 +7,9 @@ import {
   Linkedin,
   Mail,
   ChevronDown,
+  ShieldCheck,
+  CheckCircle2,
+  TrendingUp,
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 

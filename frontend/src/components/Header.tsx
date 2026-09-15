@@ -210,7 +210,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Desktop Action Icons & Fixed BrandToggle */}
         <div className="hidden lg:flex flex-1 items-center justify-end font-outfit gap-3 xl:gap-4">
-          <div className="mr-8 lg:mr-14 xl:mr-20">
+          <div className="mr-4 lg:mr-6 xl:mr-8">
             <BrandToggle />
           </div>
           <div className="h-5 w-px bg-black/15 dark:bg-white/20 mx-1" />
