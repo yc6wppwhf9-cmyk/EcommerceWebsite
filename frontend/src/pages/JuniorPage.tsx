@@ -514,7 +514,7 @@ export const JuniorPage = () => {
 
 
           <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
-            {/* Left Banner Card — Clean borderless framing */}
+            {/* Left Banner Card — Full Height Clean Image Banner */}
             <motion.div 
               className="hidden lg:block h-[500px] shrink-0"
             >
@@ -524,22 +524,12 @@ export const JuniorPage = () => {
                 className="h-full relative shrink-0 flex flex-col overflow-hidden rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all group cursor-pointer border border-gray-100"
               >
                 <Link to={activeCategoryHref} className="absolute inset-0 z-20" />
-                <div className="flex-1 w-full overflow-hidden relative bg-white flex items-center justify-center">
-                  <img
-                    src={activeCategory.image}
-                    alt={activeTab}
-                    className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-105"
-                    crossOrigin="anonymous"
-                  />
-                </div>
-                <div className="mt-auto flex min-h-[84px] items-center justify-between gap-4 bg-[#F69245] px-7 py-4 border-t-0">
-                  <h3 className="font-protest text-white leading-none drop-shadow-sm" style={{ fontSize: 'clamp(22px, 2.2vw, 30px)' }}>
-                    {activeTab}
-                  </h3>
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-md transition-transform group-hover:translate-x-2">
-                    <ArrowRight size={20} />
-                  </span>
-                </div>
+                <img
+                  src={activeCategory.image}
+                  alt={activeTab}
+                  className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-105"
+                  crossOrigin="anonymous"
+                />
               </motion.div>
             </motion.div>
 
