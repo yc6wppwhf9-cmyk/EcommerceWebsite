@@ -554,31 +554,13 @@ export const AboutUs: React.FC = () => {
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="h-[360px] sm:h-[460px] rounded-xl overflow-hidden shadow-lg border border-[#d7e2df] group">
+            <div>
+              <div className="h-[400px] sm:h-[500px] lg:h-[540px] rounded-2xl overflow-hidden shadow-lg border border-[#d7e2df] group">
                 <img
                   src="/about/08_factory_floor_wide_1.png"
                   alt="High Spirit manufacturing floor"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-              </div>
-
-              {/* Auxiliary mini-gallery */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="h-36 rounded-lg overflow-hidden border border-[#d7e2df] group">
-                  <img
-                    src="/about/10_manufacturing_facility_building.png"
-                    alt="Facility Exterior"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="h-36 rounded-lg overflow-hidden border border-[#d7e2df] group">
-                  <img
-                    src="/about/05_sewing_machine_closeup.png"
-                    alt="Industrial Sewing Machine"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
               </div>
             </div>
           </div>
