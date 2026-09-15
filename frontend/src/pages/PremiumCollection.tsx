@@ -141,9 +141,13 @@ const seriesHighlights = [
 // Default fallback if setting hasn't been configured yet
 const DEFAULT_EDITORIAL = { category: 'luggage', label: 'Luggage', url: '/luggage?theme=premium' };
 
+const SHOWCASE_LUGGAGE_SKUS = ['TRW-40709525', 'TRW-40709520', 'TRW-40709536', 'TRW-40709552'];
+const SHOWCASE_DUFFLE_SKUS = ['INV29597', 'INV29598', 'INV29596', 'INV33910'];
+
 export const PremiumCollection = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [luggageProducts, setLuggageProducts] = useState<Product[]>([]);
+  const [duffleProducts, setDuffleProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const gridRef = useRef<HTMLElement>(null);
@@ -153,10 +157,29 @@ export const PremiumCollection = () => {
     window.scrollTo(0, 0);
     sessionStorage.setItem('siteTheme', 'premium');
     Promise.all([
-      api.getProducts({ isPremium: 'true', limit: '100' }),
+      api.getProducts({ isPremium: 'true', limit: '50' }).catch(() => ({ products: [] })),
+      api.getProducts({ category: 'duffle', limit: '20' }).catch(() => ({ products: [] })),
       api.getSetting('premium_editorial_banner').catch(() => null),
-    ]).then(([prodRes, bannerRes]) => {
-      setProducts(prodRes.products as Product[]);
+    ]).then(([premRes, duffleRes, bannerRes]) => {
+      const prem = (premRes.products as Product[]) || [];
+      const duffles = (duffleRes.products as Product[]) || [];
+
+      // Row 1: Luggage — Exact 4-color geometric series (Black, Mint Green, Blue, Tan)
+      const curatedLuggage = SHOWCASE_LUGGAGE_SKUS
+        .map(sku => prem.find(p => p.sku === sku || p.id === sku || (p as any).sku?.endsWith(sku.replace('TRW-', ''))))
+        .filter(Boolean) as Product[];
+
+      const remainingLuggage = prem.filter(p => !curatedLuggage.some(c => c.id === p.id));
+      setLuggageProducts([...curatedLuggage, ...remainingLuggage].slice(0, 4));
+
+      // Row 2: Duffle — Curated premium leather & suede duffle series
+      const curatedDuffles = SHOWCASE_DUFFLE_SKUS
+        .map(sku => duffles.find(p => p.sku === sku || p.id === sku))
+        .filter(Boolean) as Product[];
+
+      const remainingDuffles = duffles.filter(p => !curatedDuffles.some(c => c.id === p.id));
+      setDuffleProducts([...curatedDuffles, ...remainingDuffles].slice(0, 4));
+
       if (bannerRes?.category) setEditorialBanner(bannerRes);
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
@@ -251,51 +274,83 @@ export const PremiumCollection = () => {
         </section>
       </div>
 
-      {/* 3. FILTERED PRODUCT GRID */}
-      <section ref={gridRef} className="bg-white text-black py-12 md:py-24 scroll-mt-16">
-        <div className="container mx-auto px-4 md:px-12 max-w-[1400px]">
-          <div className="mb-10 md:mb-20 text-center">
-            <h2
-              className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.6em] pb-4"
-              style={{ fontSize: '18px', color: '#111111' }}
-            >
-              Our Collection
-            </h2>
-          </div>
-
-          {isLoading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-                <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse" />
-              ))}
+      {/* 3. SHOWCASE SECTIONS: TWO ROWS (LUGGAGE & DUFFLE) */}
+      <section ref={gridRef} className="bg-white text-black py-12 md:py-20 scroll-mt-16">
+        <div className="container mx-auto px-4 md:px-12 max-w-[1400px] space-y-16 md:space-y-24">
+          
+          {/* ROW 1: LUGGAGE */}
+          <div>
+            <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-black/10 pb-4">
+              <h2 className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.5em] text-[15px] md:text-[18px] text-[#111111]">
+                Luggage
+              </h2>
+              <Link
+                to="/luggage?theme=premium"
+                className="text-[11px] md:text-[12px] font-semibold tracking-[0.2em] uppercase text-[#111111] hover:text-red-600 transition-colors"
+              >
+                View All →
+              </Link>
             </div>
-          ) : products.length > 0 ? (
-            <motion.div
-              layout
-              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-12 md:gap-y-24"
-            >
-              <AnimatePresence mode="popLayout">
-                {products.map((product, pIdx) => (
+
+            {isLoading ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                {[1, 2, 3, 4].map(n => (
+                  <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse rounded-sm" />
+                ))}
+              </div>
+            ) : luggageProducts.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
+                {luggageProducts.map((product, pIdx) => (
                   <motion.div
                     key={product.id}
-                    layout
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: Math.min(pIdx, 7) * 0.07 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: pIdx * 0.08 }}
                   >
                     <ProductCard product={product} theme="premium" />
                   </motion.div>
                 ))}
-              </AnimatePresence>
-            </motion.div>
-          ) : (
-            <div className="py-24 text-center">
-              <p className="text-gray-300 font-black uppercase tracking-widest text-[11px]">
-                No products in this collection yet.
-              </p>
+              </div>
+            ) : null}
+          </div>
+
+          {/* ROW 2: DUFFLE */}
+          <div>
+            <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-black/10 pb-4">
+              <h2 className="font-outfit font-medium uppercase tracking-[0.3em] md:tracking-[0.5em] text-[15px] md:text-[18px] text-[#111111]">
+                Duffle
+              </h2>
+              <Link
+                to="/duffle?theme=premium"
+                className="text-[11px] md:text-[12px] font-semibold tracking-[0.2em] uppercase text-[#111111] hover:text-red-600 transition-colors"
+              >
+                View All →
+              </Link>
             </div>
-          )}
+
+            {isLoading ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                {[1, 2, 3, 4].map(n => (
+                  <div key={n} className="aspect-[3/4] bg-gray-50 animate-pulse rounded-sm" />
+                ))}
+              </div>
+            ) : duffleProducts.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
+                {duffleProducts.map((product, pIdx) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: pIdx * 0.08 }}
+                  >
+                    <ProductCard product={product} theme="premium" />
+                  </motion.div>
+                ))}
+              </div>
+            ) : null}
+          </div>
 
         </div>
       </section>
