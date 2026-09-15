@@ -7,6 +7,7 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   className?: string;
   skeletonClassName?: string;
   priority?: boolean;
+  fallbackSrc?: string;
 }
 
 // Appends Google CDN size param to reduce payload for large images
@@ -27,12 +28,29 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   className = '',
   skeletonClassName = '',
   priority = false,
+  fallbackSrc,
   ...rest
 }) => {
   const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [imgSrc, setImgSrc] = useState(src);
 
-  const optimizedSrc = error ? src : optimizeGoogleUrl(src, width);
+  React.useEffect(() => {
+    setImgSrc(src);
+    setHasError(false);
+    setLoaded(false);
+  }, [src]);
+
+  const optimizedSrc = hasError ? imgSrc : optimizeGoogleUrl(imgSrc, width);
+
+  const handleError = () => {
+    if (fallbackSrc && imgSrc !== fallbackSrc) {
+      setImgSrc(fallbackSrc);
+    } else {
+      setHasError(true);
+      setLoaded(true);
+    }
+  };
 
   return (
     <div className="relative w-full h-full">
@@ -48,7 +66,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         decoding="async"
         referrerPolicy="no-referrer"
         onLoad={() => setLoaded(true)}
-        onError={() => { setError(true); setLoaded(true); }}
+        onError={handleError}
         className={`transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'} ${className}`}
         {...rest}
       />

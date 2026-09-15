@@ -80,6 +80,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           alt={product.name}
           className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] object-contain transition-opacity duration-300"
           src={displayImage}
+          fallbackSrc={props.theme === 'premium' ? '/Traworld/luggage.png' : '/Category/Backpack.jpg'}
           width={400}
         />
 
