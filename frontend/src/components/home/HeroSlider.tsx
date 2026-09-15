@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { HERO_SLIDES, heroVariants } from '../../constants/home';
 
@@ -22,16 +22,6 @@ export const HeroSlider = () => {
       setCurrent((p) => (p + 1) % HERO_SLIDES.length);
     }, 6000);
   }, []);
-
-  const next = useCallback(() => {
-    setCurrent((p) => (p + 1) % HERO_SLIDES.length);
-    startTimer(); // reset auto-advance after manual interaction
-  }, [startTimer]);
-
-  const prev = useCallback(() => {
-    setCurrent((p) => (p - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-    startTimer();
-  }, [startTimer]);
 
   const goTo = useCallback(
     (index: number) => {
@@ -105,22 +95,6 @@ export const HeroSlider = () => {
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prev}
-        aria-label="Previous slide"
-        className="hidden sm:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 border border-white/20 rounded-full items-center justify-center bg-black/40 hover:bg-white hover:text-gray-900 backdrop-blur-md transition-all duration-300 text-white group"
-      >
-        <ChevronLeft size={22} className="group-hover:-translate-x-0.5 transition-transform" />
-      </button>
-      <button
-        onClick={next}
-        aria-label="Next slide"
-        className="hidden sm:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 border border-white/20 rounded-full items-center justify-center bg-black/40 hover:bg-white hover:text-gray-900 backdrop-blur-md transition-all duration-300 text-white group"
-      >
-        <ChevronRight size={22} className="group-hover:translate-x-0.5 transition-transform" />
-      </button>
 
       {/* Dots & Slide Counter */}
       <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-12 z-30 flex items-center gap-2 sm:gap-3 bg-black/60 backdrop-blur-md px-3 py-1 sm:px-4 sm:py-2 rounded-full border border-white/15">

@@ -759,7 +759,7 @@ export const AboutUs: React.FC = () => {
                 <img
                   src={partner.src}
                   alt={partner.name}
-                  className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:scale-105"
+                  className="max-h-full max-w-full object-contain transition-all duration-300 group-hover:scale-105"
                   loading="lazy"
                 />
               </div>
