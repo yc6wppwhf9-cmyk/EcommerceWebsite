@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { getProductById } from '../constants/products';
-import { Star, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
 import { MarketplaceLink, type Marketplace } from './MarketplaceLink';
@@ -50,9 +50,6 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const quiet = props.variant === 'loud'
     ? false
     : props.variant === 'quiet' || (props.theme !== 'junior' && props.theme !== 'premium');
-  const rating = product.rating ?? 0;
-  const reviews = (product as any).reviews ?? 0;
-  const hasRating = rating > 0;
 
   const allMarketplaceLinks: Array<{ marketplace: Marketplace; url: string; label: string }> = [
     { marketplace: 'amazon', url: (product as any).amazon_url, label: 'Buy on Amazon' },
@@ -129,27 +126,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           </h3>
         </Link>
 
-        {/* Stars + reviews — only when we have a real Amazon rating */}
-        <div className="flex items-center gap-2 min-h-[16px]">
-          {hasRating ? (
-            <>
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={13}
-                    className={i < Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
-                  />
-                ))}
-              </div>
-              <span className={quiet ? 'text-[11px] text-slate font-normal' : 'text-[11px] text-gray-400 font-medium'}>
-                {rating.toFixed(1)}{reviews > 0 ? ` (${reviews})` : ''}
-              </span>
-            </>
-          ) : (
-            <span className={quiet ? 'text-[10px] text-slate font-normal uppercase tracking-[0.18em]' : 'text-[10px] text-gray-300 font-medium uppercase tracking-widest'}>New Arrival</span>
-          )}
-        </div>
+
 
         {/* Buy on Amazon / Flipkart / Myntra */}
         {marketplaceLinks.length > 0 ? (
