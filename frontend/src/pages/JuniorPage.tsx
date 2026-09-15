@@ -5,12 +5,13 @@ import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
 import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
+import { resolveProductAgeRange } from '../utils/productFilters';
 
 const AGE_GROUPS = [
-  { label: 'Below 3 Years', slug: 'school-backpacks', age: '30-36 months', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
-  { label: '3 to 5 Years', slug: 'school-backpacks', age: '3-5 years', img: '/junior/Rectangle 29.png', color: '#A368FB' },
-  { label: '6 to 10 Years', slug: 'school-backpacks', age: '6-10 years', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
-  { label: '11 Years & Above', slug: 'school-backpacks', age: '11+ years', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
+  { label: 'Below 3 Years', slug: 'school-backpacks', age: 'Below 3 Years', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
+  { label: '3 to 5 Years', slug: 'school-backpacks', age: '3 to 5 Years', img: '/junior/Rectangle 29.png', color: '#A368FB' },
+  { label: '6 to 10 Years', slug: 'school-backpacks', age: '6 to 10 Years', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
+  { label: '11 Years & Above', slug: 'school-backpacks', age: '11 Years & Above', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
 ];
 
 const CATEGORIES = [
@@ -110,6 +111,7 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   const secondaryImage = product.images?.[1] || product.image;
   const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   const displayImage = !isTouchDevice && isHovered ? secondaryImage : product.image;
+  const ageRange = resolveProductAgeRange(product);
 
   const allMarketplaceLinks: Array<{ marketplace: Marketplace; url: string; label: string }> = [
     { marketplace: 'amazon', url: (product as any).amazon_url, label: 'Buy on Amazon' },
@@ -156,6 +158,9 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
 
       <div className="flex flex-1 flex-col justify-between p-3.5 md:p-4 pt-2">
         <div className="flex flex-col">
+          <span className="inline-block self-start text-[10px] font-bold text-[#8750DA] bg-[#8750DA]/10 px-2.5 py-0.5 rounded-full mb-1.5">
+            {ageRange}
+          </span>
           <Link to={`/product/${product.slug || product.id}?theme=junior`}>
             <h3 className="h-11 md:h-12 text-[13px] md:text-[14px] font-black text-[#030014] leading-snug line-clamp-2 hover:text-[#F69245] transition-colors flex items-start">
               {product.name}
@@ -446,6 +451,7 @@ export const JuniorPage = () => {
         </div>
       </section>
 
+      {/* Hidden for now: Made for Little Adventures banner
       <section className="relative mb-6 overflow-visible px-4 md:px-0 flex justify-center">
         <div className="relative w-full max-w-[1600px] rounded-[5px] py-8 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: 'clamp(260px, 45vw, 500px)' }}>
 
@@ -466,6 +472,7 @@ export const JuniorPage = () => {
           </div>
         </div>
       </section>
+      */}
 
       <section className="pt-10 pb-4 md:py-20 bg-white overflow-hidden relative">
         {/* Dynamic Background Glows */}

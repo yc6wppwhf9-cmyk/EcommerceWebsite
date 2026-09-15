@@ -5,8 +5,9 @@ import { getCategoryBySlug, CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify } from 'lucide-react';
+import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify, Check } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { resolveProductColors, resolveProductAgeRange, AGE_RANGE_OPTIONS } from '../utils/productFilters';
 
 const PAGE_LIMIT = 20;
 const NO_PRICE_FILTER = 999999;
@@ -41,7 +42,8 @@ export const CategoryPage = () => {
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [openFilters, setOpenFilters] = useState<string[]>(['subcategories', 'price', 'gender', 'sizes', 'features', 'colors']);
+  const [selectedAgeRanges, setSelectedAgeRanges] = useState<string[]>(ageParam ? [ageParam] : []);
+  const [openFilters, setOpenFilters] = useState<string[]>(['subcategories', 'age', 'price', 'gender', 'sizes', 'features', 'colors']);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [mobileGridCols, setMobileGridCols] = useState<1 | 2>(2);
 
@@ -55,10 +57,11 @@ export const CategoryPage = () => {
     setSelectedFeatures([]);
     setSelectedGenders([]);
     setSelectedColors([]);
+    setSelectedAgeRanges(ageParam ? [ageParam] : []);
     setPriceRange(NO_PRICE_FILTER);
     setSortBy('newest');
     setPage(1);
-  }, [slug]);
+  }, [slug, ageParam]);
 
   // Fetch products (replace=true for first load, false for load more)
   const fetchProducts = useCallback(
@@ -147,16 +150,16 @@ export const CategoryPage = () => {
   }, [allProducts]);
 
   const availableColors = useMemo(() => {
-    const map = new Map<string, string>();
+    const map = new Map<string, { name: string; code: string; border?: boolean }>();
     allProducts.forEach(p => {
-      const colorList = (p as any).colors || p.variants || [];
-      colorList.forEach((v: any) => {
-        const name = v.name ?? v.color ?? '';
-        const code = v.code ?? v.colorCode ?? '';
-        if (name && code) map.set(name, code);
+      const colors = resolveProductColors(p);
+      colors.forEach(c => {
+        if (!map.has(c.name.toLowerCase())) {
+          map.set(c.name.toLowerCase(), c);
+        }
       });
     });
-    return Array.from(map.entries()).map(([color, code]) => ({ color, code }));
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, [allProducts]);
 
   // Genders actually present in the catalog (excludes the default "unisex")
@@ -179,9 +182,23 @@ export const CategoryPage = () => {
     return Array.from(set).sort();
   }, [allProducts]);
 
+  // Check if current category is relevant for Age Range filter (Junior / School / Kids)
+  const isJuniorOrSchoolCategory = useMemo(() => {
+    return (
+      slug === 'junior' ||
+      slug === 'school-backpacks' ||
+      slug === 'combo-set' ||
+      slug === 'trolley-backpacks' ||
+      slug === 'kids' ||
+      themeParam === 'junior' ||
+      allProducts.some(p => p.gender === 'kids' || (p as any).sub_category === 'school-backpacks' || (p as any).sub_category === 'combo-set')
+    );
+  }, [slug, themeParam, allProducts]);
+
   // Count of active filters
   const activeFilterCount = [
     selectedSubcategories.length,
+    selectedAgeRanges.length,
     selectedSizes.length,
     selectedFeatures.length,
     selectedGenders.length,
@@ -191,6 +208,7 @@ export const CategoryPage = () => {
 
   const clearAllFilters = () => {
     setSelectedSubcategories([]);
+    setSelectedAgeRanges([]);
     setSelectedSizes([]);
     setSelectedFeatures([]);
     setSelectedGenders([]);
@@ -214,10 +232,20 @@ export const CategoryPage = () => {
       const matchesGender =
         selectedGenders.length === 0 ||
         selectedGenders.map(g => g.toLowerCase()).includes((p.gender ?? '').toLowerCase());
+      
+      // Color matching using smart color resolution
+      const productColors = resolveProductColors(p).map(c => c.name.toLowerCase());
       const matchesColor =
         selectedColors.length === 0 ||
-        (p.variants ?? []).some(v => selectedColors.includes(v.color));
-      return matchesPrice && matchesSub && matchesSize && matchesFeatures && matchesGender && matchesColor;
+        selectedColors.some(sc => productColors.includes(sc.toLowerCase()));
+
+      // Age range matching using smart age resolution
+      const productAge = resolveProductAgeRange(p);
+      const matchesAge =
+        selectedAgeRanges.length === 0 ||
+        selectedAgeRanges.some(ar => ar.toLowerCase() === productAge.toLowerCase() || ((p as any).age_range && (p as any).age_range.toLowerCase().includes(ar.toLowerCase())));
+
+      return matchesPrice && matchesSub && matchesSize && matchesFeatures && matchesGender && matchesColor && matchesAge;
     });
 
     if (sortBy === 'price-low') result.sort((a, b) => a.price - b.price);
@@ -225,7 +253,7 @@ export const CategoryPage = () => {
     else if (sortBy === 'rating') result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 
     return result;
-  }, [allProducts, priceRange, sortBy, selectedSubcategories, selectedSizes, selectedFeatures, selectedGenders, selectedColors]);
+  }, [allProducts, priceRange, sortBy, selectedSubcategories, selectedAgeRanges, selectedSizes, selectedFeatures, selectedGenders, selectedColors]);
 
   const toggleFilterSection = (id: string) =>
     setOpenFilters(prev =>
@@ -235,27 +263,36 @@ export const CategoryPage = () => {
   // Reusable checkbox row
   const CheckRow = ({
     label,
+    detail,
     checked,
     onChange,
   }: {
     label: string;
+    detail?: string;
     checked: boolean;
     onChange: () => void;
   }) => (
-    <label className="flex items-center gap-3 cursor-pointer group">
+    <label className="flex items-start gap-3 cursor-pointer group">
       <input type="checkbox" className="hidden" checked={checked} onChange={onChange} />
       <div
-        className={`w-3 h-3 border transition-colors shrink-0 ${
+        className={`w-3.5 h-3.5 border transition-colors shrink-0 mt-0.5 rounded-xs ${
           checked ? 'bg-black border-black' : 'border-gray-200 group-hover:border-black'
         }`}
       />
-      <span
-        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
-          checked ? 'text-black' : 'text-gray-400 group-hover:text-black'
-        }`}
-      >
-        {label}
-      </span>
+      <div className="flex flex-col">
+        <span
+          className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+            checked ? 'text-black' : 'text-gray-500 group-hover:text-black'
+          }`}
+        >
+          {label}
+        </span>
+        {detail && (
+          <span className="text-[9px] text-gray-400 font-normal leading-tight mt-0.5">
+            {detail}
+          </span>
+        )}
+      </div>
     </label>
   );
 
@@ -282,12 +319,13 @@ export const CategoryPage = () => {
             className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
           />
         </button>
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {isOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
               <div className="pt-4 pb-2">{children}</div>
@@ -314,6 +352,29 @@ export const CategoryPage = () => {
                     prev.includes(sub.slug)
                       ? prev.filter(s => s !== sub.slug)
                       : [...prev, sub.slug]
+                  )
+                }
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
+
+      {/* Age Range Filter for Junior/Kids/School Categories */}
+      {isJuniorOrSchoolCategory && (
+        <FilterSection id="age" title="Age Range">
+          <div className="space-y-3 pt-1">
+            {AGE_RANGE_OPTIONS.map(opt => (
+              <CheckRow
+                key={opt.id}
+                label={opt.label}
+                detail={opt.detail}
+                checked={selectedAgeRanges.includes(opt.label)}
+                onChange={() =>
+                  setSelectedAgeRanges(prev =>
+                    prev.includes(opt.label)
+                      ? prev.filter(a => a !== opt.label)
+                      : [...prev, opt.label]
                   )
                 }
               />
@@ -386,26 +447,44 @@ export const CategoryPage = () => {
 
       {availableColors.length > 0 && (
         <FilterSection id="colors" title="Colors">
-          <div className="flex flex-wrap gap-3 pt-1">
-            {availableColors.map(({ color, code }) => (
-              <button
-                key={color}
-                title={color}
-                onClick={() =>
-                  setSelectedColors(prev =>
-                    prev.includes(color)
-                      ? prev.filter(c => c !== color)
-                      : [...prev, color]
-                  )
-                }
-                className={`w-6 h-6 rounded-full border-2 transition-all ${
-                  selectedColors.includes(color)
-                    ? 'border-black scale-110 shadow-md'
-                    : 'border-gray-200 hover:border-gray-500'
-                }`}
-                style={{ backgroundColor: code }}
-              />
-            ))}
+          <div className="flex flex-wrap gap-2.5 pt-1">
+            {availableColors.map(({ name, code, border }) => {
+              const isSelected = selectedColors.map(c => c.toLowerCase()).includes(name.toLowerCase());
+              const isLight = ['white', 'cream', 'light pink', 'yellow', 'beige'].includes(name.toLowerCase());
+              return (
+                <button
+                  key={name}
+                  title={name}
+                  type="button"
+                  aria-label={name}
+                  onClick={() =>
+                    setSelectedColors(prev =>
+                      prev.map(c => c.toLowerCase()).includes(name.toLowerCase())
+                        ? prev.filter(c => c.toLowerCase() !== name.toLowerCase())
+                        : [...prev, name]
+                    )
+                  }
+                  className={`group relative w-7 h-7 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                    isSelected
+                      ? 'ring-2 ring-offset-2 ring-black dark:ring-white scale-110 shadow-md'
+                      : 'hover:scale-110 shadow-2xs hover:shadow-sm'
+                  } ${border ? 'border border-gray-300 dark:border-gray-600' : ''}`}
+                  style={{ background: code }}
+                >
+                  {isSelected && (
+                    <Check
+                      size={12}
+                      className={isLight ? 'text-black' : 'text-white'}
+                      strokeWidth={3}
+                    />
+                  )}
+                  {/* Tooltip */}
+                  <span className="pointer-events-none absolute -bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[10px] font-bold py-0.5 px-2 rounded whitespace-nowrap z-30 shadow">
+                    {name}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </FilterSection>
       )}
