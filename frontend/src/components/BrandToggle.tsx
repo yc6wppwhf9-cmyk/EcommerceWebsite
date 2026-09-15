@@ -50,7 +50,13 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
 
   return (
     <div
-      className={`inline-flex items-center rounded-full p-1 bg-black/10 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/15 select-none ${className}`}
+      className={`inline-flex items-center rounded-full p-1 md:p-1.5 backdrop-blur-md transition-all duration-300 select-none ${
+        isPremium
+          ? 'bg-white/15 border border-white/30 shadow-[inset_0_1px_4px_rgba(255,255,255,0.1)]'
+          : isJunior
+            ? 'bg-black/20 border border-white/25'
+            : 'bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/15'
+      } ${className}`}
       role="group"
       aria-label="Brand Mode Switcher"
     >
@@ -58,18 +64,18 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
       <button
         type="button"
         onClick={() => handleSwitch('priority')}
-        className={`relative flex items-center gap-1.5 rounded-full font-outfit font-bold uppercase transition-colors duration-200 z-10 cursor-pointer ${
-          isSmall ? 'px-2.5 py-1 text-[10px] tracking-[0.14em]' : 'px-3 py-1.5 text-[11px] tracking-[0.16em]'
+        className={`relative flex items-center gap-1.5 rounded-full font-outfit font-extrabold uppercase transition-colors duration-200 z-10 cursor-pointer ${
+          isSmall ? 'px-3 py-1.5 text-[11px] tracking-[0.14em]' : 'px-4 py-2 text-[12px] md:text-[13px] tracking-[0.16em]'
         } ${
           !isPremium
             ? 'text-black'
-            : 'text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white'
+            : 'text-white/70 hover:text-white'
         }`}
       >
         {!isPremium && (
           <motion.div
             layoutId="brand-pill-bg"
-            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-black/5"
+            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.2)] border border-black/5"
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
           />
         )}
@@ -77,7 +83,7 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           <img
             src="/priority-icon.png"
             alt="Priority"
-            className={`${isSmall ? 'w-3.5 h-3.5' : 'w-4 h-4'} object-contain flex-shrink-0`}
+            className={`${isSmall ? 'w-4 h-4' : 'w-4.5 h-4.5'} object-contain flex-shrink-0`}
           />
           <span>PRIORITY</span>
         </span>
@@ -87,26 +93,28 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
       <button
         type="button"
         onClick={() => handleSwitch('traworld')}
-        className={`relative flex items-center gap-1.5 rounded-full font-outfit font-bold uppercase transition-colors duration-200 z-10 cursor-pointer ${
-          isSmall ? 'px-2.5 py-1 text-[10px] tracking-[0.14em]' : 'px-3 py-1.5 text-[11px] tracking-[0.16em]'
+        className={`relative flex items-center gap-1.5 rounded-full font-outfit font-extrabold uppercase transition-colors duration-200 z-10 cursor-pointer ${
+          isSmall ? 'px-3 py-1.5 text-[11px] tracking-[0.14em]' : 'px-4 py-2 text-[12px] md:text-[13px] tracking-[0.16em]'
         } ${
           isPremium
-            ? 'text-white'
-            : 'text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white'
+            ? 'text-black'
+            : isJunior
+              ? 'text-white/80 hover:text-white'
+              : 'text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white'
         }`}
       >
         {isPremium && (
           <motion.div
             layoutId="brand-pill-bg"
-            className="absolute inset-0 bg-[#0F1417] rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.25)] border border-white/20"
+            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_12px_rgba(255,255,255,0.35)] border border-white"
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
           />
         )}
         <span className="relative z-10 flex items-center gap-1.5">
           <img
-            src={isPremium ? '/traworld-icon.png' : '/traworld-icon-dark.png'}
+            src={isPremium ? '/traworld-icon-dark.png' : (isJunior ? '/traworld-icon.png' : '/traworld-icon-dark.png')}
             alt="Traworld"
-            className={`${isSmall ? 'w-4 h-3.5' : 'w-4.5 h-4'} object-contain flex-shrink-0`}
+            className={`${isSmall ? 'w-4.5 h-4' : 'w-5 h-4.5'} object-contain flex-shrink-0`}
           />
           <span>TRAWORLD</span>
         </span>

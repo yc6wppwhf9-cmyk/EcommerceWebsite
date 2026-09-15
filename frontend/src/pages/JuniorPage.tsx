@@ -14,9 +14,8 @@ const AGE_GROUPS = [
 ];
 
 const CATEGORIES = [
-  { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/Drift Sky Blue_ Hero 1.png' },
+  { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/Junior 1.jpg' },
   { label: 'Combo Set', filter: 'combo-set', image: '/junior/Rectangle 28.png' },
-  { label: 'Pouches', filter: 'pouches', image: '/junior/Rectangle 29.png' },
   { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Speedo_ Hero 1.png' },
 ];
 
@@ -206,50 +205,12 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-// Simplified Best Seller card matching user image precisely
-const BestSellerCard = ({ product }: { product: Product }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const originalPrice = (product as any).original_price ?? (product as any).originalPrice ?? product.price;
-  const discount = originalPrice > product.price
-    ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
-    : 0;
-
-  const secondaryImage = product.images?.[1] || product.image;
-  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  const displayImage = !isTouchDevice && isHovered ? secondaryImage : ((product as any).image_url ?? product.image);
-
-  return (
-    <Link 
-      to={`/product/${product.id}?theme=junior`} 
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="flex flex-col bg-white group"
-    >
-      <div className="overflow-hidden bg-[#F9F9F9] rounded-xl" style={{ aspectRatio: '1 / 1' }}>
-        <img
-          src={displayImage}
-          alt={product.name}
-          className="w-full h-full object-contain p-2 md:p-4 transition-all duration-500"
-          loading="lazy"
-          crossOrigin="anonymous"
-        />
-      </div>
-      <div className="pt-3 space-y-1">
-        <h3 className="font-outfit font-bold text-[13px] md:text-[14px] text-black uppercase tracking-wide leading-snug line-clamp-1 group-hover:text-[#8750DA] transition-colors">
-          {product.name}
-        </h3>
-      </div>
-    </Link>
-  );
-};
-
 const DRAW_COLORS = ['#F69245', '#8750DA', '#FFBB5A', '#FF6B6B', '#4ECDC4', '#000000'];
 
 export const JuniorPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('School Backpacks');
   const [products, setProducts] = useState<Product[]>([]);
-  const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [tabPage, setTabPage] = useState(0);
   const [clickEffect, setClickEffect] = useState<'dreamy' | 'power' | null>(null);
@@ -378,17 +339,6 @@ export const JuniorPage = () => {
     window.scrollTo(0, 0);
     document.documentElement.classList.remove('dark');
     sessionStorage.setItem('siteTheme', 'junior');
-    const juniorCategories = ['school-backpacks', 'trolley-backpacks', 'combo-set', 'pouches'];
-    Promise.all(juniorCategories.map(cat => api.getProducts({ category: 'junior', sub_category: cat, sort: 'bestseller', limit: '4' })))
-      .then(juniorResults => {
-        const seen = new Set<string>();
-        const combined = juniorResults
-          .flatMap(r => r.products as unknown as Product[])
-          .filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; })
-          .slice(0, 8);
-        setBestSellers(combined);
-        setIsLoading(false);
-      }).catch(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -519,7 +469,7 @@ export const JuniorPage = () => {
         {/* Dynamic Background Glows */}
         <div 
           className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
-          style={{ backgroundColor: activeTab === 'School Backpacks' ? '#F69245' : activeTab === 'Pouches' ? '#8750DA' : '#FFBB5A' }}
+          style={{ backgroundColor: activeTab === 'School Backpacks' ? '#F69245' : activeTab === 'Combo Set' ? '#FFBB5A' : '#4ECDC4' }}
         />
         <div 
           className="absolute bottom-1/4 -right-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
@@ -564,34 +514,32 @@ export const JuniorPage = () => {
 
 
           <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
-            {/* Left Banner — 3D Parallax Effect */}
+            {/* Left Banner — 3D Parallax Effect without restrictive inner borders */}
             <motion.div 
               style={{ perspective: "1000px" }}
               className="hidden lg:block h-[500px] shrink-0"
             >
               <motion.div
-                whileHover={{ rotateY: 8, rotateX: -8, scale: 1.02 }}
+                whileHover={{ rotateY: 6, rotateX: -6, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 150, damping: 20 }}
                 className="h-full relative shrink-0 flex flex-col overflow-hidden rounded-3xl bg-[#FAC05C] shadow-2xl group cursor-pointer"
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <Link to={activeCategoryHref} className="absolute inset-0 z-20" />
-                <div className="p-6 pb-4" style={{ transform: "translateZ(30px)" }}>
-                  <div className="overflow-hidden rounded-2xl bg-white/30 shadow-2xl h-[360px] border border-white/40">
-                    <img
-                      src={activeCategory.image}
-                      alt={activeTab}
-                      className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-110"
-                      crossOrigin="anonymous"
-                    />
-                  </div>
+                <div className="flex-1 w-full overflow-hidden relative" style={{ transform: "translateZ(30px)" }}>
+                  <img
+                    src={activeCategory.image}
+                    alt={activeTab}
+                    className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
+                    crossOrigin="anonymous"
+                  />
                 </div>
-                <div className="mt-auto flex min-h-[92px] items-center justify-between gap-4 bg-[#F69245] px-8 py-4" style={{ transform: "translateZ(50px)" }}>
-                  <h3 className="font-protest text-white leading-none drop-shadow-lg" style={{ fontSize: 'clamp(24px, 2.5vw, 34px)' }}>
+                <div className="mt-auto flex min-h-[84px] items-center justify-between gap-4 bg-[#F69245] px-7 py-4" style={{ transform: "translateZ(50px)" }}>
+                  <h3 className="font-protest text-white leading-none drop-shadow-lg" style={{ fontSize: 'clamp(22px, 2.2vw, 30px)' }}>
                     {activeTab}
                   </h3>
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-2xl transition-transform group-hover:translate-x-2">
-                    <ArrowRight size={22} />
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#F69245] shadow-2xl transition-transform group-hover:translate-x-2">
+                    <ArrowRight size={20} />
                   </span>
                 </div>
               </motion.div>
@@ -671,33 +619,6 @@ export const JuniorPage = () => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          EXACT BEST SELLERS SECTION
-      ═══════════════════════════════════════════════ */}
-      <section className="pt-8 pb-16 bg-white relative">
-        <div className="max-w-[1402px] mx-auto px-6 md:px-14">
-
-          <div className="text-center mb-12">
-            {/* FIGMA TYPOGRAPHY: Outfit SemiBold 16px #030014 */}
-            <h2
-              className="font-outfit font-semibold uppercase tracking-[0.1em]"
-              style={{ fontSize: '16px', color: '#030014' }}
-            >
-              Shop Best Sellers
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10">
-            {isLoading ? (
-              [1, 2, 3, 4].map(n => <div key={n} className="aspect-square bg-gray-50 animate-pulse rounded-sm" />)
-            ) : bestSellers.slice(0, 4).map((product) => (
-              <BestSellerCard key={product.id} product={product} />
-            ))}
-          </div>
-
         </div>
       </section>
 
