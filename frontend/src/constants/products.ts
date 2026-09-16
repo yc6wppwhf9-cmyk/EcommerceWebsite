@@ -1,4 +1,4 @@
-import type { Product, CategoryInfo } from '../types';
+import type { CategoryInfo } from '../types';
 
 // ─── Categories ──────────────────────────────────────────────
 export const CATEGORIES: CategoryInfo[] = [
@@ -185,49 +185,12 @@ export const CATEGORIES: CategoryInfo[] = [
   },
 ];
 
-export const PRODUCTS: Product[] = [];
-
-// ─── Helper Functions ────────────────────────────────────────
-export function getProductById(id: string): Product | undefined {
-  return PRODUCTS.find((p) => p.id === id);
-}
-
-export function getProductBySlug(slug: string): Product | undefined {
-  return PRODUCTS.find((p) => p.slug === slug);
-}
-
-export function getProductsByCategory(categorySlug: string): Product[] {
-  return PRODUCTS.filter((p) => p.category === categorySlug);
-}
-
-export function getPremiumProducts(): Product[] {
-  return PRODUCTS.filter((p) => p.isPremium);
-}
-
 export function getCategoryBySlug(slug: string): CategoryInfo | undefined {
   return CATEGORIES.find((c) => c.slug === slug);
 }
 
 export function getSubcategories(parentSlug: string): CategoryInfo[] {
   return CATEGORIES.filter((c) => c.parentCategory === parentSlug);
-}
-
-export function getBestSellers(): Product[] {
-  return [...PRODUCTS].sort((a, b) => b.reviews - a.reviews).slice(0, 5);
-}
-
-export function getNewArrivals(): Product[] {
-  return PRODUCTS.filter((p) => p.isNew).slice(0, 8);
-}
-
-export function searchProducts(query: string): Product[] {
-  const q = query.toLowerCase();
-  return PRODUCTS.filter(
-    (p) =>
-      p.name.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q)
-  );
 }
 
 export function formatPrice(price: number): string {
@@ -238,20 +201,3 @@ export function formatPrice(price: number): string {
     maximumFractionDigits: 0,
   }).format(price);
 }
-
-// Legacy compat — map from old CATEGORY_DATA keys to new system
-export const CATEGORY_DATA: Record<string, { title: string; subtitle: string; image: string; bgColor: string; products: Product[] }> = {};
-for (const cat of CATEGORIES) {
-  CATEGORY_DATA[cat.id.toUpperCase().replace(/-/g, '_')] = {
-    title: cat.title,
-    subtitle: cat.subtitle,
-    image: cat.image,
-    bgColor: cat.bgColor,
-    products: getProductsByCategory(cat.slug),
-  };
-}
-// Also map parent categories to include all subcategory products
-CATEGORY_DATA['BACKPACKS'] = {
-  ...CATEGORY_DATA['BACKPACKS'] || { title: 'TRENDY', subtitle: 'BACKPACKS', image: '', bgColor: '#f2c94c' },
-  products: PRODUCTS.filter((p) => p.category.includes('backpack')),
-};

@@ -103,7 +103,7 @@ export const Careers = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const inputBase = 'w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-priority-blue transition-all placeholder-gray-600 text-white';
+  const inputBase = 'w-full bg-white/5 border border-white/10 rounded-xl p-4 text-base focus:outline-none focus:ring-2 focus:ring-priority-blue transition-all placeholder-gray-600 text-white';
   const errorBase = 'text-red-400 text-[10px] font-bold uppercase tracking-wider mt-1';
 
   return (

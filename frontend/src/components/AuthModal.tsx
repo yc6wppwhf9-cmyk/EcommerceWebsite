@@ -77,7 +77,7 @@ export const AuthModal = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-priority-blue/30 focus:border-priority-blue transition-all text-sm"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-priority-blue/30 focus:border-priority-blue transition-all text-base"
                       placeholder="John Doe"
                     />
                   </div>
@@ -89,7 +89,7 @@ export const AuthModal = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-priority-blue/30 focus:border-priority-blue transition-all text-sm"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-priority-blue/30 focus:border-priority-blue transition-all text-base"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -101,7 +101,7 @@ export const AuthModal = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-priority-blue/30 focus:border-priority-blue transition-all text-sm"
+                      className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-priority-blue/30 focus:border-priority-blue transition-all text-base"
                       placeholder="••••••••"
                     />
                     <button

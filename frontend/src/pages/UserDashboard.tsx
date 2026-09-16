@@ -457,14 +457,14 @@ export const UserDashboard = () => {
                             <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Full Name</label>
                             <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-priority-blue/40">
                               <User size={16} className="text-[var(--color-text-muted)] shrink-0" />
-                              <input required type="text" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
+                              <input required type="text" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} className="bg-transparent text-base font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
                             </div>
                           </div>
                           <div className="space-y-1.5">
                             <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Mobile Number</label>
                             <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-priority-blue/40">
                               <Phone size={16} className="text-[var(--color-text-muted)] shrink-0" />
-                              <input type="tel" maxLength={10} value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, '') })} placeholder="10-digit mobile" className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input type="tel" maxLength={10} value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, '') })} placeholder="10-digit mobile" className="bg-transparent text-base font-black font-outfit w-full outline-none text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                           </div>
                         </div>
@@ -472,7 +472,7 @@ export const UserDashboard = () => {
                           <label className="text-[10px] font-black uppercase text-priority-blue tracking-widest">Email Address</label>
                           <div className="flex items-center gap-3 p-4 bg-[var(--color-bg-main)] rounded-2xl border border-[var(--color-border-main)] opacity-60">
                             <Mail size={16} className="text-[var(--color-text-muted)] shrink-0" />
-                            <input type="email" readOnly value={user.email} className="bg-transparent text-sm font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
+                            <input type="email" readOnly value={user.email} className="bg-transparent text-base font-black font-outfit w-full outline-none text-[var(--color-text-main)]" />
                           </div>
                           <p className="text-[9px] text-[var(--color-text-muted)] ml-1 uppercase tracking-widest">Email cannot be changed</p>
                         </div>
@@ -555,31 +555,31 @@ export const UserDashboard = () => {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="space-y-1">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Full Name *</label>
-                              <input required type="text" value={addressForm.name} onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })} placeholder="Recipient name" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input required type="text" value={addressForm.name} onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })} placeholder="Recipient name" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="space-y-1">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Phone *</label>
-                              <input required type="tel" maxLength={10} value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, '') })} placeholder="10-digit mobile" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input required type="tel" maxLength={10} value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, '') })} placeholder="10-digit mobile" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="space-y-1 sm:col-span-2">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Address Line 1 *</label>
-                              <input required type="text" value={addressForm.line1} onChange={(e) => setAddressForm({ ...addressForm, line1: e.target.value })} placeholder="House / Flat no., Street" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input required type="text" value={addressForm.line1} onChange={(e) => setAddressForm({ ...addressForm, line1: e.target.value })} placeholder="House / Flat no., Street" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="space-y-1 sm:col-span-2">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Address Line 2 <span className="opacity-50">(optional)</span></label>
-                              <input type="text" value={addressForm.line2} onChange={(e) => setAddressForm({ ...addressForm, line2: e.target.value })} placeholder="Landmark, Area" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input type="text" value={addressForm.line2} onChange={(e) => setAddressForm({ ...addressForm, line2: e.target.value })} placeholder="Landmark, Area" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="space-y-1">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">City *</label>
-                              <input required type="text" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} placeholder="City" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input required type="text" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} placeholder="City" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="space-y-1">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">State *</label>
-                              <input required type="text" value={addressForm.state} onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })} placeholder="State" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input required type="text" value={addressForm.state} onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })} placeholder="State" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="space-y-1">
                               <label className="text-[9px] font-black uppercase text-[var(--color-text-muted)] tracking-widest">Pincode *</label>
-                              <input required type="text" maxLength={6} pattern="[0-9]{6}" value={addressForm.pincode} onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, '') })} placeholder="6-digit pincode" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-sm font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
+                              <input required type="text" maxLength={6} pattern="[0-9]{6}" value={addressForm.pincode} onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, '') })} placeholder="6-digit pincode" className="w-full p-3 bg-[var(--color-bg-card)] border border-[var(--color-border-main)] rounded-xl text-base font-bold font-outfit outline-none focus:border-priority-blue transition-colors text-[var(--color-text-main)] placeholder:text-[var(--color-text-muted)]" />
                             </div>
                             <div className="flex items-center gap-3 sm:col-span-1 pt-1">
                               <input type="checkbox" id="is_default" checked={addressForm.is_default} onChange={(e) => setAddressForm({ ...addressForm, is_default: e.target.checked })} className="w-4 h-4 accent-priority-blue rounded" />
@@ -658,7 +658,7 @@ export const UserDashboard = () => {
                             type="password"
                             value={passForm.current}
                             onChange={(e) => setPassForm({ ...passForm, current: e.target.value })}
-                            className="w-full p-4 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-2xl outline-none text-sm font-black font-outfit"
+                            className="w-full p-4 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-2xl outline-none text-base font-black font-outfit"
                           />
                         </div>
                         <div className="space-y-2">
@@ -669,7 +669,7 @@ export const UserDashboard = () => {
                             minLength={8}
                             value={passForm.new}
                             onChange={(e) => setPassForm({ ...passForm, new: e.target.value })}
-                            className="w-full p-4 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-2xl outline-none text-sm font-black font-outfit"
+                            className="w-full p-4 bg-[var(--color-bg-main)] border border-[var(--color-border-main)] rounded-2xl outline-none text-base font-black font-outfit"
                           />
                           <p className="text-[9px] text-[var(--color-text-muted)] ml-1 uppercase tracking-widest">Minimum 8 characters</p>
                         </div>

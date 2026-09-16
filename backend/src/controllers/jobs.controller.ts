@@ -48,7 +48,8 @@ export const getJobs = async (req: Request, res: Response) => {
     if (error) throw error;
     res.json({ jobs: data || [], pagination: { page: pageNum, limit: limitNum, total: count || 0, pages: Math.ceil((count || 0) / limitNum) } });
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to fetch jobs', message: err.message });
+    console.error('getJobs error:', err);
+    res.status(500).json({ error: 'Failed to fetch jobs', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -58,7 +59,8 @@ export const getJobById = async (req: Request, res: Response) => {
     if (error || !data) return res.status(404).json({ error: 'Job not found' });
     res.json(data);
   } catch (err: any) {
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('getJobById error:', err);
+    res.status(500).json({ error: 'Server error', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -99,7 +101,8 @@ export const deleteJob = async (req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.json({ message: 'Job deleted' });
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to delete job', message: err.message });
+    console.error('deleteJob error:', err);
+    res.status(500).json({ error: 'Failed to delete job', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -123,7 +126,8 @@ export const getAllApplications = async (req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.json({ applications: data || [], pagination: { page: pageNum, limit: limitNum, total: count || 0 } });
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to fetch applications', message: err.message });
+    console.error('getAllApplications error:', err);
+    res.status(500).json({ error: 'Failed to fetch applications', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -148,7 +152,8 @@ export const getJobApplications = async (req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.json({ applications: data || [], pagination: { page: pageNum, limit: limitNum, total: count || 0 } });
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to fetch applications', message: err.message });
+    console.error('getJobApplications error:', err);
+    res.status(500).json({ error: 'Failed to fetch applications', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -242,6 +247,7 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response) =
     if (error || !data) return res.status(404).json({ error: 'Application not found' });
     res.json(data);
   } catch (err: any) {
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('updateApplicationStatus error:', err);
+    res.status(500).json({ error: 'Server error', message: 'Something went wrong, please try again' });
   }
 };

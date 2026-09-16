@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
-import { getProductById } from '../constants/products';
 import { Heart } from 'lucide-react';
 import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
@@ -25,7 +24,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const product = props.product || (props.id ? getProductById(props.id) : undefined);
+  const product = props.product;
   const productPath = (slug: string) =>
     props.theme ? `/product/${slug}?theme=${props.theme}` : `/product/${slug}`;
 
@@ -104,14 +103,14 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
         {/* Wishlist heart — bottom right */}
         <button
           onClick={handleWishlist}
-          className={`absolute bottom-2 right-2 rounded-full flex items-center justify-center transition-all z-10 ${quiet ? 'w-11 h-11 border border-line' : 'w-8 h-8 shadow-sm'} ${
+          className={`absolute bottom-2 right-2 rounded-full flex items-center justify-center transition-all z-10 ${quiet ? 'w-11 h-11 border border-line' : 'w-11 h-11 shadow-sm'} ${
             isWishlisted
               ? (quiet ? 'bg-marine text-white' : 'bg-red-500 text-white')
               : (quiet ? 'bg-white text-slate hover:text-marine' : 'bg-white/90 text-gray-400 hover:text-red-500 hover:bg-white')
           }`}
           title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <Heart size={14} fill={isWishlisted ? 'currentColor' : 'none'} />
+          <Heart size={15} fill={isWishlisted ? 'currentColor' : 'none'} />
         </button>
       </Link>
 

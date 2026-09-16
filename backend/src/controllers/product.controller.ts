@@ -125,8 +125,8 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     console.error('❌ Products List Controller Exception:', err);
     res.status(500).json({
       error: 'Database error',
-      message: err.message,
-      ...(process.env.NODE_ENV === 'development' && { details: err })
+      message: 'Failed to fetch products. Please try again.',
+      ...(process.env.NODE_ENV === 'development' && { details: err.message })
     });
   }
 };
@@ -436,7 +436,11 @@ export const bulkUpload = async (req: MulterRequest, res: Response) => {
     });
   } catch (err: any) {
     console.error('Bulk upload error:', err);
-    res.status(500).json({ error: 'Failed to process Excel file', details: err.message });
+    res.status(500).json({
+      error: 'Failed to process Excel file',
+      message: 'Failed to process Excel file. Please try again.',
+      ...(process.env.NODE_ENV === 'development' && { details: err.message })
+    });
   }
 };
 
@@ -478,6 +482,10 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.json({ message: 'Product deleted successfully' });
   } catch (err: any) {
     console.error('❌ Delete Product Error:', err);
-    res.status(500).json({ error: 'Failed to delete product', message: err.message });
+    res.status(500).json({
+      error: 'Failed to delete product',
+      message: 'Failed to delete product. Please try again.',
+      ...(process.env.NODE_ENV === 'development' && { details: err.message })
+    });
   }
 };

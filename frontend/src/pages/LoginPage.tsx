@@ -37,7 +37,7 @@ export const LoginPage = () => {
     }
   };
 
-  const inputClass = 'w-full px-4 py-4 bg-white border border-gray-900/10 focus:border-gray-900 outline-none transition-colors text-[15px] placeholder:text-gray-400';
+  const inputClass = 'w-full px-4 py-4 bg-white border border-gray-900/10 focus:border-gray-900 outline-none transition-colors text-base placeholder:text-gray-400';
 
   return (
     <main className="min-h-screen bg-white flex flex-col items-center pt-12 pb-20 px-6 font-outfit">

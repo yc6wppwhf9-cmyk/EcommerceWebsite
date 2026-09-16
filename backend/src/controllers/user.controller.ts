@@ -15,7 +15,8 @@ export const getMe = async (req: AuthRequest, res: Response) => {
     if (error || !user) return res.status(404).json({ error: 'User not found' });
     res.json(user);
   } catch (err: any) {
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('getMe error:', err);
+    res.status(500).json({ error: 'Server error', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -39,7 +40,8 @@ export const updateMe = async (req: AuthRequest, res: Response) => {
     if (error || !user) return res.status(404).json({ error: 'User not found' });
     res.json(user);
   } catch (err: any) {
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('updateMe error:', err);
+    res.status(500).json({ error: 'Server error', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -55,7 +57,8 @@ export const getAllUsers = async (_req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.json(data || []);
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to fetch users', message: err.message });
+    console.error('getAllUsers error:', err);
+    res.status(500).json({ error: 'Failed to fetch users', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -72,7 +75,8 @@ export const getAddresses = async (req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.json(data || []);
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to fetch addresses', message: err.message });
+    console.error('getAddresses error:', err);
+    res.status(500).json({ error: 'Failed to fetch addresses', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -100,7 +104,8 @@ export const addAddress = async (req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.status(201).json(data);
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to add address', message: err.message });
+    console.error('addAddress error:', err);
+    res.status(500).json({ error: 'Failed to add address', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -124,6 +129,7 @@ export const deleteAddress = async (req: AuthRequest, res: Response) => {
 
     res.json({ message: 'Address deleted' });
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to delete address', message: err.message });
+    console.error('deleteAddress error:', err);
+    res.status(500).json({ error: 'Failed to delete address', message: 'Something went wrong, please try again' });
   }
 };

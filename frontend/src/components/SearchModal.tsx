@@ -73,7 +73,7 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search collection…"
-                    className="flex-1 bg-transparent text-white text-[15px] font-outfit font-light tracking-[0.05em] outline-none placeholder:text-white/25"
+                    className="flex-1 bg-transparent text-white text-base font-outfit font-light tracking-[0.05em] outline-none placeholder:text-white/25"
                   />
                   <button
                     onClick={onClose}
@@ -125,7 +125,7 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search for backpacks, luggage, accessories..."
-                    className="flex-1 text-sm outline-none placeholder:text-gray-300 font-outfit font-medium"
+                    className="flex-1 text-base outline-none placeholder:text-gray-300 font-outfit font-medium"
                   />
                   <button
                     onClick={onClose}

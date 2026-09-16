@@ -14,7 +14,8 @@ export const getReviewsByProduct = async (req: Request, res: Response) => {
     if (error) throw error;
     res.json(data || []);
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to fetch reviews', message: err.message });
+    console.error('getReviewsByProduct error:', err);
+    res.status(500).json({ error: 'Failed to fetch reviews', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -62,7 +63,8 @@ export const createReview = async (req: AuthRequest, res: Response) => {
     if (error) throw error;
     res.status(201).json(data);
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to create review', message: err.message });
+    console.error('createReview error:', err);
+    res.status(500).json({ error: 'Failed to create review', message: 'Something went wrong, please try again' });
   }
 };
 
@@ -88,6 +90,7 @@ export const deleteReview = async (req: AuthRequest, res: Response) => {
 
     res.json({ message: 'Review deleted' });
   } catch (err: any) {
-    res.status(500).json({ error: 'Failed to delete review', message: err.message });
+    console.error('deleteReview error:', err);
+    res.status(500).json({ error: 'Failed to delete review', message: 'Something went wrong, please try again' });
   }
 };
