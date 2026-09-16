@@ -109,8 +109,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       'price-desc': { column: 'price', ascending: false },
       'rating': { column: 'rating', ascending: false },
       'newest': { column: 'created_at', ascending: false },
-      // total_clicks is a generated column (amazon + flipkart + myntra + ajio clicks combined) — see migration.
-      'bestseller': { column: 'total_clicks', ascending: false },
+      'bestseller': { column: 'rating', ascending: false },
     };
     const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
     query = query.order(s.column, { ascending: s.ascending });
