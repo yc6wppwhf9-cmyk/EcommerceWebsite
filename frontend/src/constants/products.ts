@@ -143,7 +143,7 @@ export const CATEGORIES: CategoryInfo[] = [
     title: 'ROLLING',
     subtitle: 'KIDS TROLLEY',
     slug: 'kids-trolley',
-    image: '/junior/Kids_luggage.jpg',
+    image: '/junior/Trolly.jpg',
     bgColor: '#FFBB5A',
     description: 'Fun, smooth-rolling 360-degree trolley luggage designed for kids.',
     parentCategory: 'junior',

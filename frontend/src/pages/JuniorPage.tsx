@@ -17,7 +17,7 @@ const AGE_GROUPS = [
 const CATEGORIES = [
   { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/School.jpg' },
   { label: 'Combo Set', filter: 'combo-set', image: '/junior/Combo.jpg' },
-  { label: 'Kids Trolley', filter: 'kids-trolley', image: '/junior/Kids_luggage.jpg' },
+  { label: 'Kids Trolley', filter: 'kids-trolley', image: '/junior/Trolly.jpg' },
   { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Trolly.jpg' },
 ];
 
