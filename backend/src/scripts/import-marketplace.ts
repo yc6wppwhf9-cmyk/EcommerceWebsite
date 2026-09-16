@@ -42,15 +42,22 @@ const DEFAULT_STOCK = Number(getArg('stock') || process.env.IMPORT_STOCK || '100
 const IMAGES_DIR =
   getArg('images') ||
   process.env.IMPORT_IMAGES_DIR ||
-  'C:\\Users\\himanshu.thakur\\Pictures\\Master images marketplace';
+  (fs.existsSync('C:\\Users\\himanshu.thakur\\Documents\\extracted_amazon_images')
+    ? 'C:\\Users\\himanshu.thakur\\Documents\\extracted_amazon_images'
+    : 'C:\\Users\\himanshu.thakur\\Pictures\\Master images marketplace');
 const EXCEL_PATH =
   getArg('excel') ||
   process.env.IMPORT_EXCEL_PATH ||
-  path.join(IMAGES_DIR, 'Marketplace 97 sku ( Amazon Asin ).xlsx');
+  (fs.existsSync('C:\\Users\\himanshu.thakur\\Documents\\Marketplace 97 sku ( Amazon Asin ) (003).xlsx')
+    ? 'C:\\Users\\himanshu.thakur\\Documents\\Marketplace 97 sku ( Amazon Asin ) (003).xlsx'
+    : path.join(IMAGES_DIR, 'Marketplace 97 sku ( Amazon Asin ).xlsx'));
 
 // ── Env / clients ────────────────────────────────────────────────────────────
 const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
-if (COMMIT) required.push('CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET');
+const hasCloudinary = Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+if (COMMIT && !hasCloudinary) {
+  console.log('ℹ️  Cloudinary env not set: using direct high-res Amazon CDN URLs from manifest if local upload is skipped.');
+}
 const missing = required.filter((k) => !process.env[k]);
 if (missing.length) {
   console.error(`❌ Missing env vars: ${missing.join(', ')}. Fill them in backend/.env.`);
@@ -60,11 +67,13 @@ if (missing.length) {
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
   auth: { persistSession: false },
 });
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+if (hasCloudinary) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const slugify = (s: string) =>
@@ -78,7 +87,7 @@ const slugify = (s: string) =>
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 
-/** files like INV16052_3.png → sorted by the trailing number */
+/** files like INV16052_01.jpg or INV16052_1.png → sorted by the trailing number */
 const gatherImages = (folder: string): string[] => {
   if (!fs.existsSync(folder)) return [];
   return fs
@@ -96,29 +105,34 @@ const gatherImages = (folder: string): string[] => {
 const optimize = (url: string) =>
   url.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_1600,c_limit/');
 
-/** keyword → category slug (first match wins) */
-const CATEGORY_RULES: Array<[RegExp, string]> = [
-  [/laptop/i, 'laptop-backpacks'],
-  [/college/i, 'college-backpacks'],
-  [/trekk|rucksack|hiking/i, 'trekking-backpacks'],
-  [/duffle|duffel/i, 'duffle'],
-  [/trolley|luggage|suitcase|cabin|check-?in/i, 'luggage'],
-  [/pouch/i, 'pouch'],
-  [/tote/i, 'tote-bag'],
-  [/lunch/i, 'lunch-bag'],
-  [/daypack/i, 'daypack'],
-  [/sling|crossbody/i, 'accessories'],
-  [/backpack/i, 'backpacks'],
-];
+/** Load manifest if available */
+const MANIFEST_PATH = path.join(
+  path.dirname(IMAGES_DIR),
+  'extracted_amazon_images',
+  'extracted_manifest.json',
+);
+let manifestMap = new Map<string, string[]>();
+if (fs.existsSync(MANIFEST_PATH)) {
+  try {
+    const mf = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8'));
+    for (const p of mf.products || []) {
+      if (p.sku && Array.isArray(p.image_urls) && p.image_urls.length) {
+        manifestMap.set(p.sku, p.image_urls);
+      }
+    }
+  } catch {}
+}
 
-const detectType = (name: string): string => {
-  const n = name.toLowerCase();
-  if (n.includes('laptop')) return 'laptop bag';
-  if (n.includes('college')) return 'college backpack';
-  if (n.includes('school')) return 'school backpack';
-  if (n.includes('trekk') || n.includes('rucksack')) return 'trekking backpack';
+const detectType = (name: string, family: string): string => {
+  const n = `${name} ${family}`.toLowerCase();
+  if (n.includes('laptop') || ['atlas', 'matrix', 'oxford', 'xtreme', 'zipster', 'protech'].some((k) => n.includes(k))) return 'laptop bag';
+  if (n.includes('college') || ['blockbuster', 'century', 'champion', 'dream', 'dreamer', 'fortuner', 'iconic', 'ignis', 'incredible', 'rockstar', 'sonata', 'stellar', 'striker'].some((k) => n.includes(k))) return 'college backpack';
+  if (n.includes('trekk') || n.includes('rucksack') || n.includes('mount')) return 'trekking backpack';
+  if (n.includes('trolley') || n.includes('trolly')) return 'kids trolley';
+  if (n.includes('combo') || n.includes('lunch') || n.includes('pencil')) return 'junior combo';
+  if (n.includes('school') || ['fluffy', 'fuzzy', 'gracious', 'minion', 'mischief', 'tipsy', 'power', 'smiley', 'funky', 'ranger'].some((k) => n.includes(k))) return 'school backpack';
   if (n.includes('duffle') || n.includes('duffel')) return 'duffle bag';
-  if (n.includes('trolley') || n.includes('luggage') || n.includes('suitcase')) return 'trolley bag';
+  if (n.includes('luggage') || n.includes('suitcase')) return 'luggage';
   if (n.includes('pouch')) return 'pouch';
   if (n.includes('tote')) return 'tote bag';
   if (n.includes('sling') || n.includes('crossbody')) return 'sling bag';
@@ -128,27 +142,56 @@ const detectType = (name: string): string => {
 
 const buildDescription = (name: string, type: string) =>
   `The ${name} is a premium ${type} from Priority, engineered for everyday durability and all-day comfort. ` +
-  `Its functional, spacious design keeps your essentials organised in style — built to keep pace with work, college and travel.`;
+  `Its functional, spacious design keeps your essentials organised in style — built to keep pace with school, college, and travel.`;
 
 const buildFeatures = (type: string): string[] => {
-  if (type === 'trolley bag') {
+  if (type === 'kids trolley' || type === 'trolley bag') {
     return [
-      'Smooth 360° spinner wheels',
-      'Telescopic aluminium trolley handle',
-      'Secure combination lock',
-      'Spacious, well-organised packing compartments',
-      'Durable, travel-ready shell',
+      'Smooth 360° spinner wheels for effortless movement',
+      'Telescopic adjustable aluminium trolley handle',
+      'Durable, impact-resistant lightweight shell with vibrant character prints',
+      'Spacious packing compartments with cross-strap retention',
+      '1 Year Manufacturer Warranty',
+    ];
+  }
+  if (type === 'junior combo') {
+    return [
+      'Complete matching set: Backpack + Lunch Tiffin Pouch + Pencil Case',
+      'Ultra-lightweight ergonomic design tailored for young children',
+      'Water-resistant wipe-clean fabric with vibrant graphics',
+      'Soft padded adjustable shoulder straps for spine protection',
+    ];
+  }
+  if (type === 'laptop bag') {
+    return [
+      'Dedicated cushioned laptop compartment (fits up to 15.6 inch laptops)',
+      'Ergonomic breathable mesh back panel & contoured shoulder straps',
+      'Water-resistant premium exterior fabric with reinforced base',
+      'Multi-utility organizer pockets for tech accessories and chargers',
+    ];
+  }
+  if (type === 'trekking backpack') {
+    return [
+      'Ergonomic padded shoulder straps and adjustable sternum buckle',
+      'High-capacity multi-compartment storage with gear loops',
+      'Water-resistant rugged exterior fabric',
+      'Reinforced load-bearing seams & heavy-duty hardware',
+    ];
+  }
+  if (type === 'school backpack') {
+    return [
+      'Ergonomic cushioned shoulder straps with breathable mesh padding',
+      'Spacious multi-compartment design for books, notebooks, and water bottles',
+      'Durable water-resistant exterior with reinforced stitching',
+      'Attractive kid-friendly vibrant prints with smooth zippers',
     ];
   }
   const base = [
     'Durable, water-resistant exterior',
     'Spacious multi-compartment storage',
     'Premium branded hardware and zippers',
+    'Ergonomic padded shoulder straps & breathable back panel',
   ];
-  if (type === 'laptop bag') base.push('Dedicated padded laptop sleeve', 'Ergonomic padded shoulder straps');
-  else if (type.includes('backpack')) base.push('Ergonomic padded shoulder straps', 'Breathable back panel');
-  else if (type === 'duffle bag') base.push('Detachable, adjustable shoulder strap');
-  else base.push('Compact, lightweight everyday carry');
   return base;
 };
 
@@ -205,17 +248,53 @@ if (catErr || !categories?.length) {
 }
 const slugToId = new Map(categories.map((c: any) => [String(c.slug).toLowerCase(), c.id]));
 const fallbackCatId = slugToId.get('backpacks') || categories[0].id;
-const resolveCategory = (name: string): { id: string; slug: string; sub_category: string } => {
-  // Kids "school bag" products belong on the Junior page: tag with the junior
-  // category + a junior sub_category filter (matches the site's convention).
-  const juniorId = slugToId.get('junior');
-  if (/school/i.test(name) && juniorId) {
-    return { id: juniorId, slug: 'junior', sub_category: 'school-backpacks' };
+const resolveCategory = (
+  name: string,
+  family: string,
+): { id: string; slug: string; sub_category: string; gender: string; age_range: string } => {
+  const n = `${name} ${family}`.toLowerCase();
+
+  // 1. Trekking
+  if (n.includes('trekk') || n.includes('rucksack') || n.includes('mount')) {
+    const id = slugToId.get('trekking-backpacks') || fallbackCatId;
+    return { id, slug: 'trekking-backpacks', sub_category: 'trekking-backpacks', gender: 'unisex', age_range: '11 Years & Above' };
   }
+
+  // 2. Laptop
+  if (n.includes('laptop') || ['atlas', 'matrix', 'oxford', 'xtreme', 'zipster', 'protech'].some((k) => n.includes(k))) {
+    const id = slugToId.get('laptop-backpacks') || fallbackCatId;
+    return { id, slug: 'laptop-backpacks', sub_category: 'laptop-backpacks', gender: 'unisex', age_range: '11 Years & Above' };
+  }
+
+  // 3. Junior (Kids School, Kids Trolley, Combo Sets)
+  const isJuniorFamily = ['fluffy', 'fuzzy', 'gracious', 'minion', 'mischief', 'tipsy', 'power', 'smiley', 'funky', 'ranger'].some((k) => n.includes(k));
+  if (n.includes('school') || isJuniorFamily || n.includes('trolley') || n.includes('trolly') || n.includes('combo')) {
+    const juniorId = slugToId.get('junior') || slugToId.get('school-backpacks') || fallbackCatId;
+    if (n.includes('trolley') || n.includes('trolly')) {
+      return { id: juniorId, slug: 'junior', sub_category: 'kids-trolley', gender: 'kids', age_range: '6 to 10 Years' };
+    }
+    if (n.includes('combo') || n.includes('lunch')) {
+      return { id: juniorId, slug: 'junior', sub_category: 'combo-set', gender: 'kids', age_range: '3 to 5 Years' };
+    }
+    const isNurseryKg = ['minion', 'gracious', 'fluffy', 'fuzzy', 'power', 'smiley'].some((k) => n.includes(k));
+    const age = isNurseryKg ? '3 to 5 Years' : '6 to 10 Years';
+    return { id: juniorId, slug: 'junior', sub_category: 'school-backpacks', gender: 'kids', age_range: age };
+  }
+
+  // 4. College
+  if (n.includes('college') || ['blockbuster', 'century', 'champion', 'dream', 'dreamer', 'fortuner', 'iconic', 'ignis', 'incredible', 'rockstar', 'sonata', 'stellar', 'striker'].some((k) => n.includes(k))) {
+    const id = slugToId.get('college-backpacks') || fallbackCatId;
+    return { id, slug: 'college-backpacks', sub_category: 'college-backpacks', gender: 'unisex', age_range: '11 Years & Above' };
+  }
+
+  // 5. General Category Rules
   for (const [re, slug] of CATEGORY_RULES) {
-    if (re.test(name) && slugToId.has(slug)) return { id: slugToId.get(slug)!, slug, sub_category: '' };
+    if (re.test(name) && slugToId.has(slug)) {
+      return { id: slugToId.get(slug)!, slug, sub_category: slug, gender: 'unisex', age_range: '11 Years & Above' };
+    }
   }
-  return { id: fallbackCatId, slug: 'backpacks (fallback)', sub_category: '' };
+
+  return { id: fallbackCatId, slug: 'backpacks', sub_category: 'backpacks', gender: 'unisex', age_range: '11 Years & Above' };
 };
 
 // ── Existing products (idempotency) ──────────────────────────────────────────
@@ -236,35 +315,35 @@ const summary = { inserted: 0, updated: 0, skippedNoImages: [] as string[], erro
 const categoryTally = new Map<string, number>();
 
 for (const row of rows) {
-  const type = detectType(row.name);
-  const { id: category_id, slug: catSlug, sub_category: subCat } = resolveCategory(row.name);
-  categoryTally.set(catSlug, (categoryTally.get(catSlug) || 0) + 1);
+  const type = detectType(row.name, row.family);
+  const { id: category_id, slug: catSlug, sub_category: subCat, gender, age_range } = resolveCategory(row.name, row.family);
+  categoryTally.set(`${catSlug}${subCat ? ' / ' + subCat : ''}`, (categoryTally.get(`${catSlug}${subCat ? ' / ' + subCat : ''}`) || 0) + 1);
 
   const folder = path.join(IMAGES_DIR, row.sku);
   const imageFiles = gatherImages(folder);
+  const manifestUrls = manifestMap.get(row.sku) || [];
   const exists = skuToRow.get(row.sku);
   const canReuse = !!exists && Array.isArray(exists.images) && exists.images.length > 0 && !REUPLOAD;
 
-  if (!imageFiles.length && !canReuse) {
+  if (!imageFiles.length && !manifestUrls.length && !canReuse) {
     summary.skippedNoImages.push(row.sku);
-    console.log(`⏭️  ${row.sku}  ${row.name}  → NO IMAGE FOLDER, skipped`);
+    console.log(`⏭️  ${row.sku}  ${row.name}  → NO IMAGE FOLDER OR URL, skipped`);
     continue;
   }
 
   console.log(
-    `${exists ? '♻️  update' : '➕ insert'}  ${row.sku}  [${catSlug}${subCat ? '/' + subCat : ''}]  ` +
-      `${canReuse ? 'reuse imgs' : imageFiles.length + ' imgs'}  ${row.name}`,
+    `${exists ? '♻️  update' : '➕ insert'}  ${row.sku}  [${catSlug}${subCat ? '/' + subCat : ''}] [${age_range}]  ` +
+      `${canReuse ? 'reuse imgs' : imageFiles.length ? imageFiles.length + ' local imgs' : manifestUrls.length + ' CDN imgs'}  ${row.name}`,
   );
 
   if (!COMMIT) continue; // dry run stops here (no uploads, no writes)
 
   try {
-    let urls: string[];
+    let urls: string[] = [];
     if (canReuse) {
       urls = exists.images as string[];
-    } else {
-      // Upload images — skip any that fail (e.g. Cloudinary's 10MB source limit)
-      urls = [];
+    } else if (hasCloudinary && imageFiles.length) {
+      // Upload local images to Cloudinary
       for (let n = 0; n < imageFiles.length; n++) {
         try {
           const res = await cloudinary.uploader.upload(imageFiles[n], {
@@ -278,8 +357,15 @@ for (const row of rows) {
           console.error(`   ⚠️  ${row.sku} image ${n + 1} skipped: ${imgErr.message}`);
         }
       }
-      if (!urls.length) throw new Error('all images failed to upload');
+    } else if (manifestUrls.length) {
+      // Use direct high-res Amazon CDN URLs from manifest
+      urls = manifestUrls;
+    } else if (imageFiles.length) {
+      // Use standard local paths
+      urls = imageFiles.map((_, idx) => `/products/${row.sku}/${row.sku}_0${idx + 1}.jpg`);
     }
+
+    if (!urls.length) throw new Error('no images found or failed to upload');
 
     const slug = exists ? exists.slug : uniqueSlug(row.name, row.sku);
     const productData: Record<string, any> = {
@@ -292,15 +378,15 @@ for (const row of rows) {
       category_id,
       image: urls[0],
       images: urls,
-      colors: [],
+      colors: [{ name: row.family, code: '#111111', images: urls }],
       features: buildFeatures(type),
       stock: DEFAULT_STOCK,
       is_new: false,
       is_highlighted: false,
       is_premium: false,
-      gender: 'unisex',
+      gender,
       size: '',
-      age_range: '',
+      age_range,
       sub_category: subCat,
       is_active: true,
       amazon_url: row.amazon_url,

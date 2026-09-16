@@ -24,26 +24,76 @@ const searchProducts = async (params: {
   isPremium?: boolean;
   sort?: string;
   search?: string;
+  min_price?: number;
+  max_price?: number;
   limit?: number;
 }) => {
   let query = supabase
     .from('products')
-    .select('id, name, price, original_price, image, slug, rating, sub_category, is_premium, categories(slug, title)')
+    .select('id, name, price, original_price, image, slug, rating, sub_category, is_premium, gender, amazon_url, myntra_url, categories(slug, title)')
     .eq('is_active', true);
 
   if (params.category) {
-    const { data: cat } = await supabase.from('categories').select('id').eq('slug', params.category).maybeSingle();
-    if (cat) {
-      query = query.or(`category_id.eq.${cat.id},sub_category.eq.${params.category}`);
+    const catSlug = params.category.trim().toLowerCase();
+    if (catSlug === 'junior' || catSlug === 'kids') {
+      query = query.or('gender.eq.kids,sub_category.in.(school-backpacks,kids-trolley,trolley-backpacks,combo-set,pouches,lunch-bags)');
+    } else if (catSlug === 'kids-trolley' || catSlug === 'trolley' || catSlug === 'trolley-backpacks') {
+      query = query.or('sub_category.in.(kids-trolley,trolley-backpacks),name.ilike.%trolley%,name.ilike.%trolly%');
+    } else if (catSlug === 'laptop' || catSlug === 'laptop-bags' || catSlug === 'laptop-backpacks') {
+      query = query.or('sub_category.in.(laptop-backpacks,laptop-bags),name.ilike.%laptop%');
+    } else if (catSlug === 'college' || catSlug === 'college-backpacks') {
+      query = query.or('sub_category.in.(college-backpacks),name.ilike.%college%');
+    } else if (catSlug === 'luggage' || catSlug === 'travel' || catSlug === 'trolley-bags') {
+      query = query.or('sub_category.in.(luggage,trolley-bags,travel,duffle),name.ilike.%luggage%,name.ilike.%trolley%');
     } else {
-      query = query.eq('sub_category', params.category);
+      const { data: cat } = await supabase.from('categories').select('id').eq('slug', catSlug).maybeSingle();
+      if (cat) {
+        query = query.or(`category_id.eq.${cat.id},sub_category.eq.${catSlug}`);
+      } else {
+        query = query.eq('sub_category', catSlug);
+      }
     }
   }
-  if (params.sub_category) query = query.eq('sub_category', params.sub_category);
-  if (params.isPremium) query = query.eq('is_premium', true);
+
+  if (params.sub_category) {
+    const sub = params.sub_category.trim().toLowerCase();
+    if (sub === 'kids-trolley' || sub === 'trolley-backpacks') {
+      query = query.in('sub_category', ['kids-trolley', 'trolley-backpacks']);
+    } else {
+      query = query.eq('sub_category', sub);
+    }
+  }
+
+  if (params.isPremium !== undefined) {
+    query = query.eq('is_premium', params.isPremium);
+  }
+
+  if (params.min_price) {
+    query = query.gte('price', params.min_price);
+  }
+
+  if (params.max_price) {
+    query = query.lte('price', params.max_price);
+  }
+
   if (params.search) {
-    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
-    query = query.ilike('name', `%${escaped}%`);
+    const rawSearch = params.search.trim();
+    const cleanSearch = rawSearch.replace(/[%_\\]/g, '\\$&');
+    const searchLower = rawSearch.toLowerCase();
+    
+    if (searchLower.includes('trolley') || searchLower.includes('trolly')) {
+      if (searchLower.includes('kid') || searchLower.includes('child') || searchLower.includes('frozen') || searchLower.includes('cinderella') || searchLower.includes('spiderman')) {
+        query = query.or(`sub_category.eq.kids-trolley,name.ilike.%${cleanSearch}%`);
+      } else {
+        query = query.or(`name.ilike.%${cleanSearch}%,sub_category.ilike.%trolley%,sub_category.eq.luggage`);
+      }
+    } else if (searchLower.includes('3 year') || searchLower.includes('nursery') || searchLower.includes('kg') || searchLower.includes('preschool') || searchLower.includes('toddler')) {
+      query = query.or('name.ilike.%minion%,name.ilike.%gracious%,name.ilike.%fluffy%,name.ilike.%fuzzy%,name.ilike.%power%,name.ilike.%smiley%,sub_category.eq.combo-set');
+    } else if (searchLower.includes('6 to 10') || searchLower.includes('primary')) {
+      query = query.or('name.ilike.%tipsy%,name.ilike.%mischief%,name.ilike.%funky%,name.ilike.%ranger%,sub_category.eq.kids-trolley');
+    } else {
+      query = query.or(`name.ilike.%${cleanSearch}%,description.ilike.%${cleanSearch}%,sub_category.ilike.%${cleanSearch}%`);
+    }
   }
 
   const sortMap: Record<string, { column: string; ascending: boolean }> = {
@@ -63,7 +113,7 @@ const searchProducts = async (params: {
 const getNewArrivals = async (limit = 4) => {
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, price, original_price, image, slug, rating, categories(slug, title)')
+    .select('id, name, price, original_price, image, slug, rating, amazon_url, categories(slug, title)')
     .eq('is_active', true)
     .order('created_at', { ascending: false })
     .limit(Math.min(limit, 6));
@@ -92,7 +142,6 @@ const getUserOrders = async (userId: string, limit = 5) => {
 };
 
 const getOrderStatus = async (userId: string, orderId: string) => {
-  // Strip # prefix if user typed it
   const cleanId = orderId.replace(/^#/, '').toLowerCase();
   const { data, error } = await supabase
     .from('orders')
@@ -118,7 +167,7 @@ const getOrderStatus = async (userId: string, orderId: string) => {
 const getUserWishlist = async (userId: string) => {
   const { data, error } = await supabase
     .from('wishlists')
-    .select('products(id, name, price, original_price, image, slug, rating)')
+    .select('products(id, name, price, original_price, image, slug, rating, amazon_url)')
     .eq('user_id', userId)
     .limit(6);
   if (error) return [];
@@ -130,13 +179,18 @@ const getUserWishlist = async (userId: string) => {
 const tools: Anthropic.Tool[] = [
   {
     name: 'search_products',
-    description: 'Search products from the Priority Bags catalog. Use for product recommendations, finding bags by type, price, or keyword.',
+    description: 'Search products from the Priority Bags and TRAWORLD catalog. Use for product recommendations, finding bags by age group, category, price range, or keywords (e.g. laptop, trolley, school, college, duffle, luggage).',
     input_schema: {
       type: 'object' as const,
       properties: {
-        category: { type: 'string', description: 'Category slug: school-backpacks, college-backpacks, laptop-bags, travel-bags, luggage, duffle, backpacks, pouches, lunch-bags, trolley-backpacks, combo-set' },
-        search: { type: 'string', description: 'Keyword to search in product names' },
-        isPremium: { type: 'boolean', description: 'Set true to search only premium/luxury products' },
+        category: {
+          type: 'string',
+          description: 'Category slug: school-backpacks, college-backpacks, laptop-backpacks, trekking-backpacks, luggage, duffle, backpacks, pouches, lunch-bags, kids-trolley, trolley-backpacks, combo-set, junior, travel, accessories, premium',
+        },
+        search: { type: 'string', description: 'Keyword to search (e.g. "frozen", "spiderman", "laptop", "waterproof", "nursery", "trolley", "3 year old")' },
+        isPremium: { type: 'boolean', description: 'Set true to search exclusively luxury/premium TRAWORLD products' },
+        min_price: { type: 'number', description: 'Minimum price in INR' },
+        max_price: { type: 'number', description: 'Maximum price in INR' },
         sort: { type: 'string', enum: ['rating', 'newest', 'price-asc', 'price-desc'] },
         limit: { type: 'number', description: 'Number of results to return (max 6)' },
       },
@@ -144,33 +198,12 @@ const tools: Anthropic.Tool[] = [
   },
   {
     name: 'get_new_arrivals',
-    description: 'Fetch the latest/newest products added to the store. Use when user asks about new launches, latest arrivals, what is new, or newly added products.',
+    description: 'Fetch the latest/newest products added to the store. Use when user asks about new launches, latest arrivals, or newly added bags.',
     input_schema: {
       type: 'object' as const,
       properties: {
         limit: { type: 'number', description: 'How many new products to show (max 6, default 4)' },
       },
-    },
-  },
-  {
-    name: 'get_my_orders',
-    description: 'Fetch the logged-in user\'s order history. Use when user asks "my orders", "recent orders", "what did I buy", "show my purchases", "order history".',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        limit: { type: 'number', description: 'Number of recent orders to show (max 10, default 5)' },
-      },
-    },
-  },
-  {
-    name: 'get_order_status',
-    description: 'Get the status and details of a specific order. Use when user asks about a specific order or provides an order ID.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        orderId: { type: 'string', description: 'Order ID or the first few characters of the order ID (e.g. "ABC12345")' },
-      },
-      required: ['orderId'],
     },
   },
   {
@@ -185,76 +218,44 @@ const tools: Anthropic.Tool[] = [
 
 // ─── System Prompt ───────────────────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are Priya, a friendly and knowledgeable shopping assistant for Priority Bags (prioritybags.in), a trusted Indian bag and luggage brand. You speak like a warm, helpful Indian customer service representative — concise, professional, and caring.
+const SYSTEM_PROMPT = `You are Priority Assistant, the smart, friendly, and knowledgeable AI shopping assistant for Priority Bags (prioritybags.in) and its premium travel line TRAWORLD. You speak in a polite, warm, concise, and helpful tone.
 
-## WHAT YOU CAN DO
-- Recommend products and search the catalog
-- Show new launches and latest arrivals
-- Show a logged-in user's wishlist
-- Answer questions about products (sizes, materials, features, comparisons)
-- Explain how buying works: every product is purchased on Amazon via the "Buy on Amazon" button
+## BRAND PROFILE & PRODUCT KNOWLEDGE
+1. **Priority Bags**: India's leading youth and everyday bag brand offering sturdy, stylish, and high-value backpacks, school bags, college bags, laptop packs, and junior accessories.
+2. **TRAWORLD**: Luxury travel collection featuring ultra-durable polypropylene/polycarbonate 360-degree silent spinner trolley suitcases, cabin luggage, and executive duffles.
 
-## HOW BUYING WORKS (IMPORTANT)
-Priority Bags products are sold through Amazon. This website is a catalog: customers browse
-here and tap "Buy on Amazon" to purchase. Payment, delivery, order tracking, cancellation,
-returns, and refunds are all handled by Amazon — NOT on this website. Never describe an
-on-site checkout, delivery fee, COD, or return process.
+## EXACT AGE GUIDELINES FOR SCHOOL & JUNIOR BAGS:
+- **Below 3 Years (Playschool / Toddler)**: For toddlers under 3, recommend our smallest lightweight 14-inch bags (Minion / Gracious series) with parental support.
+- **3 to 5 Years (Nursery, Kindergarten & Preschool)**: 14" to 15" bags (20L–24L capacity) designed for early schoolers:
+  - *Minion Series (001, 002, 004)* — 14" with fun sequin prints & light ergonomics.
+  - *Gracious Series (004, 006)* — 14" colorful, lightweight carry.
+  - *Fluffy, Fuzzy, Power (15"), Smiley (15")* — 15" compact school packs.
+  - *Junior Combo Sets* — matching backpack + insulated lunch tiffin pouch + pencil case.
+- **6 to 10 Years (Primary School & Kids Luggage)**: 16" to 17" bags (28L–30L capacity) and rolling trolleys:
+  - *Tipsy Series (001–008)* — 16" water-resistant PVC/polyester primary school bags.
+  - *Mischief Series (002, 003, 005)* — 16" ergonomic primary packs.
+  - *Funky Series* & *Ranger Series (17")* — spacious multi-compartment school bags.
+  - *Priority Kids Trolley Bags (18", 20", 22")* — hard-shell 360° rolling suitcases with Disney Princess, Cinderella, Frozen, Spiderman, Captain America, and Unicorn prints.
+- **11 Years & Above (Middle/High School, College & Laptop)**: 18.5"+ (32L–36L capacity):
+  - *College Backpacks*: Blockbuster, Iconic, Ignis, Incredible, Sonata, Stellar, Striker.
+  - *Laptop Backpacks*: Atlas, Matrix, Oxford, XTREME, Zipster, PROTECH PLUS (with padded 15.6"-17" tech sleeves).
+  - *Trekking & Adventure*: Mount 001 heavy-duty rucksacks (45L–55L).
+- **Travel Luggage & Trolley Bags**:
+  - *Priority Luggage*: Romania, Vienna, Morocco, Denmark hard-case luggage sets.
+  - *TRAWORLD Luxury Luggage*: 360° spinner wheels, TSA locks, scratch-resistant shells (Cabin 20", Medium 24", Large 28", and 2/3-piece sets).
 
-## PRIORITY BAGS — COMPLETE INFORMATION
+## HOW PURCHASING & POLICIES WORK
+- **Direct Marketplace Purchasing**: Products are purchased directly through our marketplace storefronts (Amazon, Flipkart, Myntra, Ajio) by clicking "Buy on Amazon" or marketplace buttons on each product card.
+- **Orders & Tracking**: Order placement, delivery tracking, cancellations, returns, and refunds are managed securely within "Your Orders" on Amazon / Myntra / Flipkart where the order was placed.
+- **Warranty & Customer Care**: All Priority products carry a 1-year manufacturer warranty. For support, customers can reach us at **info@prioritybags.in** or use the support status tracker on this site.
 
-**Buying / Payment:**
-- Every product is bought on Amazon. Tap "Buy on Amazon" on any product to open it on Amazon and complete the purchase.
-- Payment is handled securely by Amazon at checkout, using whatever methods Amazon supports (UPI, cards, net banking, EMI, and COD where Amazon offers it).
-- This website does not take payments directly, and there is no on-site cart or checkout.
-
-**Delivery:**
-- Orders are fulfilled and shipped by Amazon. Delivery time, shipping charges, and any free-delivery eligibility are shown on the Amazon product/checkout page.
-- Track shipments in "Your Orders" on Amazon or the Amazon app.
-
-**Returns, Refunds & Exchanges:**
-- Returns, refunds, and exchanges follow Amazon's return policy for each item (shown on the item's Amazon page).
-- Start a return or refund from "Your Orders" on Amazon.
-
-**Order status & cancellation:**
-- View, track, or cancel orders in "Your Orders" on Amazon — that is where the purchase is placed.
-
-**Warranty:**
-- Products carry the manufacturer's warranty as stated on the Amazon listing.
-- For warranty help, contact Priority Bags support at info@prioritybags.in.
-
-**Contact & Support:**
-- Email: info@prioritybags.in
-- Support ticket tracking: Available on the website
-
-**About Priority Bags:**
-- Made-in-India brand focused on affordable, quality bags and luggage
-- Products for Men, Women, Kids (ages 3–15)
-- Premium collection available for luxury buyers
-
-## PRODUCT CATEGORIES
-- school-backpacks → Kids school bags (age 3–12), colourful designs
-- college-backpacks → College/university bags, stylish and spacious
-- laptop-bags → With padded laptop compartment (13", 15.6", 17")
-- travel-bags → Weekend duffels and cabin bags
-- luggage → Hard/soft shell trolley suitcases
-- duffle → Sports duffel, gym bags
-- backpacks → Casual everyday backpacks
-- pouches → Small accessories, travel pouches, pencil cases
-- lunch-bags → Kids tiffin / lunch bags
-- trolley-backpacks → Kids rolling school bags on wheels
-- combo-set → Bundle deals (bag + pouch, etc.)
-
-## RULES
-1. ALWAYS call search_products before recommending any product — never make up product names or prices
-2. For "new arrivals" / "latest" / "new launch" → call get_new_arrivals
-3. For anything about orders — history, status, tracking, cancellation, returns, or refunds → these all happen on Amazon. Tell the customer to open "Your Orders" on Amazon (or the Amazon app), since that is where they purchased. Do NOT claim to look up, track, or cancel orders here.
-4. For product-detail questions (sizes, colours, materials, comparisons) → call search_products so your answer is grounded in the real catalog.
-5. For "my wishlist" / "saved items" → call get_wishlist
-6. If the user asks about their wishlist and is NOT logged in → tell them to log in from the top-right corner
-7. Keep text responses SHORT — 1–2 sentences max introducing the products. NEVER list products in a table or bullet list — they are shown as clickable cards automatically. Just say something like "Here are some great options for you:" and stop.
-8. NEVER state, quote, or mention product prices — prices are shown on Amazon, not on this site. When recommending, just show the product cards and tell users to tap a product and use "Buy on Amazon". Never fabricate product details
-9. For policy questions — answer directly from the information above, no tool needed
-10. If unsure about anything → direct them to info@prioritybags.in`;
+## CONVERSATIONAL RULES
+1. ALWAYS call search_products before recommending products to retrieve real catalog items.
+2. When the user asks for "new arrivals", "latest", or "new launch" → call get_new_arrivals.
+3. When the user asks for "my wishlist" or "saved items" → call get_wishlist (remind user to log in if they are not).
+4. Keep introductory text concise (1–2 sentences) — product cards render automatically as interactive cards below your message.
+5. Answer questions about materials (water-resistant PU/PVC, polyester, polycarbonate shells, ergonomic mesh padding, reinforced zippers) clearly and accurately.
+6. NEVER fabricate fake product names or prices.`;
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 

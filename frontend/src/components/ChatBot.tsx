@@ -104,27 +104,13 @@ const STATUS_LABEL: Record<string, string> = {
   returned:   'Returned',
 };
 
-const GUEST_SUGGESTIONS = [
-  'Best bags for 3 year old',
-  'Premium luggage',
-  'New arrivals',
-  'Laptop bags under ₹1500',
-];
-
-const USER_SUGGESTIONS = [
-  'Show my orders',
-  'New arrivals',
-  'Track my order',
-  'Premium luggage',
-];
-
 export const ChatBot = () => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      text: "Hi! 👋 I'm Priority Assistant, your Priority Bags assistant. I can help you find bags, check your orders, show new arrivals, and answer any shopping questions!",
+      text: "Hi! 👋 I'm Priority Assistant, your Priority Bags guide. I can help you find the right backpack, kids school or trolley bag, travel luggage, and answer any product questions!",
     },
   ]);
   const [input, setInput] = useState('');
@@ -140,8 +126,8 @@ export const ChatBot = () => {
     setMessages([{
       role: 'assistant',
       text: user
-        ? `Hi ${user.name.split(' ')[0]}! 👋 I'm Priority Assistant. I can show your orders, recommend products, check new arrivals — just ask!`
-        : "Hi! 👋 I'm Priority Assistant, your Priority Bags assistant. I can help you find bags, check new arrivals, and answer any shopping questions!",
+        ? `Hi ${user.name.split(' ')[0]}! 👋 I'm Priority Assistant. Ask me about backpacks, kids school & trolley bags, travel luggage, sizes, or materials!`
+        : "Hi! 👋 I'm Priority Assistant, your Priority Bags guide. Ask me about backpacks, kids school & trolley bags, travel luggage, sizes, or materials!",
     }]);
   }, [user?.id]);
 
@@ -330,21 +316,6 @@ export const ChatBot = () => {
             )}
             <div ref={bottomRef} />
           </div>
-
-          {/* Suggestions (only shown on first message) */}
-          {messages.length === 1 && (
-            <div className="px-3 py-2 bg-gray-50 border-t border-gray-100 flex gap-1.5 flex-wrap shrink-0">
-              {suggestions.map(s => (
-                <button
-                  key={s}
-                  onClick={() => send(s)}
-                  className="text-[10px] bg-white border border-gray-200 text-gray-600 rounded-full px-2.5 py-1 hover:border-black hover:text-black transition-colors"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          )}
 
           {/* Input */}
           <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0">
