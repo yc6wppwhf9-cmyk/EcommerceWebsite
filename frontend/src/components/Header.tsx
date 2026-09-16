@@ -131,7 +131,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   ];
 
   const premiumNavData = [
-    { title: 'HOME', to: '/' },
+    { title: 'HOME', to: '/premium' },
     {
       title: 'COLLECTION',
       to: '/premium',
@@ -149,6 +149,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const isDarkMode = isPremiumTheme;
   const activeNavData = isPremiumTheme ? premiumNavData : navData;
 
+  const homeHref = isPremiumTheme ? '/premium' : (isJunior ? '/junior' : '/');
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
     : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/logo.png');
@@ -175,7 +176,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Desktop Logo */}
         <div className="hidden lg:flex items-center lg:flex-1">
-          <Link to="/" className="flex items-center">
+          <Link to={homeHref} className="flex items-center">
             <img
               src={logoSrc}
               alt="Priority"
@@ -186,7 +187,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Mobile Navbar: Logo on left, BrandToggle + Menu button on right */}
         <div className="flex lg:hidden items-center justify-between w-full">
-          <Link to="/" className="flex items-center">
+          <Link to={homeHref} className="flex items-center">
             <img
               src={logoSrc}
               alt="Priority"
