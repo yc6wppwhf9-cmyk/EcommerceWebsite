@@ -49,12 +49,15 @@ export function useHomeData(activeTab: string): HomeData {
   const [hasProducts, setHasProducts] = useState<boolean | null>(null);
   const [genderStock, setGenderStock] = useState<GenderLink[] | null>(null);
 
-  // Prefetch all data on first render
+  // Defer non-critical background prefetching so initial paint has zero network contention
   useEffect(() => {
-    prefetchHomeData();
+    const timer = setTimeout(() => {
+      prefetchHomeData();
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
-  // Tab products — resolves from cache instantly if prefetch already ran
+  // Tab products — fetch active tab immediately
   useEffect(() => {
     setTabLoading(true);
     setTabProducts([]);
@@ -63,13 +66,15 @@ export function useHomeData(activeTab: string): HomeData {
 
     api.getProducts(params)
       .then((res) => {
-        setTabProducts((res.products as Product[]).slice(0, 15));
+        const list = (res.products as Product[]).slice(0, 15);
+        setTabProducts(list);
+        if (list.length > 0) setHasProducts(true);
       })
       .catch(() => {})
       .finally(() => setTabLoading(false));
   }, [activeTab]);
 
-  // Best sellers
+  // Best sellers & New arrivals (essential for homepage presentation)
   useEffect(() => {
     api.getProducts({ sort: 'bestseller', limit: '12', isPremium: 'false' })
       .then((res) => {
@@ -77,12 +82,10 @@ export function useHomeData(activeTab: string): HomeData {
           (p) => p.categories?.slug !== 'junior'
         );
         setBestSellers(filtered.slice(0, 12));
+        if (filtered.length > 0) setHasProducts(true);
       })
       .catch(() => {});
-  }, []);
 
-  // New arrivals — most recently added catalogue items (excludes junior + premium)
-  useEffect(() => {
     api.getProducts({ sort: 'newest', limit: '12', isPremium: 'false' })
       .then((res) => {
         const filtered = (res.products as Product[]).filter(
@@ -93,25 +96,21 @@ export function useHomeData(activeTab: string): HomeData {
       .catch(() => {});
   }, []);
 
-  // Cheapest possible existence check — one row is enough to know the store is live
+  // Defer secondary gender stock existence checks
   useEffect(() => {
-    api.getProducts({ limit: '1' })
-      .then((res) => setHasProducts((res.products?.length ?? 0) > 0))
-      .catch(() => setHasProducts(false));
-  }, []);
-
-  // Gender stock checks — only show CTAs whose queries return real products
-  useEffect(() => {
-    Promise.all(
-      GENDER_LINKS.map((link) =>
-        api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' })
-          .then((res) => (res.products?.length ?? 0) > 0)
-          .catch(() => false)
-      )
-    ).then((results) => {
-      const available = GENDER_LINKS.filter((_, i) => results[i]);
-      setGenderStock(available as GenderLink[]);
-    });
+    const timer = setTimeout(() => {
+      Promise.all(
+        GENDER_LINKS.map((link) =>
+          api.getProducts({ gender: link.gender, isPremium: 'false', limit: '1' })
+            .then((res) => (res.products?.length ?? 0) > 0)
+            .catch(() => false)
+        )
+      ).then((results) => {
+        const available = GENDER_LINKS.filter((_, i) => results[i]);
+        setGenderStock(available as GenderLink[]);
+      });
+    }, 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   return { tabProducts, tabLoading, bestSellers, newArrivals, hasProducts, genderStock };
