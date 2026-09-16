@@ -47,21 +47,30 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
 
       const catIds = (matchedCats || []).map((c) => c.id);
       
-      const orConditions: string[] = [];
-      if (catIds.length > 0) {
-        orConditions.push(`category_id.in.(${catIds.join(',')})`);
-      }
-      if (subSlugs.length > 0) {
-        orConditions.push(`sub_category.in.(${subSlugs.join(',')})`);
-      }
       if (catSlug === 'junior') {
-        orConditions.push('gender.eq.kids');
-      }
-      
-      if (orConditions.length > 0) {
+        // Strict Junior filter: only Junior / Kids bags; never match laptop, college, or trekking
+        query = query.not('sub_category', 'in', '("laptop-backpacks","college-backpacks","trekking-backpacks")');
+        const orConditions: string[] = ['gender.eq.kids'];
+        if (catIds.length > 0) {
+          orConditions.push(`category_id.in.(${catIds.join(',')})`);
+        }
+        if (subSlugs.length > 0) {
+          orConditions.push(`sub_category.in.(${subSlugs.join(',')})`);
+        }
         query = query.or(orConditions.join(','));
       } else {
-        query = query.eq('sub_category', catSlug);
+        const orConditions: string[] = [];
+        if (catIds.length > 0) {
+          orConditions.push(`category_id.in.(${catIds.join(',')})`);
+        }
+        if (subSlugs.length > 0) {
+          orConditions.push(`sub_category.in.(${subSlugs.join(',')})`);
+        }
+        if (orConditions.length > 0) {
+          query = query.or(orConditions.join(','));
+        } else {
+          query = query.eq('sub_category', catSlug);
+        }
       }
     }
 

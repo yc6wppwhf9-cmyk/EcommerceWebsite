@@ -7,7 +7,7 @@ import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify, Check } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { resolveProductColors, resolveProductAgeRange, AGE_RANGE_OPTIONS } from '../utils/productFilters';
+import { resolveProductColors, resolveProductAgeRange, isJuniorProduct, AGE_RANGE_OPTIONS } from '../utils/productFilters';
 
 const PAGE_LIMIT = 20;
 const NO_PRICE_FILTER = 999999;
@@ -118,7 +118,10 @@ export const CategoryPage = () => {
 
       try {
         const res = await api.getProducts(params);
-        const products = res.products as unknown as Product[];
+        let products = res.products as unknown as Product[];
+        if (themeParam === 'junior' || slug === 'junior' || slug === 'kids-trolley' || slug === 'combo-set') {
+          products = products.filter(isJuniorProduct);
+        }
         setHasMore(products.length >= PAGE_LIMIT);
         if (replace) {
           setAllProducts(products);

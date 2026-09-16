@@ -170,3 +170,74 @@ export function resolveProductAgeRange(p: Product): string {
   // 4. 11 Years & Above (Middle/High School, College, Adult)
   return '11 Years & Above';
 }
+
+/**
+ * Returns true if a product strictly belongs to the Junior / Kids collection.
+ * Explicitly rejects Laptop, College, Trekking / Rucksacks, and Adult luggage/duffles.
+ */
+export function isJuniorProduct(product: Product | any): boolean {
+  if (!product) return false;
+  const cat = String(product.categories?.slug || product.category || '').toLowerCase();
+  const sub = String(product.sub_category || '').toLowerCase();
+  const name = String(product.name || '').toLowerCase();
+  const fam = String(product.family || product.specifications?.Family || '').toLowerCase();
+  const gender = String(product.gender || '').toLowerCase();
+
+  // 1. Explicit exclusion list for Laptop, College, Trekking & Adult lines
+  const adultKeywords = [
+    'laptop',
+    'college',
+    'trekking',
+    'rucksack',
+    'hiking',
+    'mount 001',
+    'protech',
+    'xtreme',
+    'zipster',
+    'atlas',
+    'matrix',
+    'oxford',
+    'blockbuster',
+    'century',
+    'champion',
+    'dreamer',
+    'fortuner',
+    'iconic',
+    'ignis',
+    'incredible',
+    'rockstar',
+    'sonata',
+    'stellar',
+    'striker',
+    'traworld',
+  ];
+
+  if (
+    cat === 'laptop-backpacks' ||
+    sub === 'laptop-backpacks' ||
+    cat === 'college-backpacks' ||
+    sub === 'college-backpacks' ||
+    cat === 'trekking-backpacks' ||
+    sub === 'trekking-backpacks' ||
+    adultKeywords.some((k) => name.includes(k) || fam.includes(k))
+  ) {
+    return false;
+  }
+
+  // 2. Allow if kids gender or junior category or junior subcategory
+  if (
+    gender === 'kids' ||
+    cat === 'junior' ||
+    cat === 'kids-trolley' ||
+    sub === 'kids-trolley' ||
+    sub === 'trolley-backpacks' ||
+    sub === 'combo-set' ||
+    sub === 'school-backpacks' ||
+    cat === 'school-backpacks'
+  ) {
+    return true;
+  }
+
+  return false;
+}
+

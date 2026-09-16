@@ -248,6 +248,20 @@ if (catErr || !categories?.length) {
 }
 const slugToId = new Map(categories.map((c: any) => [String(c.slug).toLowerCase(), c.id]));
 const fallbackCatId = slugToId.get('backpacks') || categories[0].id;
+
+const CATEGORY_RULES: Array<[RegExp, string]> = [
+  [/laptop/i, 'laptop-backpacks'],
+  [/college/i, 'college-backpacks'],
+  [/trekk|rucksack|hiking/i, 'trekking-backpacks'],
+  [/duffle|duffel/i, 'duffle'],
+  [/trolley|luggage|suitcase|cabin|check-?in/i, 'luggage'],
+  [/pouch/i, 'pouch'],
+  [/tote/i, 'tote-bag'],
+  [/lunch/i, 'lunch-bag'],
+  [/daypack/i, 'daypack'],
+  [/sling|crossbody/i, 'accessories'],
+  [/backpack/i, 'backpacks'],
+];
 const resolveCategory = (
   name: string,
   family: string,

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { formatPrice, getCategoryBySlug, getSubcategories } from '../constants/products';
-import { resolveProductColors, resolveProductAgeRange } from './productFilters';
+import { resolveProductColors, resolveProductAgeRange, isJuniorProduct } from './productFilters';
 import { getProductPrimaryImage, getProductSecondaryImage } from './productImages';
 import { resolveProductCategory } from '../components/admin/AdminProducts';
 import { Product } from '../types';
@@ -110,3 +110,53 @@ describe('Product Image Utilities', () => {
     expect(getProductSecondaryImage(product)).toBe('https://example.com/img2.jpg');
   });
 });
+
+describe('Junior Product Exclusions & Filters', () => {
+  it('strictly excludes laptop, college, and trekking bags from junior views', () => {
+    const laptopProduct: any = {
+      name: 'Priority Atlas 001 Laptop Bag BLK',
+      category: 'laptop-backpacks',
+      sub_category: 'laptop-backpacks',
+    };
+    const collegeProduct: any = {
+      name: 'Priority Blockbuster 001 College Backpack',
+      category: 'college-backpacks',
+      sub_category: 'college-backpacks',
+    };
+    const trekkingProduct: any = {
+      name: 'Priority Mount 001 Trekking Rucksack',
+      category: 'trekking-backpacks',
+      sub_category: 'trekking-backpacks',
+    };
+
+    expect(isJuniorProduct(laptopProduct)).toBe(false);
+    expect(isJuniorProduct(collegeProduct)).toBe(false);
+    expect(isJuniorProduct(trekkingProduct)).toBe(false);
+  });
+
+  it('correctly includes junior school bags and kids trolleys', () => {
+    const schoolBag: any = {
+      name: 'Priority Tipsy 001 School Bag',
+      category: 'junior',
+      sub_category: 'school-backpacks',
+      gender: 'kids',
+    };
+    const trolleyBag: any = {
+      name: 'Priority Disney Princess Kids Trolley',
+      category: 'junior',
+      sub_category: 'kids-trolley',
+      gender: 'kids',
+    };
+    const comboBag: any = {
+      name: 'Priority Gracious Junior Combo Set',
+      category: 'junior',
+      sub_category: 'combo-set',
+      gender: 'kids',
+    };
+
+    expect(isJuniorProduct(schoolBag)).toBe(true);
+    expect(isJuniorProduct(trolleyBag)).toBe(true);
+    expect(isJuniorProduct(comboBag)).toBe(true);
+  });
+});
+

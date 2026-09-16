@@ -6,6 +6,7 @@ import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft } from 'lucide-react';
 import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
+import { isJuniorProduct } from '../utils/productFilters';
 
 const BURST_COLORS = ['#F69245', '#A368FB', '#FFBB5A', '#FF6B6B', '#FFD700', '#4ECDC4', '#FF69B4', '#fff'];
 
@@ -163,7 +164,8 @@ export const JuniorStylePage = () => {
     window.scrollTo(0, 0);
     sessionStorage.setItem('siteTheme', 'junior');
     api.getProducts({ junior_style: style } as any).then(res => {
-      setProducts(res.products as unknown as Product[]);
+      const juniorList = (res.products as unknown as Product[]).filter(isJuniorProduct);
+      setProducts(juniorList);
       setIsLoading(false);
     }).catch(() => setIsLoading(false));
   }, [style]);

@@ -5,7 +5,7 @@ import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from 'lucide-react';
 import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
-import { resolveProductAgeRange } from '../utils/productFilters';
+import { resolveProductAgeRange, isJuniorProduct } from '../utils/productFilters';
 
 const AGE_GROUPS = [
   { label: 'Below 3 Years', slug: 'school-backpacks', age: 'Below 3 Years', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
@@ -354,8 +354,12 @@ export const JuniorPage = () => {
     setIsLoading(true);
     setProducts([]);
     setTabPage(0);
-    api.getProducts({ sub_category: cat.filter, limit: '20' })
-      .then(res => { setProducts(res.products as unknown as Product[]); setIsLoading(false); })
+    api.getProducts({ category: 'junior', sub_category: cat.filter, limit: '50' })
+      .then(res => {
+        const juniorOnly = (res.products as unknown as Product[]).filter(isJuniorProduct);
+        setProducts(juniorOnly);
+        setIsLoading(false);
+      })
       .catch(() => setIsLoading(false));
   }, [activeTab]);
 
