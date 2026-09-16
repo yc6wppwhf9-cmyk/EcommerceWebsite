@@ -1,10 +1,40 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import fs from 'fs';
 import { defineConfig } from 'vite';
 
+const spaFallbackPlugin = () => ({
+  name: 'spa-fallback-plugin',
+  configureServer(server: any) {
+    server.middlewares.use(async (req: any, res: any, next: any) => {
+      if (req.method !== 'GET') return next();
+      const pathname = (req.url || '').split('?')[0];
+      if (
+        pathname.startsWith('/api') ||
+        pathname.startsWith('/@') ||
+        pathname.startsWith('/src') ||
+        pathname.startsWith('/node_modules') ||
+        path.extname(pathname)
+      ) {
+        return next();
+      }
+
+      try {
+        const rawHtml = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        const html = await server.transformIndexHtml(req.url, rawHtml);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.end(html);
+      } catch (err) {
+        next(err);
+      }
+    });
+  },
+});
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), spaFallbackPlugin()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

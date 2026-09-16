@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../config/supabase';
 import { config } from '../config/env';
 
-const anthropic = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY });
+const anthropic = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY || 'sk-ant-dev-key' });
 
 function getUserFromRequest(req: Request): { id: string; email: string; role: string } | null {
   try {

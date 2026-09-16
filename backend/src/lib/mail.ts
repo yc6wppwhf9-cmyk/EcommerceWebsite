@@ -2,12 +2,16 @@ import { Resend } from 'resend';
 import { config } from '../config/env';
 import { escapeHtml } from './sanitize';
 
-const resend = new Resend(config.RESEND_API_KEY);
+const resend = config.RESEND_API_KEY ? new Resend(config.RESEND_API_KEY) : null;
 
 const APP_NAME = 'Priority Bags';
 const PRIMARY_COLOR = '#000000';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
+  if (!resend) {
+    console.log(`ℹ️ [Email Dev Mode] To: ${to}, Subject: ${subject}`);
+    return;
+  }
   try {
     const { error } = await resend.emails.send({
       from: `${APP_NAME} <${config.FROM_EMAIL}>`,

@@ -6,14 +6,16 @@ const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
   .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
+const isDev = (process.env.NODE_ENV || 'development') === 'development';
+
 export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 4000,
-  JWT_SECRET: process.env.JWT_SECRET!,
-  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET!,
+  JWT_SECRET: process.env.JWT_SECRET || (isDev ? 'dev_jwt_secret_priority_bags_key_2026' : ''),
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || (isDev ? 'dev_jwt_refresh_secret_priority_bags_key_2026' : ''),
   FRONTEND_URL: (process.env.FRONTEND_URL || corsOrigins[0] || 'http://localhost:3000').replace(/\/$/, ''),
-  SUPABASE_URL: process.env.SUPABASE_URL!,
-  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  SUPABASE_URL: process.env.SUPABASE_URL || (isDev ? 'https://placeholder.supabase.co' : ''),
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || (isDev ? 'placeholder_key' : ''),
   CORS_ORIGINS: corsOrigins,
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
@@ -40,9 +42,11 @@ const requiredEnv = [
   'CORS_ORIGIN'
 ];
 
-requiredEnv.forEach(name => {
-  if (!process.env[name]) {
-    console.error(`❌ Missing critical environment variable: ${name}`);
-    process.exit(1);
-  }
-});
+if (!isDev) {
+  requiredEnv.forEach(name => {
+    if (!process.env[name]) {
+      console.error(`❌ Missing critical environment variable: ${name}`);
+      process.exit(1);
+    }
+  });
+}

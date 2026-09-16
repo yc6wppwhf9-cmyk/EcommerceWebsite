@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build --workspace=priority-bags-frontend",
+  "outputDirectory": "frontend/dist",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://ecommercewebsite-5z8k.onrender.com/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
