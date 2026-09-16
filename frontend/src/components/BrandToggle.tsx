@@ -17,9 +17,32 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
 
   const handleSwitch = (target: 'priority' | 'traworld') => {
     if (target === 'priority') {
-      navigate('/');
+      if (location.pathname === '/premium') {
+        navigate('/');
+      } else if (searchParams.get('theme') === 'premium') {
+        searchParams.delete('theme');
+        const qs = searchParams.toString();
+        navigate(`${location.pathname}${qs ? `?${qs}` : ''}`);
+      } else {
+        navigate('/');
+      }
     } else {
-      navigate('/premium');
+      if (location.pathname === '/' || location.pathname.startsWith('/junior')) {
+        navigate('/premium');
+      } else if (
+        location.pathname.startsWith('/product/') ||
+        location.pathname.startsWith('/wishlist') ||
+        location.pathname.startsWith('/account') ||
+        location.pathname.startsWith('/about') ||
+        location.pathname.startsWith('/careers') ||
+        location.pathname.startsWith('/contact')
+      ) {
+        navigate('/premium');
+      } else {
+        // category page like /backpacks, /luggage
+        searchParams.set('theme', 'premium');
+        navigate(`${location.pathname}?${searchParams.toString()}`);
+      }
     }
   };
 
