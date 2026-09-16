@@ -153,10 +153,18 @@ describe('Junior Product Exclusions & Filters', () => {
       sub_category: 'combo-set',
       gender: 'kids',
     };
+    const trolleyBackpack: any = {
+      name: 'Priority Marvel Spiderman Rolling Trolley Backpack',
+      category: 'junior',
+      sub_category: 'trolley-backpacks',
+      gender: 'kids',
+    };
 
     expect(isJuniorProduct(schoolBag)).toBe(true);
     expect(isJuniorProduct(trolleyBag)).toBe(true);
     expect(isJuniorProduct(comboBag)).toBe(true);
+    expect(isJuniorProduct(trolleyBackpack)).toBe(true);
+    expect(trolleyBag.sub_category).not.toBe(trolleyBackpack.sub_category);
   });
 });
 

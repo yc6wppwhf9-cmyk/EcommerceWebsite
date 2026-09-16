@@ -284,7 +284,10 @@ const resolveCategory = (
   const isJuniorFamily = ['fluffy', 'fuzzy', 'gracious', 'minion', 'mischief', 'tipsy', 'power', 'smiley', 'funky', 'ranger'].some((k) => n.includes(k));
   if (n.includes('school') || isJuniorFamily || n.includes('trolley') || n.includes('trolly') || n.includes('combo')) {
     const juniorId = slugToId.get('junior') || slugToId.get('school-backpacks') || fallbackCatId;
-    if (n.includes('trolley') || n.includes('trolly')) {
+    if (n.includes('trolley backpack') || n.includes('trolly backpack') || n.includes('rolling backpack') || (n.includes('backpack') && (n.includes('trolley') || n.includes('trolly')))) {
+      return { id: juniorId, slug: 'junior', sub_category: 'trolley-backpacks', gender: 'kids', age_range: '6 to 10 Years' };
+    }
+    if (n.includes('trolley') || n.includes('trolly') || n.includes('luggage')) {
       return { id: juniorId, slug: 'junior', sub_category: 'kids-trolley', gender: 'kids', age_range: '6 to 10 Years' };
     }
     if (n.includes('combo') || n.includes('lunch')) {

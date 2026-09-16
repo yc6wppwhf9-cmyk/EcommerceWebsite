@@ -92,8 +92,10 @@ export const CategoryPage = () => {
         params.isPremium = 'false';
         if (slug === 'school-backpacks') {
           params.sub_category = 'school-backpacks';
-        } else if (slug === 'kids-trolley' || slug === 'trolley-backpacks') {
+        } else if (slug === 'kids-trolley') {
           params.sub_category = 'kids-trolley';
+        } else if (slug === 'trolley-backpacks') {
+          params.sub_category = 'trolley-backpacks';
         } else if (slug === 'combo-set') {
           params.sub_category = 'combo-set';
         } else {
@@ -107,9 +109,13 @@ export const CategoryPage = () => {
         params.isPremium = 'false';
       } else if (isPremiumFilter) {
         params.isPremium = 'true';
-      } else if (slug === 'kids-trolley' || slug === 'trolley-backpacks') {
+      } else if (slug === 'kids-trolley') {
         params.category = 'junior';
         params.sub_category = 'kids-trolley';
+        params.isPremium = 'false';
+      } else if (slug === 'trolley-backpacks') {
+        params.category = 'junior';
+        params.sub_category = 'trolley-backpacks';
         params.isPremium = 'false';
       } else {
         params.category = slug;
@@ -119,7 +125,7 @@ export const CategoryPage = () => {
       try {
         const res = await api.getProducts(params);
         let products = res.products as unknown as Product[];
-        if (themeParam === 'junior' || slug === 'junior' || slug === 'kids-trolley' || slug === 'combo-set') {
+        if (themeParam === 'junior' || slug === 'junior' || slug === 'kids-trolley' || slug === 'trolley-backpacks' || slug === 'combo-set' || slug === 'school-backpacks') {
           products = products.filter(isJuniorProduct);
         }
         setHasMore(products.length >= PAGE_LIMIT);

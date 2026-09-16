@@ -30,15 +30,17 @@ const searchProducts = async (params: {
 }) => {
   let query = supabase
     .from('products')
-    .select('id, name, price, original_price, image, slug, rating, sub_category, is_premium, gender, amazon_url, myntra_url, categories(slug, title)')
+    .select('id, name, price, original_price, image, slug, rating, sub_category, is_premium, gender, amazon_url, myntra_url, flipkart_url, ajio_url, categories(slug, title)')
     .eq('is_active', true);
 
   if (params.category) {
     const catSlug = params.category.trim().toLowerCase();
     if (catSlug === 'junior' || catSlug === 'kids') {
       query = query.or('gender.eq.kids,sub_category.in.(school-backpacks,kids-trolley,trolley-backpacks,combo-set,pouches,lunch-bags)');
-    } else if (catSlug === 'kids-trolley' || catSlug === 'trolley' || catSlug === 'trolley-backpacks') {
-      query = query.or('sub_category.in.(kids-trolley,trolley-backpacks),name.ilike.%trolley%,name.ilike.%trolly%');
+    } else if (catSlug === 'kids-trolley') {
+      query = query.or('sub_category.eq.kids-trolley,name.ilike.%kids trolley%,name.ilike.%kids trolly%');
+    } else if (catSlug === 'trolley-backpacks') {
+      query = query.or('sub_category.eq.trolley-backpacks,name.ilike.%trolley backpack%,name.ilike.%trolly backpack%');
     } else if (catSlug === 'laptop' || catSlug === 'laptop-bags' || catSlug === 'laptop-backpacks') {
       query = query.or('sub_category.in.(laptop-backpacks,laptop-bags),name.ilike.%laptop%');
     } else if (catSlug === 'college' || catSlug === 'college-backpacks') {
@@ -57,11 +59,7 @@ const searchProducts = async (params: {
 
   if (params.sub_category) {
     const sub = params.sub_category.trim().toLowerCase();
-    if (sub === 'kids-trolley' || sub === 'trolley-backpacks') {
-      query = query.in('sub_category', ['kids-trolley', 'trolley-backpacks']);
-    } else {
-      query = query.eq('sub_category', sub);
-    }
+    query = query.eq('sub_category', sub);
   }
 
   if (params.isPremium !== undefined) {

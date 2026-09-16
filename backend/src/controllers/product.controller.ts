@@ -76,11 +76,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
 
     if (sub_category) {
       const subCatStr = String(sub_category).trim();
-      if (subCatStr === 'kids-trolley' || subCatStr === 'trolley-backpacks') {
-        query = query.in('sub_category', ['kids-trolley', 'trolley-backpacks']);
-      } else {
-        query = query.eq('sub_category', subCatStr);
-      }
+      query = query.eq('sub_category', subCatStr);
     }
 
     if (gender) {

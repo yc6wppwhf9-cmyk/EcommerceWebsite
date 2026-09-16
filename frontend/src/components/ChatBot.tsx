@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Headset, X, Send, Package, ShoppingBag } from 'lucide-react';
+import { Headset, X, Send, Package, ShoppingBag, ExternalLink } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../lib/api';
+import { Product } from '../types';
 
 // Renders a small subset of markdown: **bold**, *italic*, bullet lists, line breaks
 function renderMarkdown(text: string) {
@@ -57,6 +59,60 @@ interface Product {
   image: string;
   slug: string;
   rating?: number;
+  amazon_url?: string;
+  amazonUrl?: string;
+  myntra_url?: string;
+  myntraUrl?: string;
+  flipkart_url?: string;
+  flipkartUrl?: string;
+  ajio_url?: string;
+  ajioUrl?: string;
+  is_premium?: boolean;
+  isPremium?: boolean;
+}
+
+function getPrimaryMarketplace(p: Product | any) {
+  if (p.myntra_url || p.myntraUrl) {
+    return {
+      marketplace: 'myntra' as const,
+      url: p.myntra_url || p.myntraUrl,
+      label: 'View on Myntra',
+      badgeClass: 'text-[#FF3F6C]',
+    };
+  }
+  if (p.amazon_url || p.amazonUrl) {
+    return {
+      marketplace: 'amazon' as const,
+      url: p.amazon_url || p.amazonUrl,
+      label: 'View on Amazon',
+      badgeClass: 'text-[#0284C7]',
+    };
+  }
+  if (p.flipkart_url || p.flipkartUrl) {
+    return {
+      marketplace: 'flipkart' as const,
+      url: p.flipkart_url || p.flipkartUrl,
+      label: 'View on Flipkart',
+      badgeClass: 'text-[#2874F0]',
+    };
+  }
+  if (p.ajio_url || p.ajioUrl) {
+    return {
+      marketplace: 'ajio' as const,
+      url: p.ajio_url || p.ajioUrl,
+      label: 'View on Ajio',
+      badgeClass: 'text-[#2C4152]',
+    };
+  }
+  if (p.is_premium || p.isPremium || String(p.name || '').toLowerCase().includes('traworld')) {
+    return {
+      marketplace: 'myntra' as const,
+      url: `https://www.myntra.com/${p.slug || ''}`,
+      label: 'View on Myntra',
+      badgeClass: 'text-[#FF3F6C]',
+    };
+  }
+  return null;
 }
 
 interface OrderItem {
@@ -223,25 +279,66 @@ export const ChatBot = () => {
                 {/* Product cards */}
                 {msg.products && msg.products.length > 0 && (
                   <div className="mt-2 w-full space-y-2">
-                    {msg.products.slice(0, 4).map(p => (
-                      <Link
-                        key={p.id}
-                        to={`/product/${p.slug || p.id}`}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 hover:border-gray-300 hover:shadow-sm transition-all"
-                      >
-                        <img
-                          src={p.image}
-                          alt={p.name}
-                          className="w-12 h-12 object-contain rounded-lg bg-gray-50 flex-shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[12px] font-semibold text-gray-800 line-clamp-2 leading-tight">{p.name}</p>
-                          <span className="text-[10px] font-bold uppercase tracking-wide text-[#26B3FF] mt-0.5 inline-block">View on Amazon</span>
-                        </div>
-                        <span className="text-[10px] text-gray-400 flex-shrink-0">View →</span>
-                      </Link>
-                    ))}
+                    {msg.products.slice(0, 4).map(p => {
+                      const mk = getPrimaryMarketplace(p);
+                      if (mk && mk.url) {
+                        return (
+                          <a
+                            key={p.id}
+                            href={mk.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => {
+                              if (p.id) api.trackMarketplaceClick(p.id, mk.marketplace);
+                            }}
+                            className="group flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 hover:border-gray-300 hover:shadow-sm transition-all text-left"
+                          >
+                            <img
+                              src={p.image}
+                              alt={p.name}
+                              className="w-12 h-12 object-contain rounded-lg bg-gray-50 flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] font-semibold text-gray-800 line-clamp-2 leading-tight group-hover:text-black">
+                                {p.name}
+                              </p>
+                              <span className={`text-[10px] font-black uppercase tracking-wide mt-0.5 inline-block ${mk.badgeClass}`}>
+                                {mk.label}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-400 group-hover:text-black flex-shrink-0 flex items-center gap-0.5">
+                              Buy <ExternalLink size={10} />
+                            </span>
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <Link
+                          key={p.id}
+                          to={`/product/${p.slug || p.id}`}
+                          onClick={() => setOpen(false)}
+                          className="group flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 hover:border-gray-300 hover:shadow-sm transition-all text-left"
+                        >
+                          <img
+                            src={p.image}
+                            alt={p.name}
+                            className="w-12 h-12 object-contain rounded-lg bg-gray-50 flex-shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[12px] font-semibold text-gray-800 line-clamp-2 leading-tight group-hover:text-black">
+                              {p.name}
+                            </p>
+                            {p.price > 0 && (
+                              <span className="text-[10px] font-bold text-gray-500 mt-0.5 inline-block">
+                                ₹{p.price.toLocaleString('en-IN')}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-gray-400 flex-shrink-0">View →</span>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
 
