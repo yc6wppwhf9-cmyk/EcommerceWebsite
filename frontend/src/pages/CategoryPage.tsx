@@ -87,16 +87,30 @@ export const CategoryPage = () => {
           params.category = slug;
         }
       } else if (themeParam === 'junior') {
-        // Junior sub-pages: fetch by category=junior + sub_category=slug
+        // Junior sub-pages: fetch by category=junior + sub_category
         params.category = 'junior';
         params.isPremium = 'false';
-        const juniorCat = getCategoryBySlug(slug);
-        if (juniorCat?.parentCategory === 'junior') params.sub_category = slug;
+        if (slug === 'school-backpacks') {
+          params.sub_category = 'school-backpacks';
+        } else if (slug === 'kids-trolley' || slug === 'trolley-backpacks') {
+          params.sub_category = 'kids-trolley';
+        } else if (slug === 'combo-set') {
+          params.sub_category = 'combo-set';
+        } else {
+          const juniorCat = getCategoryBySlug(slug);
+          if (juniorCat?.parentCategory === 'junior' && slug !== 'junior') {
+            params.sub_category = slug;
+          }
+        }
       } else if (isGenderFilter) {
         params.gender = slug;
         params.isPremium = 'false';
       } else if (isPremiumFilter) {
         params.isPremium = 'true';
+      } else if (slug === 'kids-trolley' || slug === 'trolley-backpacks') {
+        params.category = 'junior';
+        params.sub_category = 'kids-trolley';
+        params.isPremium = 'false';
       } else {
         params.category = slug;
         params.isPremium = 'false';
@@ -184,9 +198,10 @@ export const CategoryPage = () => {
       slug === 'school-backpacks' ||
       slug === 'combo-set' ||
       slug === 'trolley-backpacks' ||
+      slug === 'kids-trolley' ||
       slug === 'kids' ||
       themeParam === 'junior' ||
-      allProducts.some(p => p.gender === 'kids' || (p as any).sub_category === 'school-backpacks' || (p as any).sub_category === 'combo-set')
+      allProducts.some(p => p.gender === 'kids' || (p as any).sub_category === 'school-backpacks' || (p as any).sub_category === 'combo-set' || (p as any).sub_category === 'kids-trolley')
     );
   }, [slug, themeParam, allProducts]);
 

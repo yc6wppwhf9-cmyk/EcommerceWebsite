@@ -17,7 +17,7 @@ const AGE_GROUPS = [
 const CATEGORIES = [
   { label: 'School Backpacks', filter: 'school-backpacks', image: '/junior/School.jpg' },
   { label: 'Combo Set', filter: 'combo-set', image: '/junior/Combo.jpg' },
-  { label: 'Trolley Backpacks', filter: 'trolley-backpacks', image: '/junior/Trolly.jpg' },
+  { label: 'Kids Trolley', filter: 'kids-trolley', image: '/junior/Trolly.jpg' },
 ];
 
 const AgeGroupCarousel = () => {
@@ -484,7 +484,7 @@ export const JuniorPage = () => {
         />
         <div 
           className="absolute bottom-1/4 -right-20 w-[400px] h-[400px] rounded-full blur-[120px] transition-colors duration-1000 opacity-20 pointer-events-none"
-          style={{ backgroundColor: activeTab === 'Trolley Backpacks' ? '#4ECDC4' : '#F69245' }}
+          style={{ backgroundColor: (activeTab === 'Kids Trolley' || activeTab === 'Trolley Backpacks') ? '#4ECDC4' : '#F69245' }}
         />
 
         <div className="absolute inset-0 junior-grid-bg opacity-[0.15] pointer-events-none" />

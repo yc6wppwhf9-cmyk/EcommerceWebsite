@@ -144,7 +144,7 @@ export function resolveProductAgeRange(p: Product): string {
     return '3 to 5 Years';
   }
 
-  // 3. 6 to 10 Years (Primary School)
+  // 3. 6 to 10 Years (Primary School & Kids Trolleys)
   if (
     text.includes('6 to 10') ||
     text.includes('6-10') ||
@@ -157,6 +157,11 @@ export function resolveProductAgeRange(p: Product): string {
     text.includes('speedo') ||
     text.includes('school bag') ||
     text.includes('school backpack') ||
+    text.includes('kids trolley') ||
+    text.includes('kids-trolley') ||
+    text.includes('trolley-backpack') ||
+    text.includes('trolley-backpacks') ||
+    ((text.includes('trolley') || text.includes('trolly')) && (text.includes('kids') || text.includes('junior') || (p as any).sub_category === 'kids-trolley' || (p as any).category === 'junior')) ||
     (p.gender === 'kids')
   ) {
     return '6 to 10 Years';

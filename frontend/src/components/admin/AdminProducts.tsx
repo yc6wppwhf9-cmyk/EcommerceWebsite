@@ -37,6 +37,7 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   ],
   junior: [
     { value: 'school-backpacks', label: 'School Backpacks' },
+    { value: 'kids-trolley', label: 'Kids Trolley' },
     { value: 'trolley-backpacks', label: 'Trolley Backpacks' },
     { value: 'combo-set', label: 'Combo Set' },
     { value: 'pouches', label: 'Pouches' },
@@ -69,7 +70,7 @@ export const resolveProductCategory = (p: any): { mainCat: string; subCat: strin
   }
 
   // Junior
-  if (rawCatSlug === 'junior' || rawSub.includes('junior') || p.gender === 'kids' || ['trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'].includes(rawSub)) {
+  if (rawCatSlug === 'junior' || rawSub.includes('junior') || p.gender === 'kids' || ['kids-trolley', 'trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'].includes(rawSub)) {
     return { mainCat: 'junior', subCat: rawSub || 'school-backpacks' };
   }
 
@@ -81,7 +82,7 @@ export const resolveProductCategory = (p: any): { mainCat: string; subCat: strin
   }
 
   // Travel
-  const travelSubs = ['luggage', 'duffle'];
+  const travelSubs = ['luggage', 'duffle', 'trolley-bags'];
   if (travelSubs.includes(rawSub) || travelSubs.includes(rawCatSlug) || rawCatSlug === 'travel') {
     const matchedSub = travelSubs.includes(rawSub) ? rawSub : (travelSubs.includes(rawCatSlug) ? rawCatSlug : 'luggage');
     return { mainCat: 'travel', subCat: matchedSub };

@@ -17,9 +17,9 @@ const getPublishIssues = (product: Record<string, any>): string[] => {
 
 const PARENT_CATEGORY_MAP: Record<string, string[]> = {
   backpacks: ['backpacks', 'college-backpacks', 'school-backpacks', 'laptop-backpacks', 'trekking-backpacks'],
-  travel: ['travel', 'luggage', 'duffle'],
+  travel: ['travel', 'luggage', 'duffle', 'trolley-bags'],
   accessories: ['accessories', 'pouch', 'lunch-bag', 'daypack', 'tote-bag'],
-  junior: ['junior', 'school-backpacks', 'trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'],
+  junior: ['junior', 'school-backpacks', 'trolley-backpacks', 'kids-trolley', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'],
   premium: ['premium', 'premium-backpacks', 'premium-luggage', 'premium-accessories', 'premium-duffle'],
 };
 
@@ -66,7 +66,12 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     }
 
     if (sub_category) {
-      query = query.eq('sub_category', sub_category);
+      const subCatStr = String(sub_category).trim();
+      if (subCatStr === 'kids-trolley' || subCatStr === 'trolley-backpacks') {
+        query = query.in('sub_category', ['kids-trolley', 'trolley-backpacks']);
+      } else {
+        query = query.eq('sub_category', subCatStr);
+      }
     }
 
     if (gender) {

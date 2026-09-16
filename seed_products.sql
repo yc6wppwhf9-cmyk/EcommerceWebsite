@@ -116,6 +116,13 @@ ON CONFLICT (slug) DO UPDATE SET
   bg_color = EXCLUDED.bg_color,
   is_active = true;
 INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
+VALUES (uuid_generate_v4(), 'kids-trolley', 'Kids Trolley Bags', 'Fun rolling luggage for kids', '#FFBB5A', true)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  bg_color = EXCLUDED.bg_color,
+  is_active = true;
+INSERT INTO categories (id, slug, title, subtitle, bg_color, is_active)
 VALUES (uuid_generate_v4(), 'trolley-backpacks', 'Trolley Backpacks', 'Rolling backpacks for kids', '#FFBB5A', true)
 ON CONFLICT (slug) DO UPDATE SET
   title = EXCLUDED.title,
@@ -3647,7 +3654,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366055',
   true
@@ -3743,7 +3750,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366054',
   true
@@ -3791,7 +3798,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366059',
   true
@@ -3839,7 +3846,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366060',
   true
@@ -3887,7 +3894,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366062',
   true
@@ -3935,7 +3942,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366051',
   true
@@ -3983,7 +3990,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366056',
   true
@@ -4031,7 +4038,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366057',
   true
@@ -4079,7 +4086,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366058',
   true
@@ -4127,7 +4134,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36356967',
   true
@@ -4175,7 +4182,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36356966',
   true
@@ -4223,7 +4230,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36356974',
   true
@@ -4271,7 +4278,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36356973',
   true
@@ -4319,7 +4326,7 @@ INSERT INTO products (
   false,
   false,
   false,
-  'unisex',
+  'kids',
   'kids-trolley',
   'https://www.myntra.com/36366061',
   true
