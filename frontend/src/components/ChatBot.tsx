@@ -179,8 +179,6 @@ export const ChatBot = () => {
     }
   };
 
-  const suggestions = user ? USER_SUGGESTIONS : GUEST_SUGGESTIONS;
-
   return (
     <>
       {/* Floating button */}
