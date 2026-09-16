@@ -269,8 +269,8 @@ export const AboutUs: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="h-[380px] sm:h-[480px] lg:h-[560px] rounded-lg overflow-hidden shadow-lg border border-[#dfe6e4] order-2 md:order-1 group">
               <img
-                src="/about/03_aerial_factory_3.png"
-                alt="Highspirit manufacturing facility"
+                src="/about/Stictiching banner.jpg"
+                alt="Highspirit manufacturing facility and craftsmanship"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
