@@ -185,21 +185,36 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
-        {/* Mobile Navbar: Logo on left, BrandToggle + Menu button on right */}
-        <div className="flex lg:hidden items-center justify-between w-full">
-          <Link to={homeHref} className="flex items-center">
-            <img
-              src={logoSrc}
-              alt="Priority"
-              className={`${isJunior ? 'w-[95px] sm:w-[110px]' : 'w-[110px] sm:w-[130px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
-            />
-          </Link>
-          <div className="flex items-center gap-2">
-            <BrandToggle size="sm" />
-            <button className="p-1.5" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+        {/* Mobile Navbar: BrandToggle centered, Menu button on right */}
+        <div className="flex lg:hidden items-center justify-between w-full relative">
+          {isJunior ? (
+            <>
+              <Link to={homeHref} className="flex items-center">
+                <img
+                  src={logoSrc}
+                  alt="Priority Junior"
+                  className="w-[95px] sm:w-[110px] h-auto transition-all duration-300"
+                />
+              </Link>
+              <button className="p-1.5" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="w-full flex items-center justify-center">
+                <BrandToggle size="sm" />
+              </div>
+              <button
+                className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5"
+                style={{ color: 'currentColor' }}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle Menu"
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </>
+          )}
         </div>
 
         {/* Desktop Navigation (Centered) */}
