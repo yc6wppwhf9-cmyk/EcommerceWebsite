@@ -17,6 +17,30 @@ const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
     image: '/Category/Trekking H banner.png',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
+  'trekking': {
+    image: '/Category/Trekking H banner.png',
+    alt: 'Trekking Backpacks — Explore Beyond The Limits',
+  },
+  'college-backpacks': {
+    image: '/Category/Campus H banner.png',
+    alt: 'College & Campus Backpacks — Carry The Style Your Way',
+  },
+  'college': {
+    image: '/Category/Campus H banner.png',
+    alt: 'College & Campus Backpacks — Carry The Style Your Way',
+  },
+  'campus': {
+    image: '/Category/Campus H banner.png',
+    alt: 'College & Campus Backpacks — Carry The Style Your Way',
+  },
+  'laptop-backpacks': {
+    image: '/Category/laptop H banner.png',
+    alt: 'Executive Laptop Backpacks — Built For Every Journey',
+  },
+  'laptop': {
+    image: '/Category/laptop H banner.png',
+    alt: 'Executive Laptop Backpacks — Built For Every Journey',
+  },
 };
 
 export const CategoryPage = () => {
