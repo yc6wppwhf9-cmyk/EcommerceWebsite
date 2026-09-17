@@ -14,11 +14,11 @@ const NO_PRICE_FILTER = 999999;
 
 const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
   'trekking-backpacks': {
-    image: '/Category/Trekking H banner.png',
+    image: '/Category/Trekking_Backpacks_Banner_1920x480.png',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
   'trekking': {
-    image: '/Category/Trekking H banner.png',
+    image: '/Category/Trekking_Backpacks_Banner_1920x480.png',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
   'college-backpacks': {
