@@ -330,7 +330,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                           {nav.items.map(item => (
                             <Link
                               key={item.slug}
-                              to={`/${item.slug}`}
+                              to={isPremiumTheme ? `/${item.slug}?theme=premium` : `/${item.slug}`}
                               className="py-3 text-[13px] font-semibold uppercase tracking-widest text-gray-500 hover:text-priority-blue border-b border-gray-100 last:border-0 transition-colors"
                               onClick={() => setIsMenuOpen(false)}
                             >

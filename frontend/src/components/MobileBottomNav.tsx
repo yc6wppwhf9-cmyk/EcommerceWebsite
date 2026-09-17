@@ -12,8 +12,12 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
     ? (user?.role === 'admin' ? '/admin' : '/account')
     : '/login';
 
+  const isJunior = location.pathname.startsWith('/junior') || new URLSearchParams(location.search).get('theme') === 'junior';
+  const isPremium = !isJunior && (location.pathname.startsWith('/premium') || new URLSearchParams(location.search).get('theme') === 'premium');
+  const homePath = isPremium ? '/premium' : (isJunior ? '/junior' : '/');
+
   const navItems = [
-    { icon: Home, label: 'Home', path: '/' },
+    { icon: Home, label: 'Home', path: homePath },
     { icon: Heart, label: 'Wishlist', path: '/wishlist' },
     { icon: Search, label: 'Search', onClick: onSearchOpen },
     { icon: User, label: 'Account', path: accountPath },

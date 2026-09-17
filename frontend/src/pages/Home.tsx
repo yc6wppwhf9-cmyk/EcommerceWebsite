@@ -5,7 +5,6 @@ import { HeroSlider } from '../components/home/HeroSlider';
 import { CategoryShowcase } from '../components/home/CategoryShowcase';
 import { EditorialBanner } from '../components/home/EditorialBanner';
 import { BackpackTabs } from '../components/home/BackpackTabs';
-import { BestSellers } from '../components/home/BestSellers';
 import { BestReviewedShowcase } from '../components/home/BestReviewedShowcase';
 import { BagsSoldCountdown } from '../components/home/BagsSoldCountdown';
 import { InstagramShowcase } from '../components/home/InstagramShowcase';
@@ -40,7 +39,7 @@ const useColumnTier = (): ColumnTier => {
 export const Home = () => {
   const [activeTab, setActiveTab] = useState('college-backpacks');
   const columns = useColumnTier();
-  const { tabProducts, tabLoading, bestSellers, newArrivals, hasProducts, genderStock } = useHomeData(activeTab);
+  const { tabProducts, tabLoading, hasProducts, genderStock } = useHomeData(activeTab);
 
   // Ensure we're on the light theme (Junior / Premium pages toggle dark)
   useEffect(() => {
@@ -67,7 +66,6 @@ export const Home = () => {
         columns={columns}
       />
 
-      <BestSellers products={bestSellers} columns={columns} />
       <BestReviewedShowcase />
       <BagsSoldCountdown />
       <InstagramShowcase />

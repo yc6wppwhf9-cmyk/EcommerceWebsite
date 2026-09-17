@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import { getCategoryBySlug, CATEGORIES } from '../constants/products';
 import { api } from '../lib/api';
@@ -15,6 +15,7 @@ const NO_PRICE_FILTER = 999999;
 export const CategoryPage = () => {
   const { category } = useParams<{ category: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const themeParam = searchParams.get('theme') ?? undefined;
   const ageParam = searchParams.get('age') ?? undefined;
 
@@ -26,6 +27,17 @@ export const CategoryPage = () => {
 
   const isGenderFilter = ['men', 'women', 'kids'].includes(slug);
   const isPremiumFilter = slug === 'premium';
+
+  // If theme is premium, TRAWORLD only supports luggage, backpacks, and duffle.
+  // Any other category (pouch, daypack, lunch-bag, tote-bag, accessories, etc.) auto-redirects to /premium.
+  useEffect(() => {
+    if (themeParam === 'premium') {
+      const allowedPremiumSlugs = ['luggage', 'backpacks', 'duffle', 'premium-luggage', 'premium-backpacks', 'premium-duffle', 'premium'];
+      if (!allowedPremiumSlugs.includes(slug)) {
+        navigate('/premium', { replace: true });
+      }
+    }
+  }, [themeParam, slug, navigate]);
 
   // Products & pagination
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -125,6 +137,18 @@ export const CategoryPage = () => {
       try {
         const res = await api.getProducts(params);
         let products = res.products as unknown as Product[];
+        if ((slug === 'duffle' || slug === 'premium-duffle') && themeParam === 'premium') {
+          try {
+            const cultRes = await api.getProducts({ search: 'Cult', limit: '20' });
+            const cults = (cultRes.products as unknown as Product[]) || [];
+            const merged = [...products, ...cults].filter(
+              (p, idx, arr) => idx === arr.findIndex(x => x.id === p.id || x.sku === p.sku)
+            );
+            products = merged;
+          } catch {
+            // ignore
+          }
+        }
         if (themeParam === 'junior' || slug === 'junior' || slug === 'kids-trolley' || slug === 'trolley-backpacks' || slug === 'combo-set' || slug === 'school-backpacks') {
           products = products.filter(isJuniorProduct);
         }

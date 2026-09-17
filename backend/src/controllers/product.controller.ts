@@ -87,8 +87,14 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       query = query.eq('age_range', age_range);
     }
 
+    const isDuffleCategory = category === 'duffle' || category === 'premium-duffle' || sub_category === 'duffle';
+
     if (isPremium === 'true' || category === 'premium') {
-      query = query.eq('is_premium', true);
+      if (isDuffleCategory) {
+        query = query.or('is_premium.eq.true,name.ilike.%Cult%,sku.in.("INV29561","INV29562","INV29563","INV30691","INV30692")');
+      } else {
+        query = query.eq('is_premium', true);
+      }
     } else if (isPremium === 'false') {
       query = query.eq('is_premium', false);
     }
@@ -109,8 +115,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       'price-desc': { column: 'price', ascending: false },
       'rating': { column: 'rating', ascending: false },
       'newest': { column: 'created_at', ascending: false },
-      // total_clicks is a generated column (amazon + flipkart + myntra + ajio clicks combined) — see migration.
-      'bestseller': { column: 'total_clicks', ascending: false },
+      'bestseller': { column: 'rating', ascending: false },
     };
     const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
     query = query.order(s.column, { ascending: s.ascending });
