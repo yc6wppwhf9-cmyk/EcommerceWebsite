@@ -41,6 +41,26 @@ const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
     image: '/Category/Laptop_Backpacks_Banner.png',
     alt: 'Executive Laptop Backpacks — Built For Every Journey',
   },
+  'duffle': {
+    image: '/Category/Duffle_Bags_Banner.jpg',
+    alt: 'Duffle Bags — Versatile & Stylish For Every Journey',
+  },
+  'duffle-bags': {
+    image: '/Category/Duffle_Bags_Banner.jpg',
+    alt: 'Duffle Bags — Versatile & Stylish For Every Journey',
+  },
+  'luggage': {
+    image: '/Category/Luggage_Trolley_Banner.jpg',
+    alt: 'Premium Luggage & Trolley Bags — Travel In Style',
+  },
+  'travel': {
+    image: '/Category/Luggage_Trolley_Banner.jpg',
+    alt: 'Premium Luggage & Trolley Bags — Travel In Style',
+  },
+  'trolley': {
+    image: '/Category/Luggage_Trolley_Banner.jpg',
+    alt: 'Premium Luggage & Trolley Bags — Travel In Style',
+  },
 };
 
 export const CategoryPage = () => {
