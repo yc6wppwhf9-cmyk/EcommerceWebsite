@@ -462,7 +462,7 @@ export const JuniorPage = () => {
           SHOP BY GENDER / STYLES SECTION
           (Ready, Set, Explore! — Power Styles for Him & Dreamy Styles for Her)
       ═══════════════════════════════════════════════ */}
-      <section className="py-6 md:py-10 px-4 sm:px-6 md:px-12 max-w-[1420px] mx-auto overflow-hidden">
+      <section className="py-4 md:py-8 px-2 sm:px-4 md:px-8 max-w-[1600px] mx-auto overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
