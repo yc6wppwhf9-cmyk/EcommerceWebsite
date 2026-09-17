@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { fadeUp, stagger, revealProps } from '../../lib/motion';
 import { LazyImage } from '../LazyImage';
@@ -103,26 +103,21 @@ export const CategoryShowcase = () => {
             </div>
 
             {/* Navigation controls */}
-            <div className="flex justify-between items-center mt-6 px-1">
-              <button onClick={goPrev} aria-label="Previous category" className="p-2 text-gray-400 transition-opacity">
-                <ChevronLeft className="w-5 h-5" />
-              </button>
+            <div className="flex justify-center items-center mt-6 px-1">
               <div className="flex gap-2" role="tablist" aria-label="Category indicators">
                 {CATS.map((_, i) => (
-                  <div
+                  <button
                     key={i}
+                    onClick={() => setCatFlipIndex(i)}
                     role="tab"
                     aria-selected={i === catFlipIndex}
                     aria-label={CATS[i].label}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                       i === catFlipIndex ? 'w-6 bg-ink' : 'w-1.5 bg-line'
                     }`}
                   />
                 ))}
               </div>
-              <button onClick={goNext} aria-label="Next category" className="p-2 text-gray-400 transition-opacity">
-                <ChevronRight className="w-5 h-5" />
-              </button>
             </div>
           </div>
         </div>
