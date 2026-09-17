@@ -14,31 +14,31 @@ const NO_PRICE_FILTER = 999999;
 
 const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
   'trekking-backpacks': {
-    image: '/Category/Trekking_Backpacks_Banner_1920x480.png',
+    image: '/Category/Trekking_Backpacks_Banner.png',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
   'trekking': {
-    image: '/Category/Trekking_Backpacks_Banner_1920x480.png',
+    image: '/Category/Trekking_Backpacks_Banner.png',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
   'college-backpacks': {
-    image: '/Category/Campus H banner.png',
+    image: '/Category/Campus_Backpacks_Banner.png',
     alt: 'College & Campus Backpacks — Carry The Style Your Way',
   },
   'college': {
-    image: '/Category/Campus H banner.png',
+    image: '/Category/Campus_Backpacks_Banner.png',
     alt: 'College & Campus Backpacks — Carry The Style Your Way',
   },
   'campus': {
-    image: '/Category/Campus H banner.png',
+    image: '/Category/Campus_Backpacks_Banner.png',
     alt: 'College & Campus Backpacks — Carry The Style Your Way',
   },
   'laptop-backpacks': {
-    image: '/Category/laptop H banner.png',
+    image: '/Category/Laptop_Backpacks_Banner.png',
     alt: 'Executive Laptop Backpacks — Built For Every Journey',
   },
   'laptop': {
-    image: '/Category/laptop H banner.png',
+    image: '/Category/Laptop_Backpacks_Banner.png',
     alt: 'Executive Laptop Backpacks — Built For Every Journey',
   },
 };
