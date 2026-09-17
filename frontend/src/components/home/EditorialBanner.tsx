@@ -107,20 +107,6 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
               {BANNER_CTA.label}
               <ArrowRight size={14} />
             </Link>
-
-            {/* Mobile Slide Dots */}
-            <div className="flex gap-1.5 items-center">
-              {EDITORIAL_SLIDES.map((s, idx) => (
-                <button
-                  key={s.id}
-                  onClick={() => handleSelect(idx)}
-                  aria-label={`Slide ${idx + 1}`}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    idx === currentSlide ? 'w-5 bg-[#26B3FF]' : 'w-1.5 bg-white/40'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -166,20 +152,6 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
                 {BANNER_CTA.label}
                 <ArrowRight size={15} />
               </Link>
-            </div>
-
-            {/* Slide Dots (2 slides) */}
-            <div className="flex items-center gap-2 mt-6">
-              {EDITORIAL_SLIDES.map((s, idx) => (
-                <button
-                  key={s.id}
-                  onClick={() => handleSelect(idx)}
-                  aria-label={`Go to slide ${idx + 1}`}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    idx === currentSlide ? 'w-8 bg-[#26B3FF]' : 'w-2 bg-[#748694]/30 hover:bg-[#748694]/60'
-                  }`}
-                />
-              ))}
             </div>
           </div>
         </div>
