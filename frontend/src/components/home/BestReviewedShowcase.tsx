@@ -154,6 +154,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
 export const BestReviewedShowcase: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const touchStartX = React.useRef<number | null>(null);
 
   const total = FEATURED_REVIEWS.length;
   const current = FEATURED_REVIEWS[currentIndex];
@@ -168,30 +169,46 @@ export const BestReviewedShowcase: React.FC = () => {
     setCurrentIndex((prev) => (prev - 1 + total) % total);
   };
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 40) handleNext();
+    else if (diff < -40) handlePrev();
+    touchStartX.current = null;
+  };
+
   return (
-    <section className="py-16 md:py-24 bg-[#FAFAFA] dark:bg-[#0c1013] overflow-hidden transition-colors duration-300">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+    <section className="py-12 md:py-20 bg-[#FAFAFA] dark:bg-[#0c1013] overflow-hidden transition-colors duration-300">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 md:px-8">
         
         {/* Section Header */}
-        <div className="text-center mb-10 md:mb-14">
-          <p className="text-[11px] md:text-xs font-bold font-outfit uppercase tracking-[0.24em] text-marine dark:text-cyan-400 mb-2.5">
+        <div className="text-center mb-8 md:mb-12">
+          <p className="text-[10px] md:text-xs font-bold font-outfit uppercase tracking-[0.24em] text-marine dark:text-cyan-400 mb-2">
             Top Rated On Marketplaces
           </p>
-          <h2 className="text-2xl md:text-4xl font-extrabold font-outfit uppercase tracking-[0.14em] text-ink dark:text-white">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-extrabold font-outfit uppercase tracking-[0.14em] text-ink dark:text-white">
             Best Reviewed Travel Gear
           </h2>
         </div>
 
         {/* Carousel Outer Wrapper */}
-        <div className="relative max-w-[1060px] mx-auto flex items-center justify-center pl-2 sm:pl-6 md:pl-8 pr-12 sm:pr-16 md:pr-20">
+        <div
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          className="relative max-w-[1020px] mx-auto flex items-center justify-center pl-1 sm:pl-4 md:pl-8 pr-6 sm:pr-12 md:pr-16"
+        >
 
           {/* Left Arrow */}
           <button
             onClick={handlePrev}
             aria-label="Previous Review"
-            className="absolute -left-2 sm:-left-4 md:-left-6 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#8E8E93]/80 hover:bg-[#8E8E93] text-white flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute -left-2 sm:-left-3 md:-left-6 z-30 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-[#8E8E93]/85 hover:bg-[#8E8E93] text-white flex items-center justify-center shadow-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
           >
-            <ChevronLeft size={22} strokeWidth={2.5} />
+            <ChevronLeft size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" strokeWidth={2.5} />
           </button>
 
           {/* Stacked Deck Container */}
@@ -200,95 +217,91 @@ export const BestReviewedShowcase: React.FC = () => {
             {/* Background Stacked Card Layer 3 (Farthest Back) */}
             <div
               onClick={handleNext}
-              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white dark:bg-[#1c2126] border border-black/10 dark:border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-300"
-              style={{
-                transform: 'translateX(36px) scaleY(0.92)',
-                transformOrigin: 'left center',
-                zIndex: 1,
-              }}
+              className="absolute inset-y-0 right-0 w-full rounded-xl sm:rounded-2xl md:rounded-[28px] bg-white dark:bg-[#1c2126] border border-black/10 dark:border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.05)] cursor-pointer transition-all duration-300 translate-x-4 sm:translate-x-6 md:translate-x-8 scale-y-[0.92] origin-left z-[1]"
             />
 
             {/* Background Stacked Card Layer 2 (Middle Behind) */}
             <div
               onClick={handleNext}
-              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white dark:bg-[#181c20] border border-black/10 dark:border-white/10 shadow-[0_8px_25px_rgba(0,0,0,0.07)] cursor-pointer transition-all duration-300"
-              style={{
-                transform: 'translateX(24px) scaleY(0.96)',
-                transformOrigin: 'left center',
-                zIndex: 2,
-              }}
+              className="absolute inset-y-0 right-0 w-full rounded-xl sm:rounded-2xl md:rounded-[28px] bg-white dark:bg-[#181c20] border border-black/10 dark:border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-300 translate-x-2.5 sm:translate-x-4 md:translate-x-5 scale-y-[0.96] origin-left z-[2]"
             />
 
             {/* Background Stacked Card Layer 1 (Closest Behind Front) */}
             <div
               onClick={handleNext}
-              className="absolute inset-y-0 right-0 w-full rounded-2xl md:rounded-[28px] bg-white dark:bg-[#14181B] border border-black/10 dark:border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer transition-all duration-300"
-              style={{
-                transform: 'translateX(12px) scaleY(0.99)',
-                transformOrigin: 'left center',
-                zIndex: 3,
-              }}
+              className="absolute inset-y-0 right-0 w-full rounded-xl sm:rounded-2xl md:rounded-[28px] bg-white dark:bg-[#14181B] border border-black/10 dark:border-white/10 shadow-[0_8px_25px_rgba(0,0,0,0.07)] cursor-pointer transition-all duration-300 translate-x-1 sm:translate-x-2 md:translate-x-2.5 scale-y-[0.99] origin-left z-[3]"
             />
 
             {/* Main Active Card (Front) */}
-            <div className="relative z-10 w-full bg-white dark:bg-[#14181B] rounded-2xl md:rounded-[28px] shadow-[0_14px_45px_rgba(0,0,0,0.09)] dark:shadow-[0_14px_45px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/10 overflow-hidden min-h-[380px] md:min-h-[420px] flex items-center">
+            <div className="relative z-10 w-full bg-white dark:bg-[#14181B] rounded-xl sm:rounded-2xl md:rounded-[28px] shadow-[0_10px_35px_rgba(0,0,0,0.08)] dark:shadow-[0_14px_45px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/10 overflow-hidden min-h-[290px] sm:min-h-[350px] md:min-h-[400px] flex items-center">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={current.id}
                   custom={direction}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.25}
+                  onDragEnd={(_e, info) => {
+                    const threshold = 40;
+                    if (info.offset.x < -threshold || info.velocity.x < -300) {
+                      handleNext();
+                    } else if (info.offset.x > threshold || info.velocity.x > 300) {
+                      handlePrev();
+                    }
+                  }}
                   initial={{ opacity: 0, x: direction * 40 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -direction * 40 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 p-6 sm:p-10 md:p-14 items-center"
+                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                  className="w-full grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-8 md:gap-10 p-4 sm:p-7 md:p-12 items-center cursor-grab active:cursor-grabbing touch-pan-y select-none"
                 >
                   {/* Left Column: Product Showcase */}
                   <div className="md:col-span-5 flex flex-col items-center text-center">
-                    <div className="relative w-44 h-48 md:w-56 md:h-60 flex items-center justify-center mb-4">
+                    <div className="relative w-32 h-36 sm:w-44 sm:h-48 md:w-56 md:h-60 flex items-center justify-center mb-2 sm:mb-4">
                       <img
                         src={current.image}
                         alt={current.productName}
-                        className="max-h-full max-w-full object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.15)] transition-transform duration-500 hover:scale-105"
+                        className="max-h-full max-w-full object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.12)] transition-transform duration-500 hover:scale-105 pointer-events-none"
                       />
                     </div>
-                    <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
+                    <p className="text-[10px] sm:text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-0.5 sm:mb-1">
                       {current.subtitle}
                     </p>
-                    <h3 className="text-sm md:text-base font-extrabold text-ink dark:text-white uppercase tracking-wider">
+                    <h3 className="text-xs sm:text-sm md:text-base font-extrabold text-ink dark:text-white uppercase tracking-wider">
                       {current.productName}
                     </h3>
                   </div>
 
                   {/* Right Column: Review Details & CTA */}
-                  <div className="md:col-span-7 flex flex-col items-start justify-center md:pl-4">
+                  <div className="md:col-span-7 flex flex-col items-start justify-center md:pl-2">
                     {/* Review Title */}
-                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-ink dark:text-white uppercase tracking-[0.08em] mb-3 leading-tight">
+                    <h4 className="text-sm sm:text-lg md:text-xl font-black text-ink dark:text-white uppercase tracking-[0.06em] mb-2 sm:mb-3 leading-tight">
                       {current.reviewTitle}
                     </h4>
 
                     {/* Review Quote */}
-                    <p className="text-sm md:text-[15px] leading-relaxed text-gray-600 dark:text-gray-300 font-normal mb-6">
+                    <p className="text-xs sm:text-sm md:text-[14px] leading-relaxed text-gray-600 dark:text-gray-300 font-normal mb-3 sm:mb-5">
                       "{current.reviewQuote}"
                     </p>
 
                     {/* Star Rating & Review Count */}
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                       <div className="flex items-center gap-0.5 text-[#E53E3E] dark:text-[#F56565]">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={18} fill="currentColor" stroke="none" />
+                          <Star key={i} size={15} className="sm:w-4.5 sm:h-4.5" fill="currentColor" stroke="none" />
                         ))}
                       </div>
-                      <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                      <span className="text-[11px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">
                         ({current.reviewCount} Reviews)
                       </span>
                     </div>
 
                     {/* Reviewer & Marketplace Attribution */}
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-7">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-4 sm:mb-6">
                       <span>{current.timeAgo} by <strong className="text-ink dark:text-white font-semibold">{current.reviewer}</strong></span>
                       <span>•</span>
                       <span className="inline-flex items-center gap-1 font-semibold text-marine dark:text-cyan-400">
-                        <ShieldCheck size={14} /> Verified on {current.marketplaceName}
+                        <ShieldCheck size={13} /> Verified on {current.marketplaceName}
                       </span>
                     </div>
 
@@ -296,11 +309,11 @@ export const BestReviewedShowcase: React.FC = () => {
                     <MarketplaceLink
                       marketplace={current.marketplace}
                       url={current.marketplaceUrl}
-                      className="inline-flex items-center justify-center bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-gray-100 font-extrabold uppercase text-xs tracking-[0.2em] px-8 md:px-10 py-3.5 md:py-4 transition-all duration-300 shadow-md hover:shadow-lg group"
+                      className="inline-flex items-center justify-center bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-gray-100 font-extrabold uppercase text-[10px] sm:text-xs tracking-[0.16em] px-6 sm:px-8 md:px-10 py-2.5 sm:py-3.5 transition-all duration-300 shadow-md hover:shadow-lg group rounded-sm"
                     >
                       <span className="flex items-center gap-2">
                         VIEW PRODUCT
-                        <ExternalLink size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+                        <ExternalLink size={13} className="transition-transform duration-300 group-hover:translate-x-0.5" />
                       </span>
                     </MarketplaceLink>
                   </div>
@@ -314,14 +327,14 @@ export const BestReviewedShowcase: React.FC = () => {
           <button
             onClick={handleNext}
             aria-label="Next Review"
-            className="absolute -right-1 sm:-right-2 md:-right-4 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black text-white hover:bg-neutral-800 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute -right-1 sm:-right-2 md:-right-4 z-30 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-black text-white hover:bg-neutral-800 flex items-center justify-center shadow-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
           >
-            <ChevronRight size={22} strokeWidth={2.5} />
+            <ChevronRight size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" strokeWidth={2.5} />
           </button>
         </div>
 
         {/* Dots Pagination Indicator */}
-        <div className="flex items-center justify-center gap-2 mt-8 md:mt-10">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-6 md:mt-8">
           {FEATURED_REVIEWS.map((rev, idx) => (
             <button
               key={rev.id}
@@ -330,10 +343,10 @@ export const BestReviewedShowcase: React.FC = () => {
                 setCurrentIndex(idx);
               }}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+              className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer ${
                 idx === currentIndex
-                  ? 'w-8 bg-black dark:bg-white'
-                  : 'w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400'
+                  ? 'w-6 sm:w-8 bg-black dark:bg-white'
+                  : 'w-1.5 sm:w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400'
               }`}
             />
           ))}

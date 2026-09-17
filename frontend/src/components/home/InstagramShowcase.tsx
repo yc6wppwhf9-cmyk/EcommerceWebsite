@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Instagram, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3';
 
@@ -82,15 +83,44 @@ const INSTA_CARDS: InstagramCardData[] = [
   },
 ];
 
-const InstagramCard = ({ card }: { card: InstagramCardData }) => {
-  const [imgSrc, setImgSrc] = useState(card.img);
-  const [avatarSrc, setAvatarSrc] = useState(card.avatar);
+export const InstagramShowcase = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [cards, setCards] = useState<InstagramCardData[]>(INSTA_CARDS);
+  const touchStartX = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
+  const total = cards.length;
+  const current = cards[currentIndex];
+  const nextCard = cards[(currentIndex + 1) % total];
+  const nextNextCard = cards[(currentIndex + 2) % total];
+
+  const handleNext = () => {
+    setDirection(1);
+    setCurrentIndex((prev) => (prev + 1) % total);
+  };
+
+  const handlePrev = () => {
+    setDirection(-1);
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 40) handleNext();
+    else if (diff < -40) handlePrev();
+    touchStartX.current = null;
+  };
+
   const handleMouseEnter = () => {
     setIsHovered(true);
-    if (card.video && videoRef.current) {
+    if (current.video && videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
     }
@@ -98,308 +128,281 @@ const InstagramCard = ({ card }: { card: InstagramCardData }) => {
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (card.video && videoRef.current) {
+    if (current.video && videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
   };
 
   return (
-    <a
-      href={card.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="group flex-shrink-0 w-[280px] sm:w-[310px] md:w-[330px] bg-white rounded-3xl border border-gray-100/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_14px_45px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden snap-start"
-    >
-      {/* Card Header: Profile Info & Stats */}
-      <div className="p-4 pb-3">
-        <div className="flex items-center justify-between gap-3">
-          {/* Avatar */}
-          <div className="w-10 h-10 rounded-full border border-gray-200 p-0.5 flex-shrink-0 overflow-hidden bg-gray-50 flex items-center justify-center">
-            <img
-              src={avatarSrc}
-              alt={card.handle}
-              onError={() => avatarSrc !== card.avatarFallback && setAvatarSrc(card.avatarFallback)}
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
-
-          {/* Stats */}
-          <div className="flex-1 grid grid-cols-3 text-center gap-1">
-            <div className="flex flex-col">
-              <span className="font-bold text-[12px] sm:text-[13px] text-gray-900 leading-tight">
-                {card.posts}
-              </span>
-              <span className="text-[10px] text-gray-500 font-normal leading-none mt-0.5">
-                posts
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-[12px] sm:text-[13px] text-gray-900 leading-tight">
-                {card.followers}
-              </span>
-              <span className="text-[10px] text-gray-500 font-normal leading-none mt-0.5">
-                followers
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-[12px] sm:text-[13px] text-gray-900 leading-tight">
-                {card.following}
-              </span>
-              <span className="text-[10px] text-gray-500 font-normal leading-none mt-0.5">
-                following
-              </span>
-            </div>
-          </div>
-
-          {/* 3 dots menu */}
-          <div className="text-gray-400 pl-1">
-            <MoreVertical size={16} />
-          </div>
-        </div>
-
-        {/* Username handle */}
-        <div className="mt-2.5">
-          <span className="font-bold text-[13px] text-gray-900 tracking-tight">
-            {card.handle}
-          </span>
-        </div>
-      </div>
-
-      {/* Main Post Media (Tall 3:4 Container to show full creative without cropping) */}
-      <div className="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden">
-        {/* Crisp static cover image — always visible when idle */}
-        <img
-          src={imgSrc}
-          alt={card.caption}
-          loading="lazy"
-          onError={() => imgSrc !== card.fallback && setImgSrc(card.fallback)}
-          className={`w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
-            card.video && isHovered ? 'opacity-0' : 'opacity-100'
-          }`}
-        />
-
-        {/* Video stream (activates and fades in when hovered) */}
-        {card.video && (
-          <>
-            <video
-              ref={videoRef}
-              src={card.video}
-              muted
-              loop
-              playsInline
-              preload="none"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                isHovered ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-              }`}
-            />
-            {/* Reel / Video indicator badge (visible when not hovered) */}
-            <div
-              className={`absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white pointer-events-none transition-opacity duration-300 ${
-                isHovered ? 'opacity-0' : 'opacity-100'
-              }`}
-            >
-              <svg className="w-3.5 h-3.5 fill-current ml-0.5" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-          </>
-        )}
-
-        {/* Subtle Instagram hover badge for photo cards */}
-        {!card.video && (
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300 flex items-center justify-center pointer-events-none">
-            <div className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-300 shadow-md">
-              <Instagram size={20} />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Card Footer: Action Icons & Caption */}
-      <div className="p-4 pt-3 flex flex-col gap-2.5">
-        {/* Icons row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3.5">
-            {/* Red Heart */}
-            <svg className="w-5 h-5 fill-[#ED4956] text-[#ED4956]" viewBox="0 0 24 24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-
-            {/* Comment Bubble */}
-            <svg className="w-5 h-5 text-gray-800 -scale-x-100" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-.818-.817c.07-.464.204-1.02.39-1.637A8.13 8.13 0 013 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-            </svg>
-
-            {/* Send / Airplane */}
-            <svg className="w-5 h-5 text-gray-800 -rotate-12 transform" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-            </svg>
-          </div>
-
-          {/* Bookmark */}
-          <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-          </svg>
-        </div>
-
-        {/* Caption */}
-        <p className="text-[12px] sm:text-[13px] text-gray-800 font-medium leading-snug line-clamp-2">
-          {card.caption}
-        </p>
-      </div>
-    </a>
-  );
-};
-
-export const InstagramShowcase = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [cards, setCards] = useState<InstagramCardData[]>(INSTA_CARDS);
-  const [isLoadingFeed, setIsLoadingFeed] = useState(false);
-
-  // Live Auto-Sync: Fetch from Instagram Feed API if configured
-  useEffect(() => {
-    const feedUrl =
-      import.meta.env.VITE_INSTAGRAM_FEED_URL ||
-      (import.meta.env.VITE_BEHOLD_FEED_ID
-        ? `https://feeds.behold.so/${import.meta.env.VITE_BEHOLD_FEED_ID}`
-        : null);
-
-    if (!feedUrl) return;
-
-    let isMounted = true;
-    setIsLoadingFeed(true);
-
-    fetch(feedUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!isMounted || !data) return;
-        const postsList = Array.isArray(data) ? data : data.data || [];
-        if (postsList.length === 0) return;
-
-        const liveCards: InstagramCardData[] = postsList.slice(0, 8).map((item: any, idx: number) => {
-          const img = item.thumbnailUrl || item.thumbnail_url || item.mediaUrl || item.media_url || INSTA_CARDS[idx % INSTA_CARDS.length].img;
-          const href = item.permalink || item.url || INSTAGRAM_URL;
-          const caption = item.caption ? item.caption.split('\n')[0] : 'Explore new journeys with Priority Bags';
-          const handle = item.username || 'priority.bags';
-
-          return {
-            handle: handle.startsWith('@') ? handle.substring(1) : handle,
-            avatar: '/priority-icon.png',
-            avatarFallback: '/Priority Logo-02.png',
-            posts: '366',
-            followers: '13.1K',
-            following: '4',
-            img,
-            fallback: INSTA_CARDS[idx % INSTA_CARDS.length].fallback,
-            href,
-            caption: caption.length > 80 ? caption.substring(0, 77) + '...' : caption,
-          };
-        });
-
-        if (liveCards.length > 0) {
-          setCards(liveCards);
-        }
-      })
-      .catch((err) => {
-        console.warn('Instagram live feed load error, using cached posts:', err);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoadingFeed(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const checkScroll = () => {
-    if (!scrollRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-  };
-
-  useEffect(() => {
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
-  }, [cards]);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (!scrollRef.current) return;
-    const scrollAmount = direction === 'left' ? -330 : 330;
-    scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  };
-
-  return (
     <section
-      className="bg-[#FAFAFA] border-t border-gray-100 font-outfit py-14 md:py-20 relative overflow-hidden"
+      className="bg-[#FAFAFA] border-t border-gray-100 font-outfit py-12 md:py-20 relative overflow-hidden"
       aria-label="Explore Priority Bags on Instagram"
     >
-      <div className="max-w-[1720px] mx-auto px-4 md:px-10">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8">
         {/* Section Heading */}
-        <div className="flex flex-col items-center text-center gap-2 mb-8 md:mb-12">
-          <div className="flex items-center gap-2.5">
-            <Instagram size={22} className="text-[#0F1417]" strokeWidth={2} />
-            <h2 className="font-outfit font-bold text-[18px] md:text-[24px] tracking-[0.06em] text-[#0F1417]">
+        <div className="flex flex-col items-center text-center gap-1.5 mb-8 md:mb-12">
+          <div className="flex items-center gap-2">
+            <Instagram size={20} className="text-[#0F1417]" strokeWidth={2.2} />
+            <h2 className="font-outfit font-bold text-[17px] sm:text-[20px] md:text-[24px] tracking-[0.06em] text-[#0F1417]">
               EXPLORE <span className="text-[#26B3FF]">#PriorityBags</span>
             </h2>
           </div>
-          <p className="text-[12px] md:text-[13px] font-medium text-gray-500 max-w-md">
-            Tag <span className="font-semibold text-[#0F1417]">@priority.bags</span> for a chance to be featured. Here's how our community carries it.
+          <p className="text-[11px] sm:text-[12px] md:text-[13px] font-medium text-gray-500 max-w-md">
+            Tag <span className="font-semibold text-[#0F1417]">@priority.bags</span> for a chance to be featured.
           </p>
         </div>
 
-        {/* Carousel Container with Floating Controls */}
-        <div className="relative group/carousel max-w-[1400px] mx-auto">
+        {/* Stacked Carousel Outer Deck */}
+        <div
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          className="relative max-w-[340px] sm:max-w-[380px] md:max-w-[420px] mx-auto flex items-center justify-center pl-1 pr-6 sm:pr-8 md:pr-10"
+        >
           {/* Left Arrow */}
-          {canScrollLeft && (
-            <button
-              onClick={() => scroll('left')}
-              className="absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 backdrop-blur-md shadow-[0_4px_15px_rgba(0,0,0,0.15)] border border-gray-200/80 flex items-center justify-center text-gray-800 hover:bg-white hover:scale-110 active:scale-95 transition-all duration-200"
-              aria-label="Scroll left"
+          <button
+            onClick={handlePrev}
+            aria-label="Previous Instagram Post"
+            className="absolute -left-3 sm:-left-6 md:-left-8 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-md shadow-md border border-gray-200/80 flex items-center justify-center text-gray-800 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+          >
+            <ChevronLeft size={18} className="sm:w-5 sm:h-5" strokeWidth={2.2} />
+          </button>
+
+          {/* Stacked Container */}
+          <div className="relative w-full">
+            {/* Background Stacked Card Layer 3 (Farthest Back) */}
+            <div
+              onClick={handleNext}
+              className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-gray-200/50 shadow-[0_4px_16px_rgba(0,0,0,0.04)] cursor-pointer transition-all duration-300 translate-x-5 sm:translate-x-7 md:translate-x-9 scale-[0.90] origin-left z-[1] overflow-hidden opacity-60"
             >
-              <ChevronLeft size={22} strokeWidth={2.2} />
-            </button>
-          )}
+              <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                <img
+                  src={nextNextCard?.img || nextNextCard?.fallback}
+                  alt=""
+                  className="w-full h-full object-cover opacity-30 blur-[1px]"
+                />
+              </div>
+            </div>
+
+            {/* Background Stacked Card Layer 2 (Middle Behind) */}
+            <div
+              onClick={handleNext}
+              className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-gray-200/70 shadow-[0_6px_20px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-300 translate-x-2.5 sm:translate-x-3.5 md:translate-x-4.5 scale-[0.95] origin-left z-[2] overflow-hidden opacity-80"
+            >
+              <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                <img
+                  src={nextCard?.img || nextCard?.fallback}
+                  alt=""
+                  className="w-full h-full object-cover opacity-50 blur-[0.5px]"
+                />
+              </div>
+            </div>
+
+            {/* Main Active Front Card */}
+            <div className="relative z-10 w-full bg-white rounded-2xl sm:rounded-3xl border border-gray-100/90 shadow-[0_10px_35px_rgba(0,0,0,0.08)] overflow-hidden">
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={current.href + current.img}
+                  custom={direction}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.3}
+                  onDragEnd={(_e, info) => {
+                    const threshold = 40;
+                    if (info.offset.x < -threshold || info.velocity.x < -300) {
+                      handleNext();
+                    } else if (info.offset.x > threshold || info.velocity.x > 300) {
+                      handlePrev();
+                    }
+                  }}
+                  initial={{ opacity: 0, x: direction * 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -direction * 50 }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  className="flex flex-col cursor-grab active:cursor-grabbing touch-pan-y select-none"
+                >
+                  {/* Card Header: Profile Info & Stats */}
+                  <div className="p-3 sm:p-3.5 pb-2 sm:pb-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      {/* Avatar */}
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-gray-200 p-0.5 flex-shrink-0 overflow-hidden bg-gray-50 flex items-center justify-center">
+                        <img
+                          src={current.avatar}
+                          alt={current.handle}
+                          className="w-full h-full object-contain rounded-full"
+                        />
+                      </div>
+
+                      {/* Stats */}
+                      <div className="flex-1 grid grid-cols-3 text-center gap-0.5">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 leading-tight">
+                            {current.posts}
+                          </span>
+                          <span className="text-[8px] sm:text-[9px] text-gray-400 font-normal leading-none mt-0.5">
+                            posts
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 leading-tight">
+                            {current.followers}
+                          </span>
+                          <span className="text-[8px] sm:text-[9px] text-gray-400 font-normal leading-none mt-0.5">
+                            followers
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 leading-tight">
+                            {current.following}
+                          </span>
+                          <span className="text-[8px] sm:text-[9px] text-gray-400 font-normal leading-none mt-0.5">
+                            following
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 3 dots menu */}
+                      <div className="text-gray-400 pl-0.5">
+                        <MoreVertical size={14} />
+                      </div>
+                    </div>
+
+                    {/* Username handle */}
+                    <div className="mt-1.5">
+                      <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 tracking-tight">
+                        {current.handle}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Main Media Container */}
+                  <a
+                    href={current.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative w-full aspect-[4/5] bg-gray-100 overflow-hidden block"
+                  >
+                    <img
+                      src={current.img}
+                      alt={current.caption}
+                      loading="lazy"
+                      className={`w-full h-full object-cover object-center transition-all duration-500 pointer-events-none ${
+                        current.video && isHovered ? 'opacity-0' : 'opacity-100'
+                      }`}
+                    />
+
+                    {/* Video stream */}
+                    {current.video && (
+                      <>
+                        <video
+                          ref={videoRef}
+                          src={current.video}
+                          muted
+                          loop
+                          playsInline
+                          preload="none"
+                          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                            isHovered ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        />
+                        <div
+                          className={`absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white pointer-events-none transition-opacity duration-300 ${
+                            isHovered ? 'opacity-0' : 'opacity-100'
+                          }`}
+                        >
+                          <svg className="w-3 h-3 fill-current ml-0.5" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                      </>
+                    )}
+
+                    {!current.video && (
+                      <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                        <div className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm">
+                          <Instagram size={17} />
+                        </div>
+                      </div>
+                    )}
+                  </a>
+
+                  {/* Card Footer */}
+                  <div className="p-3 sm:p-3.5 pt-2 sm:pt-2.5 flex flex-col gap-1.5">
+                    {/* Icons row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {/* Red Heart */}
+                        <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-[#ED4956] text-[#ED4956]" viewBox="0 0 24 24">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+
+                        {/* Comment Bubble */}
+                        <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-gray-800 -scale-x-100" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-.818-.817c.07-.464.204-1.02.39-1.637A8.13 8.13 0 013 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                        </svg>
+
+                        {/* Send Airplane */}
+                        <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-gray-800 -rotate-12 transform" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        </svg>
+                      </div>
+
+                      {/* Bookmark */}
+                      <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-gray-800" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                      </svg>
+                    </div>
+
+                    {/* Caption */}
+                    <p className="text-[11px] sm:text-[12px] text-gray-800 font-medium leading-snug line-clamp-2">
+                      {current.caption}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
 
           {/* Right Arrow */}
-          {canScrollRight && (
-            <button
-              onClick={() => scroll('right')}
-              className="absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 backdrop-blur-md shadow-[0_4px_15px_rgba(0,0,0,0.15)] border border-gray-200/80 flex items-center justify-center text-gray-800 hover:bg-white hover:scale-110 active:scale-95 transition-all duration-200"
-              aria-label="Scroll right"
-            >
-              <ChevronRight size={22} strokeWidth={2.2} />
-            </button>
-          )}
-
-          {/* Cards Scroll Deck */}
-          <div
-            ref={scrollRef}
-            onScroll={checkScroll}
-            className="flex items-stretch gap-4 md:gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory py-4 px-2 md:px-4"
+          <button
+            onClick={handleNext}
+            aria-label="Next Instagram Post"
+            className="absolute -right-3 sm:-right-6 md:-right-8 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-md shadow-md border border-gray-200/80 flex items-center justify-center text-gray-800 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
           >
-            {cards.map((card) => (
-              <InstagramCard key={card.handle + card.img + card.caption} card={card} />
-            ))}
-          </div>
+            <ChevronRight size={18} className="sm:w-5 sm:h-5" strokeWidth={2.2} />
+          </button>
+        </div>
+
+        {/* Dots Pagination Indicator */}
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-6 md:mt-8">
+          {cards.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setDirection(idx > currentIndex ? 1 : -1);
+                setCurrentIndex(idx);
+              }}
+              aria-label={`Go to slide ${idx + 1}`}
+              className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === currentIndex
+                  ? 'w-6 sm:w-8 bg-[#0F1417]'
+                  : 'w-1.5 sm:w-2 bg-gray-300 hover:bg-gray-400'
+              }`}
+            />
+          ))}
         </div>
 
         {/* Section Bottom CTA */}
-        <div className="flex justify-center mt-8 md:mt-12">
+        <div className="flex justify-center mt-6 md:mt-10">
           <a
             href={INSTAGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 bg-[#0F1417] text-white px-8 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] shadow-md hover:bg-[#26B3FF] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 bg-[#0F1417] text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] shadow-md hover:bg-[#26B3FF] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
           >
-            <Instagram size={16} strokeWidth={2.2} />
+            <Instagram size={15} strokeWidth={2.2} />
             Follow @priority.bags
           </a>
         </div>
