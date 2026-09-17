@@ -75,7 +75,7 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
       };
 
   return (
-    <section className="relative bg-ink" aria-label={banner.heading}>
+    <section className="relative bg-[#CBD7E0]" aria-label={banner.heading}>
       {/* ─── Mobile ─────────────────────────────────────────────────────── */}
       <div className="md:hidden relative w-full overflow-hidden min-h-[420px] flex flex-col justify-end">
         <AnimatePresence mode="wait">
@@ -88,21 +88,21 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
             className="absolute inset-0"
           >
             <img src={activeSlide.image} alt={banner.heading} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
           </motion.div>
         </AnimatePresence>
 
         <div className="relative z-10 p-6 pb-8">
-          <h2 className="text-[13px] font-medium uppercase tracking-[0.35em] text-white mb-2">
+          <h2 className="text-[14px] font-bold uppercase tracking-[0.35em] text-white mb-2">
             {banner.heading}
           </h2>
-          <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/80 select-none mb-6">
+          <p className="text-[16px] font-outfit font-medium uppercase tracking-[0.2em] text-white/90 select-none mb-6">
             {banner.subheading}
           </p>
           <div className="flex items-center justify-between">
             <Link
               to={BANNER_CTA.to}
-              className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3.5 text-[11px] font-medium uppercase tracking-[0.2em] text-ink"
+              className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] text-[#748694] shadow-sm"
             >
               {BANNER_CTA.label}
               <ArrowRight size={14} />
@@ -126,7 +126,7 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
       </div>
 
       {/* ─── Desktop ────────────────────────────────────────────────────── */}
-      <div className="hidden md:block text-white relative py-4 lg:py-6">
+      <div className="hidden md:block relative py-4 lg:py-6">
         <div className="max-w-[1720px] mx-auto px-8 lg:px-12 relative z-10 flex flex-row items-center gap-10 lg:gap-16">
           {/* Left Poster Image (2-slide animated container extending -mt-8 -mb-8) */}
           <div className="w-[42%] lg:w-[40%] relative z-30 rounded-sm overflow-hidden -mt-8 -mb-8 block group">
@@ -152,19 +152,16 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
 
           {/* Right Text & Controls */}
           <div className="flex-1 text-left py-2">
-            <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-brass mb-2">
-              Fresh picks for every trip
-            </p>
-            <h2 className="text-3xl lg:text-5xl font-normal uppercase tracking-[0.14em] text-white mb-3">
+            <h2 className="text-3xl lg:text-5xl font-bold uppercase tracking-[0.14em] text-[#748694] mb-3">
               {banner.heading}
             </h2>
-            <p className="text-[14px] lg:text-[15px] font-outfit font-normal uppercase tracking-[0.2em] text-white/50 select-none pointer-events-none mb-6">
+            <p className="text-[14px] lg:text-[15px] font-outfit font-medium uppercase tracking-[0.2em] text-[#748694]/80 select-none pointer-events-none mb-6">
               {banner.subheading}
             </p>
             <div className="flex items-center gap-4 mt-2">
               <Link
                 to={BANNER_CTA.to}
-                className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3 text-[11px] font-medium uppercase tracking-[0.2em] text-ink transition-transform duration-500 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-sm bg-white px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-[#748694] transition-all duration-500 hover:-translate-y-0.5 shadow-sm hover:shadow-md"
               >
                 {BANNER_CTA.label}
                 <ArrowRight size={15} />
@@ -179,7 +176,7 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
                   onClick={() => handleSelect(idx)}
                   aria-label={`Go to slide ${idx + 1}`}
                   className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    idx === currentSlide ? 'w-8 bg-[#26B3FF]' : 'w-2 bg-white/30 hover:bg-white/60'
+                    idx === currentSlide ? 'w-8 bg-[#26B3FF]' : 'w-2 bg-[#748694]/30 hover:bg-[#748694]/60'
                   }`}
                 />
               ))}
