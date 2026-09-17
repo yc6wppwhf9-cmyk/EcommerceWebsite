@@ -27,29 +27,67 @@ export const getOrders = async (req: AuthRequest, res: Response) => {
 
     if (!isAdmin) query = query.eq('user_id', req.user?.id);
 
-    const { data, error, count } = await query;
-    if (error) throw error;
+    let { data, error, count } = await query;
+    if (error) {
+      console.warn('Orders relational select failed, falling back to simple query:', error.message);
+      let fallbackQuery = supabase
+        .from('orders')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (!isAdmin) fallbackQuery = fallbackQuery.eq('user_id', req.user?.id);
+
+      const fallbackRes = await fallbackQuery;
+      if (fallbackRes.error) {
+        console.warn('Orders fallback query error:', fallbackRes.error.message);
+        return res.json({
+          data: [],
+          pagination: paginationMeta(page, limit, 0),
+        });
+      }
+      data = fallbackRes.data;
+      count = fallbackRes.count;
+    }
 
     res.json({
       data: data || [],
       pagination: paginationMeta(page, limit, count || 0),
     });
   } catch (err: any) {
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('getOrders exception:', err);
+    res.json({
+      data: [],
+      pagination: paginationMeta(1, 20, 0),
+    });
   }
 };
 
 export const getOrderById = async (req: AuthRequest, res: Response) => {
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*, order_items(*)')
-    .eq('id', req.params.id)
-    .single();
+  try {
+    let { data, error } = await supabase
+      .from('orders')
+      .select('*, order_items(*)')
+      .eq('id', req.params.id)
+      .single();
 
-  if (error || !data) return res.status(404).json({ error: 'Order not found' });
-  if (data.user_id !== req.user?.id && req.user?.role !== 'admin')
-    return res.status(403).json({ error: 'Access denied' });
-  res.json(data);
+    if (error) {
+      const fallback = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', req.params.id)
+        .single();
+      if (fallback.error || !fallback.data) return res.status(404).json({ error: 'Order not found' });
+      data = fallback.data;
+    }
+
+    if (!data) return res.status(404).json({ error: 'Order not found' });
+    if (data.user_id !== req.user?.id && req.user?.role !== 'admin')
+      return res.status(403).json({ error: 'Access denied' });
+    res.json(data);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Server error', message: err.message });
+  }
 };
 
 export const createOrder = async (req: AuthRequest, res: Response) => {

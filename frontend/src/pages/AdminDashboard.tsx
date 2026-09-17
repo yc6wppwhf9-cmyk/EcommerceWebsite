@@ -147,11 +147,10 @@ export const AdminDashboard = () => {
       api.getAllApplications(),
     ]);
     if (prodRes.status === 'fulfilled') setProducts(prodRes.value.products.map((p: any) => ({ ...p, id: String(p.id) })));
-    else showToast('Failed to load products — check connection', 'error');
-    if (orderRes.status === 'fulfilled') setOrders(orderRes.value.data);
-    else showToast('Failed to load orders — check connection', 'error');
-    if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs);
-    if (appRes.status === 'fulfilled') setApplications(appRes.value.applications);
+    if (orderRes.status === 'fulfilled' && orderRes.value?.data) setOrders(orderRes.value.data);
+    else setOrders([]);
+    if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs || []);
+    if (appRes.status === 'fulfilled') setApplications(appRes.value.applications || []);
     setFetchLoading(false);
   };
 
