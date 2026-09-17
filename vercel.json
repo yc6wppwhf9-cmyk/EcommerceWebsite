@@ -4,6 +4,8 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "https://ecommercewebsite-5z8k.onrender.com/api/$1" },
+    { "source": "/sitemap.xml", "destination": "https://ecommercewebsite-5z8k.onrender.com/api/sitemap.xml" },
+    { "source": "/shopping-feed.xml", "destination": "https://ecommercewebsite-5z8k.onrender.com/api/shopping-feed.xml" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

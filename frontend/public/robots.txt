@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://prioritybags.in/sitemap.xml
 Sitemap: https://prioritybags.in/api/sitemap.xml
