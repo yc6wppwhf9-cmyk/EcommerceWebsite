@@ -12,6 +12,13 @@ import { resolveProductColors, resolveProductAgeRange, isJuniorProduct, AGE_RANG
 const PAGE_LIMIT = 20;
 const NO_PRICE_FILTER = 999999;
 
+const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
+  'trekking-backpacks': {
+    image: '/Category/Trekking H banner.png',
+    alt: 'Trekking Backpacks — Explore Beyond The Limits',
+  },
+};
+
 export const CategoryPage = () => {
   const { category } = useParams<{ category: string }>();
   const [searchParams] = useSearchParams();
@@ -554,16 +561,35 @@ export const CategoryPage = () => {
           url={`https://prioritybags.in/${slug}`}
         />
 
-        {/* Title */}
-        <div className="w-full px-6 md:px-12 mb-4 md:mb-6">
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-2xl md:text-3xl font-normal text-center uppercase tracking-[0.28em] text-ink"
-          >
-            {pageTitle}
-          </motion.h1>
-        </div>
+        {/* Title or Category Banner */}
+        {CATEGORY_BANNERS[slug] ? (
+          <div className="w-full max-w-[1720px] mx-auto px-4 md:px-8 mb-6 md:mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative w-full rounded-xl md:rounded-2xl overflow-hidden shadow-xs"
+            >
+              <h1 className="sr-only">{pageTitle}</h1>
+              <img
+                src={CATEGORY_BANNERS[slug].image}
+                alt={CATEGORY_BANNERS[slug].alt}
+                className="w-full h-auto object-cover block select-none rounded-xl md:rounded-2xl"
+                loading="eager"
+                decoding="async"
+              />
+            </motion.div>
+          </div>
+        ) : (
+          <div className="w-full px-6 md:px-12 mb-4 md:mb-6">
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-2xl md:text-3xl font-normal text-center uppercase tracking-[0.28em] text-ink"
+            >
+              {pageTitle}
+            </motion.h1>
+          </div>
+        )}
 
         <div className="w-full px-4 md:px-8 pb-24">
           {/* Top bar: mobile filter button + sort */}
