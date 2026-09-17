@@ -111,9 +111,7 @@ app.use('/api/auth/reset-password', authRecoveryLimiter);
 app.use('/api/auth/refresh', authRecoveryLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
-// First-party checkout is disabled — storefront now redirects to Amazon/Flipkart/Myntra/Ajio.
-// Routers/controllers are left in place (unused) so this can be re-enabled without redoing the work.
-// app.use('/api/orders', orderRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 // app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
@@ -123,7 +121,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api', sitemapRoutes);
 app.use('/api/contact', supportLimiter, contactRoutes);
 app.use('/api/support', supportLimiter, supportRoutes);
-// app.use('/api/coupons', couponRoutes);
+app.use('/api/coupons', couponRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 // Health Check

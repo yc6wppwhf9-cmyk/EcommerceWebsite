@@ -131,6 +131,13 @@ async function request<T>(path: string, options: RequestInit = {}, allowRetry = 
         if (refreshed) return request<T>(path, options, false);
         throw new Error(getFriendlyErrorMessage('token expired'));
       }
+
+      // If server is 502/503/504 waking up from cold start on GET, retry once after short delay
+      if (allowRetry && method === 'GET' && [502, 503, 504].includes(res.status)) {
+        await new Promise((r) => setTimeout(r, 1500));
+        return request<T>(path, options, false);
+      }
+
       const rawMsg = Array.isArray(data.details) && data.details.length > 0
         ? `Validation error: ${data.details.map((d: any) => `${d.path ? d.path.replace(/^body\./, '') : 'field'}: ${d.message}`).join(', ')}`
         : (data.error || data.message || `Request failed (${res.status})`);
@@ -138,11 +145,22 @@ async function request<T>(path: string, options: RequestInit = {}, allowRetry = 
     }
     return data as T;
   } catch (err: any) {
+    if (allowRetry && method === 'GET' && (err.message === 'Failed to fetch' || err.name === 'TypeError')) {
+      await new Promise((r) => setTimeout(r, 1500));
+      return request<T>(path, options, false);
+    }
     if (err.message === 'Failed to fetch') {
       throw new Error(getFriendlyErrorMessage('failed to fetch'));
     }
     throw err;
   }
+}
+
+// Background pre-warm ping on startup to wake sleeping free-tier backend early
+if (typeof window !== 'undefined') {
+  try {
+    fetch(`${BASE}/api/health`, { method: 'GET' }).catch(() => {});
+  } catch { /* noop */ }
 }
 
 export const api = {
