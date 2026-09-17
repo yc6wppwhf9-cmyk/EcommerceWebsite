@@ -23,14 +23,6 @@ export const HeroSlider = () => {
     }, 6000);
   }, []);
 
-  const goTo = useCallback(
-    (index: number) => {
-      setCurrent(index);
-      startTimer();
-    },
-    [startTimer]
-  );
-
   useEffect(() => {
     startTimer();
     return () => {
@@ -94,28 +86,6 @@ export const HeroSlider = () => {
             </div>
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      {/* Dots & Slide Counter */}
-      <div className="absolute bottom-2 right-2 sm:bottom-6 sm:right-12 z-30 flex items-center gap-1.5 sm:gap-3 bg-black/60 backdrop-blur-md px-2 sm:px-4 py-0.5 sm:py-2 rounded-full border border-white/15">
-        <span className="text-[8px] sm:text-[11px] font-bold tracking-widest text-white/90">
-          {String(current + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
-        </span>
-        <div className="w-px h-2 sm:h-3 bg-white/20" />
-        <div className="flex gap-1 sm:gap-1.5" role="tablist" aria-label="Slide indicators">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              role="tab"
-              aria-selected={i === current}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 ${
-                i === current ? 'w-3 sm:w-6 bg-[#26B3FF]' : 'w-1 sm:w-1.5 bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );
