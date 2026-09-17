@@ -563,17 +563,17 @@ export const CategoryPage = () => {
 
         {/* Title or Category Banner */}
         {CATEGORY_BANNERS[slug] ? (
-          <div className="w-full max-w-[1720px] mx-auto px-4 md:px-8 mb-6 md:mb-8">
+          <div className="w-full max-w-[1720px] mx-auto px-4 md:px-8 mb-4 md:mb-6">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative w-full rounded-xl md:rounded-2xl overflow-hidden shadow-xs"
+              className="relative w-full rounded-xl md:rounded-2xl overflow-hidden shadow-xs h-[150px] sm:h-[200px] md:h-[240px] lg:h-[280px]"
             >
               <h1 className="sr-only">{pageTitle}</h1>
               <img
                 src={CATEGORY_BANNERS[slug].image}
                 alt={CATEGORY_BANNERS[slug].alt}
-                className="w-full h-auto object-cover block select-none rounded-xl md:rounded-2xl"
+                className="w-full h-full object-cover object-center block select-none"
                 loading="eager"
                 decoding="async"
               />
