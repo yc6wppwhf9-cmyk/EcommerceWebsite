@@ -578,7 +578,7 @@ export const CategoryPage = () => {
 
   return (
     <>
-      <main className="bg-bone min-h-screen font-outfit pt-3 md:pt-6 selection:bg-ink selection:text-white">
+      <main className={`bg-bone min-h-screen font-outfit selection:bg-ink selection:text-white ${CATEGORY_BANNERS[slug] ? 'pt-0' : 'pt-3 md:pt-6'}`}>
         <SEO
           title={currentCategory?.title || pageTitle}
           description={`Shop ${pageTitle} at Priority Bags. Browse our premium collection with fast delivery across India.`}
@@ -587,17 +587,17 @@ export const CategoryPage = () => {
 
         {/* Title or Category Banner */}
         {CATEGORY_BANNERS[slug] ? (
-          <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-6 md:px-8 mb-4 md:mb-6">
+          <div className="w-full mb-6 md:mb-8">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="relative w-full rounded-xl md:rounded-2xl overflow-hidden shadow-xs"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative w-full overflow-hidden"
             >
               <h1 className="sr-only">{pageTitle}</h1>
               <img
                 src={CATEGORY_BANNERS[slug].image}
                 alt={CATEGORY_BANNERS[slug].alt}
-                className="w-full h-auto object-contain block select-none rounded-xl md:rounded-2xl"
+                className="w-full h-auto block select-none"
                 loading="eager"
                 decoding="async"
               />
