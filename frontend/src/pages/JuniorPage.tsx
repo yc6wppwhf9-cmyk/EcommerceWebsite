@@ -462,41 +462,44 @@ export const JuniorPage = () => {
           SHOP BY GENDER / STYLES SECTION
           (Ready, Set, Explore! — Power Styles for Him & Dreamy Styles for Her)
       ═══════════════════════════════════════════════ */}
-      <section className="py-6 md:py-12 px-4 sm:px-6 md:px-12 max-w-[1520px] mx-auto overflow-hidden">
+      <section className="py-6 md:py-10 px-4 sm:px-6 md:px-12 max-w-[1420px] mx-auto overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-lg md:shadow-2xl bg-white border border-black/5"
+          className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-transparent select-none shadow-none"
         >
           {/* Main Banner Image */}
           <img
             src="/junior/shop by gender UI.jpg"
             alt="Ready, Set, Explore! - Power Styles for Him, Dreamy Styles for Her"
-            className="w-full h-auto object-contain block select-none"
+            className="w-full h-auto object-contain block select-none rounded-2xl md:rounded-3xl"
             loading="lazy"
+            decoding="async"
           />
 
           {/* Interactive Clickable Hotspot Overlays */}
           {/* Left: Power Styles / FOR HIM */}
           <Link
             to="/junior/power"
+            onClick={(e) => handleStyleClick(e, 'power')}
             aria-label="Power Styles - For Him"
-            className="absolute top-[18%] left-0 bottom-0 w-1/2 cursor-pointer z-10 group/him transition-all duration-300"
+            className="absolute inset-y-0 left-0 w-1/2 cursor-pointer z-10 group/him transition-all duration-300"
           >
             <span className="sr-only">Power Styles For Him</span>
-            <div className="absolute inset-0 bg-[#3E92E6]/0 group-hover/him:bg-[#3E92E6]/[0.08] transition-colors rounded-l-2xl md:rounded-l-3xl" />
+            <div className="absolute inset-0 bg-[#3E92E6]/0 group-hover/him:bg-[#3E92E6]/[0.05] transition-colors rounded-l-2xl md:rounded-l-3xl" />
           </Link>
 
           {/* Right: Dreamy Styles / FOR HER */}
           <Link
             to="/junior/dreamy"
+            onClick={(e) => handleStyleClick(e, 'dreamy')}
             aria-label="Dreamy Styles - For Her"
-            className="absolute top-[18%] right-0 bottom-0 w-1/2 cursor-pointer z-10 group/her transition-all duration-300"
+            className="absolute inset-y-0 right-0 w-1/2 cursor-pointer z-10 group/her transition-all duration-300"
           >
             <span className="sr-only">Dreamy Styles For Her</span>
-            <div className="absolute inset-0 bg-[#A368FB]/0 group-hover/her:bg-[#A368FB]/[0.08] transition-colors rounded-r-2xl md:rounded-r-3xl" />
+            <div className="absolute inset-0 bg-[#A368FB]/0 group-hover/her:bg-[#A368FB]/[0.05] transition-colors rounded-r-2xl md:rounded-r-3xl" />
           </Link>
         </motion.div>
 
@@ -504,13 +507,15 @@ export const JuniorPage = () => {
         <div className="grid grid-cols-2 gap-3 mt-4 sm:hidden">
           <Link
             to="/junior/power"
-            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#235b9e] active:scale-95 text-white font-outfit font-black text-[12px] uppercase tracking-wider rounded-xl shadow-md transition-transform"
+            onClick={(e) => handleStyleClick(e, 'power')}
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#235b9e] active:scale-95 text-white font-outfit font-black text-[12px] uppercase tracking-wider rounded-xl transition-transform"
           >
             <span>🚀 Power (For Him)</span>
           </Link>
           <Link
             to="/junior/dreamy"
-            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#b34384] active:scale-95 text-white font-outfit font-black text-[12px] uppercase tracking-wider rounded-xl shadow-md transition-transform"
+            onClick={(e) => handleStyleClick(e, 'dreamy')}
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#b34384] active:scale-95 text-white font-outfit font-black text-[12px] uppercase tracking-wider rounded-xl transition-transform"
           >
             <span>🌸 Dreamy (For Her)</span>
           </Link>
