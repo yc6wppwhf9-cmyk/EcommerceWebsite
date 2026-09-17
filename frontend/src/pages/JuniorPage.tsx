@@ -458,28 +458,64 @@ export const JuniorPage = () => {
         </div>
       </section>
 
-      {/* Hidden for now: Made for Little Adventures banner
-      <section className="relative mb-6 overflow-visible px-4 md:px-0 flex justify-center">
-        <div className="relative w-full max-w-[1600px] rounded-[5px] py-8 md:py-14 flex flex-col items-center justify-center text-center overflow-visible shadow-sm" style={{ backgroundColor: '#8750DA', minHeight: 'clamp(260px, 45vw, 500px)' }}>
+      {/* ═══════════════════════════════════════════════
+          SHOP BY GENDER / STYLES SECTION
+          (Ready, Set, Explore! — Power Styles for Him & Dreamy Styles for Her)
+      ═══════════════════════════════════════════════ */}
+      <section className="py-6 md:py-12 px-4 sm:px-6 md:px-12 max-w-[1520px] mx-auto overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-lg md:shadow-2xl bg-white border border-black/5"
+        >
+          {/* Main Banner Image */}
+          <img
+            src="/junior/shop by gender UI.jpg"
+            alt="Ready, Set, Explore! - Power Styles for Him, Dreamy Styles for Her"
+            className="w-full h-auto object-contain block select-none"
+            loading="lazy"
+          />
 
-          <div className="absolute left-2 md:left-24 top-1/2 -translate-y-1/2 w-[120px] sm:w-[180px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} />
-          <div className="absolute right-2 md:right-24 top-1/2 -translate-y-1/2 w-[120px] sm:w-[180px] md:w-[380px] aspect-square opacity-100 pointer-events-none" style={{ backgroundImage: "url('/junior/Group 36.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }} />
+          {/* Interactive Clickable Hotspot Overlays */}
+          {/* Left: Power Styles / FOR HIM */}
+          <Link
+            to="/junior/power"
+            aria-label="Power Styles - For Him"
+            className="absolute top-[18%] left-0 bottom-0 w-1/2 cursor-pointer z-10 group/him transition-all duration-300"
+          >
+            <span className="sr-only">Power Styles For Him</span>
+            <div className="absolute inset-0 bg-[#3E92E6]/0 group-hover/him:bg-[#3E92E6]/[0.08] transition-colors rounded-l-2xl md:rounded-l-3xl" />
+          </Link>
 
-          <div className="relative w-full flex flex-col items-center justify-center px-6 mt-[-70px] sm:mt-[-100px] md:mt-[-120px] mb-4 overflow-visible">
-            <div className="relative w-[220px] sm:w-[340px] md:w-[463px] md:h-[423px] overflow-visible">
-              <img src="/junior/Layer 1.png" alt="" aria-hidden className="w-full h-full object-contain pointer-events-none select-none drop-shadow-2xl" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 md:pt-6">
-                <h2 className="font-protest tracking-tight max-w-[433px] mx-auto text-center" style={{ fontSize: 'clamp(20px, 6.5vw, 50.82px)', color: '#FFFFFF', lineHeight: '104.7%' }}>Made for Little Adventures</h2>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-8 md:gap-32 mt-4 md:mt-6 relative z-10">
-            <a href="/junior/dreamy" onClick={e => handleStyleClick(e, 'dreamy')} className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors cursor-pointer" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Dreamy Styles</a>
-            <a href="/junior/power" onClick={e => handleStyleClick(e, 'power')} className="text-white font-outfit font-semibold uppercase tracking-[0.1em] border-b-2 border-white/60 pb-1.5 hover:border-white transition-colors cursor-pointer" style={{ fontSize: 'clamp(12px, 3vw, 16px)' }}>Power Styles</a>
-          </div>
+          {/* Right: Dreamy Styles / FOR HER */}
+          <Link
+            to="/junior/dreamy"
+            aria-label="Dreamy Styles - For Her"
+            className="absolute top-[18%] right-0 bottom-0 w-1/2 cursor-pointer z-10 group/her transition-all duration-300"
+          >
+            <span className="sr-only">Dreamy Styles For Her</span>
+            <div className="absolute inset-0 bg-[#A368FB]/0 group-hover/her:bg-[#A368FB]/[0.08] transition-colors rounded-r-2xl md:rounded-r-3xl" />
+          </Link>
+        </motion.div>
+
+        {/* Mobile Quick Tap Action Pills */}
+        <div className="grid grid-cols-2 gap-3 mt-4 sm:hidden">
+          <Link
+            to="/junior/power"
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#235b9e] active:scale-95 text-white font-outfit font-black text-[12px] uppercase tracking-wider rounded-xl shadow-md transition-transform"
+          >
+            <span>🚀 Power (For Him)</span>
+          </Link>
+          <Link
+            to="/junior/dreamy"
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-[#b34384] active:scale-95 text-white font-outfit font-black text-[12px] uppercase tracking-wider rounded-xl shadow-md transition-transform"
+          >
+            <span>🌸 Dreamy (For Her)</span>
+          </Link>
         </div>
       </section>
-      */}
 
       <section className="pt-10 pb-4 md:py-20 bg-white overflow-hidden relative">
         {/* Dynamic Background Glows */}
