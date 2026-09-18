@@ -142,17 +142,37 @@ export const BackpackTabs = ({
             {tabProducts.length > columns.tabs && (
               <>
                 <button
-                  onClick={() => setTabPage((p) => Math.max(0, p - 1))}
-                  disabled={tabPage === 0}
-                  className="hidden md:flex absolute left-0 top-[35%] -translate-x-1/2 w-11 h-11 bg-white hover:bg-ink hover:text-white items-center justify-center transition-colors duration-300 z-30 rounded-full border border-line disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (tabPage > 0) setTabPage((p) => Math.max(0, p - 1));
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  aria-disabled={tabPage === 0}
+                  className={`hidden md:flex absolute -left-5 lg:-left-6 top-[35%] w-11 h-11 bg-white items-center justify-center transition-all duration-300 z-40 rounded-full border border-line shadow-md ${
+                    tabPage === 0
+                      ? 'opacity-30 cursor-not-allowed bg-white/80 text-gray-400'
+                      : 'hover:bg-ink hover:text-white cursor-pointer hover:shadow-lg text-ink'
+                  }`}
                   aria-label="Previous products"
                 >
                   <ChevronLeft size={20} />
                 </button>
                 <button
-                  onClick={() => setTabPage((p) => Math.min(tabPageCount - 1, p + 1))}
-                  disabled={tabPage >= tabPageCount - 1}
-                  className="hidden md:flex absolute right-0 top-[35%] translate-x-1/2 w-11 h-11 bg-white hover:bg-ink hover:text-white items-center justify-center transition-colors duration-300 z-30 rounded-full border border-line disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-current"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (tabPage < tabPageCount - 1) setTabPage((p) => Math.min(tabPageCount - 1, p + 1));
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  aria-disabled={tabPage >= tabPageCount - 1}
+                  className={`hidden md:flex absolute -right-5 lg:-right-6 top-[35%] w-11 h-11 bg-white items-center justify-center transition-all duration-300 z-40 rounded-full border border-line shadow-md ${
+                    tabPage >= tabPageCount - 1
+                      ? 'opacity-30 cursor-not-allowed bg-white/80 text-gray-400'
+                      : 'hover:bg-ink hover:text-white cursor-pointer hover:shadow-lg text-ink'
+                  }`}
                   aria-label="Next products"
                 >
                   <ChevronRight size={20} />
