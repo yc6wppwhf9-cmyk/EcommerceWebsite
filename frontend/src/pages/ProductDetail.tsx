@@ -27,6 +27,7 @@ import { LazyImage } from '../components/LazyImage';
 import { SEO } from '../components/SEO';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink';
+import { trackViewItem } from '../lib/gtag';
 
 const THEMES = {
   junior: {
@@ -192,6 +193,12 @@ export const ProductDetail = () => {
 
   useEffect(() => {
     if (!product?.id) return;
+    trackViewItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      category: product.category,
+    });
     const sessionId = sessionStorage.getItem('pbsid') || (() => {
       const id = Math.random().toString(36).slice(2);
       sessionStorage.setItem('pbsid', id);
@@ -435,6 +442,9 @@ export const ProductDetail = () => {
                       marketplace={link.marketplace}
                       url={link.url}
                       productId={product.id}
+                      productName={product.name}
+                      productPrice={product.price}
+                      category={product.category}
                       className={`block text-center w-full font-outfit text-[15px] tracking-[0.2em] py-4 rounded-sm transition-colors ${theme.btn}`}
                     >
                       {link.label.toUpperCase()}
@@ -606,7 +616,15 @@ export const ProductDetail = () => {
       {/* Mobile sticky bottom bar — leads with the primary marketplace; the full set of buttons lives in the Actions section above */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-bone/95 backdrop-blur-sm border-t border-line px-4 py-3">
         {marketplaceLinks.length > 0 ? (
-          <MarketplaceLink marketplace={marketplaceLinks[0].marketplace} url={marketplaceLinks[0].url} productId={product.id} className={`flex items-center justify-center w-full h-12 text-[11px] uppercase rounded-sm ${theme.btn} transition-all tracking-[0.2em]`}>
+          <MarketplaceLink
+            marketplace={marketplaceLinks[0].marketplace}
+            url={marketplaceLinks[0].url}
+            productId={product.id}
+            productName={product.name}
+            productPrice={product.price}
+            category={product.category}
+            className={`flex items-center justify-center w-full h-12 text-[11px] uppercase rounded-sm ${theme.btn} transition-all tracking-[0.2em]`}
+          >
             {marketplaceLinks[0].label.toUpperCase()}
           </MarketplaceLink>
         ) : (

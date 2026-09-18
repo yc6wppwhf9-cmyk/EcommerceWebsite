@@ -193,6 +193,9 @@ const JuniorProductCard = ({ product }: { product: Product }) => {
                   marketplace={link.marketplace}
                   url={link.url}
                   productId={product.id}
+                  productName={product.name}
+                  productPrice={product.price}
+                  category="Junior"
                   className="flex items-center justify-center w-full h-10 md:h-11 bg-[#F69245] hover:bg-[#e07d3a] text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.14em] transition-colors rounded-md"
                 >
                   {link.label}

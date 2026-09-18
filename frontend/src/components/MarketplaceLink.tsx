@@ -1,5 +1,6 @@
 import React from 'react';
 import { api } from '../lib/api';
+import { trackMarketplaceClick } from '../lib/gtag';
 
 export type Marketplace = 'amazon' | 'flipkart' | 'myntra' | 'ajio';
 
@@ -7,6 +8,9 @@ interface MarketplaceLinkProps {
   marketplace: Marketplace;
   url: string;
   productId?: string;
+  productName?: string;
+  productPrice?: number;
+  category?: string;
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
@@ -23,10 +27,21 @@ interface MarketplaceLinkProps {
  * it's installed and to the browser when it isn't. No custom URL scheme or fallback timer
  * needed.
  *
- * Click tracking still fires: trackMarketplaceClick uses sendBeacon, which survives the page
- * being backgrounded when the app takes over.
+ * Click tracking fires both:
+ * 1. api.trackMarketplaceClick using sendBeacon for the backend DB counter
+ * 2. trackMarketplaceClick for Google Analytics 4 conversion / key event tracking
  */
-export const MarketplaceLink = ({ marketplace, url, productId, className, style, children }: MarketplaceLinkProps) => (
+export const MarketplaceLink = ({
+  marketplace,
+  url,
+  productId,
+  productName,
+  productPrice,
+  category,
+  className,
+  style,
+  children,
+}: MarketplaceLinkProps) => (
   <a
     href={url}
     target="_blank"
@@ -34,6 +49,14 @@ export const MarketplaceLink = ({ marketplace, url, productId, className, style,
     onClick={(e) => {
       e.stopPropagation();
       if (productId) api.trackMarketplaceClick(productId, marketplace);
+      trackMarketplaceClick({
+        marketplace,
+        url,
+        productId,
+        productName,
+        productPrice,
+        category,
+      });
     }}
     className={className}
     style={style}
@@ -41,3 +64,4 @@ export const MarketplaceLink = ({ marketplace, url, productId, className, style,
     {children}
   </a>
 );
+

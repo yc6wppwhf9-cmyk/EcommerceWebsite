@@ -13,6 +13,7 @@ import { SearchModal } from './components/SearchModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { ToastContainer } from './components/ui/Toast';
 import { Home } from './pages/Home';
+import { pageview } from './lib/gtag';
 
 const CategoryPage = lazy(() => import('./pages/CategoryPage').then((module) => ({ default: module.CategoryPage })));
 const JuniorPage = lazy(() => import('./pages/JuniorPage').then((module) => ({ default: module.JuniorPage })));
@@ -51,6 +52,14 @@ const ScrollToTop = () => {
   return null;
 };
 
+const PageTracker = () => {
+  const location = useLocation();
+  useEffect(() => {
+    pageview(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+  return null;
+};
+
 function AppContent() {
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
@@ -62,6 +71,7 @@ function AppContent() {
   return (
     <>
       <ScrollToTop />
+      <PageTracker />
       <div className="flex flex-col min-h-screen relative bg-[var(--color-bg-main)] text-[var(--color-text-main)] transition-colors duration-300">
         {!isAdmin && !isPremium && <Header onSearchOpen={() => setSearchOpen(true)} />}
         <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin ? 'pb-20 lg:pb-0' : ''}`}>

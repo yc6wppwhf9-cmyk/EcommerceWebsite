@@ -136,6 +136,9 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                 marketplace={link.marketplace}
                 url={link.url}
                 productId={product.id}
+                productName={product.name}
+                productPrice={product.price}
+                category={product.category}
                 className={`block text-center w-full py-2.5 text-white text-[11px] uppercase transition-all rounded-sm ${quiet ? 'font-medium tracking-[0.2em] bg-marine hover:bg-marine-deep' : 'font-bold tracking-[0.15em]'} ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : quiet ? '' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
               >
                 {link.label}

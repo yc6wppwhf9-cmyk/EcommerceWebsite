@@ -134,6 +134,9 @@ const JuniorProductCard = ({ product, accent }: { product: Product; accent: stri
                 marketplace={link.marketplace}
                 url={link.url}
                 productId={product.id}
+                productName={product.name}
+                productPrice={product.price}
+                category="Junior"
                 className="block text-center w-full py-2.5 text-white text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-md"
                 style={{ backgroundColor: accent }}
               >

@@ -309,6 +309,9 @@ export const BestReviewedShowcase: React.FC = () => {
                     <MarketplaceLink
                       marketplace={current.marketplace}
                       url={current.marketplaceUrl}
+                      productId={current.id}
+                      productName={current.productName}
+                      category={current.subtitle}
                       className="inline-flex items-center justify-center bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-gray-100 font-extrabold uppercase text-[10px] sm:text-xs tracking-[0.16em] px-6 sm:px-8 md:px-10 py-2.5 sm:py-3.5 transition-all duration-300 shadow-md hover:shadow-lg group rounded-sm"
                     >
                       <span className="flex items-center gap-2">
