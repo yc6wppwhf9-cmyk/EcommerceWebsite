@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ProductCard } from '../components/ProductCard';
 import { api } from '../lib/api';
 import type { Product } from '../types';
-import { ChevronDown, Search, ShoppingBag, User } from 'lucide-react';
+import { ChevronDown, Search, ShoppingBag, User, Heart } from 'lucide-react';
 import { SearchModal } from '../components/SearchModal';
 import { BrandToggle } from '../components/BrandToggle';
 
@@ -19,15 +19,22 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-16 flex items-center justify-between px-4 sm:px-6 md:px-12 border-b border-white/10">
-        {/* Desktop Left Nav Links */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-16 flex items-center justify-between px-4 sm:px-6 md:px-8 border-b border-white/10">
+        {/* Desktop Left: Traworld Logo */}
+        <div className="hidden md:flex items-center md:flex-1">
+          <Link to="/premium" className="flex items-center">
+            <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 md:h-7 w-auto" />
+          </Link>
+        </div>
+
+        {/* Desktop Center: Navigation Links */}
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
+          <Link to="/" className="text-white text-[13px] font-medium font-outfit tracking-[0.18em] uppercase hover:opacity-70 transition-opacity">
             HOME
           </Link>
           <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-            <button className="flex items-center gap-1.5 text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
-              COLLECTION <ChevronDown size={13} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+            <button className="flex items-center gap-1.5 text-white text-[13px] font-medium font-outfit tracking-[0.18em] uppercase hover:opacity-70 transition-opacity">
+              COLLECTION <ChevronDown size={12} className={`opacity-70 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
             </button>
             <AnimatePresence>
               {open && (
@@ -42,7 +49,7 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                     <Link
                       key={item.slug}
                       to={item.slug}
-                      className="block px-5 py-3 text-[13px] font-semibold tracking-[0.12em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                      className="block px-5 py-3 text-[13px] font-medium font-outfit tracking-[0.14em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -51,13 +58,6 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               )}
             </AnimatePresence>
           </div>
-        </div>
-
-        {/* Center: Desktop-only Logo */}
-        <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
-          <Link to="/premium">
-            <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
-          </Link>
         </div>
 
         {/* Mobile: BrandToggle centered, Menu Button on Right */}
@@ -78,20 +78,35 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </button>
         </div>
 
-        {/* Desktop Right Actions */}
-        <div className="hidden md:flex items-center gap-3 md:gap-4 justify-end">
-          <div className="flex items-center mr-2">
-            <BrandToggle size="sm" />
+        {/* Desktop Right Actions: BrandToggle, Divider, Search, Wishlist, User */}
+        <div className="hidden md:flex flex-1 items-center justify-end font-outfit gap-3 xl:gap-4">
+          <div className="mr-3 lg:mr-4">
+            <BrandToggle />
           </div>
-          <button
-            onClick={onSearchOpen}
-            className="text-white hover:opacity-70 transition-opacity"
-          >
-            <Search size={18} strokeWidth={1.5} />
-          </button>
-          <Link to="/account" className="text-white hover:opacity-70 transition-opacity">
-            <User size={18} strokeWidth={1.5} />
-          </Link>
+          <div className="h-5 w-px bg-white/20 mx-1" />
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onSearchOpen}
+              className="w-10 h-10 flex items-center justify-center rounded-full text-white transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-white/10"
+              aria-label="Search"
+            >
+              <Search size={20} />
+            </button>
+            <Link
+              to="/wishlist"
+              className="w-10 h-10 flex items-center justify-center rounded-full text-white transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-white/10"
+              aria-label="Wishlist"
+            >
+              <Heart size={20} />
+            </Link>
+            <Link
+              to="/account"
+              className="w-10 h-10 flex items-center justify-center rounded-full text-white transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-white/10"
+              aria-label="Account"
+            >
+              <User size={20} />
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -102,7 +117,7 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-14 left-0 right-0 z-40 bg-black border-t border-white/10 md:hidden"
+            className="fixed top-16 left-0 right-0 z-40 bg-black border-t border-white/10 md:hidden"
           >
             <div className="flex flex-col py-2">
               <Link
