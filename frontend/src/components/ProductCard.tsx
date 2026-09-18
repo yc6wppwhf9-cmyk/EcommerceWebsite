@@ -6,6 +6,7 @@ import type { Product } from '../types';
 import { LazyImage } from './LazyImage';
 import { MarketplaceLink, type Marketplace } from './MarketplaceLink';
 import { getProductPrimaryImage, getProductSecondaryImage, getProductFallback } from '../utils/productImages';
+import { formatPrice } from '../constants/products';
 
 interface ProductCardProps {
   product?: Product;
@@ -124,6 +125,18 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
             {product.name}
           </h3>
         </Link>
+
+        <div className="flex min-h-6 items-baseline gap-2">
+          <span className={`text-[15px] ${quiet ? 'font-medium text-ink' : 'font-bold text-black'}`}>
+            {formatPrice(product.price)}
+          </span>
+          {originalPrice > product.price && (
+            <>
+              <span className="text-[12px] text-slate line-through">{formatPrice(originalPrice)}</span>
+              <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-marine">{discount}% off</span>
+            </>
+          )}
+        </div>
 
 
 

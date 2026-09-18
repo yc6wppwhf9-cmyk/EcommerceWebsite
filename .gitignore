@@ -8,8 +8,8 @@ coverage/
 !.env.example
 .claude/
 .mcp.json
+.playwright-cli/
 product_images/
 frontend/HSCVPL_About_Us_PROPER_FINAL/
-
 
 

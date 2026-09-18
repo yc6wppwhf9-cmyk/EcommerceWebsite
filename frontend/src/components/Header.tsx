@@ -235,6 +235,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <button
               onClick={onSearchOpen}
               className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06]"
+              aria-label="Search products"
             >
               <Search size={20} />
             </button>
@@ -243,6 +244,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <Link
               to="/wishlist"
               className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06] ${location.pathname === '/wishlist' ? 'bg-ink/[0.08]' : ''}`}
+              aria-label="Wishlist"
             >
               <Heart size={20} fill={location.pathname === '/wishlist' ? 'currentColor' : 'none'} />
             </Link>
@@ -252,6 +254,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               <Link
                 to={user?.role === 'admin' ? '/admin' : '/account'}
                 className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06]"
+                aria-label="Account"
               >
                 <User size={20} className="text-current" />
               </Link>
@@ -259,6 +262,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               <Link
                 to="/login"
                 className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06] ${location.pathname === '/login' ? 'bg-white/20' : ''}`}
+                aria-label="Account"
               >
                 <User size={20} />
               </Link>
@@ -270,6 +274,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 onClick={logout}
                 className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06] active:scale-95"
                 title="Logout"
+                aria-label="Log out"
               >
                 <LogOut size={20} />
               </button>
@@ -292,7 +297,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Header */}
             <div className="flex justify-between items-center px-5 py-4 border-b border-gray-100 shrink-0">
               <img src={logoSrc} alt="Priority" className={`${isJunior ? 'w-[100px]' : 'w-[120px]'} h-auto`} />
-              <button onClick={() => setIsMenuOpen(false)} className="p-2.5 border border-gray-200 rounded-full text-gray-700">
+              <button onClick={() => setIsMenuOpen(false)} className="p-2.5 border border-gray-200 rounded-full text-gray-700" aria-label="Close menu">
                 <X size={20} />
               </button>
             </div>
@@ -324,6 +329,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                       <button
                         onClick={() => setOpenAccordion(openAccordion === nav.title ? null : nav.title)}
                         className="p-2 text-gray-400"
+                        aria-label={`${openAccordion === nav.title ? 'Collapse' : 'Expand'} ${nav.title} menu`}
                       >
                         <ChevronDown
                           size={18}

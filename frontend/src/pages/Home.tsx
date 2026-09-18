@@ -39,7 +39,7 @@ const useColumnTier = (): ColumnTier => {
 export const Home = () => {
   const [activeTab, setActiveTab] = useState('college-backpacks');
   const columns = useColumnTier();
-  const { tabProducts, tabLoading, hasProducts, genderStock } = useHomeData(activeTab);
+  const { tabProducts, tabLoading, hasProducts } = useHomeData(activeTab);
 
   // Ensure we're on the light theme (Junior / Premium pages toggle dark)
   useEffect(() => {
@@ -56,7 +56,7 @@ export const Home = () => {
 
       <HeroSlider />
       <CategoryShowcase />
-      <EditorialBanner hasProducts={hasProducts} genderStock={genderStock} />
+      <EditorialBanner hasProducts={hasProducts} />
 
       <BackpackTabs
         activeTab={activeTab}

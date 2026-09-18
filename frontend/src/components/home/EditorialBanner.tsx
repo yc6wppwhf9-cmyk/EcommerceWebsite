@@ -3,22 +3,20 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { IMG, BANNER_CTA } from '../../constants/home';
-import type { GenderLink } from '../../constants/home';
 
 interface EditorialBannerProps {
   hasProducts: boolean | null;
-  genderStock: GenderLink[] | null;
 }
 
 const EDITORIAL_SLIDES = [
   {
     id: 'slide-1',
-    image: IMG.banner,
+    images: IMG.banner,
     to: '/luggage',
   },
   {
     id: 'slide-2',
-    image: IMG.refPoster,
+    images: IMG.refPoster,
     to: '/backpacks',
   },
 ];
@@ -26,7 +24,7 @@ const EDITORIAL_SLIDES = [
 /**
  * Editorial banner section with 2 auto-cycling images in original styling.
  */
-export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, genderStock }) => {
+export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -60,18 +58,10 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
     ? {
         heading: 'New Arrival',
         subheading: 'Ready For Your Journey',
-        links:
-          genderStock && genderStock.length > 0
-            ? genderStock.map(({ to, label }) => ({ to, label }))
-            : [
-                { to: '/women', label: 'Shop Women' },
-                { to: '/men', label: 'Shop Men' },
-              ],
       }
     : {
         heading: 'Launching Soon',
         subheading: 'Ready For Your Journey',
-        links: [{ to: '/contact', label: 'Notify Me' }],
       };
 
   return (
@@ -87,7 +77,17 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
             transition={{ duration: 0.5, ease: 'easeInOut' }}
             className="absolute inset-0"
           >
-            <img src={activeSlide.image} alt={banner.heading} className="w-full h-full object-cover" />
+            <picture className="block h-full w-full">
+              <source media="(max-width: 767px)" srcSet={activeSlide.images.mobileSrc} />
+              <img
+                src={activeSlide.images.desktopSrc}
+                alt={banner.heading}
+                className="h-full w-full object-contain"
+                loading="lazy"
+                decoding="async"
+                sizes="100vw"
+              />
+            </picture>
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
           </motion.div>
         </AnimatePresence>
@@ -126,11 +126,17 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts, g
                 className="w-full h-full"
               >
                 <Link to={activeSlide.to} className="block w-full h-full">
-                  <img
-                    src={activeSlide.image}
-                    alt={banner.heading}
-                    className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105 block"
-                  />
+                  <picture className="block h-full w-full">
+                    <source media="(max-width: 767px)" srcSet={activeSlide.images.mobileSrc} />
+                    <img
+                      src={activeSlide.images.desktopSrc}
+                      alt={banner.heading}
+                      className="block h-auto w-full object-contain transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(min-width: 768px) 40vw, 100vw"
+                    />
+                  </picture>
                 </Link>
               </motion.div>
             </AnimatePresence>

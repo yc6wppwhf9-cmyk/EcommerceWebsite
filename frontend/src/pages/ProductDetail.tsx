@@ -408,6 +408,16 @@ export const ProductDetail = () => {
               <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">Out of stock</p>
             )}
 
+            <div className="flex items-baseline gap-3">
+              <span className={`text-2xl font-medium ${theme.price}`}>{formatPrice(product.price)}</span>
+              {product.originalPrice > product.price && (
+                <>
+                  <span className="text-sm text-slate line-through">{formatPrice(product.originalPrice)}</span>
+                  <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-marine">Save {discount}%</span>
+                </>
+              )}
+            </div>
+
             {/* Quantity */}
             <div className="flex items-center gap-5">
               <span className="font-outfit font-normal text-[15px] text-graphite">Quantity : {quantity}</span>

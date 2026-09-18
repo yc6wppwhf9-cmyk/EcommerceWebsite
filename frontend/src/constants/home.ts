@@ -4,12 +4,9 @@
 
 // ─── Hero Slider ─────────────────────────────────────────────────────────────
 
-/** Native pixel size of the hero creatives — the slider locks to this ratio. */
-export const HERO_W = 2880;
-export const HERO_H = 1621;
-
 export interface HeroSlide {
-  src: string;
+  desktopSrc: string;
+  mobileSrc: string;
   badge: string;
   title: string;
   subtitle: string;
@@ -23,7 +20,8 @@ export interface HeroSlide {
 // step with the banner it sits on.
 export const HERO_SLIDES: HeroSlide[] = [
   {
-    src: '/Creatives/5.png', // "CARRY THE STYLE YOUR WAY — EXPLORE CAMPUS PICKS"
+    desktopSrc: '/optimized/hero/campus-desktop.jpg',
+    mobileSrc: '/optimized/hero/campus-mobile.jpg',
     badge: 'CAMPUS COLLECTION',
     title: 'CARRY THE STYLE YOUR WAY',
     subtitle: 'Ergonomic college backpacks designed for campus, commute and everyday carry.',
@@ -31,7 +29,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     to: '/college-backpacks',
   },
   {
-    src: '/Creatives/4.png', // "BUILT FOR EVERY JOURNEY" — laptop series
+    desktopSrc: '/optimized/hero/laptop-desktop.jpg',
+    mobileSrc: '/optimized/hero/laptop-mobile.jpg',
     badge: 'EXECUTIVE LAPTOP SERIES',
     title: 'BUILT FOR EVERY JOURNEY',
     subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
@@ -39,7 +38,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     to: '/laptop-backpacks',
   },
   {
-    src: '/Creatives/3.png', // "EXPLORE BEYOND THE LIMITS — TREKKING BACKPACKS"
+    desktopSrc: '/optimized/hero/trekking-desktop.jpg',
+    mobileSrc: '/optimized/hero/trekking-mobile.jpg',
     badge: 'TREKKING & OUTDOOR',
     title: 'EXPLORE BEYOND THE LIMITS',
     subtitle: 'Rugged, high-capacity trekking rucksacks built to go the distance.',
@@ -47,7 +47,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     to: '/trekking-backpacks',
   },
   {
-    src: '/Creatives/1.png', // "WHERE STYLE MEETS THE COMFORT — TRAVEL LUGGAGE BAGS"
+    desktopSrc: '/optimized/hero/luggage-desktop.jpg',
+    mobileSrc: '/optimized/hero/luggage-mobile.jpg',
     badge: 'PREMIUM TRAVEL GEAR',
     title: 'WHERE STYLE MEETS THE COMFORT',
     subtitle: 'High-durability trolley bags & luggage built for effortless journeys.',
@@ -55,7 +56,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     to: '/luggage',
   },
   {
-    src: '/Creatives/2.png', // "READY FOR EVERY SCHOOL DAY — EXPLORE 2026 COLLECTION"
+    desktopSrc: '/optimized/hero/junior-desktop.jpg',
+    mobileSrc: '/optimized/hero/junior-mobile.jpg',
     badge: 'JUNIOR & SCHOOL SERIES',
     title: 'READY FOR EVERY SCHOOL DAY',
     subtitle: 'Smart storage, waterproof fabrics & posture-support design for kids & juniors.',
@@ -81,10 +83,10 @@ export interface BackpackTab {
 }
 
 export const BACKPACK_TABS: BackpackTab[] = [
-  { id: 'college-backpacks',  label: 'College Backpack',  image: '/New Arrival/Artboard 1@2x.png',         to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
-  { id: 'laptop-backpacks',   label: 'Laptop Backpack',   image: '/New Arrival/Artboard 3 copy 5@2x.png', to: '/laptop-backpacks',   apiParams: { category: 'laptop-backpacks' } },
-  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/New Arrival/Artboard 3 copy 7@2x.png', to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
-  { id: 'duffle',             label: 'Duffle Bag',        image: '/New Arrival/Artboard 3 copy 6@2x.png', to: '/duffle',             apiParams: { category: 'duffle' } },
+  { id: 'college-backpacks',  label: 'College Backpack',  image: '/optimized/backpack-tabs/college.jpg',  to: '/college-backpacks',  apiParams: { category: 'college-backpacks' } },
+  { id: 'laptop-backpacks',   label: 'Laptop Backpack',   image: '/optimized/backpack-tabs/laptop.jpg',   to: '/laptop-backpacks',   apiParams: { category: 'laptop-backpacks' } },
+  { id: 'trekking-backpacks', label: 'Trekking Backpack', image: '/optimized/backpack-tabs/trekking.jpg', to: '/trekking-backpacks', apiParams: { category: 'trekking-backpacks' } },
+  { id: 'duffle',             label: 'Duffle Bag',        image: '/optimized/backpack-tabs/duffle.jpg',   to: '/duffle',             apiParams: { category: 'duffle' } },
 ];
 
 // ─── Category Cards ──────────────────────────────────────────────────────────
@@ -104,8 +106,14 @@ export const CATS: CategoryCard[] = [
 // ─── Editorial Banner ────────────────────────────────────────────────────────
 
 export const IMG = {
-  banner: '/Category/New Arrival.jpg',
-  refPoster: '/New Arrival/Artboard 3 copy 3@2x.png',
+  banner: {
+    desktopSrc: '/optimized/editorial/new-arrival-desktop.jpg',
+    mobileSrc: '/optimized/editorial/new-arrival-mobile.jpg',
+  },
+  refPoster: {
+    desktopSrc: '/optimized/editorial/backpack-desktop.jpg',
+    mobileSrc: '/optimized/editorial/backpack-mobile.jpg',
+  },
 };
 
 /** Primary editorial banner CTA — always present, regardless of gender tagging. */

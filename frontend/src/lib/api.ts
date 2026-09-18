@@ -156,13 +156,6 @@ async function request<T>(path: string, options: RequestInit = {}, allowRetry = 
   }
 }
 
-// Background pre-warm ping on startup to wake sleeping free-tier backend early
-if (typeof window !== 'undefined') {
-  try {
-    fetch(`${BASE}/api/health`, { method: 'GET' }).catch(() => {});
-  } catch { /* noop */ }
-}
-
 export const api = {
   // Auth
   login: (email: string, password: string) =>

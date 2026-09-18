@@ -135,6 +135,11 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       });
       throw error;
     }
+    // Public catalogue queries are identical for every shopper and are safe to
+    // cache at the Vercel edge. Admin inventory views remain private.
+    if (!includeInactive) {
+      res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    }
     res.json({ products: data, page: pageNum, limit: limitNum });
   } catch (err: any) {
     console.error('❌ Products List Controller Exception:', err);

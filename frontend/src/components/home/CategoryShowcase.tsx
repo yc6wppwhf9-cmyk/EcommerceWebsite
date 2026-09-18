@@ -70,6 +70,8 @@ export const CategoryShowcase = () => {
                       src={CATS[idx]?.img || ''}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover object-top"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </div>
@@ -96,6 +98,8 @@ export const CategoryShowcase = () => {
                       src={CATS[catFlipIndex].img}
                       alt={CATS[catFlipIndex].label}
                       className="absolute inset-0 w-full h-full object-cover object-top"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </Link>
                 </motion.div>

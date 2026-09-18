@@ -38,7 +38,7 @@ export const HeroSlider = () => {
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured collections"
-      className="relative w-full bg-white overflow-hidden aspect-[1920/860] sm:aspect-auto sm:h-[calc(100vh-4rem)] sm:max-h-[620px] sm:min-h-[480px] lg:max-h-[760px]"
+      className="relative w-full overflow-hidden bg-[#0F1417] aspect-[2.2/1] lg:max-h-[760px]"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
@@ -50,12 +50,18 @@ export const HeroSlider = () => {
           transition={{ duration: 0.6, ease: 'easeInOut' }}
           className="absolute inset-0 z-0"
         >
-          <img
-            alt={slide.title}
-            className="w-full h-full object-cover object-center"
-            src={slide.src}
-            loading="eager"
-          />
+          <picture className="block h-full w-full">
+            <source media="(max-width: 767px)" srcSet={slide.mobileSrc} />
+            <img
+              alt={slide.title}
+              className="h-full w-full object-contain object-center"
+              src={slide.desktopSrc}
+              loading={current === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchPriority={current === 0 ? 'high' : 'low'}
+              sizes="100vw"
+            />
+          </picture>
           {/* Light gradient so controls stay readable over baked-in artwork */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
         </motion.div>
