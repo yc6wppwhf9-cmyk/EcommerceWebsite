@@ -7,6 +7,7 @@
 export interface HeroSlide {
   desktopSrc: string;
   mobileSrc: string;
+  aspectRatio: string;
   badge: string;
   title: string;
   subtitle: string;
@@ -22,6 +23,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     desktopSrc: '/optimized/hero/campus-desktop.jpg',
     mobileSrc: '/optimized/hero/campus-mobile.jpg',
+    aspectRatio: '1837 / 856',
     badge: 'CAMPUS COLLECTION',
     title: 'CARRY THE STYLE YOUR WAY',
     subtitle: 'Ergonomic college backpacks designed for campus, commute and everyday carry.',
@@ -31,6 +33,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     desktopSrc: '/optimized/hero/laptop-desktop.jpg',
     mobileSrc: '/optimized/hero/laptop-mobile.jpg',
+    aspectRatio: '1704 / 923',
     badge: 'EXECUTIVE LAPTOP SERIES',
     title: 'BUILT FOR EVERY JOURNEY',
     subtitle: 'Padded laptop compartments with weather resistance & sleek minimalist design.',
@@ -40,6 +43,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     desktopSrc: '/optimized/hero/trekking-desktop.jpg',
     mobileSrc: '/optimized/hero/trekking-mobile.jpg',
+    aspectRatio: '1920 / 836',
     badge: 'TREKKING & OUTDOOR',
     title: 'EXPLORE BEYOND THE LIMITS',
     subtitle: 'Rugged, high-capacity trekking rucksacks built to go the distance.',
@@ -49,6 +53,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     desktopSrc: '/optimized/hero/luggage-desktop.jpg',
     mobileSrc: '/optimized/hero/luggage-mobile.jpg',
+    aspectRatio: '1920 / 836',
     badge: 'PREMIUM TRAVEL GEAR',
     title: 'WHERE STYLE MEETS THE COMFORT',
     subtitle: 'High-durability trolley bags & luggage built for effortless journeys.',
@@ -58,6 +63,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     desktopSrc: '/optimized/hero/junior-desktop.jpg',
     mobileSrc: '/optimized/hero/junior-mobile.jpg',
+    aspectRatio: '1866 / 843',
     badge: 'JUNIOR & SCHOOL SERIES',
     title: 'READY FOR EVERY SCHOOL DAY',
     subtitle: 'Smart storage, waterproof fabrics & posture-support design for kids & juniors.',

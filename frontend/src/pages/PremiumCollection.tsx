@@ -224,11 +224,12 @@ export const PremiumCollection = () => {
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} theme="premium" />
 
       {/* 1. CINEMATIC HERO */}
-      <section className="relative min-h-[70vh] sm:min-h-screen flex items-end overflow-hidden bg-black pt-14">
+      <section className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: '1439 / 783' }}>
         <img
           src="/Traworld/hero.png"
           alt="Traworld Premium Collection"
-          className="w-full h-full object-cover object-center absolute inset-0"
+          className="absolute inset-0 h-full w-full object-contain"
+          decoding="async"
         />
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
         <div className="relative z-10 w-full px-4 md:px-12 pb-14 md:pb-20 flex justify-center">
@@ -281,11 +282,13 @@ export const PremiumCollection = () => {
         <div className="h-10 md:h-16 bg-white" />
 
         {/* Editorial banner — clicking filters to luggage */}
-        <section className="relative w-full overflow-hidden" style={{ minHeight: 'clamp(320px, 56vw, 700px)' }}>
+        <section className="relative w-full overflow-hidden" style={{ aspectRatio: '2752 / 1536' }}>
           <img
             src="/Traworld/section 2.png"
             alt="Sleek Strong Seamless"
-            className="w-full h-full object-cover block absolute inset-0"
+            className="absolute inset-0 block h-full w-full object-contain"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute bottom-0 left-0 right-0 z-10 pb-6 md:pb-10">
             <motion.div

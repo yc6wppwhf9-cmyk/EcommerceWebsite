@@ -67,7 +67,7 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts })
   return (
     <section className="relative bg-[#CBD7E0]" aria-label={banner.heading}>
       {/* ─── Mobile ─────────────────────────────────────────────────────── */}
-      <div className="md:hidden relative w-full overflow-hidden min-h-[420px] flex flex-col justify-end">
+      <div className="md:hidden relative w-full aspect-square overflow-hidden flex flex-col justify-end">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSlide.id}
