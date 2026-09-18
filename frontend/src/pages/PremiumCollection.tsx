@@ -19,7 +19,7 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-14 flex items-center justify-between px-4 sm:px-6 md:px-12">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-16 flex items-center justify-between px-4 sm:px-6 md:px-12 border-b border-white/10">
         {/* Desktop Left Nav Links */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="text-white text-[14px] font-semibold tracking-[0.12em] uppercase hover:opacity-70 transition-opacity">
@@ -60,11 +60,13 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </Link>
         </div>
 
-        {/* Mobile: Toggle Switch on Left, Menu Button on Right */}
-        <div className="flex md:hidden items-center justify-between w-full">
-          <BrandToggle size="sm" />
+        {/* Mobile: BrandToggle centered, Menu Button on Right */}
+        <div className="flex md:hidden items-center justify-between w-full relative">
+          <div className="w-full flex items-center justify-center">
+            <BrandToggle size="sm" />
+          </div>
           <button
-            className="text-white hover:opacity-70 transition-opacity p-2"
+            className="absolute right-0 top-1/2 -translate-y-1/2 text-white hover:opacity-70 transition-opacity p-2"
             onClick={() => setMobileMenuOpen(v => !v)}
             aria-label="Menu"
           >
