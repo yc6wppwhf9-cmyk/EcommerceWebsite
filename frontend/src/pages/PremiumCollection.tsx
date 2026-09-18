@@ -19,15 +19,8 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-16 flex items-center justify-between px-4 sm:px-6 md:px-8 border-b border-white/10">
-        {/* Desktop Left: Traworld Logo */}
-        <div className="hidden md:flex items-center md:flex-1">
-          <Link to="/premium" className="flex items-center">
-            <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 md:h-7 w-auto" />
-          </Link>
-        </div>
-
-        {/* Desktop Center: Navigation Links */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-16 flex items-center justify-between px-4 sm:px-6 md:px-12 border-b border-white/10">
+        {/* Desktop Left: Navigation Links */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="text-white text-[13px] font-medium font-outfit tracking-[0.18em] uppercase hover:opacity-70 transition-opacity">
             HOME
@@ -60,6 +53,13 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </div>
         </div>
 
+        {/* Desktop Center: Traworld Logo */}
+        <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
+          <Link to="/premium">
+            <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
+          </Link>
+        </div>
+
         {/* Mobile: BrandToggle centered, Menu Button on Right */}
         <div className="flex md:hidden items-center justify-between w-full relative">
           <div className="w-full flex items-center justify-center">
@@ -78,10 +78,10 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           </button>
         </div>
 
-        {/* Desktop Right Actions: BrandToggle, Divider, Search, Wishlist, User */}
-        <div className="hidden md:flex flex-1 items-center justify-end font-outfit gap-3 xl:gap-4">
-          <div className="mr-3 lg:mr-4">
-            <BrandToggle />
+        {/* Desktop Right Actions */}
+        <div className="hidden md:flex items-center gap-3 md:gap-4 justify-end font-outfit">
+          <div className="flex items-center mr-1">
+            <BrandToggle size="sm" />
           </div>
           <div className="h-5 w-px bg-white/20 mx-1" />
           <div className="flex items-center gap-1">
@@ -90,21 +90,21 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               className="w-10 h-10 flex items-center justify-center rounded-full text-white transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-white/10"
               aria-label="Search"
             >
-              <Search size={20} />
+              <Search size={18} strokeWidth={1.5} />
             </button>
             <Link
               to="/wishlist"
               className="w-10 h-10 flex items-center justify-center rounded-full text-white transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-white/10"
               aria-label="Wishlist"
             >
-              <Heart size={20} />
+              <Heart size={18} strokeWidth={1.5} />
             </Link>
             <Link
               to="/account"
               className="w-10 h-10 flex items-center justify-center rounded-full text-white transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-white/10"
               aria-label="Account"
             >
-              <User size={20} />
+              <User size={18} strokeWidth={1.5} />
             </Link>
           </div>
         </div>
