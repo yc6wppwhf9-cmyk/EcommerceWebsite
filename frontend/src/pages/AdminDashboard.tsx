@@ -146,7 +146,18 @@ export const AdminDashboard = () => {
       api.getJobs({ status: 'all' }),
       api.getAllApplications(),
     ]);
-    if (prodRes.status === 'fulfilled') setProducts(prodRes.value.products.map((p: any) => ({ ...p, id: String(p.id) })));
+    if (prodRes.status === 'fulfilled') {
+      setProducts(prodRes.value.products.map((p: any) => {
+        const { mainCat, subCat } = resolveProductCategory(p);
+        return {
+          ...p,
+          id: String(p.id),
+          category: p.category || mainCat,
+          subcategory: p.subcategory || p.sub_category || subCat,
+          sub_category: p.sub_category || p.subcategory || subCat,
+        };
+      }));
+    }
     if (orderRes.status === 'fulfilled' && orderRes.value?.data) setOrders(orderRes.value.data);
     else setOrders([]);
     if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs || []);

@@ -53,55 +53,65 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
 };
 
 export const resolveProductCategory = (p: any): { mainCat: string; subCat: string } => {
-  const isPrem = !!p.is_premium || !!p.isPremium;
+  if (!p) return { mainCat: 'backpacks', subCat: 'college-backpacks' };
+
+  const isPrem = !!(p.is_premium ?? p.isPremium);
   const rawSub = (p.sub_category || p.subcategory || '').toLowerCase().trim();
   const rawCatSlug = (p.categories?.slug || p.category || '').toLowerCase().trim();
+  const explicitCat = (p.category || '').toLowerCase().trim();
 
-  if (isPrem || rawCatSlug === 'premium' || rawSub.startsWith('premium-')) {
+  // 1. Premium Collection
+  if (isPrem || explicitCat === 'premium' || rawCatSlug === 'premium' || rawSub.startsWith('premium-')) {
     let sub = rawSub;
     if (!sub || !sub.startsWith('premium-')) {
-      if (sub === 'backpacks' || rawCatSlug.includes('backpack')) sub = 'premium-backpacks';
+      if (sub === 'duffle' || rawCatSlug.includes('duffle')) sub = 'premium-duffle';
       else if (sub === 'luggage' || rawCatSlug.includes('luggage')) sub = 'premium-luggage';
-      else if (sub === 'duffle' || rawCatSlug.includes('duffle')) sub = 'premium-duffle';
       else if (sub === 'accessories' || rawCatSlug.includes('access')) sub = 'premium-accessories';
       else sub = 'premium-backpacks';
     }
     return { mainCat: 'premium', subCat: sub };
   }
 
-  // Junior
-  if (rawCatSlug === 'junior' || rawSub.includes('junior') || p.gender === 'kids' || ['kids-trolley', 'trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'].includes(rawSub)) {
-    return { mainCat: 'junior', subCat: rawSub || 'school-backpacks' };
+  // 2. Explicit parent category set on product
+  if (['travel', 'backpacks', 'accessories', 'junior'].includes(explicitCat)) {
+    const validSubs = (SUBCATEGORIES[explicitCat] || []).map(s => s.value);
+    const sub = validSubs.includes(rawSub) ? rawSub : (validSubs[0] || '');
+    return { mainCat: explicitCat, subCat: sub };
   }
 
-  // Backpacks
-  const backpackSubs = ['college-backpacks', 'school-backpacks', 'laptop-backpacks', 'trekking-backpacks'];
-  if (backpackSubs.includes(rawSub) || backpackSubs.includes(rawCatSlug) || rawCatSlug === 'backpacks') {
-    const matchedSub = backpackSubs.includes(rawSub) ? rawSub : (backpackSubs.includes(rawCatSlug) ? rawCatSlug : 'college-backpacks');
-    return { mainCat: 'backpacks', subCat: matchedSub };
+  // 3. Junior (by category slug or junior-specific subcategories)
+  const juniorSubs = ['kids-trolley', 'trolley-backpacks', 'combo-set', 'pouches', 'lunch-bags', 'kids-accessories'];
+  if (rawCatSlug === 'junior' || juniorSubs.includes(rawSub) || juniorSubs.includes(rawCatSlug)) {
+    const validSubs = (SUBCATEGORIES.junior || []).map(s => s.value);
+    const sub = validSubs.includes(rawSub) ? rawSub : (validSubs.includes(rawCatSlug) ? rawCatSlug : 'school-backpacks');
+    return { mainCat: 'junior', subCat: sub };
   }
 
-  // Travel
+  // 4. Travel
   const travelSubs = ['luggage', 'duffle', 'trolley-bags'];
-  if (travelSubs.includes(rawSub) || travelSubs.includes(rawCatSlug) || rawCatSlug === 'travel') {
-    const matchedSub = travelSubs.includes(rawSub) ? rawSub : (travelSubs.includes(rawCatSlug) ? rawCatSlug : 'luggage');
-    return { mainCat: 'travel', subCat: matchedSub };
+  if (rawCatSlug === 'travel' || travelSubs.includes(rawSub) || travelSubs.includes(rawCatSlug)) {
+    const sub = rawSub === 'duffle' || rawCatSlug === 'duffle' ? 'duffle' : 'luggage';
+    return { mainCat: 'travel', subCat: sub };
   }
 
-  // Accessories
+  // 5. Accessories
   const accessSubs = ['pouch', 'lunch-bag', 'daypack', 'tote-bag'];
-  if (accessSubs.includes(rawSub) || accessSubs.includes(rawCatSlug) || rawCatSlug === 'accessories') {
-    const matchedSub = accessSubs.includes(rawSub) ? rawSub : (accessSubs.includes(rawCatSlug) ? rawCatSlug : 'pouch');
-    return { mainCat: 'accessories', subCat: matchedSub };
+  if (rawCatSlug === 'accessories' || accessSubs.includes(rawSub) || accessSubs.includes(rawCatSlug)) {
+    const validSubs = (SUBCATEGORIES.accessories || []).map(s => s.value);
+    const sub = validSubs.includes(rawSub) ? rawSub : (validSubs.includes(rawCatSlug) ? rawCatSlug : 'pouch');
+    return { mainCat: 'accessories', subCat: sub };
   }
 
-  return { mainCat: 'backpacks', subCat: rawSub || 'college-backpacks' };
+  // 6. Backpacks (default)
+  const backpackSubs = ['college-backpacks', 'school-backpacks', 'laptop-backpacks', 'trekking-backpacks'];
+  const matchedSub = backpackSubs.includes(rawSub) ? rawSub : (backpackSubs.includes(rawCatSlug) ? rawCatSlug : 'college-backpacks');
+  return { mainCat: 'backpacks', subCat: matchedSub };
 };
 
 export type ColorVariant = { color: string; colorCode: string; images: string[] };
 
 export const BLANK_FORM = (): Partial<Product> => ({
-  name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: '',
+  name: '', price: 0, originalPrice: 0, category: 'backpacks', subcategory: 'college-backpacks',
   gender: 'unisex', ageRange: '', stock: 50, description: '', isPremium: false, images: [],
   features: [], sku: 'PB-' + Math.floor(1000 + Math.random() * 9000),
   size: '', juniorStyle: '', amazon_url: '', flipkart_url: '', myntra_url: '', ajio_url: '',
@@ -178,7 +188,8 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
 
   const filteredProducts = products.filter(p => {
     const matchSearch = !productSearch || (p.name || '').toLowerCase().includes(productSearch.toLowerCase());
-    const matchCat = productCategoryFilter === 'all' || ((p as any).categories?.slug || p.category) === productCategoryFilter;
+    const { mainCat } = resolveProductCategory(p);
+    const matchCat = productCategoryFilter === 'all' || mainCat === productCategoryFilter;
     return matchSearch && matchCat;
   });
 
@@ -222,22 +233,25 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
 
       const filteredImages = (formData.images || []).filter(Boolean);
       const mainImage = filteredImages[0] || formData.image || '';
+      const isPrem = formData.category === 'premium';
+      const selectedSub = formData.subcategory || formData.sub_category || (SUBCATEGORIES[formData.category || 'backpacks']?.[0]?.value || '');
 
       const cleanPayload: any = {
         name: formData.name,
         price: Number(formData.price),
         originalPrice: Number(formData.originalPrice),
         category: formData.category,
-        sub_category: formData.subcategory || formData.sub_category || '',
+        sub_category: selectedSub,
         description: formData.description || '',
         stock: Number(formData.stock),
-        gender: formData.gender || 'unisex',
-        ageRange: formData.ageRange || '',
+        gender: formData.gender || (formData.category === 'junior' ? 'kids' : 'unisex'),
+        ageRange: formData.gender === 'kids' ? (formData.ageRange || '') : '',
         size: formData.size || '',
-        junior_style: formData.juniorStyle || formData.junior_style || null,
+        junior_style: formData.category === 'junior' ? (formData.juniorStyle || formData.junior_style || null) : null,
         isNew: !!formData.isNew,
         highlighted: !!formData.highlighted,
-        isPremium: formData.category === 'premium' || !!formData.isPremium,
+        isPremium: isPrem,
+        is_premium: isPrem,
         features: Array.isArray(formData.features) ? formData.features : [],
         image: mainImage,
         images: filteredImages,
@@ -255,11 +269,30 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
 
       if (editingProduct) {
         const updated = await api.updateProduct(editingProduct.id, cleanPayload);
-        setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...updated } : p));
+        const mergedProduct: Product = {
+          ...editingProduct,
+          ...cleanPayload,
+          ...updated,
+          category: formData.category,
+          subcategory: selectedSub,
+          sub_category: selectedSub,
+          is_premium: isPrem,
+          isPremium: isPrem,
+        };
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? mergedProduct : p));
         showToast('Product Updated!');
       } else {
         const newProduct = await api.createProduct(cleanPayload);
-        setProducts(prev => [...prev, newProduct]);
+        const mergedNewProduct: Product = {
+          ...cleanPayload,
+          ...newProduct,
+          category: formData.category,
+          subcategory: selectedSub,
+          sub_category: selectedSub,
+          is_premium: isPrem,
+          isPremium: isPrem,
+        };
+        setProducts(prev => [...prev, mergedNewProduct]);
         showToast('New Product Registered!');
       }
       setIsAddingProduct(false);
@@ -334,14 +367,32 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Category (Main Section) <span className="text-red-500">*</span></label>
-                <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: '', isPremium: e.target.value === 'premium' ? true : formData.isPremium })} className={inputCls}>
+                <select
+                  value={formData.category || 'backpacks'}
+                  onChange={(e) => {
+                    const newCat = e.target.value;
+                    const defaultSub = SUBCATEGORIES[newCat]?.[0]?.value || '';
+                    setFormData(prev => ({
+                      ...prev,
+                      category: newCat,
+                      subcategory: defaultSub,
+                      sub_category: defaultSub,
+                      isPremium: newCat === 'premium',
+                      gender: newCat === 'junior' ? 'kids' : (prev.gender === 'kids' ? 'unisex' : (prev.gender || 'unisex')),
+                    }));
+                  }}
+                  className={inputCls}
+                >
                   {MAIN_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-gray-600 uppercase ml-1">Sub-Category (Type)</label>
-                <select value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className={inputCls}>
-                  <option value="">-- Pick Sub-Category --</option>
+                <select
+                  value={formData.subcategory || formData.sub_category || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, subcategory: e.target.value, sub_category: e.target.value }))}
+                  className={inputCls}
+                >
                   {(SUBCATEGORIES[formData.category || 'backpacks'] || []).map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </div>
@@ -678,7 +729,7 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                     <div className="p-4 flex flex-col flex-1 justify-between">
                       <div>
                         <p className="text-[9px] font-black text-priority-blue uppercase tracking-widest truncate mb-1">
-                          {(p.categories?.slug || p.category || 'Standard').toUpperCase()} • {(p.gender || 'Unisex').toUpperCase()}
+                          {resolveProductCategory(p).mainCat.toUpperCase()} • {(p.sub_category || (p as any).subcategory || resolveProductCategory(p).subCat || p.gender || 'Standard').toUpperCase()}
                         </p>
                         <h4 className="text-sm font-black text-gray-900 leading-tight mb-1 truncate">{p.name || 'Unnamed Product'}</h4>
                         <div className="flex items-baseline gap-2 mb-2">
@@ -728,11 +779,12 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                               originalPrice: p.originalPrice || (p as any).original_price || p.price || 0,
                               category: mainCat,
                               subcategory: subCat,
+                              sub_category: subCat,
                               stock: p.stock ?? 50,
-                              isPremium: mainCat === 'premium' || !!((p as any).is_premium ?? p.isPremium),
+                              isPremium: mainCat === 'premium',
                               highlighted: (p as any).is_highlighted ?? p.highlighted ?? false,
                               isNew: (p as any).is_new ?? p.isNew ?? false,
-                              gender: p.gender || 'unisex',
+                              gender: p.gender || (mainCat === 'junior' ? 'kids' : 'unisex'),
                               size: p.size || '',
                               ageRange: (p as any).age_range || p.ageRange || '',
                               juniorStyle: (p as any).junior_style || (p as any).juniorStyle || '',
@@ -749,7 +801,13 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                               colorCode: v.code || v.colorCode || '#000',
                               images: (v.images || []).filter(Boolean),
                             })));
-                            setDiscountPercent(0);
+                            const orig = p.originalPrice || (p as any).original_price || p.price || 0;
+                            const sale = p.price || 0;
+                            if (orig > sale && orig > 0) {
+                              setDiscountPercent(Math.round(((orig - sale) / orig) * 100));
+                            } else {
+                              setDiscountPercent(0);
+                            }
                             setIsAddingProduct(true);
                           }}
                           className="text-[10px] font-black text-priority-blue uppercase tracking-widest hover:underline decoration-2 flex items-center gap-1"

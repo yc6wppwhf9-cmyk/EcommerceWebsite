@@ -278,6 +278,9 @@ export const updateProduct = async (req: Request, res: Response) => {
       }
     }
     if (catData) updates.category_id = catData.id;
+    if (req.body.sub_category !== undefined || req.body.subcategory !== undefined) {
+      updates.sub_category = subSlug || '';
+    }
   }
 
   // 2. Map fields and handle both camelCase and snake_case
@@ -295,8 +298,10 @@ export const updateProduct = async (req: Request, res: Response) => {
 
   if (mainSlug === 'premium' || subSlug.startsWith('premium-')) {
     updates.is_premium = true;
-  } else if (req.body.isPremium !== undefined) {
-    updates.is_premium = !!req.body.isPremium;
+  } else if (req.body.isPremium !== undefined || req.body.is_premium !== undefined) {
+    updates.is_premium = req.body.isPremium !== undefined ? !!req.body.isPremium : !!req.body.is_premium;
+  } else if (mainSlug) {
+    updates.is_premium = false;
   }
 
   if (Array.isArray(updates.images)) {
