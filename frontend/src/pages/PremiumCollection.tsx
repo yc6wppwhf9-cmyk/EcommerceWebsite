@@ -290,17 +290,16 @@ export const PremiumCollection = () => {
             loading="lazy"
             decoding="async"
           />
-          <div className="absolute bottom-0 left-0 right-0 z-10 pb-6 md:pb-10">
+          <div className="absolute bottom-0 left-0 right-0 z-10 pb-3 sm:pb-6 md:pb-10">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="flex flex-col items-center"
             >
               <Link
                 to={editorialBanner.url}
-                className="flex items-center justify-center border border-white text-white font-outfit font-medium tracking-[0.3em] md:tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-colors"
-                style={{ width: 'clamp(160px, 50vw, 228px)', height: '44px', fontSize: 'clamp(11px, 3vw, 16px)' }}
+                className="inline-flex items-center justify-center border border-white/90 text-white font-outfit font-medium tracking-[0.25em] md:tracking-[0.35em] uppercase hover:bg-white hover:text-black transition-all duration-300 px-4 sm:px-6 md:px-8 py-1.5 sm:py-2 md:py-2.5 text-[10px] sm:text-[12px] md:text-[14px] backdrop-blur-[2px]"
               >
                 SHOP NOW
               </Link>
