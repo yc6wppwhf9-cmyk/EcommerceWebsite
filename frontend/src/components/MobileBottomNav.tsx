@@ -9,7 +9,7 @@ export const MobileBottomNav = ({ onSearchOpen }: { onSearchOpen: () => void }) 
   const { isAuthenticated, user } = useAuth();
 
   const accountPath = isAuthenticated
-    ? (user?.role === 'admin' ? '/admin' : '/account')
+    ? (user?.role === 'admin' || user?.role === 'hr' ? '/admin' : '/account')
     : '/login';
 
   const isJunior = location.pathname.startsWith('/junior') || new URLSearchParams(location.search).get('theme') === 'junior';

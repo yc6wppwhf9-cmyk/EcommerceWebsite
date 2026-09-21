@@ -41,8 +41,9 @@ const ProtectedRoute = ({ children, adminOnly = false, userOnly = false }: { chi
   const { isAuthenticated, user, isLoading } = useAuth();
   if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (adminOnly && user?.role !== 'admin') return <Navigate to="/" replace />;
-  if (userOnly && user?.role === 'admin') return <Navigate to="/admin" replace />;
+  const isStaff = user?.role === 'admin' || user?.role === 'hr';
+  if (adminOnly && !isStaff) return <Navigate to="/" replace />;
+  if (userOnly && isStaff) return <Navigate to="/admin" replace />;
   return <>{children}</>;
 };
 

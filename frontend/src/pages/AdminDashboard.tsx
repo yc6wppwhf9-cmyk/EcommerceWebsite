@@ -24,7 +24,8 @@ import { AdminChatLogs } from '../components/admin/AdminChatLogs';
 export const AdminDashboard = () => {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const isHR = user?.role === 'hr';
+  const [activeTab, setActiveTab] = useState(user?.role === 'hr' ? 'jobs' : 'overview');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -136,12 +137,29 @@ export const AdminDashboard = () => {
   };
 
   useEffect(() => {
+    if (isHR && activeTab !== 'jobs' && activeTab !== 'applications') {
+      setActiveTab('jobs');
+    }
+  }, [isHR, activeTab]);
+
+  useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate('/login');
-    if (user && user.role !== 'admin') navigate('/account');
+    if (user && user.role !== 'admin' && user.role !== 'hr') navigate('/account');
   }, [isAuthenticated, isLoading, navigate, user]);
 
   const fetchData = async () => {
     setFetchLoading(true);
+    if (isHR) {
+      const [jobRes, appRes] = await Promise.allSettled([
+        api.getJobs({ status: 'all' }),
+        api.getAllApplications(),
+      ]);
+      if (jobRes.status === 'fulfilled') setJobs(jobRes.value?.jobs || []);
+      if (appRes.status === 'fulfilled') setApplications(appRes.value?.applications || []);
+      setFetchLoading(false);
+      return;
+    }
+
     const [prodRes, orderRes, jobRes, appRes] = await Promise.allSettled([
       api.getProducts({ limit: '999', include_inactive: 'true' }),
       api.getOrders({ limit: 500 }),
@@ -182,10 +200,12 @@ export const AdminDashboard = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchData();
-      fetchCoupons();
-      api.getAllUsers().then(setAllUsers).catch(() => {});
+      if (!isHR) {
+        fetchCoupons();
+        api.getAllUsers().then(setAllUsers).catch(() => {});
+      }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isHR]);
 
   // Pricing Logic
   useEffect(() => {
@@ -195,16 +215,21 @@ export const AdminDashboard = () => {
     }
   }, [discountPercent, formData.originalPrice]);
 
-  const tabs = [
-    { id: 'overview', label: 'Stats', icon: LayoutDashboard },
-    { id: 'inventory', label: 'Products', icon: Box },
-    { id: 'chat-logs', label: 'Bot Queries', icon: MessageSquareText },
-    { id: 'bulk', label: 'Add Many', icon: FileSpreadsheet },
-    { id: 'banners', label: 'Banners', icon: ImageIcon },
-    { id: 'jobs', label: 'Jobs', icon: Briefcase },
-    { id: 'applications', label: 'Applications', icon: FileText },
-    { id: 'customers', label: 'Users', icon: Users },
-  ];
+  const tabs = isHR
+    ? [
+        { id: 'jobs', label: 'Jobs', icon: Briefcase },
+        { id: 'applications', label: 'Applications', icon: FileText },
+      ]
+    : [
+        { id: 'overview', label: 'Stats', icon: LayoutDashboard },
+        { id: 'inventory', label: 'Products', icon: Box },
+        { id: 'chat-logs', label: 'Bot Queries', icon: MessageSquareText },
+        { id: 'bulk', label: 'Add Many', icon: FileSpreadsheet },
+        { id: 'banners', label: 'Banners', icon: ImageIcon },
+        { id: 'jobs', label: 'Jobs', icon: Briefcase },
+        { id: 'applications', label: 'Applications', icon: FileText },
+        { id: 'customers', label: 'Users', icon: Users },
+      ];
 
   const handleSaveJob = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -339,8 +364,12 @@ export const AdminDashboard = () => {
         {/* Simple Header */}
         <div className="flex items-center justify-between mb-6 sm:mb-10">
           <div>
-            <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight">Shop Admin</h1>
-            <p className="text-[10px] font-black text-priority-blue uppercase tracking-widest mt-1">Manage Store Inventory</p>
+            <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight">
+              {isHR ? 'HR Careers Portal' : 'Shop Admin'}
+            </h1>
+            <p className="text-[10px] font-black text-priority-blue uppercase tracking-widest mt-1">
+              {isHR ? 'Manage Job Postings & Candidate Applications' : 'Manage Store Inventory & Operations'}
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => navigate('/')} className="px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 font-bold text-xs flex items-center gap-2 hover:bg-gray-50 transition-all">

@@ -27,7 +27,7 @@ export const config = {
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
   FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.in',
-  HR_EMAIL: process.env.HR_EMAIL || 'humanresource@prioritybags.in',
+  HR_EMAIL: (process.env.HR_EMAIL && process.env.HR_EMAIL !== 'hr@hscvpl.com') ? process.env.HR_EMAIL : 'humanresource@prioritybags.in',
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
   RESEND_API_KEY: process.env.RESEND_API_KEY || process.env.SMTP_PASS || '',
   // Shipping constants (single source of truth for backend + frontend)

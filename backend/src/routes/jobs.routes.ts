@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import * as JobsController from '../controllers/jobs.controller';
-import { authenticateToken, requireAdmin } from '../middleware/auth';
+import { authenticateToken, requireAdminOrHR } from '../middleware/auth';
 import { validateCsrf } from '../middleware/csrf';
 
 const router = Router();
@@ -19,18 +19,18 @@ router.post('/upload-resume', resumeUpload.single('resume'), JobsController.uplo
 
 // Public: list open jobs + single job
 router.get('/', JobsController.getJobs);
-router.get('/applications', authenticateToken, requireAdmin, JobsController.getAllApplications);
+router.get('/applications', authenticateToken, requireAdminOrHR, JobsController.getAllApplications);
 router.get('/:id', JobsController.getJobById);
 
-// Admin: create / update / delete jobs
-router.post('/', authenticateToken, requireAdmin, validateCsrf, JobsController.createJob);
-router.put('/:id', authenticateToken, requireAdmin, validateCsrf, JobsController.updateJob);
-router.delete('/:id', authenticateToken, requireAdmin, validateCsrf, JobsController.deleteJob);
+// Admin / HR: create / update / delete jobs
+router.post('/', authenticateToken, requireAdminOrHR, validateCsrf, JobsController.createJob);
+router.put('/:id', authenticateToken, requireAdminOrHR, validateCsrf, JobsController.updateJob);
+router.delete('/:id', authenticateToken, requireAdminOrHR, validateCsrf, JobsController.deleteJob);
 
 // Applications: anyone can apply (no auth required for public applicants)
 router.post('/:jobId/apply', JobsController.submitApplication);
-router.get('/:jobId/applications', authenticateToken, requireAdmin, JobsController.getJobApplications);
-router.patch('/applications/:appId/status', authenticateToken, requireAdmin, validateCsrf, JobsController.updateApplicationStatus);
-router.delete('/applications/:appId', authenticateToken, requireAdmin, validateCsrf, JobsController.deleteApplication);
+router.get('/:jobId/applications', authenticateToken, requireAdminOrHR, JobsController.getJobApplications);
+router.patch('/applications/:appId/status', authenticateToken, requireAdminOrHR, validateCsrf, JobsController.updateApplicationStatus);
+router.delete('/applications/:appId', authenticateToken, requireAdminOrHR, validateCsrf, JobsController.deleteApplication);
 
 export default router;

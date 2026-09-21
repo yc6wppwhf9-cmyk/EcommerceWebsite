@@ -166,16 +166,16 @@ export const Careers = () => {
       </section>
 
       {/* ── 2. Main Content Grid (Openings + Application Form) ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* ── Left Column: Openings & Info ── */}
-          <div className="lg:col-span-5 space-y-8">
+          <div className={`${jobs.length === 0 ? 'lg:col-span-4' : 'lg:col-span-5'} space-y-6`}>
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-gray-900 flex items-center gap-2.5">
-                    <Briefcase size={20} className="text-priority-blue" />
+                    <Briefcase size={22} className="text-priority-blue" />
                     Open Roles
                   </h2>
                   <p className="text-xs text-gray-500 font-medium mt-0.5">Explore available positions across teams</p>
@@ -192,24 +192,36 @@ export const Careers = () => {
                   ))}
                 </div>
               ) : jobs.length === 0 ? (
-                /* No Openings Clean Card */
-                <div className="bg-white rounded-2xl p-7 border border-gray-200/80 shadow-sm space-y-4">
-                  <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                /* No Openings Clean Info Card */
+                <div className="bg-white rounded-3xl p-7 sm:p-8 border border-gray-200/80 shadow-sm space-y-5">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center">
                     <Clock size={22} />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-gray-900">No Active Openings Right Now</h3>
-                    <p className="text-xs text-gray-500 font-medium leading-relaxed mt-1">
-                      We don’t have active vacancies published right now, but we are always excited to discover great talent.
+                    <h3 className="text-lg font-bold text-gray-900">No Active Openings Right Now</h3>
+                    <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed mt-1.5">
+                      We don’t have published vacancies right now, but our talent team is constantly reviewing profiles for future design, engineering, sales, and operations openings.
                     </p>
                   </div>
-                  <div className="pt-2 border-t border-gray-100">
-                    <p className="text-[11px] text-gray-600 font-medium">
-                      Submit a <strong>General Application</strong> on the right, or drop your CV at{' '}
-                      <a href={`mailto:${HR_EMAIL}`} className="text-priority-blue font-bold hover:underline">
-                        {HR_EMAIL}
-                      </a>.
+                  
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">
+                      Talent Community
+                    </span>
+                    <p className="text-xs text-gray-700 font-medium leading-relaxed">
+                      Submit a <strong>General Application</strong> using the form, or email your resume directly to our HR team at:
                     </p>
+                    <a
+                      href={`mailto:${HR_EMAIL}`}
+                      className="text-xs text-priority-blue font-extrabold hover:underline block break-all pt-1"
+                    >
+                      {HR_EMAIL}
+                    </a>
+                  </div>
+
+                  <div className="pt-2 text-[11px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+                    Applications Reviewed Daily
                   </div>
                 </div>
               ) : (
@@ -263,28 +275,28 @@ export const Careers = () => {
             </div>
           </div>
 
-          {/* ── Right Column: High-End Application Form ── */}
-          <div ref={formRef} className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xl">
+          {/* ── Right Column: Full-Sized High-End Application Form ── */}
+          <div ref={formRef} className={`${jobs.length === 0 ? 'lg:col-span-8' : 'lg:col-span-7'}`}>
+            <div className="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-gray-200/80 shadow-xl">
               
               {submittedSuccessfully ? (
                 /* Success Message */
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="py-12 text-center space-y-4"
+                  className="py-14 text-center space-y-4"
                 >
                   <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
                     <CheckCircle2 size={36} />
                   </div>
-                  <h3 className="text-2xl font-black uppercase text-gray-900">Application Received!</h3>
-                  <p className="text-sm text-gray-600 max-w-md mx-auto font-medium">
+                  <h3 className="text-2xl sm:text-3xl font-black uppercase text-gray-900">Application Received!</h3>
+                  <p className="text-sm sm:text-base text-gray-600 max-w-lg mx-auto font-medium">
                     Thank you for applying. Our talent team will review your profile and reach out via email/phone if your background aligns with our needs.
                   </p>
                   <div className="pt-4">
                     <button
                       onClick={() => setSubmittedSuccessfully(false)}
-                      className="px-6 py-3 bg-black text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-gray-800 transition-colors"
+                      className="px-8 py-3.5 bg-black text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-gray-800 transition-colors shadow-sm"
                     >
                       Submit Another Application
                     </button>
@@ -293,35 +305,55 @@ export const Careers = () => {
               ) : (
                 /* Application Form */
                 <>
-                  <div className="mb-8">
-                    <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-gray-900">
+                  <div className="mb-8 pb-6 border-b border-gray-100">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-gray-900">
                       Submit Application
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1">
-                      Select a role or submit a general inquiry to our hiring team.
+                      Select a role or submit a general inquiry directly to our hiring team.
                     </p>
                   </div>
 
-                  <form onSubmit={handleSubmit} noValidate className="space-y-5">
-                    {/* Full Name */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-700">
-                        Full Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Rahul Sharma"
-                        value={form.name}
-                        onChange={set('name')}
-                        className={`w-full bg-[#f8f9fa] border ${errors.name ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all`}
-                      />
-                      {errors.name && <p className="text-red-500 text-[10px] font-bold tracking-wide mt-1">{errors.name}</p>}
+                  <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                    {/* Row 1: Full Name & Position */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-700">
+                          Full Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Rahul Sharma"
+                          value={form.name}
+                          onChange={set('name')}
+                          className={`w-full bg-[#f8f9fa] border ${errors.name ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl px-4 py-3.5 sm:py-4 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all`}
+                        />
+                        {errors.name && <p className="text-red-500 text-[10px] font-bold tracking-wide mt-1">{errors.name}</p>}
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-700">
+                          Position of Interest
+                        </label>
+                        <select
+                          value={form.position}
+                          onChange={set('position')}
+                          className="w-full bg-[#f8f9fa] border border-gray-200 rounded-xl px-4 py-3.5 sm:py-4 text-sm font-semibold text-gray-900 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all cursor-pointer"
+                        >
+                          <option value="">General Application (Open Inquiry)</option>
+                          {jobs.map(j => (
+                            <option key={j.id} value={j.title}>
+                              {j.title} {j.department ? `(${j.department})` : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
-                    {/* Email & Phone */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Row 2: Email & Phone */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-700">
+                        <label className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-700">
                           Email Address <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -329,13 +361,13 @@ export const Careers = () => {
                           placeholder="rahul@example.com"
                           value={form.email}
                           onChange={set('email')}
-                          className={`w-full bg-[#f8f9fa] border ${errors.email ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all`}
+                          className={`w-full bg-[#f8f9fa] border ${errors.email ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl px-4 py-3.5 sm:py-4 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all`}
                         />
                         {errors.email && <p className="text-red-500 text-[10px] font-bold tracking-wide mt-1">{errors.email}</p>}
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-700">
+                        <label className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-700">
                           Phone Number <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -343,53 +375,39 @@ export const Careers = () => {
                           placeholder="+91 98765 43210"
                           value={form.phone}
                           onChange={set('phone')}
-                          className={`w-full bg-[#f8f9fa] border ${errors.phone ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all`}
+                          className={`w-full bg-[#f8f9fa] border ${errors.phone ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl px-4 py-3.5 sm:py-4 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all`}
                         />
                         {errors.phone && <p className="text-red-500 text-[10px] font-bold tracking-wide mt-1">{errors.phone}</p>}
                       </div>
                     </div>
 
-                    {/* Position Applied For */}
+                    {/* Row 3: Resume Upload Dropzone */}
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-700">
-                        Position of Interest
-                      </label>
-                      <select
-                        value={form.position}
-                        onChange={set('position')}
-                        className="w-full bg-[#f8f9fa] border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-gray-900 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all cursor-pointer"
-                      >
-                        <option value="">General Application (Open Inquiry)</option>
-                        {jobs.map(j => (
-                          <option key={j.id} value={j.title}>
-                            {j.title} {j.department ? `(${j.department})` : ''}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Resume Upload Dropzone */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-700 flex items-center justify-between">
-                        <span>Resume / CV (PDF or DOC)</span>
-                        <span className="text-[9px] font-bold text-gray-400">Max 5 MB</span>
+                      <label className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-700 flex items-center justify-between">
+                        <span>Resume / CV (PDF, DOC, DOCX)</span>
+                        <span className="text-[10px] font-bold text-gray-400">Max 5 MB</span>
                       </label>
                       <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-3 bg-[#f8f9fa] hover:bg-[#f1f3f5] border border-dashed border-gray-300 rounded-xl px-4 py-3.5 cursor-pointer transition-all group"
+                        className="flex items-center gap-4 bg-[#f8f9fa] hover:bg-[#f1f3f5] border border-dashed border-gray-300 rounded-2xl px-5 py-4 cursor-pointer transition-all group"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-black shrink-0">
-                          <Paperclip size={16} />
+                        <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-black shrink-0 shadow-2xs">
+                          <Paperclip size={18} />
                         </div>
                         <div className="flex-1 min-w-0">
                           {form.resume ? (
-                            <span className="text-xs font-bold text-gray-900 truncate block">
+                            <span className="text-sm font-bold text-gray-900 truncate block">
                               {form.resume.name} ({(form.resume.size / 1024).toFixed(0)} KB)
                             </span>
                           ) : (
-                            <span className="text-xs font-medium text-gray-500 group-hover:text-gray-700 block">
-                              Click to attach or upload your resume...
-                            </span>
+                            <div>
+                              <span className="text-sm font-semibold text-gray-700 block">
+                                Click to attach or browse your resume file
+                              </span>
+                              <span className="text-[11px] text-gray-400 font-medium block mt-0.5">
+                                Supports PDF, DOC, or DOCX up to 5MB
+                              </span>
+                            </div>
                           )}
                         </div>
                         {form.resume && (
@@ -400,10 +418,10 @@ export const Careers = () => {
                               setForm(prev => ({ ...prev, resume: null }));
                               if (fileInputRef.current) fileInputRef.current.value = '';
                             }}
-                            className="p-1 rounded-md text-gray-400 hover:text-red-500 transition-colors"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                             title="Remove file"
                           >
-                            <X size={14} />
+                            <X size={16} />
                           </button>
                         )}
                       </div>
@@ -416,36 +434,36 @@ export const Careers = () => {
                       />
                     </div>
 
-                    {/* Cover Letter / Tell Us About Yourself */}
+                    {/* Row 4: Cover Letter / Tell Us About Yourself */}
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-700">
+                      <label className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-700">
                         Why Priority & About You <span className="text-red-500">*</span>
                       </label>
                       <textarea
-                        rows={4}
-                        placeholder="Tell us about your background, relevant experience, and what excites you about working at Priority Bags..."
+                        rows={5}
+                        placeholder="Tell us about your background, relevant experience, key achievements, and what excites you about building the future with Priority Bags..."
                         value={form.cover_letter}
                         onChange={set('cover_letter')}
-                        className={`w-full bg-[#f8f9fa] border ${errors.cover_letter ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-xl p-4 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all resize-y`}
+                        className={`w-full bg-[#f8f9fa] border ${errors.cover_letter ? 'border-red-400 bg-red-50/20' : 'border-gray-200'} rounded-2xl p-4 sm:p-5 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black transition-all resize-y`}
                       />
                       {errors.cover_letter && <p className="text-red-500 text-[10px] font-bold tracking-wide mt-1">{errors.cover_letter}</p>}
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="pt-2">
+                    {/* Row 5: Submit Button */}
+                    <div className="pt-3">
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full bg-black hover:bg-gray-800 text-white font-black text-xs uppercase tracking-[0.2em] py-4 rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99]"
+                        className="w-full bg-black hover:bg-gray-800 text-white font-black text-sm uppercase tracking-[0.2em] py-4 sm:py-5 rounded-2xl shadow-md hover:shadow-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 active:scale-[0.99]"
                       >
                         {submitting ? (
                           <>
-                            <Loader2 size={16} className="animate-spin" />
+                            <Loader2 size={18} className="animate-spin" />
                             Submitting Application...
                           </>
                         ) : (
                           <>
-                            Submit Application <Send size={14} />
+                            Submit Application <Send size={16} />
                           </>
                         )}
                       </button>

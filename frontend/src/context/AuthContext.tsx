@@ -25,7 +25,7 @@ function mapApiUser(u: any): User {
     phone: u.phone,
     addresses: u.addresses || [],
     createdAt: u.created_at || new Date().toISOString(),
-    role: u.role === 'admin' ? 'admin' : 'user',
+    role: u.role === 'admin' ? 'admin' : (u.role === 'hr' ? 'hr' : 'user'),
   };
 }
 

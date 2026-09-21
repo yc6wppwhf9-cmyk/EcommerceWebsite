@@ -252,7 +252,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             {/* Account / User */}
             {isAuthenticated ? (
               <Link
-                to={user?.role === 'admin' ? '/admin' : '/account'}
+                to={user?.role === 'admin' || user?.role === 'hr' ? '/admin' : '/account'}
                 className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 opacity-80 hover:opacity-100 hover:bg-ink/[0.06]"
                 aria-label="Account"
               >
@@ -370,8 +370,8 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
             <div className="px-5 pt-4 pb-8 border-t border-gray-100 space-y-3 shrink-0">
               {isAuthenticated ? (
                 <>
-                  <Link to={user?.role === 'admin' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
-                    {user?.role === 'admin' ? 'Admin Panel' : 'My Account'}
+                  <Link to={user?.role === 'admin' || user?.role === 'hr' ? "/admin" : "/account"} className="w-full bg-priority-blue text-white py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block" onClick={() => setIsMenuOpen(false)}>
+                    {user?.role === 'admin' ? 'Admin Panel' : user?.role === 'hr' ? 'HR Portal' : 'My Account'}
                   </Link>
                   <button onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full bg-gray-100 text-black py-4 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-center block">Logout</button>
                 </>

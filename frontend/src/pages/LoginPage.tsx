@@ -18,7 +18,7 @@ export const LoginPage = () => {
 
   useEffect(() => {
     if (user && !registered) {
-      navigate(user.role === 'admin' ? '/admin' : '/account');
+      navigate(user.role === 'admin' || user.role === 'hr' ? '/admin' : '/account');
     }
   }, [user, navigate, registered]);
 

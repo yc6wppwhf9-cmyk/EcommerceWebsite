@@ -46,3 +46,10 @@ export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction
   }
   next();
 }
+
+export function requireAdminOrHR(req: AuthRequest, res: Response, next: NextFunction) {
+  if (req.user?.role !== 'admin' && req.user?.role !== 'hr') {
+    return res.status(403).json({ error: 'Admin or HR access required' });
+  }
+  next();
+}

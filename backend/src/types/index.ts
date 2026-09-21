@@ -3,7 +3,7 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  role: 'customer' | 'admin';
+  role: 'customer' | 'admin' | 'hr';
   is_verified: boolean;
   verification_token?: string;
   reset_token?: string;
