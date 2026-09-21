@@ -24,12 +24,13 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
   };
 
   const isSmall = size === 'sm';
+  const pillLayoutId = `brand-pill-bg-${size}`;
 
   return (
     <div
       className={`inline-flex items-center rounded-full p-1 md:p-1.5 backdrop-blur-md transition-all duration-300 select-none ${
         isPremium
-          ? 'bg-white/15 border border-white/30 shadow-[inset_0_1px_4px_rgba(255,255,255,0.1)]'
+          ? 'bg-white/10 border border-white/20 shadow-[inset_0_1px_4px_rgba(255,255,255,0.08)]'
           : isJunior
             ? 'bg-black/20 border border-white/25'
             : 'bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/15'
@@ -46,13 +47,13 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
         } ${
           !isPremium
             ? 'text-black'
-            : 'text-white/70 hover:text-white'
+            : 'text-white/80 hover:text-white'
         }`}
       >
         {!isPremium && (
           <motion.div
-            layoutId="brand-pill-bg"
-            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.2)] border border-black/5"
+            layoutId={pillLayoutId}
+            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.2)] border border-black/5 z-0"
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
           />
         )}
@@ -77,13 +78,13 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
             ? 'text-black'
             : isJunior
               ? 'text-white/80 hover:text-white'
-              : 'text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white'
+              : 'text-gray-500 hover:text-black dark:text-gray-300 dark:hover:text-white'
         }`}
       >
         {isPremium && (
           <motion.div
-            layoutId="brand-pill-bg"
-            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_12px_rgba(255,255,255,0.35)] border border-white"
+            layoutId={pillLayoutId}
+            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_12px_rgba(255,255,255,0.35)] border border-white z-0"
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
           />
         )}
