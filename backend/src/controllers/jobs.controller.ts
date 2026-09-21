@@ -211,7 +211,10 @@ export const submitApplication = async (req: AuthRequest, res: Response) => {
       const { data: job } = await supabase.from('jobs').select('title').eq('id', actualJobId).single();
       const jobTitle = job?.title || 'General Application';
 
-      const hrRecipient = (config.HR_EMAIL && config.HR_EMAIL !== 'hr@hscvpl.com') ? config.HR_EMAIL : 'humanresource@prioritybags.in';
+      const rawHr = (config.HR_EMAIL || '').trim();
+      const hrRecipient = (!rawHr || rawHr.toLowerCase().includes('hscvpl.com') || rawHr.toLowerCase() === 'hr@hscvpl.com')
+        ? 'humanresource@prioritybags.in'
+        : rawHr;
 
       await sendEmail(
         hrRecipient,

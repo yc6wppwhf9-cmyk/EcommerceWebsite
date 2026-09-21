@@ -12,10 +12,14 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     console.log(`ℹ️ [Email Dev Mode] To: ${to}, Subject: ${subject}`);
     return;
   }
+  let recipient = (to || '').trim();
+  if (recipient.toLowerCase().includes('hscvpl.com')) {
+    recipient = 'humanresource@prioritybags.in';
+  }
   try {
     const { error } = await resend.emails.send({
       from: `${APP_NAME} <${config.FROM_EMAIL}>`,
-      to,
+      to: recipient,
       subject,
       html,
     });

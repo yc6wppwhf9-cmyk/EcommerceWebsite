@@ -8,6 +8,13 @@ const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
 
 const isDev = (process.env.NODE_ENV || 'development') === 'development';
 
+function resolveHrEmail(val?: string): string {
+  if (!val) return 'humanresource@prioritybags.in';
+  const clean = val.trim().toLowerCase();
+  if (clean.includes('hscvpl.com') || clean.includes('hr@')) return 'humanresource@prioritybags.in';
+  return val.trim();
+}
+
 export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 4000,
@@ -27,7 +34,7 @@ export const config = {
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
   FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.in',
-  HR_EMAIL: (process.env.HR_EMAIL && process.env.HR_EMAIL !== 'hr@hscvpl.com') ? process.env.HR_EMAIL : 'humanresource@prioritybags.in',
+  HR_EMAIL: resolveHrEmail(process.env.HR_EMAIL),
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
   RESEND_API_KEY: process.env.RESEND_API_KEY || process.env.SMTP_PASS || '',
   // Shipping constants (single source of truth for backend + frontend)
