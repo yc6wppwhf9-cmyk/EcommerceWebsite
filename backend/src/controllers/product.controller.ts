@@ -91,7 +91,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
 
     if (isPremium === 'true' || category === 'premium') {
       if (isDuffleCategory) {
-        query = query.or('is_premium.eq.true,name.ilike.%Cult%,sku.in.("INV29561","INV29562","INV29563","INV30691","INV30692")');
+        query = query.or('is_premium.eq.true,name.ilike.%Cult%,sku.in.("INV29561","INV29562","INV29563")');
       } else {
         query = query.eq('is_premium', true);
       }
