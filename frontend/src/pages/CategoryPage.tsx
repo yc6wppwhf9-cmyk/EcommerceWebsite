@@ -78,6 +78,8 @@ export const CategoryPage = () => {
 
   const isGenderFilter = ['men', 'women', 'kids'].includes(slug);
   const isPremiumFilter = slug === 'premium';
+  const isPremiumTheme = themeParam === 'premium' || isPremiumFilter;
+  const showCategoryBanner = Boolean(CATEGORY_BANNERS[slug] && !isPremiumTheme);
 
   // If theme is premium, TRAWORLD only supports luggage, backpacks, and duffle.
   // Any other category (pouch, daypack, lunch-bag, tote-bag, accessories, etc.) auto-redirects to /premium.
@@ -102,11 +104,10 @@ export const CategoryPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedAgeRanges, setSelectedAgeRanges] = useState<string[]>(ageParam ? [ageParam] : []);
-  const [openFilters, setOpenFilters] = useState<string[]>(['subcategories', 'age', 'price', 'gender', 'sizes', 'features', 'colors']);
+  const [openFilters, setOpenFilters] = useState<string[]>(['subcategories', 'age', 'price', 'gender', 'sizes', 'colors']);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [mobileGridCols, setMobileGridCols] = useState<1 | 2>(2);
 
@@ -117,7 +118,6 @@ export const CategoryPage = () => {
   useEffect(() => {
     setSelectedSubcategories([]);
     setSelectedSizes([]);
-    setSelectedFeatures([]);
     setSelectedGenders([]);
     setSelectedColors([]);
     setSelectedAgeRanges(ageParam ? [ageParam] : []);
@@ -243,12 +243,6 @@ export const CategoryPage = () => {
     return Math.ceil(Math.max(...allProducts.map(p => p.price)) / 500) * 500;
   }, [allProducts]);
 
-  const availableFeatures = useMemo(() => {
-    const set = new Set<string>();
-    allProducts.forEach(p => (p.features || []).forEach(f => set.add(f)));
-    return Array.from(set).sort();
-  }, [allProducts]);
-
   const availableColors = useMemo(() => {
     const map = new Map<string, { name: string; code: string; border?: boolean }>();
     allProducts.forEach(p => {
@@ -301,7 +295,6 @@ export const CategoryPage = () => {
     selectedSubcategories.length,
     selectedAgeRanges.length,
     selectedSizes.length,
-    selectedFeatures.length,
     selectedGenders.length,
     selectedColors.length,
     priceRange < maxPrice ? 1 : 0,
@@ -311,7 +304,6 @@ export const CategoryPage = () => {
     setSelectedSubcategories([]);
     setSelectedAgeRanges([]);
     setSelectedSizes([]);
-    setSelectedFeatures([]);
     setSelectedGenders([]);
     setSelectedColors([]);
     setPriceRange(NO_PRICE_FILTER);
@@ -327,9 +319,6 @@ export const CategoryPage = () => {
       const matchesSize =
         selectedSizes.length === 0 ||
         selectedSizes.some(s => s.toLowerCase() === (p.size ?? '').toLowerCase());
-      const matchesFeatures =
-        selectedFeatures.length === 0 ||
-        selectedFeatures.some(f => (p.features ?? []).includes(f));
       const matchesGender =
         selectedGenders.length === 0 ||
         selectedGenders.map(g => g.toLowerCase()).includes((p.gender ?? '').toLowerCase());
@@ -346,7 +335,7 @@ export const CategoryPage = () => {
         selectedAgeRanges.length === 0 ||
         selectedAgeRanges.some(ar => ar.toLowerCase() === productAge.toLowerCase() || ((p as any).age_range && (p as any).age_range.toLowerCase().includes(ar.toLowerCase())));
 
-      return matchesPrice && matchesSub && matchesSize && matchesFeatures && matchesGender && matchesColor && matchesAge;
+      return matchesPrice && matchesSub && matchesSize && matchesGender && matchesColor && matchesAge;
     });
 
     if (sortBy === 'price-low') result.sort((a, b) => a.price - b.price);
@@ -354,7 +343,7 @@ export const CategoryPage = () => {
     else if (sortBy === 'rating') result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 
     return result;
-  }, [allProducts, priceRange, sortBy, selectedSubcategories, selectedAgeRanges, selectedSizes, selectedFeatures, selectedGenders, selectedColors]);
+  }, [allProducts, priceRange, sortBy, selectedSubcategories, selectedAgeRanges, selectedSizes, selectedGenders, selectedColors]);
 
   const toggleFilterSection = (id: string) =>
     setOpenFilters(prev =>
@@ -525,27 +514,6 @@ export const CategoryPage = () => {
         </FilterSection>
       )}
 
-      {availableFeatures.length > 0 && (
-        <FilterSection id="features" title="Features">
-          <div className="space-y-3">
-            {availableFeatures.map(feature => (
-              <CheckRow
-                key={feature}
-                label={feature}
-                checked={selectedFeatures.includes(feature)}
-                onChange={() =>
-                  setSelectedFeatures(prev =>
-                    prev.includes(feature)
-                      ? prev.filter(f => f !== feature)
-                      : [...prev, feature]
-                  )
-                }
-              />
-            ))}
-          </div>
-        </FilterSection>
-      )}
-
       {availableColors.length > 0 && (
         <FilterSection id="colors" title="Colors">
           <div className="flex flex-wrap gap-2.5 pt-1">
@@ -605,7 +573,7 @@ export const CategoryPage = () => {
 
   return (
     <>
-      <main className={`bg-bone min-h-screen font-outfit selection:bg-ink selection:text-white ${CATEGORY_BANNERS[slug] ? 'pt-0' : 'pt-3 md:pt-6'}`}>
+      <main className={`bg-bone min-h-screen font-outfit selection:bg-ink selection:text-white ${showCategoryBanner ? 'pt-0' : 'pt-3 md:pt-6'}`}>
         <SEO
           title={currentCategory?.title || pageTitle}
           description={`Shop ${pageTitle} at Priority Bags. Browse our premium collection with fast delivery across India.`}
@@ -613,7 +581,7 @@ export const CategoryPage = () => {
         />
 
         {/* Title or Category Banner */}
-        {CATEGORY_BANNERS[slug] ? (
+        {showCategoryBanner ? (
           <div className="w-full mb-6 md:mb-8">
             <motion.div
               initial={{ opacity: 0 }}
