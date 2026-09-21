@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Briefcase, Send, Paperclip, X, Loader2, Sparkles,
-  Mail, MapPin, CheckCircle2, Clock, Users, ArrowUpRight,
-  ShieldCheck, Rocket, HeartHandshake
+  Mail, MapPin, CheckCircle2, Clock, ArrowUpRight,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
@@ -29,24 +28,6 @@ const EMPTY_FORM: FormState = {
 };
 
 const HR_EMAIL = 'humanresource@prioritybags.in';
-
-const PERKS = [
-  {
-    icon: Rocket,
-    title: 'High-Impact Work',
-    desc: 'Shape products used by millions of students, commuters, and travelers across India.',
-  },
-  {
-    icon: HeartHandshake,
-    title: 'People-First Culture',
-    desc: 'Empowering environment built on trust, creative freedom, and shared ownership.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Career Acceleration',
-    desc: 'Clear pathways for leadership, competitive compensation, and continuous learning.',
-  },
-];
 
 export const Careers = () => {
   const { showToast } = useCart();
@@ -184,29 +165,7 @@ export const Careers = () => {
         </motion.div>
       </section>
 
-      {/* ── 2. Culture & Perks ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PERKS.map((perk, idx) => (
-            <motion.div
-              key={perk.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-sm hover:shadow-md transition-all group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gray-50 group-hover:bg-black group-hover:text-white text-gray-800 flex items-center justify-center transition-colors mb-5">
-                <perk.icon size={22} strokeWidth={1.75} />
-              </div>
-              <h3 className="text-base font-bold text-gray-900 mb-2">{perk.title}</h3>
-              <p className="text-xs text-gray-500 font-medium leading-relaxed">{perk.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 3. Main Content Grid (Openings + Application Form) ── */}
+      {/* ── 2. Main Content Grid (Openings + Application Form) ── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           
@@ -301,35 +260,6 @@ export const Careers = () => {
                   </div>
                 </AnimatePresence>
               )}
-            </div>
-
-            {/* HR Contact & Office Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-50 text-gray-800 flex items-center justify-center">
-                  <Users size={18} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-gray-900">Human Resources Team</h4>
-                  <p className="text-[11px] text-gray-500">Priority Bags Corporate Office</p>
-                </div>
-              </div>
-              <div className="space-y-2 pt-2 text-xs text-gray-600 font-medium border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <Mail size={13} className="text-gray-400 shrink-0" />
-                  <a href={`mailto:${HR_EMAIL}`} className="text-priority-blue font-bold hover:underline">
-                    {HR_EMAIL}
-                  </a>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin size={13} className="text-gray-400 shrink-0" />
-                  <span>Mumbai, Maharashtra, India</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock size={13} className="text-gray-400 shrink-0" />
-                  <span className="text-gray-500">Applications reviewed within 3-5 business days</span>
-                </div>
-              </div>
             </div>
           </div>
 

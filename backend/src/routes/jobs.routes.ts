@@ -31,5 +31,6 @@ router.delete('/:id', authenticateToken, requireAdmin, validateCsrf, JobsControl
 router.post('/:jobId/apply', JobsController.submitApplication);
 router.get('/:jobId/applications', authenticateToken, requireAdmin, JobsController.getJobApplications);
 router.patch('/applications/:appId/status', authenticateToken, requireAdmin, validateCsrf, JobsController.updateApplicationStatus);
+router.delete('/applications/:appId', authenticateToken, requireAdmin, validateCsrf, JobsController.deleteApplication);
 
 export default router;

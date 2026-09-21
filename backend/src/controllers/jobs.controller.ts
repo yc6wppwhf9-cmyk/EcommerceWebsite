@@ -252,3 +252,14 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response) =
     res.status(500).json({ error: 'Server error', message: 'Something went wrong, please try again' });
   }
 };
+
+export const deleteApplication = async (req: AuthRequest, res: Response) => {
+  try {
+    const { error } = await supabase.from('applications').delete().eq('id', req.params.appId);
+    if (error) throw error;
+    res.json({ message: 'Application deleted successfully' });
+  } catch (err: any) {
+    console.error('deleteApplication error:', err);
+    res.status(500).json({ error: 'Failed to delete application', message: 'Something went wrong, please try again' });
+  }
+};

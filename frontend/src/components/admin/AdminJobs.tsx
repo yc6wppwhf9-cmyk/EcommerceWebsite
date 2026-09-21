@@ -38,6 +38,7 @@ interface AdminJobsProps {
   handleSaveJob: (e: React.FormEvent) => Promise<void>;
   handleDeleteJob: (jobId: string) => Promise<void>;
   handleUpdateAppStatus: (appId: string, status: string) => Promise<void>;
+  handleDeleteApplication?: (appId: string) => Promise<void>;
 }
 
 export const AdminJobs: React.FC<AdminJobsProps> = ({
@@ -55,6 +56,7 @@ export const AdminJobs: React.FC<AdminJobsProps> = ({
   handleSaveJob,
   handleDeleteJob,
   handleUpdateAppStatus,
+  handleDeleteApplication,
 }) => {
   const inputCls = 'w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-priority-blue outline-none transition-all placeholder:text-gray-400';
 
@@ -93,24 +95,35 @@ export const AdminJobs: React.FC<AdminJobsProps> = ({
                   <p className="text-[10px] text-gray-500 mt-0.5">{app.applicant_email}{app.applicant_phone ? ` · ${app.applicant_phone}` : ''}</p>
                   <p className="text-[10px] text-gray-400 mt-0.5 font-bold uppercase">Applied for: {app.jobs?.title || '—'} &bull; {new Date(app.applied_at).toLocaleDateString('en-IN')}</p>
                 </div>
-                <select
-                  value={app.status}
-                  onChange={e => handleUpdateAppStatus(app.id, e.target.value)}
-                  className={`border rounded-xl px-3 py-1.5 text-[9px] font-black uppercase outline-none cursor-pointer ${
-                    app.status === 'pending'
-                      ? 'bg-yellow-50 border-yellow-200 text-yellow-700'
-                      : app.status === 'shortlisted'
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : app.status === 'hired'
-                      ? 'bg-green-50 border-green-200 text-green-700'
-                      : 'bg-red-50 border-red-200 text-red-600'
-                  }`}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="shortlisted">Shortlisted</option>
-                  <option value="hired">Hired</option>
-                  <option value="rejected">Rejected</option>
-                </select>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={app.status}
+                    onChange={e => handleUpdateAppStatus(app.id, e.target.value)}
+                    className={`border rounded-xl px-3 py-1.5 text-[9px] font-black uppercase outline-none cursor-pointer ${
+                      app.status === 'pending'
+                        ? 'bg-yellow-50 border-yellow-200 text-yellow-700'
+                        : app.status === 'shortlisted'
+                        ? 'bg-blue-50 border-blue-200 text-blue-700'
+                        : app.status === 'hired'
+                        ? 'bg-green-50 border-green-200 text-green-700'
+                        : 'bg-red-50 border-red-200 text-red-600'
+                    }`}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="hired">Hired</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                  {handleDeleteApplication && (
+                    <button
+                      onClick={() => handleDeleteApplication(app.id)}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      title="Delete Application"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  )}
+                </div>
               </div>
               {app.cover_letter && (
                 <p className="text-[11px] text-gray-600 bg-gray-50 rounded-xl p-3 line-clamp-2">{app.cover_letter}</p>

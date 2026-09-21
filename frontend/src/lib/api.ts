@@ -298,6 +298,8 @@ export const api = {
     request<{ applications: any[]; pagination: any }>(`/api/jobs/${jobId}/applications`),
   updateApplicationStatus: (appId: string, status: string) =>
     request<any>(`/api/jobs/applications/${appId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  deleteApplication: (appId: string) =>
+    request<any>(`/api/jobs/applications/${appId}`, { method: 'DELETE' }),
 
   // Site Settings
   getSetting: (key: string) => request<any>(`/api/settings/${key}`),

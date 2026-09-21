@@ -242,6 +242,17 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteApplication = async (appId: string) => {
+    if (!window.confirm('Are you sure you want to delete this job application?')) return;
+    try {
+      await api.deleteApplication(appId);
+      fetchData();
+      showToast('Application deleted successfully');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to delete application', 'error');
+    }
+  };
+
   const updateStatus = async (orderId: string, status: string, invoiceUrl?: string) => {
     try {
       await api.updateOrderStatus(orderId, status, invoiceUrl);
@@ -462,6 +473,7 @@ export const AdminDashboard = () => {
                   handleSaveJob={handleSaveJob}
                   handleDeleteJob={handleDeleteJob}
                   handleUpdateAppStatus={handleUpdateAppStatus}
+                  handleDeleteApplication={handleDeleteApplication}
                 />
               )}
 
@@ -481,6 +493,7 @@ export const AdminDashboard = () => {
                   handleSaveJob={handleSaveJob}
                   handleDeleteJob={handleDeleteJob}
                   handleUpdateAppStatus={handleUpdateAppStatus}
+                  handleDeleteApplication={handleDeleteApplication}
                 />
               )}
 
