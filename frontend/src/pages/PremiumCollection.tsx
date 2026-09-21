@@ -193,9 +193,11 @@ export const PremiumCollection = () => {
       // Row 2: Duffle — ONLY Cult series marked under premium
       const allDufflesAndCults = [...prem, ...cults];
       const premDuffles = allDufflesAndCults.filter(p => 
-        (p.name || '').toLowerCase().includes('cult') ||
+        !p.name?.toLowerCase().includes('solo') &&
+        !['INV30691', 'INV30692'].includes(p.sku || '') &&
+        ((p.name || '').toLowerCase().includes('cult') ||
         ((p.category || '').toLowerCase().includes('duffle') && p.is_premium) ||
-        ((p as any).sub_category?.includes('duffle') && p.is_premium)
+        ((p as any).sub_category?.includes('duffle') && p.is_premium))
       );
 
       const curatedDuffles = SHOWCASE_DUFFLE_SKUS

@@ -188,17 +188,24 @@ export const CategoryPage = () => {
       try {
         const res = await api.getProducts(params);
         let products = res.products as unknown as Product[];
-        if ((slug === 'duffle' || slug === 'premium-duffle') && themeParam === 'premium') {
-          try {
-            const cultRes = await api.getProducts({ search: 'Cult', limit: '20' });
-            const cults = (cultRes.products as unknown as Product[]) || [];
-            const merged = [...products, ...cults].filter(
-              (p, idx, arr) => idx === arr.findIndex(x => x.id === p.id || x.sku === p.sku)
-            );
-            products = merged;
-          } catch {
-            // ignore
+        if (themeParam === 'premium') {
+          if (slug === 'duffle' || slug === 'premium-duffle') {
+            try {
+              const cultRes = await api.getProducts({ search: 'Cult', limit: '20' });
+              const cults = (cultRes.products as unknown as Product[]) || [];
+              const merged = [...products, ...cults].filter(
+                (p, idx, arr) => idx === arr.findIndex(x => x.id === p.id || x.sku === p.sku)
+              );
+              products = merged;
+            } catch {
+              // ignore
+            }
           }
+          // Strictly exclude Solo series from premium views
+          products = products.filter(p =>
+            !p.name?.toLowerCase().includes('solo') &&
+            !['INV30691', 'INV30692'].includes(p.sku || '')
+          );
         }
         if (themeParam === 'junior' || slug === 'junior' || slug === 'kids-trolley' || slug === 'trolley-backpacks' || slug === 'combo-set' || slug === 'school-backpacks') {
           products = products.filter(isJuniorProduct);

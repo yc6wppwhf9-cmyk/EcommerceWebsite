@@ -90,6 +90,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     const isDuffleCategory = category === 'duffle' || category === 'premium-duffle' || sub_category === 'duffle';
 
     if (isPremium === 'true' || category === 'premium') {
+      query = query.not('name', 'ilike', '%solo%').not('sku', 'in', '("INV30691","INV30692")');
       if (isDuffleCategory) {
         query = query.or('is_premium.eq.true,name.ilike.%Cult%,sku.in.("INV29561","INV29562","INV29563")');
       } else {
