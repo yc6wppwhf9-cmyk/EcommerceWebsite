@@ -108,7 +108,7 @@ export const deleteJob = async (req: AuthRequest, res: Response) => {
 };
 
 export const getAllApplications = async (req: AuthRequest, res: Response) => {
-  const { status, page = '1', limit = '20' } = req.query;
+  const { status, page = '1', limit = '50' } = req.query;
   try {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -116,7 +116,7 @@ export const getAllApplications = async (req: AuthRequest, res: Response) => {
 
     let query = supabase
       .from('applications')
-      .select('*, jobs(id, title, location, job_type), users(id, name, email)', { count: 'exact' });
+      .select('*, jobs(id, title, location, job_type)', { count: 'exact' });
 
     if (status && status !== 'all') query = query.eq('status', status);
 
@@ -128,12 +128,12 @@ export const getAllApplications = async (req: AuthRequest, res: Response) => {
     res.json({ applications: data || [], pagination: { page: pageNum, limit: limitNum, total: count || 0 } });
   } catch (err: any) {
     console.error('getAllApplications error:', err);
-    res.status(500).json({ error: 'Failed to fetch applications', message: 'Something went wrong, please try again' });
+    res.status(500).json({ error: 'Failed to fetch applications', message: err?.message || 'Something went wrong, please try again' });
   }
 };
 
 export const getJobApplications = async (req: AuthRequest, res: Response) => {
-  const { status, page = '1', limit = '20' } = req.query;
+  const { status, page = '1', limit = '50' } = req.query;
   try {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -141,7 +141,7 @@ export const getJobApplications = async (req: AuthRequest, res: Response) => {
 
     let query = supabase
       .from('applications')
-      .select('*, jobs(id, title), users(id, name, email)', { count: 'exact' })
+      .select('*, jobs(id, title)', { count: 'exact' })
       .eq('job_id', req.params.jobId);
 
     if (status && status !== 'all') query = query.eq('status', status);
@@ -154,7 +154,7 @@ export const getJobApplications = async (req: AuthRequest, res: Response) => {
     res.json({ applications: data || [], pagination: { page: pageNum, limit: limitNum, total: count || 0 } });
   } catch (err: any) {
     console.error('getJobApplications error:', err);
-    res.status(500).json({ error: 'Failed to fetch applications', message: 'Something went wrong, please try again' });
+    res.status(500).json({ error: 'Failed to fetch applications', message: err?.message || 'Something went wrong, please try again' });
   }
 };
 
