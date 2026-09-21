@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 import { AuthRequest } from '../middleware/auth';
 import { sendEmail, getJobApplicationTemplate } from '../lib/mail';
+import { config } from '../config/env';
 import cloudinary from '../config/cloudinary';
 
 type MulterRequest = Request & { file?: { buffer: Buffer; originalname: string; mimetype: string } };
@@ -211,7 +212,7 @@ export const submitApplication = async (req: AuthRequest, res: Response) => {
       const jobTitle = job?.title || 'General Application';
 
       await sendEmail(
-        'Hr@hscvpl.com',
+        config.HR_EMAIL || 'humanresource@prioritybags.in',
         `New Job Application: ${name} - ${jobTitle}`,
         getJobApplicationTemplate({
           applicantName: name,

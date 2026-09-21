@@ -375,4 +375,44 @@ export const api = {
 
   getProductViewCount: (product_id: string) =>
     request<{ count: number }>(`/api/analytics/view/${product_id}`),
+
+  // Bot Chat Logs & Analytics
+  getChatLogs: (params?: { page?: number; limit?: number; search?: string; category?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.page) q.set('page', String(params.page));
+    if (params?.limit) q.set('limit', String(params.limit));
+    if (params?.search) q.set('search', params.search);
+    if (params?.category) q.set('category', params.category);
+    return request<{
+      data: Array<{
+        id: string;
+        user_id?: string;
+        session_id?: string;
+        user_message: string;
+        bot_response: string;
+        intent_category: string;
+        products_matched: any[];
+        user_ip?: string;
+        user_agent?: string;
+        created_at: string;
+        users?: { name: string; email: string };
+      }>;
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>(`/api/chat/logs?${q.toString()}`);
+  },
+
+  getChatAnalytics: () =>
+    request<{
+      totalChats: number;
+      todayChats: number;
+      categoryBreakdown: Record<string, number>;
+      topKeywords: Array<{ word: string; count: number }>;
+      frequentQuestions: Array<{ question: string; count: number }>;
+    }>('/api/chat/analytics'),
+
+  deleteChatLog: (id: string) =>
+    request<{ success: boolean }>(`/api/chat/logs/${id}`, { method: 'DELETE' }),
 };

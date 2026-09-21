@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Box,
   FileSpreadsheet, Image as ImageIcon,
   Briefcase, FileText, Loader2,
+  MessageSquareText,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +19,7 @@ import { AdminJobs } from '../components/admin/AdminJobs';
 import { AdminBanners } from '../components/admin/AdminBanners';
 import { AdminUsers } from '../components/admin/AdminUsers';
 import { AdminCoupons } from '../components/admin/AdminCoupons';
+import { AdminChatLogs } from '../components/admin/AdminChatLogs';
 
 export const AdminDashboard = () => {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
@@ -196,6 +198,7 @@ export const AdminDashboard = () => {
   const tabs = [
     { id: 'overview', label: 'Stats', icon: LayoutDashboard },
     { id: 'inventory', label: 'Products', icon: Box },
+    { id: 'chat-logs', label: 'Bot Queries', icon: MessageSquareText },
     { id: 'bulk', label: 'Add Many', icon: FileSpreadsheet },
     { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'jobs', label: 'Jobs', icon: Briefcase },
@@ -487,6 +490,10 @@ export const AdminDashboard = () => {
                   userSearch={userSearch}
                   setUserSearch={setUserSearch}
                 />
+              )}
+
+              {activeTab === 'chat-logs' && (
+                <AdminChatLogs showToast={showToast} />
               )}
 
               {activeTab === 'coupons' && (

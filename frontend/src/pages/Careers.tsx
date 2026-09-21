@@ -117,9 +117,15 @@ export const Careers = () => {
       <div className="max-w-6xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center mb-16">
           <h1 className="text-3xl md:text-5xl font-outfit font-black uppercase tracking-wide mb-4">
-            JOIN OUR HSCVPL FAM
+            JOIN OUR PRIORITY FAM
           </h1>
-          <p className="text-gray-500 max-w-xl mx-auto">Help us redefine travel gear for the next generation.</p>
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Help us redefine travel gear for the next generation. Send your resume directly to{' '}
+            <a href="mailto:humanresource@prioritybags.in" className="text-priority-blue font-bold hover:underline">
+              humanresource@prioritybags.in
+            </a>{' '}
+            or submit the application form below.
+          </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-16">
@@ -137,7 +143,9 @@ export const Careers = () => {
             ) : jobs.length === 0 ? (
               <div className="p-10 border border-dashed border-gray-200 rounded-2xl text-center">
                 <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">No openings right now</p>
-                <p className="text-gray-300 text-xs mt-1">Send a general application below — we'd love to hear from you.</p>
+                <p className="text-gray-300 text-xs mt-1">
+                  Email your CV to <strong className="text-gray-600">humanresource@prioritybags.in</strong> or apply below.
+                </p>
               </div>
             ) : (
               <AnimatePresence>
@@ -173,7 +181,9 @@ export const Careers = () => {
           {/* Application Form */}
           <div ref={formRef} className="bg-priority-dark p-8 md:p-12 rounded-3xl text-white scroll-mt-24">
             <h2 className="text-2xl font-black mb-2 uppercase">Apply Now</h2>
-            <p className="text-gray-400 text-sm mb-8">Don't see a role? Send a general application.</p>
+            <p className="text-gray-400 text-sm mb-8">
+              Don't see a role? Send a general application or email <strong className="text-gray-300">humanresource@prioritybags.in</strong>.
+            </p>
 
             <form onSubmit={handleSubmit} noValidate className="space-y-6">
               <div className="space-y-1">

@@ -255,6 +255,41 @@ const SYSTEM_PROMPT = `You are Priority Assistant, the smart, friendly, and know
 5. Answer questions about materials (water-resistant PU/PVC, polyester, polycarbonate shells, ergonomic mesh padding, reinforced zippers) clearly and accurately.
 6. NEVER fabricate fake product names or prices.`;
 
+// ─── Logging Helper ─────────────────────────────────────────────────────────
+
+const logChatInteraction = async (data: {
+  userId?: string | null;
+  sessionId?: string;
+  userMessage: string;
+  botResponse: string;
+  intentCategory: string;
+  productsMatched: any[];
+  userIp?: string;
+  userAgent?: string;
+}) => {
+  try {
+    await supabase.from('chat_logs').insert({
+      user_id: data.userId || null,
+      session_id: data.sessionId || null,
+      user_message: data.userMessage,
+      bot_response: data.botResponse,
+      intent_category: data.intentCategory,
+      products_matched: data.productsMatched.map(p => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        image: p.image,
+        slug: p.slug,
+      })),
+      user_ip: data.userIp || null,
+      user_agent: data.userAgent || null,
+    });
+  } catch (logErr) {
+    // Graceful fallback if table is not created yet
+    console.warn('Chat log write skipped:', logErr);
+  }
+};
+
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
 export const chat = async (req: Request, res: Response) => {
@@ -366,14 +401,183 @@ export const chat = async (req: Request, res: Response) => {
     }
 
     const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text');
+    const botReply = textBlock?.text || "I'm here to help you find the perfect bag!";
+
+    // Extract last user message and infer intent category
+    const lastUserObj = [...messages].reverse().find(m => m.role === 'user');
+    const lastUserMessage = typeof lastUserObj?.content === 'string' ? lastUserObj.content : '';
+
+    if (lastUserMessage.trim()) {
+      const textLower = lastUserMessage.toLowerCase();
+      let intentCategory = 'general';
+      if (/school|kid|child|nursery|kg|toddler|playschool|minion|gracious|fluffy|fuzzy|tipsy|mischief|combo|princess|frozen|spiderman|disney/i.test(textLower)) {
+        intentCategory = 'school_kids';
+      } else if (/laptop|college|office|work|matrix|atlas|oxford|trekking|rucksack|study|school bag/i.test(textLower)) {
+        intentCategory = 'laptop_college';
+      } else if (/luggage|trolley|travel|suitcase|traworld|cabin|duffle|cult|solo/i.test(textLower)) {
+        intentCategory = 'luggage_travel';
+      } else if (/order|track|return|refund|warranty|shipping|delivery|buy|how to buy|purchase|support|help|contact/i.test(textLower)) {
+        intentCategory = 'orders_support';
+      }
+
+      logChatInteraction({
+        userId: user?.id,
+        userMessage: lastUserMessage,
+        botResponse: botReply,
+        intentCategory,
+        productsMatched: products,
+        userIp: req.ip || (req.headers['x-forwarded-for'] as string),
+        userAgent: req.headers['user-agent'],
+      }).catch(() => {});
+    }
 
     return res.json({
-      message: textBlock?.text || "I'm here to help you find the perfect bag!",
+      message: botReply,
       products,
       orders,
     });
   } catch (err: any) {
     console.error('Chat error:', err);
     return res.status(500).json({ error: 'Chat service error' });
+  }
+};
+
+// ─── Admin Endpoints ─────────────────────────────────────────────────────────
+
+export const getChatLogs = async (req: Request, res: Response) => {
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+  const offset = (page - 1) * limit;
+  const search = (req.query.search as string || '').trim();
+  const category = (req.query.category as string || '').trim();
+
+  try {
+    let query = supabase
+      .from('chat_logs')
+      .select('id, user_id, session_id, user_message, bot_response, intent_category, products_matched, user_ip, user_agent, created_at, users(name, email)', { count: 'exact' });
+
+    if (category && category !== 'all') {
+      query = query.eq('intent_category', category);
+    }
+
+    if (search) {
+      query = query.or(`user_message.ilike.%${search}%,bot_response.ilike.%${search}%`);
+    }
+
+    const { data, count, error } = await query
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      return res.json({ data: [], total: 0, page, limit, totalPages: 0 });
+    }
+
+    return res.json({
+      data: data || [],
+      total: count || 0,
+      page,
+      limit,
+      totalPages: Math.ceil((count || 0) / limit),
+    });
+  } catch (err: any) {
+    console.error('getChatLogs error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve chat logs' });
+  }
+};
+
+export const getChatAnalytics = async (_req: Request, res: Response) => {
+  try {
+    const { count: totalChats, error: countErr } = await supabase
+      .from('chat_logs')
+      .select('id', { count: 'exact', head: true });
+
+    if (countErr) {
+      return res.json({
+        totalChats: 0,
+        todayChats: 0,
+        categoryBreakdown: { school_kids: 0, laptop_college: 0, luggage_travel: 0, orders_support: 0, general: 0 },
+        topKeywords: [],
+        frequentQuestions: [],
+      });
+    }
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const { count: todayChats } = await supabase
+      .from('chat_logs')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', startOfToday.toISOString());
+
+    const { data: logs } = await supabase
+      .from('chat_logs')
+      .select('user_message, intent_category, created_at')
+      .order('created_at', { ascending: false })
+      .limit(500);
+
+    const categoryBreakdown: Record<string, number> = {
+      school_kids: 0,
+      laptop_college: 0,
+      luggage_travel: 0,
+      orders_support: 0,
+      general: 0,
+    };
+
+    const keywordCounts: Record<string, number> = {};
+    const questionCounts: Record<string, number> = {};
+
+    const stopWords = new Set([
+      'the', 'is', 'at', 'which', 'on', 'a', 'an', 'and', 'or', 'in', 'for', 'to', 'of', 'i', 'me', 'my', 'we', 'our',
+      'you', 'your', 'what', 'where', 'how', 'do', 'can', 'have', 'please', 'show', 'want', 'need', 'bags', 'bag',
+      'give', 'any', 'tell', 'about', 'with', 'from', 'this', 'that', 'these', 'are', 'best'
+    ]);
+
+    (logs || []).forEach(log => {
+      const cat = log.intent_category || 'general';
+      categoryBreakdown[cat] = (categoryBreakdown[cat] || 0) + 1;
+
+      const cleanQ = (log.user_message || '').trim().toLowerCase().replace(/[^\w\s]/g, '');
+      if (cleanQ.length > 3) {
+        questionCounts[cleanQ] = (questionCounts[cleanQ] || 0) + 1;
+      }
+
+      const words = cleanQ.split(/\s+/);
+      words.forEach(w => {
+        if (w.length > 2 && !stopWords.has(w)) {
+          keywordCounts[w] = (keywordCounts[w] || 0) + 1;
+        }
+      });
+    });
+
+    const topKeywords = Object.entries(keywordCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map(([word, count]) => ({ word, count }));
+
+    const frequentQuestions = Object.entries(questionCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([question, count]) => ({ question, count }));
+
+    return res.json({
+      totalChats: totalChats || 0,
+      todayChats: todayChats || 0,
+      categoryBreakdown,
+      topKeywords,
+      frequentQuestions,
+    });
+  } catch (err: any) {
+    console.error('getChatAnalytics error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve chat analytics' });
+  }
+};
+
+export const deleteChatLog = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const { error } = await supabase.from('chat_logs').delete().eq('id', id);
+    if (error) throw error;
+    return res.json({ success: true });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to delete chat log' });
   }
 };
