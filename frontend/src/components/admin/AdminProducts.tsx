@@ -52,13 +52,24 @@ const SUBCATEGORIES: Record<string, { value: string; label: string }[]> = {
   ],
 };
 
+const safeStr = (val: any): string => {
+  if (!val) return '';
+  if (typeof val === 'string') return val.toLowerCase().trim();
+  if (typeof val === 'object') {
+    if (typeof val.slug === 'string') return val.slug.toLowerCase().trim();
+    if (typeof val.name === 'string') return val.name.toLowerCase().trim();
+    if (typeof val.title === 'string') return val.title.toLowerCase().trim();
+  }
+  return String(val).toLowerCase().trim();
+};
+
 export const resolveProductCategory = (p: any): { mainCat: string; subCat: string } => {
   if (!p) return { mainCat: 'backpacks', subCat: 'college-backpacks' };
 
   const isPrem = !!(p.is_premium ?? p.isPremium);
-  const rawSub = (p.sub_category || p.subcategory || '').toLowerCase().trim();
-  const rawCatSlug = (p.categories?.slug || p.category || '').toLowerCase().trim();
-  const explicitCat = (p.category || '').toLowerCase().trim();
+  const rawSub = safeStr(p.sub_category || p.subcategory);
+  const rawCatSlug = safeStr(p.categories?.slug || p.categories || p.category);
+  const explicitCat = safeStr(typeof p.category === 'string' ? p.category : p.category?.slug);
 
   // 1. Premium Collection
   if (isPrem || explicitCat === 'premium' || rawCatSlug === 'premium' || rawSub.startsWith('premium-')) {

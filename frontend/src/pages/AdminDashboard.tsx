@@ -146,22 +146,34 @@ export const AdminDashboard = () => {
       api.getJobs({ status: 'all' }),
       api.getAllApplications(),
     ]);
-    if (prodRes.status === 'fulfilled') {
-      setProducts(prodRes.value.products.map((p: any) => {
-        const { mainCat, subCat } = resolveProductCategory(p);
-        return {
-          ...p,
-          id: String(p.id),
-          category: p.category || mainCat,
-          subcategory: p.subcategory || p.sub_category || subCat,
-          sub_category: p.sub_category || p.subcategory || subCat,
-        };
+    if (prodRes.status === 'fulfilled' && prodRes.value) {
+      const raw = prodRes.value;
+      const list = Array.isArray(raw?.products) ? raw.products : (Array.isArray(raw) ? raw : []);
+      setProducts(list.map((p: any) => {
+        try {
+          const { mainCat, subCat } = resolveProductCategory(p);
+          return {
+            ...p,
+            id: String(p.id),
+            category: typeof p.category === 'string' ? p.category : mainCat,
+            subcategory: p.subcategory || p.sub_category || subCat,
+            sub_category: p.sub_category || p.subcategory || subCat,
+          };
+        } catch {
+          return {
+            ...p,
+            id: String(p?.id || Math.random()),
+            category: typeof p?.category === 'string' ? p.category : 'backpacks',
+            subcategory: p?.sub_category || 'college-backpacks',
+            sub_category: p?.sub_category || 'college-backpacks',
+          };
+        }
       }));
     }
     if (orderRes.status === 'fulfilled' && orderRes.value?.data) setOrders(orderRes.value.data);
     else setOrders([]);
-    if (jobRes.status === 'fulfilled') setJobs(jobRes.value.jobs || []);
-    if (appRes.status === 'fulfilled') setApplications(appRes.value.applications || []);
+    if (jobRes.status === 'fulfilled') setJobs(jobRes.value?.jobs || []);
+    if (appRes.status === 'fulfilled') setApplications(appRes.value?.applications || []);
     setFetchLoading(false);
   };
 
