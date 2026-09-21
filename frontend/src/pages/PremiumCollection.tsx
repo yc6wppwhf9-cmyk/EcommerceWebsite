@@ -219,24 +219,24 @@ export const PremiumCollection = () => {
 
 
   return (
-    <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white">
+    <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white pt-16">
       <PremiumNav onSearchOpen={() => setIsSearchOpen(true)} />
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} theme="premium" />
 
       {/* 1. CINEMATIC HERO */}
-      <section className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: '1439 / 783' }}>
+      <section className="relative w-full overflow-hidden bg-black aspect-[4/5] sm:aspect-[4/3] md:aspect-[1439/783] min-h-[420px] sm:min-h-[480px] md:min-h-[580px] flex flex-col justify-end">
         <img
           src="/Traworld/hero.png"
           alt="Traworld Premium Collection"
-          className="absolute inset-0 h-full w-full object-contain"
+          className="absolute inset-0 h-full w-full object-cover object-[50%_15%] sm:object-[50%_20%] md:object-center"
           decoding="async"
         />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
-        <div className="relative z-10 w-full px-4 md:px-12 pb-14 md:pb-20 flex justify-center">
+        <div className="absolute inset-x-0 bottom-0 h-40 sm:h-52 md:h-1/2 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
+        <div className="relative z-10 w-full px-4 sm:px-8 md:px-12 pb-8 sm:pb-12 md:pb-16 flex justify-center">
           <motion.img
             src="/Traworld/_Layer_.png"
             alt="Luxury that Travels with you"
-            className="h-auto w-full max-w-[90%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert mx-auto drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]"
+            className="h-auto w-full max-w-[85%] sm:max-w-[70%] md:max-w-3xl brightness-0 invert mx-auto drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
