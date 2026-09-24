@@ -163,8 +163,7 @@ export const CorporateGifting: React.FC = () => {
             
             <div className="bg-black text-white px-6 py-6 sm:px-10 sm:py-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10">
               <div>
-                <span className="text-xs font-bold tracking-[0.2em] text-[#F69245] uppercase">Direct Manufacturer Request</span>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Corporate Requirement Form</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Corporate Requirement Form</h2>
                 <p className="text-gray-400 text-sm mt-1">
                   Fill in your bulk gifting specifications below. Our corporate gifting team will revert with tailored catalog &amp; volume quote within 24 hours.
                 </p>
