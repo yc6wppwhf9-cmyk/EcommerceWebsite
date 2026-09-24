@@ -55,7 +55,7 @@ const POSTS_DATA: InstagramPost[] = [
 
 /**
  * "Seen on Instagram" gallery.
- * - Mobile/tablet: swipeable snap-scroll row; reels autoplay (muted) while in view.
+ * - Mobile/tablet: bento grid (featured post + 2×2); reels autoplay (muted) while in view.
  * - Desktop: 5-up editorial grid; reels play on hover, captions slide up.
  */
 export const InstagramShowcase = () => {
@@ -82,7 +82,7 @@ export const InstagramShowcase = () => {
             href={INSTAGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group self-center md:self-auto inline-flex items-center gap-3 rounded-full border border-gray-200 bg-white pl-1.5 pr-5 py-1.5 hover:border-transparent hover:shadow-[0_10px_30px_-12px_rgba(221,42,123,0.45)] transition-all duration-300"
+            className="group hidden md:inline-flex items-center gap-3 rounded-full border border-gray-200 bg-white pl-1.5 pr-5 py-1.5 hover:border-transparent hover:shadow-[0_10px_30px_-12px_rgba(221,42,123,0.45)] transition-all duration-300"
           >
             <span className={`w-11 h-11 rounded-full p-[2px] ${IG_GRADIENT}`}>
               <span className="w-full h-full rounded-full bg-white p-[3px] flex items-center justify-center">
@@ -103,20 +103,35 @@ export const InstagramShowcase = () => {
 
         {/* Gallery */}
         <motion.ul
-          className="flex lg:grid lg:grid-cols-5 gap-3 md:gap-4 lg:gap-5 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scroll-px-4 md:scroll-px-8 px-4 md:px-8 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-5 px-4 md:px-8"
           variants={stagger(0.08)}
           {...revealProps(reduceMotion)}
         >
-          {POSTS_DATA.map((post) => (
+          {POSTS_DATA.map((post, i) => (
             <motion.li
               key={post.href}
               variants={fadeUp}
-              className="snap-start shrink-0 w-[64vw] sm:w-[42vw] md:w-[30vw] lg:w-auto"
+              className={i === 0 ? 'col-span-2 lg:col-span-1' : undefined}
             >
               <PostTile post={post} />
             </motion.li>
           ))}
         </motion.ul>
+
+        {/* Mobile follow CTA (desktop shows the profile pill in the header) */}
+        <div className="md:hidden px-4 mt-6">
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 h-12 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-[0.2em] active:scale-[0.98] transition-transform"
+          >
+            <Instagram size={16} /> Follow @{HANDLE}
+          </a>
+          <p className="mt-2.5 text-center text-[12px] text-gray-500">
+            {FOLLOWERS} followers · {POSTS} posts
+          </p>
+        </div>
       </div>
     </section>
   );
@@ -162,7 +177,7 @@ const PostTile = ({ post }: { post: InstagramPost }) => {
       aria-label={`Open on Instagram: ${post.caption}`}
       onMouseEnter={post.video ? play : undefined}
       onMouseLeave={post.video ? stop : undefined}
-      className="group relative block aspect-[4/5] rounded-2xl overflow-hidden bg-gray-100"
+      className="group relative block aspect-square lg:aspect-[4/5] rounded-xl lg:rounded-2xl overflow-hidden bg-gray-100"
     >
       <img
         src={src}
@@ -191,13 +206,13 @@ const PostTile = ({ post }: { post: InstagramPost }) => {
 
       {/* Reel badge */}
       {post.video && (
-        <span className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/45 backdrop-blur-md flex items-center justify-center text-white">
+        <span className="absolute top-2 right-2 lg:top-3 lg:right-3 w-7 h-7 rounded-full bg-black/45 backdrop-blur-md flex items-center justify-center text-white">
           <Play size={12} className="fill-current ml-0.5" />
         </span>
       )}
 
-      {/* Caption: always on touch, slides up on hover for desktop */}
-      <div className="absolute inset-x-0 bottom-0 p-3.5 md:p-4 pt-12 bg-gradient-to-t from-black/75 via-black/30 to-transparent text-left lg:translate-y-3 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-500">
+      {/* Caption: desktop only, slides up on hover */}
+      <div className="hidden lg:block absolute inset-x-0 bottom-0 p-4 pt-12 bg-gradient-to-t from-black/75 via-black/30 to-transparent text-left lg:translate-y-3 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-500">
         <p className="text-white text-[12px] md:text-[13px] leading-snug font-medium line-clamp-2">
           {post.caption}
         </p>
