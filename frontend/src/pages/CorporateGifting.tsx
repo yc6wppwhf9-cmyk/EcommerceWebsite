@@ -125,29 +125,35 @@ export const CorporateGifting: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── Manufacturing Highlights Bar ───────────────────────────────────────── */}
-      <div className="bg-[#12100e] text-white border-b border-white/10 py-5">
+      {/* ─── Intro & Manufacturing Highlights ──────────────────────────────────── */}
+      <section className="bg-gradient-to-b from-[#18120c] to-[#0f1417] text-white py-10 sm:py-12 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center sm:text-left">
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <p className="text-gray-300 text-base sm:text-lg md:text-xl font-light leading-relaxed">
+              From employee onboarding kits and annual rewards to festive bulk orders and executive luxury travel gear. Manufactured by <strong className="text-white font-semibold">High Spirit Commercial Ventures</strong> — India&apos;s leading luggage powerhouse.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-6 border-t border-white/10 text-center">
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-white">25+ Years</p>
-              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Manufacturing Legacy</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white">25+ Years</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Manufacturing Legacy</p>
             </div>
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-[#F69245]">50,000+</p>
-              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Bags Daily Capacity</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-[#F69245]">50,000+</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Bags Daily Capacity</p>
             </div>
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-white">Pan-India</p>
-              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Doorstep Delivery</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white">Pan-India</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Doorstep Delivery</p>
             </div>
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-[#F69245]">100%</p>
-              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Logo Customization</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-[#F69245]">100%</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Logo Customization</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ─── Main Form Section ─────────────────────────────────────────────────── */}
       <section className="py-12 md:py-16 relative z-20" id="corporate-form">
@@ -491,30 +497,6 @@ export const CorporateGifting: React.FC = () => {
             className="w-full h-auto object-cover max-h-[640px] mx-auto block shadow-inner"
             loading="lazy"
           />
-        </div>
-      </section>
-
-      {/* ─── Contact Banner ───────────────────────────────────────────────────── */}
-      <section className="py-12 bg-[#F69245] text-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Have an urgent requirement or tender?
-            </h3>
-            <p className="text-black/80 text-sm font-medium mt-1">
-              Speak directly with our institutional gifting desk at <span className="font-bold underline">ayyappan.kp@hscvpl.com</span>
-            </p>
-          </div>
-          <a
-            href="#corporate-form"
-            onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 380, behavior: 'smooth' });
-            }}
-            className="px-8 py-3.5 bg-black text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-neutral-900 transition-colors shrink-0"
-          >
-            Request Instant Quote
-          </a>
         </div>
       </section>
 
