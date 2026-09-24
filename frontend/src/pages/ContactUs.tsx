@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Mail, Phone, MapPin, MessageSquare, CheckCircle, AlertCircle,
+  Mail, MapPin, MessageSquare, CheckCircle, AlertCircle,
   Clock, ArrowUpRight, ArrowRight, ShieldCheck, Search,
 } from 'lucide-react';
 import { api } from '../lib/api';
@@ -22,8 +22,6 @@ const TOPICS = [
   'Something else',
 ];
 
-const PHONE = '+91 74004 59254';
-const PHONE_TEL = '+917400459254';
 const MAPS_URL = 'https://maps.google.com/?q=Universal+Majestic+Building,+Ghatkopar-Mankhurd+Link+Road,+Chembur+West,+Mumbai+400043';
 
 export const ContactUs = () => {
@@ -90,7 +88,7 @@ export const ContactUs = () => {
     <main className="bg-white">
       <SEO
         title="Contact Priority Bags"
-        description="Talk to the Priority Bags concierge team. WhatsApp, call, or send a message about orders, products, warranty, and bulk enquiries."
+        description="Talk to the Priority Bags concierge team. WhatsApp or send a message about orders, products, warranty, and bulk enquiries."
         url="https://prioritybags.in/contact"
       />
 
@@ -120,7 +118,7 @@ export const ContactUs = () => {
 
       {/* ── Quick channels ─────────────────────────────────────── */}
       <section className="max-w-[1280px] mx-auto px-6 lg:px-10 -mt-8 lg:-mt-10 relative z-10">
-        <div className="grid sm:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid sm:grid-cols-2 gap-4 lg:gap-6">
           <a
             href="https://wa.me/917400459254"
             target="_blank"
@@ -139,21 +137,6 @@ export const ContactUs = () => {
               </p>
               <p className="text-[13px] text-white/50 mt-1">Browse, ask, and order directly</p>
             </div>
-          </a>
-
-          <a
-            href={`tel:${PHONE_TEL}`}
-            className="group rounded-2xl border border-gray-100 bg-white p-6 lg:p-7 shadow-lg shadow-gray-100/60 transition-transform duration-500 hover:-translate-y-1"
-          >
-            <div className="w-11 h-11 rounded-xl bg-priority-blue/10 flex items-center justify-center mb-5">
-              <Phone className="w-5 h-5 text-priority-blue" />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Call us</p>
-            <p className="font-outfit font-bold text-[18px] text-[#0d1b2a] flex items-center gap-2">
-              {PHONE}
-              <ArrowUpRight className="w-4 h-4 text-priority-blue opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-            </p>
-            <p className="text-[13px] text-gray-400 mt-1">Mon – Sat, 10:00 AM – 6:30 PM</p>
           </a>
 
           <a

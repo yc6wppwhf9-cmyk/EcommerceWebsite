@@ -130,6 +130,7 @@ export const Footer = () => {
           <div className="md:pr-10 lg:pr-14">
             <FooterSection title="Company">
               <ul className="space-y-3">
+                <li><Link className="hover:text-white transition-colors text-xs font-medium uppercase tracking-wider" to="/corporate-gifting">Corporate Gifting</Link></li>
                 <li><Link className="hover:text-white transition-colors text-xs font-medium uppercase tracking-wider" to="/careers">Careers</Link></li>
                 <li><Link className="hover:text-white transition-colors text-xs font-medium uppercase tracking-wider" to={isAuthenticated ? (user?.role === 'admin' || user?.role === 'hr' ? '/admin' : '/account') : '/login'}>Account</Link></li>
                 <li><Link className="hover:text-white transition-colors text-xs font-medium uppercase tracking-wider" to="/about">About Us</Link></li>

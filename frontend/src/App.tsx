@@ -26,6 +26,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then((module)
 const AboutUs = lazy(() => import('./pages/AboutUs').then((module) => ({ default: module.AboutUs })));
 const ContactUs = lazy(() => import('./pages/ContactUs').then((module) => ({ default: module.ContactUs })));
 const Careers = lazy(() => import('./pages/Careers').then((module) => ({ default: module.Careers })));
+const CorporateGifting = lazy(() => import('./pages/CorporateGifting').then((module) => ({ default: module.CorporateGifting })));
 const ShippingPolicy = lazy(() => import('./pages/Policies').then((module) => ({ default: module.ShippingPolicy })));
 const ReturnsRefunds = lazy(() => import('./pages/Policies').then((module) => ({ default: module.ReturnsRefunds })));
 const PrivacyPolicy = lazy(() => import('./pages/Policies').then((module) => ({ default: module.PrivacyPolicy })));
@@ -92,6 +93,8 @@ function AppContent() {
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/corporate-gifting" element={<CorporateGifting />} />
+            <Route path="/corporate" element={<CorporateGifting />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/shipping" element={<ShippingPolicy />} />
             <Route path="/returns" element={<ReturnsRefunds />} />

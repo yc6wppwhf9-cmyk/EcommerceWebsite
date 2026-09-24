@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 
@@ -8,6 +8,7 @@ interface BrandToggleProps {
 }
 
 export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size = 'md' }) => {
+  const instanceId = useId();
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -24,7 +25,7 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
   };
 
   const isSmall = size === 'sm';
-  const pillLayoutId = `brand-pill-bg-${size}`;
+  const pillLayoutId = `brand-pill-${instanceId}`;
 
   return (
     <div
@@ -46,8 +47,10 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           isSmall ? 'px-3 py-1.5 text-[11px] tracking-[0.14em]' : 'px-4 py-2 text-[12px] md:text-[13px] tracking-[0.16em]'
         } ${
           !isPremium
-            ? 'text-black'
-            : 'text-white/80 hover:text-white'
+            ? 'text-black font-black'
+            : isPremium
+              ? 'text-white/70 hover:text-white'
+              : 'text-gray-500 hover:text-black'
         }`}
       >
         {!isPremium && (
@@ -61,7 +64,7 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           <img
             src="/priority-icon.png"
             alt="Priority"
-            className={`${isSmall ? 'w-4 h-4' : 'w-4.5 h-4.5'} object-contain flex-shrink-0`}
+            className={`${isSmall ? 'w-4 h-4' : 'w-4.5 h-4.5'} object-contain flex-shrink-0 ${isPremium ? 'opacity-80' : 'opacity-100'}`}
           />
           <span>PRIORITY</span>
         </span>
@@ -75,7 +78,7 @@ export const BrandToggle: React.FC<BrandToggleProps> = ({ className = '', size =
           isSmall ? 'px-3 py-1.5 text-[11px] tracking-[0.14em]' : 'px-4 py-2 text-[12px] md:text-[13px] tracking-[0.16em]'
         } ${
           isPremium
-            ? 'text-black'
+            ? 'text-black font-black'
             : isJunior
               ? 'text-white/80 hover:text-white'
               : 'text-gray-500 hover:text-black dark:text-gray-300 dark:hover:text-white'
