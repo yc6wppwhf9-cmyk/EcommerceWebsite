@@ -24,9 +24,4 @@ CREATE INDEX IF NOT EXISTS idx_corporate_inquiries_email ON public.corporate_inq
 -- Enable RLS
 ALTER TABLE public.corporate_inquiries ENABLE ROW LEVEL SECURITY;
 
--- Allow service role full access
-CREATE POLICY "Service role has full access to corporate_inquiries"
-  ON public.corporate_inquiries
-  FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- No policies: only the backend (service role, which bypasses RLS) may access this table.

@@ -8,8 +8,8 @@ import { resolveEligibleCoupon } from '../lib/coupon.service';
 import { calculateCheckoutTotals } from '../lib/pricing';
 
 const razorpay = new Razorpay({
-  key_id: config.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-  key_secret: config.RAZORPAY_KEY_SECRET || 'placeholder_secret',
+  key_id: config.RAZORPAY_KEY_ID,
+  key_secret: config.RAZORPAY_KEY_SECRET,
 });
 
 /**
