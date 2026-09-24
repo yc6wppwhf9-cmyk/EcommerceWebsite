@@ -76,7 +76,7 @@ function AppContent() {
       <PageTracker />
       <div className="flex flex-col min-h-screen relative bg-[var(--color-bg-main)] text-[var(--color-text-main)] transition-colors duration-300">
         {!isAdmin && !isPremium && <Header onSearchOpen={() => setSearchOpen(true)} />}
-        <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin ? 'pb-20 lg:pb-0' : ''}`}>
+        <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin && isPremiumTheme ? 'pb-20 lg:pb-0' : ''}`}>
           <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-sm font-semibold text-gray-500">Loading…</div>}>
           <Routes>
             <Route path="/" element={<Home />} />

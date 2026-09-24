@@ -156,7 +156,7 @@ export const CorporateGifting: React.FC = () => {
       </section>
 
       {/* ─── Main Form Section ─────────────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 relative z-20" id="corporate-form">
+      <section className="pt-12 pb-8 md:py-16 relative z-20" id="corporate-form">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-black/5 overflow-hidden">
