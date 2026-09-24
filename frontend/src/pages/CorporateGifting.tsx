@@ -4,7 +4,6 @@ import {
   Briefcase,
   User,
   CheckCircle2,
-  Sparkles,
   Send,
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
@@ -114,48 +113,44 @@ export const CorporateGifting: React.FC = () => {
         url="https://prioritybags.in/corporate-gifting"
       />
 
-      {/* ─── Hero Section ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#0f1417] to-[#1a2329] text-white pt-14 pb-20 md:pt-20 md:pb-28">
-        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold uppercase tracking-widest text-[#F69245] mb-6">
-              <Sparkles size={14} /> Official Corporate &amp; Institutional Gifting Partner
-            </div>
-            
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] mb-6">
-              Elevate Your Brand with <span className="text-[#F69245]">Custom Crafted</span> Corporate Gifting.
-            </h1>
-            
-            <p className="text-gray-300 text-base sm:text-lg md:text-xl font-light leading-relaxed mb-8">
-              From employee onboarding kits and annual rewards to festive bulk orders and executive luxury travel gear. Manufactured by <strong>High Spirit Commercial Ventures</strong> — India&apos;s leading luggage powerhouse.
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/10">
-              <div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-white">25+ Years</p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Manufacturing Legacy</p>
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-[#F69245]">50,000+</p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Bags Daily Capacity</p>
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-white">Pan-India</p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Doorstep Delivery</p>
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-[#F69245]">100%</p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mt-1">Logo Customization</p>
-              </div>
-            </div>
-          </div>
+      {/* ─── Hero Banner ──────────────────────────────────────────────────────── */}
+      <section className="relative w-full bg-[#18120c] overflow-hidden">
+        <div className="w-full">
+          <img
+            src="/Creatives/corporate-hero-banner.png"
+            alt="Traworld & Priority Corporate Gifting - Curated Gifts for Every Business Occasion"
+            className="w-full h-auto object-cover max-h-[560px] md:max-h-[660px] lg:max-h-[760px] mx-auto block"
+            loading="eager"
+          />
         </div>
       </section>
 
+      {/* ─── Manufacturing Highlights Bar ───────────────────────────────────────── */}
+      <div className="bg-[#12100e] text-white border-b border-white/10 py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center sm:text-left">
+            <div>
+              <p className="text-xl sm:text-2xl font-extrabold text-white">25+ Years</p>
+              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Manufacturing Legacy</p>
+            </div>
+            <div>
+              <p className="text-xl sm:text-2xl font-extrabold text-[#F69245]">50,000+</p>
+              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Bags Daily Capacity</p>
+            </div>
+            <div>
+              <p className="text-xl sm:text-2xl font-extrabold text-white">Pan-India</p>
+              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Doorstep Delivery</p>
+            </div>
+            <div>
+              <p className="text-xl sm:text-2xl font-extrabold text-[#F69245]">100%</p>
+              <p className="text-[11px] text-gray-400 uppercase tracking-wider mt-0.5">Logo Customization</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ─── Main Form Section ─────────────────────────────────────────────────── */}
-      <section className="py-12 md:py-20 -mt-8 relative z-20">
+      <section className="py-12 md:py-16 relative z-20" id="corporate-form">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-black/5 overflow-hidden">
@@ -167,10 +162,6 @@ export const CorporateGifting: React.FC = () => {
                 <p className="text-gray-400 text-sm mt-1">
                   Fill in your bulk gifting specifications below. Our corporate gifting team will revert with tailored catalog &amp; volume quote within 24 hours.
                 </p>
-              </div>
-              <div className="hidden lg:flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl text-xs font-medium text-gray-300">
-                <Briefcase size={16} className="text-[#F69245]" />
-                <span>Bulk discounts apply on 50+ units</span>
               </div>
             </div>
 
@@ -488,6 +479,18 @@ export const CorporateGifting: React.FC = () => {
 
           </div>
 
+        </div>
+      </section>
+
+      {/* ─── Creative Showcase Banner ────────────────────────────────────────── */}
+      <section className="w-full bg-[#1b0826] overflow-hidden">
+        <div className="w-full">
+          <img
+            src="/Creatives/corporate-showcase-banner.png"
+            alt="Priority Experiences Over Objects - Corporate Gifting Showcase"
+            className="w-full h-auto object-cover max-h-[640px] mx-auto block shadow-inner"
+            loading="lazy"
+          />
         </div>
       </section>
 
