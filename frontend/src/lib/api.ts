@@ -355,6 +355,23 @@ export const api = {
       `/api/support/status/${encodeURIComponent(ticketNumber)}?email=${encodeURIComponent(email)}`,
     ),
 
+  // Corporate Gifting
+  submitCorporateInquiry: (data: {
+    name: string;
+    phone: string;
+    organisation_name: string;
+    email: string;
+    quantity: string;
+    location: string;
+    approx_budget: string;
+    category: string;
+    notes?: string;
+  }) =>
+    request<{ success: boolean; message: string; inquiry_id?: string; reference_number?: string }>(
+      '/api/corporate-gifting',
+      { method: 'POST', body: JSON.stringify(data) }
+    ),
+
   // Coupons
   listCoupons: () => request<any[]>('/api/coupons'),
   createCoupon: (data: { code: string; discount_type: string; discount_value: number; max_uses?: number; min_cart_value?: number; start_date?: string; end_date?: string }) =>

@@ -15,49 +15,13 @@ const collectionLinks = [
 ];
 
 const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
-  const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black h-16 flex items-center justify-between px-4 sm:px-6 md:px-12 border-b border-white/10">
-        {/* Desktop Left: Navigation Links */}
-        <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-white text-[13px] font-medium font-outfit tracking-[0.18em] uppercase hover:opacity-70 transition-opacity">
-            HOME
-          </Link>
-          <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-            <button className="flex items-center gap-1.5 text-white text-[13px] font-medium font-outfit tracking-[0.18em] uppercase hover:opacity-70 transition-opacity">
-              COLLECTION <ChevronDown size={12} className={`opacity-70 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
-            </button>
-            <AnimatePresence>
-              {open && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute top-full left-0 mt-2 w-44 bg-[#111] border border-white/10 shadow-2xl py-2"
-                >
-                  {collectionLinks.map(item => (
-                    <Link
-                      key={item.slug}
-                      to={item.slug}
-                      className="block px-5 py-3 text-[13px] font-medium font-outfit tracking-[0.14em] uppercase text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Desktop Center: Traworld Logo */}
-        <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
-          <Link to="/premium">
-            <img src="/Traworld/nav bar logo.png" alt="Traworld" className="h-6 w-auto" />
-          </Link>
+        {/* Desktop Left: BrandToggle */}
+        <div className="hidden md:flex items-center">
+          <BrandToggle size="sm" />
         </div>
 
         {/* Mobile: BrandToggle centered, Menu Button on Right */}
@@ -80,10 +44,6 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Desktop Right Actions */}
         <div className="hidden md:flex items-center gap-3 md:gap-4 justify-end font-outfit">
-          <div className="flex items-center mr-1">
-            <BrandToggle size="sm" />
-          </div>
-          <div className="h-5 w-px bg-white/20 mx-1" />
           <div className="flex items-center gap-1">
             <button
               onClick={onSearchOpen}
@@ -140,6 +100,13 @@ const PremiumNav = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   </Link>
                 ))}
               </div>
+              <Link
+                to="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-6 py-4 text-white text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white/5 transition-colors"
+              >
+                ABOUT US
+              </Link>
             </div>
           </motion.div>
         )}

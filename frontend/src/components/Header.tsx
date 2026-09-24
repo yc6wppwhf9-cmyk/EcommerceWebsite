@@ -38,17 +38,17 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       {highlight ? (
         <Link
-          className="h-16 flex items-center px-2.5 text-[13px] font-outfit uppercase"
+          className="h-16 flex items-center pl-4 pr-2 text-[13px] font-outfit uppercase"
           to={getThemeTo(to)}
         >
-          <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-3.5 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
+          <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
             {title}
             {items && <ChevronDown size={12} className={`opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
           </span>
         </Link>
       ) : (
         <Link
-          className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
+          className="h-16 flex items-center gap-1.5 px-4 xl:px-5 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
           to={getThemeTo(to)}
         >
           {title}
@@ -127,6 +127,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         { label: 'Tote Bag', slug: 'tote-bag' },
       ]
     },
+    { title: 'ABOUT US', to: '/about' },
     { title: 'JUNIOR', to: '/junior', highlight: 'junior' },
   ];
 
@@ -141,6 +142,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         { label: 'Duffle', slug: 'duffle' },
       ],
     },
+    { title: 'ABOUT US', to: '/about' },
   ];
 
   const queryParams = new URLSearchParams(location.search);
@@ -174,15 +176,19 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     >
       <div className="max-w-[1720px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
-        {/* Desktop Logo */}
+        {/* Desktop Brand Switcher (Left) */}
         <div className="hidden lg:flex items-center lg:flex-1">
-          <Link to={homeHref} className="flex items-center">
-            <img
-              src={logoSrc}
-              alt="Priority"
-              className={`${isJunior ? 'w-[100px] sm:w-[120px]' : 'w-[110px] sm:w-[140px] md:w-[165px]'} h-auto transition-all duration-300 ${isLightNav ? 'brightness-0' : ''}`}
-            />
-          </Link>
+          {isJunior ? (
+            <Link to={homeHref} className="flex items-center">
+              <img
+                src={logoSrc}
+                alt="Priority Junior"
+                className="w-[100px] sm:w-[120px] h-auto transition-all duration-300"
+              />
+            </Link>
+          ) : (
+            <BrandToggle />
+          )}
         </div>
 
         {/* Mobile Navbar: BrandToggle centered, Menu button on right */}
@@ -219,17 +225,13 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Desktop Navigation (Centered) */}
         <nav className="hidden lg:flex items-center">
-          <ul className="flex items-center">
+          <ul className="flex items-center gap-1.5 xl:gap-2.5">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
         </nav>
 
-        {/* Desktop Action Icons & Fixed BrandToggle */}
+        {/* Desktop Action Icons */}
         <div className="hidden lg:flex flex-1 items-center justify-end font-outfit gap-3 xl:gap-4">
-          <div className="mr-4 lg:mr-6 xl:mr-8">
-            <BrandToggle />
-          </div>
-          <div className="h-5 w-px bg-black/15 dark:bg-white/20 mx-1" />
           <div className="flex items-center gap-1">
             {/* Search */}
             <button
@@ -296,15 +298,14 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
           >
             {/* Header */}
             <div className="flex justify-between items-center px-5 py-4 border-b border-gray-100 shrink-0">
-              <img src={logoSrc} alt="Priority" className={`${isJunior ? 'w-[100px]' : 'w-[120px]'} h-auto`} />
+              {isJunior ? (
+                <img src={logoSrc} alt="Priority Junior" className="w-[100px] h-auto" />
+              ) : (
+                <BrandToggle size="sm" />
+              )}
               <button onClick={() => setIsMenuOpen(false)} className="p-2.5 border border-gray-200 rounded-full text-gray-700" aria-label="Close menu">
                 <X size={20} />
               </button>
-            </div>
-
-            {/* Mobile Brand Switcher */}
-            <div className="px-5 py-3 border-b border-gray-100 flex justify-center bg-gray-50/70">
-              <BrandToggle />
             </div>
 
             {/* Scrollable nav area */}

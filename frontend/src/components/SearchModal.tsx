@@ -4,6 +4,7 @@ import { Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatPrice } from '../constants/products';
 import { api } from '../lib/api';
+import { trackSearch, trackSelectItem } from '../lib/gtag';
 import type { Product } from '../types';
 
 interface SearchModalProps {
@@ -28,16 +29,21 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
 
   useEffect(() => {
     if (query.length >= 2) {
-      api.getProducts({ search: query }).then(res => {
-        // The API returns the joined `categories` object, not a flat `category`
-        // string — casting the raw row straight to Product left category
-        // undefined and threw on `.replace()` while rendering results.
-        const products = (res.products as any[]).map(raw => ({
-          ...raw,
-          category: raw.categories?.slug ?? raw.sub_category ?? '',
-        })) as Product[];
-        setResults(products.slice(0, 8));
-      }).catch(() => {});
+      const timer = setTimeout(() => {
+        api.getProducts({ search: query }).then(res => {
+          // The API returns the joined `categories` object, not a flat `category`
+          // string — casting the raw row straight to Product left category
+          // undefined and threw on `.replace()` while rendering results.
+          const products = (res.products as any[]).map(raw => ({
+            ...raw,
+            category: raw.categories?.slug ?? raw.sub_category ?? '',
+          })) as Product[];
+          setResults(products.slice(0, 8));
+          trackSearch(query, products.length);
+        }).catch(() => {});
+      }, 300);
+
+      return () => clearTimeout(timer);
     } else {
       setResults([]);
     }
@@ -92,7 +98,13 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                         <Link
                           key={product.id}
                           to={`/product/${product.id}`}
-                          onClick={onClose}
+                          onClick={() => {
+                            trackSelectItem(
+                              { id: product.id, name: product.name, price: product.price, category: product.category },
+                              'Search Results'
+                            );
+                            onClose();
+                          }}
                           className="flex items-center gap-4 py-3 hover:bg-white/5 -mx-2 px-2 transition-colors"
                         >
                           <div className="w-12 h-12 bg-white/5 shrink-0 overflow-hidden flex items-center justify-center">
@@ -144,7 +156,13 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                         <Link
                           key={product.id}
                           to={`/product/${product.id}`}
-                          onClick={onClose}
+                          onClick={() => {
+                            trackSelectItem(
+                              { id: product.id, name: product.name, price: product.price, category: product.category },
+                              'Search Results'
+                            );
+                            onClose();
+                          }}
                           className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors"
                         >
                           <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden shrink-0 flex items-center justify-center">

@@ -26,6 +26,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then((module)
 const AboutUs = lazy(() => import('./pages/AboutUs').then((module) => ({ default: module.AboutUs })));
 const ContactUs = lazy(() => import('./pages/ContactUs').then((module) => ({ default: module.ContactUs })));
 const Careers = lazy(() => import('./pages/Careers').then((module) => ({ default: module.Careers })));
+const CorporateGifting = lazy(() => import('./pages/CorporateGifting').then((module) => ({ default: module.CorporateGifting })));
 const ShippingPolicy = lazy(() => import('./pages/Policies').then((module) => ({ default: module.ShippingPolicy })));
 const ReturnsRefunds = lazy(() => import('./pages/Policies').then((module) => ({ default: module.ReturnsRefunds })));
 const PrivacyPolicy = lazy(() => import('./pages/Policies').then((module) => ({ default: module.PrivacyPolicy })));
@@ -75,7 +76,7 @@ function AppContent() {
       <PageTracker />
       <div className="flex flex-col min-h-screen relative bg-[var(--color-bg-main)] text-[var(--color-text-main)] transition-colors duration-300">
         {!isAdmin && !isPremium && <Header onSearchOpen={() => setSearchOpen(true)} />}
-        <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin ? 'pb-20 lg:pb-0' : ''}`}>
+        <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin && isPremiumTheme ? 'pb-20 lg:pb-0' : ''}`}>
           <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-sm font-semibold text-gray-500">Loading…</div>}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -92,6 +93,8 @@ function AppContent() {
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/corporate-gifting" element={<CorporateGifting />} />
+            <Route path="/corporate" element={<CorporateGifting />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/shipping" element={<ShippingPolicy />} />
             <Route path="/returns" element={<ReturnsRefunds />} />

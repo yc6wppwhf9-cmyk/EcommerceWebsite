@@ -13,7 +13,7 @@ import { Product, Job, Application } from '../types';
 import { api } from '../lib/api';
 import { BulkUpload } from '../components/BulkUpload';
 import { AdminOverview } from '../components/admin/AdminOverview';
-import { AdminProducts, BLANK_FORM, ColorVariant } from '../components/admin/AdminProducts';
+import { AdminProducts, BLANK_FORM, ColorVariant, resolveProductCategory } from '../components/admin/AdminProducts';
 import { AdminOrders } from '../components/admin/AdminOrders';
 import { AdminJobs } from '../components/admin/AdminJobs';
 import { AdminBanners } from '../components/admin/AdminBanners';

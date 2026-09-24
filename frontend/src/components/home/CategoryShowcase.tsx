@@ -1,128 +1,156 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion/react';
 import { fadeUp, stagger, revealProps } from '../../lib/motion';
 import { LazyImage } from '../LazyImage';
 import { CATS } from '../../constants/home';
 
 /**
  * "Shop By Category" section.
- * - Mobile: 3D depth-stacked card carousel with touch swipe.
+ * - Mobile: 3D coverflow carousel with drag/swipe and looping.
  * - Desktop: 3-column grid with hover reveal arrows.
  */
 export const CategoryShowcase = () => {
   const reduceMotion = useReducedMotion();
-  const [catFlipIndex, setCatFlipIndex] = useState(0);
-  const catTouchRef = useRef<number | null>(null);
+  const [active, setActive] = useState(0);
+  const draggedRef = useRef(false);
 
   const total = CATS.length;
 
-  const goNext = () => setCatFlipIndex((i) => (i + 1) % total);
-  const goPrev = () => setCatFlipIndex((i) => (i - 1 + total) % total);
+  const goNext = () => setActive((i) => (i + 1) % total);
+  const goPrev = () => setActive((i) => (i - 1 + total) % total);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    catTouchRef.current = e.touches[0].clientX;
+  // Shortest signed distance from the active card, so the carousel loops.
+  const offsetOf = (i: number) => {
+    let d = i - active;
+    if (d > total / 2) d -= total;
+    if (d < -total / 2) d += total;
+    return d;
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (catTouchRef.current === null) return;
-    const diff = catTouchRef.current - e.changedTouches[0].clientX;
-    if (diff > 40) goNext();
-    else if (diff < -40) goPrev();
-    catTouchRef.current = null;
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.x < -50 || info.velocity.x < -400) goNext();
+    else if (info.offset.x > 50 || info.velocity.x > 400) goPrev();
+    // Let the click that ends a drag pass without navigating.
+    setTimeout(() => { draggedRef.current = false; }, 0);
   };
+
+  const spring = reduceMotion
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 260, damping: 32, mass: 0.9 };
 
   return (
     <>
-      {/* ─── Mobile: Card Stack ─────────────────────────────────────────── */}
-      <section className="md:hidden py-6 px-4 text-center" aria-label="Shop by category">
-        <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-4">
+      {/* ─── Mobile: Coverflow Carousel ─────────────────────────────────── */}
+      <section className="md:hidden pt-8 pb-10 overflow-hidden text-center" aria-label="Shop by category">
+        <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-6">
           Shop By Category
         </h2>
-        <div className="px-2">
-          <div
-            className="relative select-none max-w-[270px] xs:max-w-[290px] mx-auto"
-            style={{ perspective: '1200px' }}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            aria-label="Category card stack — swipe to browse"
-          >
-            {/* Stacked cards behind (depth effect) */}
-            {[2, 1].map((offset) => {
-              const idx = catFlipIndex + offset;
-              if (idx >= total) return null;
-              return (
-                <div
-                  key={`stack-${offset}`}
-                  className="absolute inset-y-0 rounded-2xl overflow-hidden pointer-events-none"
-                  style={{
-                    left: `${offset * 10}px`,
-                    right: `-${offset * 10}px`,
-                    transform: `scale(${1 - offset * 0.04}) translateX(${offset * 8}px)`,
-                    filter: `brightness(${0.55 - offset * 0.1})`,
-                    zIndex: 10 - offset,
-                    transformOrigin: 'right center',
+
+        <motion.div
+          className="relative mx-auto w-[70vw] max-w-[300px] aspect-[3/4] touch-pan-y select-none"
+          style={{ perspective: 1100 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragStart={() => { draggedRef.current = true; }}
+          onDragEnd={handleDragEnd}
+          aria-roledescription="carousel"
+          aria-label="Categories — swipe to browse"
+        >
+          {CATS.map((cat, i) => {
+            const d = offsetOf(i);
+            const isActive = d === 0;
+            return (
+              <motion.div
+                key={cat.label}
+                className="absolute inset-0"
+                initial={false}
+                animate={{
+                  x: `${d * 74}%`,
+                  scale: isActive ? 1 : 0.82,
+                  rotateY: d * -22,
+                  opacity: Math.abs(d) > 1 ? 0 : 1,
+                }}
+                transition={spring}
+                style={{ zIndex: 10 - Math.abs(d) }}
+              >
+                <Link
+                  to={cat.to}
+                  draggable={false}
+                  tabIndex={isActive ? 0 : -1}
+                  aria-hidden={!isActive}
+                  onClick={(e) => {
+                    if (draggedRef.current || !isActive) {
+                      e.preventDefault();
+                      if (!draggedRef.current) setActive(i);
+                    }
                   }}
+                  className={`relative block w-full h-full rounded-[22px] overflow-hidden transition-shadow duration-500 ${
+                    isActive
+                      ? 'shadow-[0_24px_48px_-20px_rgba(15,20,23,0.55)]'
+                      : 'shadow-[0_10px_24px_-14px_rgba(15,20,23,0.35)]'
+                  }`}
                 >
-                  <div className="relative w-full" style={{ paddingBottom: '125%' }}>
-                    <img
-                      src={CATS[idx]?.img || ''}
-                      alt=""
-                      className="absolute inset-0 w-full h-full object-cover object-top"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Active card */}
-            <div style={{ position: 'relative', zIndex: 20, overflow: 'hidden', borderRadius: '1rem' }}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={catFlipIndex}
-                  initial={{ opacity: 0, scale: 1.03 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.4, ease: 'easeInOut' }}
-                  className="w-full rounded-sm overflow-hidden border border-line shadow-md"
-                >
-                  <Link
-                    to={CATS[catFlipIndex].to}
-                    className="block w-full relative"
-                    style={{ paddingBottom: '125%' }}
-                  >
-                    <img
-                      src={CATS[catFlipIndex].img}
-                      alt={CATS[catFlipIndex].label}
-                      className="absolute inset-0 w-full h-full object-cover object-top"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </Link>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Navigation controls */}
-            <div className="flex justify-center items-center mt-6 px-1">
-              <div className="flex gap-2" role="tablist" aria-label="Category indicators">
-                {CATS.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCatFlipIndex(i)}
-                    role="tab"
-                    aria-selected={i === catFlipIndex}
-                    aria-label={CATS[i].label}
-                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                      i === catFlipIndex ? 'w-6 bg-ink' : 'w-1.5 bg-line'
-                    }`}
+                  <img
+                    src={cat.img}
+                    alt={cat.label}
+                    draggable={false}
+                    className="w-full h-full object-cover pointer-events-none"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
                   />
-                ))}
-              </div>
-            </div>
+                  {/* Dim the side cards so the centre card reads as the focus */}
+                  <motion.div
+                    className="absolute inset-0 bg-ink pointer-events-none"
+                    initial={false}
+                    animate={{ opacity: isActive ? 0 : 0.35 }}
+                    transition={spring}
+                  />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* CTA + progress */}
+        <div className="mt-7 flex flex-col items-center gap-5">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={active}
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+            >
+              <Link
+                to={CATS[active].to}
+                className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-[0.22em] active:scale-[0.97] transition-transform"
+              >
+                Shop {CATS[active].label}
+                <ArrowRight size={14} />
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex gap-2" role="tablist" aria-label="Category indicators">
+            {CATS.map((cat, i) => (
+              <button
+                key={cat.label}
+                onClick={() => setActive(i)}
+                role="tab"
+                aria-selected={i === active}
+                aria-label={cat.label}
+                className="py-2 cursor-pointer"
+              >
+                <span
+                  className={`block h-1 rounded-full transition-all duration-500 ${
+                    i === active ? 'w-7 bg-ink' : 'w-3 bg-line'
+                  }`}
+                />
+              </button>
+            ))}
           </div>
         </div>
       </section>

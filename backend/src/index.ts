@@ -24,6 +24,7 @@ import contactRoutes from './routes/contact.routes';
 import couponRoutes from './routes/coupon.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import supportRoutes from './routes/support.routes';
+import corporateRoutes from './routes/corporate.routes';
 
 const app = express();
 
@@ -121,6 +122,8 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api', sitemapRoutes);
 app.use('/api/contact', supportLimiter, contactRoutes);
 app.use('/api/support', supportLimiter, supportRoutes);
+app.use('/api/corporate-gifting', supportLimiter, corporateRoutes);
+app.use('/api/corporate', supportLimiter, corporateRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/analytics', analyticsRoutes);
 

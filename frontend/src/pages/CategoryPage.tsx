@@ -7,6 +7,7 @@ import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify, Check } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { trackViewItemList } from '../lib/gtag';
 import { resolveProductColors, resolveProductAgeRange, isJuniorProduct, AGE_RANGE_OPTIONS } from '../utils/productFilters';
 
 const PAGE_LIMIT = 20;
@@ -571,11 +572,27 @@ export const CategoryPage = () => {
     return currentCategory?.subtitle || slug.replace(/-/g, ' ').toUpperCase();
   })();
 
+  // Track GA4 view_item_list when products are loaded for this category
+  useEffect(() => {
+    if (!isLoading && allProducts.length > 0) {
+      trackViewItemList({
+        itemListId: slug,
+        itemListName: pageTitle,
+        items: allProducts.slice(0, 20).map(p => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          category: p.category || slug,
+        })),
+      });
+    }
+  }, [slug, isLoading, allProducts.length, pageTitle]);
+
   return (
     <>
       <main className={`bg-bone min-h-screen font-outfit selection:bg-ink selection:text-white ${showCategoryBanner ? 'pt-0' : 'pt-3 md:pt-6'}`}>
         <SEO
-          title={currentCategory?.title || pageTitle}
+          title={pageTitle}
           description={`Shop ${pageTitle} at Priority Bags. Browse our premium collection with fast delivery across India.`}
           url={`https://prioritybags.in/${slug}`}
         />
