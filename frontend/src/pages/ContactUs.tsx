@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Mail, MapPin, MessageSquare, CheckCircle, AlertCircle,
+  Mail, MapPin, CheckCircle, AlertCircle,
   Clock, ArrowUpRight, ArrowRight, ShieldCheck, Search,
 } from 'lucide-react';
 import { api } from '../lib/api';
@@ -88,7 +88,7 @@ export const ContactUs = () => {
     <main className="bg-white">
       <SEO
         title="Contact Priority Bags"
-        description="Talk to the Priority Bags concierge team. WhatsApp or send a message about orders, products, warranty, and bulk enquiries."
+        description="Talk to the Priority Bags concierge team. Send us a message about orders, products, warranty, and bulk enquiries."
         url="https://prioritybags.in/contact"
       />
 
@@ -118,27 +118,7 @@ export const ContactUs = () => {
 
       {/* ── Quick channels ─────────────────────────────────────── */}
       <section className="max-w-[1280px] mx-auto px-6 lg:px-10 -mt-8 lg:-mt-10 relative z-10">
-        <div className="grid sm:grid-cols-2 gap-4 lg:gap-6">
-          <a
-            href="https://wa.me/917400459254"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative overflow-hidden rounded-2xl bg-[#0d1b2a] p-6 lg:p-7 text-white shadow-xl transition-transform duration-500 hover:-translate-y-1"
-          >
-            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-green-500/20 blur-2xl" />
-            <div className="relative">
-              <div className="w-11 h-11 rounded-xl bg-green-500 flex items-center justify-center mb-5">
-                <MessageSquare className="w-5 h-5 text-white" />
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 mb-1">WhatsApp shopping</p>
-              <p className="font-outfit font-bold text-[18px] flex items-center gap-2">
-                Chat with concierge
-                <ArrowUpRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-              </p>
-              <p className="text-[13px] text-white/50 mt-1">Browse, ask, and order directly</p>
-            </div>
-          </a>
-
+        <div className="grid gap-4 lg:gap-6">
           <a
             href="mailto:info@prioritybags.in"
             className="group rounded-2xl border border-gray-100 bg-white p-6 lg:p-7 shadow-lg shadow-gray-100/60 transition-transform duration-500 hover:-translate-y-1"
