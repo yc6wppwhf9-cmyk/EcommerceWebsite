@@ -38,17 +38,17 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       {highlight ? (
         <Link
-          className="h-16 flex items-center px-2.5 text-[13px] font-outfit uppercase"
+          className="h-16 flex items-center pl-4 pr-2 text-[13px] font-outfit uppercase"
           to={getThemeTo(to)}
         >
-          <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-3.5 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
+          <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
             {title}
             {items && <ChevronDown size={12} className={`opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
           </span>
         </Link>
       ) : (
         <Link
-          className="h-16 flex items-center gap-1.5 px-4 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
+          className="h-16 flex items-center gap-1.5 px-4 xl:px-5 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
           to={getThemeTo(to)}
         >
           {title}
@@ -225,7 +225,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Desktop Navigation (Centered) */}
         <nav className="hidden lg:flex items-center">
-          <ul className="flex items-center">
+          <ul className="flex items-center gap-1.5 xl:gap-2.5">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
         </nav>
