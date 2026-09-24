@@ -1,14 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Instagram, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
-import {
-  motion,
-  animate,
-  useMotionValue,
-  useMotionValueEvent,
-  useReducedMotion,
-  useTransform,
-  type PanInfo,
-} from 'motion/react';
+import { motion, useReducedMotion, type PanInfo } from 'motion/react';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3';
 
@@ -214,14 +206,13 @@ export const InstagramShowcase = () => {
   );
 };
 
-const SWIPE_DISTANCE = 90;
-const SWIPE_VELOCITY = 500;
+const SWIPE_DISTANCE = 50;
+const SWIPE_VELOCITY = 400;
 
 /**
- * Mobile card deck. The front card follows the finger (with a slight tilt);
- * the card underneath grows into place as you drag. Dragging left reveals the
- * next post, dragging right the previous one. Releasing past the threshold
- * flings the card away; otherwise it springs back.
+ * Mobile 3D coverflow (same feel as "Shop By Category"): the active post sits
+ * in the centre, neighbours peek in at the sides angled and dimmed. Drag or
+ * swipe to move; it loops. Tapping a side card brings it to the centre.
  */
 const MobileDeck: React.FC<{
   cards: InstagramCardData[];
@@ -230,122 +221,86 @@ const MobileDeck: React.FC<{
 }> = ({ cards, index, onIndexChange }) => {
   const reduceMotion = useReducedMotion();
   const total = cards.length;
-  const x = useMotionValue(0);
-  const rotate = useTransform(x, [-240, 0, 240], [-9, 0, 9]);
-  const progress = useTransform(x, (v) => Math.min(Math.abs(v) / 180, 1));
-  const underScale = useTransform(progress, [0, 1], [0.94, 1]);
-  const underY = useTransform(progress, [0, 1], [13, 0]);
-  const underOpacity = useTransform(progress, [0, 1], [0.85, 1]);
-  const [peek, setPeek] = useState<1 | -1>(1);
-  const busy = useRef(false);
   const dragged = useRef(false);
 
-  // Which neighbour sits underneath depends on drag direction.
-  useMotionValueEvent(x, 'change', (v) => {
-    if (v === 0) return;
-    const next = v < 0 ? 1 : -1;
-    setPeek((p) => (p === next ? p : next));
-  });
+  const go = (dir: 1 | -1) => onIndexChange((((index + dir) % total) + total) % total, dir);
 
-  const at = (offset: number) => cards[(((index + offset) % total) + total) % total];
-
-  const fling = async (dir: 1 | -1) => {
-    if (busy.current) return;
-    busy.current = true;
-    setPeek(dir);
-    const width = typeof window !== 'undefined' ? window.innerWidth : 400;
-    await animate(x, -dir * width * 1.1, reduceMotion ? { duration: 0 } : { duration: 0.32, ease: [0.32, 0.72, 0, 1] });
-    onIndexChange((((index + dir) % total) + total) % total, dir);
-    x.set(0);
-    busy.current = false;
+  // Shortest signed distance from the active card, so the carousel loops.
+  const offsetOf = (i: number) => {
+    let d = i - index;
+    if (d > total / 2) d -= total;
+    if (d < -total / 2) d += total;
+    return d;
   };
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY) fling(1);
-    else if (info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY) fling(-1);
-    else animate(x, 0, { type: 'spring', stiffness: 420, damping: 32 });
+    if (info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY) go(1);
+    else if (info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY) go(-1);
     setTimeout(() => { dragged.current = false; }, 0);
   };
 
-  const front = at(0);
-  const under = at(peek);
-  const back = at(peek * 2);
+  const spring = reduceMotion
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 260, damping: 32, mass: 0.9 };
 
   return (
-    <div className="md:hidden">
-      <div className="relative max-w-[340px] sm:max-w-[380px] mx-auto pb-9">
-        {/* Back card */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 bottom-9 z-[1] pointer-events-none bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-[0_6px_20px_rgba(0,0,0,0.05)] overflow-hidden"
-          style={{ transform: 'translateY(26px) scale(0.88)', transformOrigin: 'bottom center', opacity: 0.6 }}
-        >
-          <div className="invisible">
-            <InstagramCardContent key={back.href} card={back} />
-          </div>
-        </div>
-
-        {/* Card underneath: grows into place while dragging */}
-        <motion.div
-          aria-hidden
-          className="absolute inset-x-0 top-0 bottom-9 z-[2] pointer-events-none bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-[0_8px_26px_rgba(0,0,0,0.07)] overflow-hidden"
-          style={{ scale: underScale, y: underY, opacity: underOpacity, transformOrigin: 'bottom center' }}
-        >
-          <InstagramCardContent key={under.href} card={under} />
-        </motion.div>
-
-        {/* Front card */}
-        <motion.div
-          key={front.href}
-          className="relative z-10 bg-white rounded-2xl sm:rounded-3xl border border-gray-100/90 shadow-[0_14px_40px_rgba(0,0,0,0.10)] overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y select-none [&_a]:[-webkit-user-drag:none] [&_img]:[-webkit-user-drag:none]"
-          style={{ x, rotate, transformOrigin: '50% 90%' }}
-          drag="x"
-          dragDirectionLock
-          dragMomentum={false}
-          onDragStart={() => { dragged.current = true; }}
-          onDragEnd={handleDragEnd}
-          onClickCapture={(e) => {
-            if (dragged.current) {
-              e.preventDefault();
-              e.stopPropagation();
-            }
-          }}
-        >
-          <InstagramCardContent card={front} autoPlay />
-        </motion.div>
-      </div>
-
-      {/* Controls */}
-      <div className="flex items-center justify-center gap-4">
-        <button
-          onClick={() => fling(-1)}
-          aria-label="Previous Instagram post"
-          className="w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-800 active:scale-95 transition-transform"
-        >
-          <ChevronLeft size={18} strokeWidth={2.2} />
-        </button>
-        <div className="flex items-center gap-1.5">
-          {cards.map((c, i) => (
-            <button
-              key={c.href}
-              onClick={() => {
-                if (i !== index) onIndexChange(i, i > index ? 1 : -1);
+    <div className="md:hidden -mx-4 overflow-hidden pb-2">
+      <motion.div
+        className="relative mx-auto w-[74vw] max-w-[320px] grid touch-pan-y select-none"
+        style={{ perspective: 1100 }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragStart={() => { dragged.current = true; }}
+        onDragEnd={handleDragEnd}
+        aria-roledescription="carousel"
+        aria-label="Instagram posts — swipe to browse"
+      >
+        {cards.map((card, i) => {
+          const d = offsetOf(i);
+          const isActive = d === 0;
+          return (
+            <motion.div
+              key={card.href}
+              className="[grid-area:1/1] self-start"
+              initial={false}
+              animate={{
+                x: `${d * 76}%`,
+                scale: isActive ? 1 : 0.84,
+                rotateY: d * -22,
+                opacity: Math.abs(d) > 1 ? 0 : 1,
               }}
-              aria-label={`Go to post ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index ? 'w-6 bg-[#0F1417]' : 'w-1.5 bg-gray-300'
-              }`}
-            />
-          ))}
-        </div>
-        <button
-          onClick={() => fling(1)}
-          aria-label="Next Instagram post"
-          className="w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-800 active:scale-95 transition-transform"
-        >
-          <ChevronRight size={18} strokeWidth={2.2} />
-        </button>
-      </div>
+              transition={spring}
+              style={{ zIndex: 10 - Math.abs(d), pointerEvents: Math.abs(d) > 1 ? 'none' : 'auto' }}
+              aria-hidden={!isActive}
+              onClickCapture={(e) => {
+                if (dragged.current || !isActive) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!dragged.current) go(d > 0 ? 1 : -1);
+                }
+              }}
+            >
+              <div
+                className={`relative bg-white rounded-2xl border border-gray-100/90 overflow-hidden transition-shadow duration-500 [&_a]:[-webkit-user-drag:none] [&_img]:[-webkit-user-drag:none] ${
+                  isActive
+                    ? 'shadow-[0_22px_44px_-18px_rgba(15,20,23,0.35)]'
+                    : 'shadow-[0_10px_24px_-14px_rgba(15,20,23,0.25)]'
+                }`}
+              >
+                <InstagramCardContent card={card} autoPlay={isActive} />
+                {/* Dim the side cards so the centre card reads as the focus */}
+                <motion.div
+                  className="absolute inset-0 bg-ink pointer-events-none"
+                  initial={false}
+                  animate={{ opacity: isActive ? 0 : 0.3 }}
+                  transition={spring}
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
     </div>
   );
 };
