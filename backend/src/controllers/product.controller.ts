@@ -106,9 +106,20 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     if (min_price) query = query.gte('price', Number(min_price));
     if (max_price) query = query.lte('price', Number(max_price));
     if (search) {
-      // Escape ILIKE metacharacters so user input is treated as a literal string
-      const escaped = (search as string).replace(/[%_\\]/g, '\\$&');
-      query = query.ilike('name', `%${escaped}%`);
+      // Match word by word so extra spaces, word order and case don't matter
+      // ("Atlas 001 Laptop Bag  BLK" finds "Priority Atlas 001 Laptop Bag BLK"),
+      // and let a word match the SKU too ("INV29220"). Characters outside
+      // letters/digits/hyphen are dropped, which also keeps ILIKE wildcards and
+      // PostgREST filter syntax out of the query.
+      const words = String(search)
+        .toLowerCase()
+        .split(/\s+/)
+        .map((w) => w.replace(/[^a-z0-9-]/g, ''))
+        .filter(Boolean)
+        .slice(0, 8);
+      for (const w of words) {
+        query = query.or(`name.ilike.%${w}%,sku.ilike.%${w}%`);
+      }
     }
 
     const sortMap: Record<string, { column: string; ascending: boolean }> = {
