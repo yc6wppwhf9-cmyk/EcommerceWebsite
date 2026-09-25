@@ -455,7 +455,9 @@ export const CategoryPage = () => {
       {isJuniorOrSchoolCategory && (
         <FilterSection id="age" title="Age Range">
           <div className="space-y-3 pt-1">
-            {AGE_RANGE_OPTIONS.map(opt => (
+            {AGE_RANGE_OPTIONS.filter(opt =>
+              selectedAgeRanges.includes(opt.label) || allProducts.some(p => resolveProductAgeRange(p) === opt.label)
+            ).map(opt => (
               <CheckRow
                 key={opt.id}
                 label={opt.label}

@@ -8,7 +8,6 @@ import { MarketplaceLink, type Marketplace } from '../components/MarketplaceLink
 import { resolveProductAgeRange, isJuniorProduct } from '../utils/productFilters';
 
 const AGE_GROUPS = [
-  { label: 'Below 3 Years', slug: 'school-backpacks', age: 'Below 3 Years', img: '/junior/Rectangle 28.png', color: '#FFBB5A' },
   { label: '3 to 5 Years', slug: 'school-backpacks', age: '3 to 5 Years', img: '/junior/Rectangle 29.png', color: '#A368FB' },
   { label: '6 to 10 Years', slug: 'school-backpacks', age: '6 to 10 Years', img: "/junior/Speedo_ Hero 1.png", color: '#FFBB5A' },
   { label: '11 Years & Above', slug: 'school-backpacks', age: '11 Years & Above', img: "/junior/Beautiful_ Hero 1.png", color: '#FFBB5A' },
@@ -352,20 +351,37 @@ export const JuniorPage = () => {
     sessionStorage.setItem('siteTheme', 'junior');
   }, []);
 
+  // Load every tab once so tabs with no live products can be hidden.
+  const [tabProducts, setTabProducts] = useState<Record<string, Product[]>>({});
   useEffect(() => {
-    const cat = CATEGORIES.find(c => c.label === activeTab);
-    if (!cat) return;
-    setIsLoading(true);
-    setProducts([]);
+    let cancelled = false;
+    Promise.all(
+      CATEGORIES.map(cat =>
+        api.getProducts({ category: 'junior', sub_category: cat.filter, limit: '50' })
+          .then(res => [cat.label, (res.products as unknown as Product[]).filter(isJuniorProduct)] as const)
+          .catch(() => [cat.label, [] as Product[]] as const),
+      ),
+    ).then(entries => {
+      if (!cancelled) setTabProducts(Object.fromEntries(entries));
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const tabsLoaded = Object.keys(tabProducts).length > 0;
+  const visibleCategories = tabsLoaded
+    ? CATEGORIES.filter(c => (tabProducts[c.label]?.length ?? 0) > 0)
+    : CATEGORIES;
+
+  useEffect(() => {
+    if (!tabsLoaded) return;
+    if (!visibleCategories.some(c => c.label === activeTab) && visibleCategories.length > 0) {
+      setActiveTab(visibleCategories[0].label);
+      return;
+    }
+    setProducts(tabProducts[activeTab] ?? []);
     setTabPage(0);
-    api.getProducts({ category: 'junior', sub_category: cat.filter, limit: '50' })
-      .then(res => {
-        const juniorOnly = (res.products as unknown as Product[]).filter(isJuniorProduct);
-        setProducts(juniorOnly);
-        setIsLoading(false);
-      })
-      .catch(() => setIsLoading(false));
-  }, [activeTab]);
+    setIsLoading(false);
+  }, [activeTab, tabsLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden junior-theme">
@@ -444,7 +460,7 @@ export const JuniorPage = () => {
           <AgeGroupCarousel />
 
           {/* Desktop: 4-column grid */}
-          <div className="hidden md:grid grid-cols-4 gap-8 lg:gap-10">
+          <div className="hidden md:grid grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto">
             {AGE_GROUPS.map((group, i) => (
               <motion.div key={group.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
                 <Link to={`/${group.slug}?theme=junior&age=${encodeURIComponent(group.age)}`} className="group relative block rounded-xl shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-2 !overflow-visible" style={{ aspectRatio: '1/1.4' }}>
@@ -548,7 +564,7 @@ export const JuniorPage = () => {
           <div className="flex justify-center mb-10 md:mb-14">
             <div className="relative w-full flex justify-center">
               <div className="flex overflow-x-auto no-scrollbar gap-2 rounded-xl border border-gray-100 bg-white/90 p-1.5 shadow-sm px-4">
-                {CATEGORIES.map((cat) => (
+                {visibleCategories.map((cat) => (
                   <button
                     key={cat.label}
                     onClick={() => setActiveTab(cat.label)}
