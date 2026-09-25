@@ -51,7 +51,14 @@ export const AdminEnquiries: React.FC<AdminEnquiriesProps> = ({ showToast }) => 
     const [inq, tix] = await Promise.allSettled([api.listAdminInquiries(), api.listAdminTickets()]);
     if (inq.status === 'fulfilled') setInquiries(inq.value || []);
     if (tix.status === 'fulfilled') setTickets(tix.value || []);
-    if (inq.status === 'rejected' || tix.status === 'rejected') toastRef.current('Some enquiries could not be loaded', 'error');
+    const failed = [inq, tix].find((r) => r.status === 'rejected') as PromiseRejectedResult | undefined;
+    if (failed) {
+      const notDeployed = String(failed.reason?.message || '').includes('404');
+      toastRef.current(
+        notDeployed ? 'Enquiries need the latest server update (merge the pending pull request).' : 'Some enquiries could not be loaded',
+        'error',
+      );
+    }
     setLoading(false);
   }, []);
 

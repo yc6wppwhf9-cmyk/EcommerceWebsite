@@ -59,7 +59,14 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigateTab }) =
     try {
       setData(await api.getAdminInsights());
     } catch (e: any) {
-      setError(e?.message || 'Could not load dashboard');
+      const msg = String(e?.message || '');
+      // The website and the API deploy separately (Vercel vs Render); a 404 here means the
+      // API hasn't been redeployed with the dashboard endpoint yet.
+      setError(
+        msg.includes('404')
+          ? 'The dashboard needs the latest server update. Merge the pending pull request into master so Render redeploys the API, then refresh.'
+          : msg || 'Could not load dashboard',
+      );
     } finally {
       setLoading(false);
     }
