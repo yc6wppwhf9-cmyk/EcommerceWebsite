@@ -25,6 +25,7 @@ import couponRoutes from './routes/coupon.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import supportRoutes from './routes/support.routes';
 import corporateRoutes from './routes/corporate.routes';
+import insightsRoutes from './routes/insights.routes';
 
 const app = express();
 
@@ -126,6 +127,7 @@ app.use('/api/corporate-gifting', supportLimiter, corporateRoutes);
 app.use('/api/corporate', supportLimiter, corporateRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/admin/insights', insightsRoutes);
 
 // Health Check
 app.get('/api/health', async (_req, res) => {

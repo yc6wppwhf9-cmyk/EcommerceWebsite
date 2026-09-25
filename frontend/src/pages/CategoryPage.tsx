@@ -572,6 +572,9 @@ export const CategoryPage = () => {
     return currentCategory?.subtitle || slug.replace(/-/g, ' ').toUpperCase();
   })();
 
+  // Search-friendly name for <title>: "COLLEGE BACKPACKS" -> "College Backpacks".
+  const seoName = pageTitle.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+
   // Track GA4 view_item_list when products are loaded for this category
   useEffect(() => {
     if (!isLoading && allProducts.length > 0) {
@@ -592,8 +595,8 @@ export const CategoryPage = () => {
     <>
       <main className={`bg-bone min-h-screen font-outfit selection:bg-ink selection:text-white ${showCategoryBanner ? 'pt-0' : 'pt-3 md:pt-6'}`}>
         <SEO
-          title={pageTitle}
-          description={`Shop ${pageTitle} at Priority Bags. Browse our premium collection with fast delivery across India.`}
+          title={`${seoName} — Shop Online`}
+          description={`Shop ${seoName.toLowerCase()} from Priority Bags. See prices and colours, and buy on Amazon, Myntra and more with delivery across India.`}
           url={`https://prioritybags.in/${slug}`}
         />
 

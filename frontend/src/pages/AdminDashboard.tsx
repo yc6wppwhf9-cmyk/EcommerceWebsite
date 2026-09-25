@@ -6,6 +6,7 @@ import {
   FileSpreadsheet, Image as ImageIcon,
   Briefcase, FileText, Loader2,
   MessageSquareText,
+  Inbox,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +21,7 @@ import { AdminBanners } from '../components/admin/AdminBanners';
 import { AdminUsers } from '../components/admin/AdminUsers';
 import { AdminCoupons } from '../components/admin/AdminCoupons';
 import { AdminChatLogs } from '../components/admin/AdminChatLogs';
+import { AdminEnquiries } from '../components/admin/AdminEnquiries';
 
 export const AdminDashboard = () => {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
@@ -222,6 +224,7 @@ export const AdminDashboard = () => {
       ]
     : [
         { id: 'overview', label: 'Stats', icon: LayoutDashboard },
+        { id: 'enquiries', label: 'Enquiries', icon: Inbox },
         { id: 'inventory', label: 'Products', icon: Box },
         { id: 'chat-logs', label: 'Bot Queries', icon: MessageSquareText },
         { id: 'bulk', label: 'Add Many', icon: FileSpreadsheet },
@@ -424,12 +427,10 @@ export const AdminDashboard = () => {
           <div className="flex-1 min-w-0">
             <AnimatePresence mode="wait">
               {activeTab === 'overview' && (
-                <AdminOverview
-                  orders={orders}
-                  products={products}
-                  onNavigateTab={(tab) => { setActiveTab(tab); }}
-                />
+                <AdminOverview onNavigateTab={(tab) => { setActiveTab(tab); }} />
               )}
+
+              {activeTab === 'enquiries' && <AdminEnquiries showToast={showToast} />}
 
               {activeTab === 'inventory' && (
                 <AdminProducts

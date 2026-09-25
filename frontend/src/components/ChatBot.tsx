@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Headset, X, Send, Package, ShoppingBag, ExternalLink } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
+import { trackMarketplaceClick } from '../lib/gtag';
 import { Product } from '../types';
 
 // Renders a small subset of markdown: **bold**, *italic*, bullet lists, line breaks
@@ -289,7 +290,14 @@ export const ChatBot = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => {
-                              if (p.id) api.trackMarketplaceClick(p.id, mk.marketplace);
+                              if (p.id) api.trackMarketplaceClick(p.id, mk.marketplace, 'chatbot');
+                              trackMarketplaceClick({
+                                marketplace: mk.marketplace,
+                                url: mk.url,
+                                productId: p.id,
+                                productName: p.name,
+                                productPrice: p.price,
+                              });
                             }}
                             className="group flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 hover:border-gray-300 hover:shadow-sm transition-all text-left"
                           >
