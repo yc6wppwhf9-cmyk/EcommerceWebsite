@@ -4,8 +4,6 @@ import {
   Star,
   Heart,
   ChevronDown,
-  Minus,
-  Plus,
   ShoppingCart,
   Laptop,
   Sparkles,
@@ -132,7 +130,6 @@ export const ProductDetail = () => {
   const navigate = useNavigate();
   const { showToast } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const [quantity, setQuantity] = useState(1);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [openAccordion, setOpenAccordion] = useState<string | null>('highlight');
@@ -153,7 +150,6 @@ export const ProductDetail = () => {
     setLoading(true);
     setProduct(null);
     setFetchError(false);
-    setQuantity(1);
     setSelectedVariantIndex(0);
     setSelectedImage(0);
     window.scrollTo(0, 0);
@@ -381,23 +377,6 @@ export const ProductDetail = () => {
             {/* Product Name */}
             <h1 className="font-outfit font-normal text-[30px] leading-tight tracking-tight text-ink">{product.name}</h1>
 
-            {/* Stars — only when there is a real Amazon rating */}
-            {product.rating > 0 ? (
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className={i < Math.round(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
-                  ))}
-                </div>
-                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate">
-                  {product.rating.toFixed(1)}{product.reviews > 0 ? ` · ${product.reviews} reviews` : ''}
-                </span>
-              </div>
-            ) : (
-              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate">New Arrival</span>
-            )}
-
-
             {/* Availability — stated, not shouted. The scarcity counters
                 ("only N left!", live viewer count) read as discount-store
                 urgency, so they are off in the quiet palette. */}
@@ -407,29 +386,6 @@ export const ProductDetail = () => {
             {!inStock && (
               <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">Out of stock</p>
             )}
-
-            {/* Quantity */}
-            <div className="flex items-center gap-5">
-              <span className="font-outfit font-normal text-[15px] text-graphite">Quantity : {quantity}</span>
-              <div className="flex items-center border border-line rounded-sm overflow-hidden">
-                <button
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="w-10 h-10 bg-ink text-white flex items-center justify-center hover:bg-graphite transition-colors"
-                >
-                  <Minus size={14} />
-                </button>
-                <span className="w-10 text-center font-outfit font-medium text-[15px] text-ink">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                  disabled={quantity >= product.stock}
-                  className="w-10 h-10 bg-ink text-white flex items-center justify-center hover:bg-graphite transition-colors disabled:opacity-30"
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
-            </div>
-
-
 
             {/* Actions */}
             <div className="space-y-3 pt-2">
