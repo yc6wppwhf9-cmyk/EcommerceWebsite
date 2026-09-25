@@ -151,7 +151,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   const isDarkMode = isPremiumTheme;
   const activeNavData = isPremiumTheme ? premiumNavData : navData;
 
-  const homeHref = isPremiumTheme ? '/premium' : (isJunior ? '/junior' : '/');
   const logoSrc = isJunior
     ? '/junior/junior logo.png'
     : (isPremiumTheme ? '/Traworld/nav bar logo.png' : '/logo.png');
@@ -179,7 +178,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         {/* Desktop Brand Switcher (Left) */}
         <div className="hidden lg:flex items-center lg:flex-1">
           {isJunior ? (
-            <Link to={homeHref} className="flex items-center">
+            <Link to="/" aria-label="Priority Bags home" className="flex items-center">
               <img
                 src={logoSrc}
                 alt="Priority Junior"
@@ -195,7 +194,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         <div className="flex lg:hidden items-center justify-between w-full relative">
           {isJunior ? (
             <>
-              <Link to={homeHref} className="flex items-center">
+              <Link to="/" aria-label="Priority Bags home" className="flex items-center">
                 <img
                   src={logoSrc}
                   alt="Priority Junior"
