@@ -215,9 +215,13 @@ export const api = {
   getProduct: (slug: string) =>
     cacheGet(`/api/products/${slug}`, () => request<any>(`/api/products/${slug}`)),
   // Fire-and-forget: records a "Buy on <marketplace>" click to rank Best Sellers by demand.
-  trackMarketplaceClick: (productId: string, marketplace: 'amazon' | 'flipkart' | 'myntra' | 'ajio') => {
+  trackMarketplaceClick: (
+    productId: string,
+    marketplace: 'amazon' | 'flipkart' | 'myntra' | 'ajio',
+    source: 'site' | 'chatbot' = 'site',
+  ) => {
     if (!productId) return;
-    const url = `${BASE}/api/analytics/click/${productId}/${marketplace}`;
+    const url = `${BASE}/api/analytics/click/${productId}/${marketplace}${source === 'chatbot' ? '?source=chatbot' : ''}`;
     try {
       if (typeof navigator !== 'undefined' && navigator.sendBeacon) navigator.sendBeacon(url);
       else fetch(url, { method: 'POST', keepalive: true }).catch(() => {});
@@ -371,6 +375,15 @@ export const api = {
       '/api/corporate-gifting',
       { method: 'POST', body: JSON.stringify(data) }
     ),
+
+  // Admin dashboard insights
+  getAdminInsights: () => request<any>('/api/admin/insights/summary'),
+  listAdminTickets: () => request<any[]>('/api/admin/insights/tickets'),
+  updateAdminTicketStatus: (id: string, status: string) =>
+    request<any>(`/api/admin/insights/tickets/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  listAdminInquiries: () => request<any[]>('/api/admin/insights/inquiries'),
+  updateAdminInquiryStatus: (id: string, status: string) =>
+    request<any>(`/api/admin/insights/inquiries/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
 
   // Coupons
   listCoupons: () => request<any[]>('/api/coupons'),

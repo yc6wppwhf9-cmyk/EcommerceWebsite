@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion/react';
+import { motion, useReducedMotion, type PanInfo } from 'motion/react';
 import { fadeUp, stagger, revealProps } from '../../lib/motion';
 import { LazyImage } from '../LazyImage';
 import { CATS } from '../../constants/home';
@@ -43,7 +43,7 @@ export const CategoryShowcase = () => {
   return (
     <>
       {/* ─── Mobile: Coverflow Carousel ─────────────────────────────────── */}
-      <section className="md:hidden pt-8 pb-10 overflow-hidden text-center" aria-label="Shop by category">
+      <section className="md:hidden pt-8 pb-12 overflow-hidden text-center" aria-label="Shop by category">
         <h2 className="text-[11px] font-medium uppercase tracking-[0.3em] text-slate mb-6">
           Shop By Category
         </h2>
@@ -114,45 +114,6 @@ export const CategoryShowcase = () => {
           })}
         </motion.div>
 
-        {/* CTA + progress */}
-        <div className="mt-7 flex flex-col items-center gap-5">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={active}
-              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-            >
-              <Link
-                to={CATS[active].to}
-                className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-ink text-white text-[11px] font-semibold uppercase tracking-[0.22em] active:scale-[0.97] transition-transform"
-              >
-                Shop {CATS[active].label}
-                <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="flex gap-2" role="tablist" aria-label="Category indicators">
-            {CATS.map((cat, i) => (
-              <button
-                key={cat.label}
-                onClick={() => setActive(i)}
-                role="tab"
-                aria-selected={i === active}
-                aria-label={cat.label}
-                className="py-2 cursor-pointer"
-              >
-                <span
-                  className={`block h-1 rounded-full transition-all duration-500 ${
-                    i === active ? 'w-7 bg-ink' : 'w-3 bg-line'
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ─── Desktop: 3-column Grid ─────────────────────────────────────── */}

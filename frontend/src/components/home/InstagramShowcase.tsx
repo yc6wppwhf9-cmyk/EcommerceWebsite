@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Instagram, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, useReducedMotion, type PanInfo } from 'motion/react';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/priority.bags?igsh=OXJ6d3I5MXM0djU3';
 
@@ -87,12 +87,8 @@ export const InstagramShowcase = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [cards] = useState<InstagramCardData[]>(INSTA_CARDS);
-  const touchStartX = useRef<number | null>(null);
 
   const total = cards.length;
-  const current = cards[currentIndex];
-  const nextCard = cards[(currentIndex + 1) % total];
-  const nextNextCard = cards[(currentIndex + 2) % total];
 
   const handleNext = () => {
     setDirection(1);
@@ -102,18 +98,6 @@ export const InstagramShowcase = () => {
   const handlePrev = () => {
     setDirection(-1);
     setCurrentIndex((prev) => (prev - 1 + total) % total);
-  };
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (diff > 40) handleNext();
-    else if (diff < -40) handlePrev();
-    touchStartX.current = null;
   };
 
   return (
@@ -153,12 +137,15 @@ export const InstagramShowcase = () => {
             {[0, 1, 2].map((offset) => {
               const card = cards[(currentIndex + offset) % total];
               return (
-                <div
+                <motion.div
                   key={`${card.href}-${offset}`}
+                  initial={{ opacity: 0, x: direction * 36 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, delay: offset * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   className="w-full bg-white rounded-2xl lg:rounded-3xl border border-gray-100/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
                 >
                   <InstagramCardContent card={card} />
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -174,93 +161,19 @@ export const InstagramShowcase = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* MOBILE VIEW (< md): Stacked Deck Carousel */}
+        {/* MOBILE VIEW (< md): Swipeable card deck */}
         {/* ========================================================================= */}
-        <div
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
-          className="block md:hidden relative max-w-[340px] sm:max-w-[380px] mx-auto flex items-center justify-center pl-1 pr-6 sm:pr-8"
-        >
-          {/* Left Arrow */}
-          <button
-            onClick={handlePrev}
-            aria-label="Previous Instagram Post"
-            className="absolute -left-3 sm:-left-6 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-md shadow-md border border-gray-200/80 flex items-center justify-center text-gray-800 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-          >
-            <ChevronLeft size={18} className="sm:w-5 sm:h-5" strokeWidth={2.2} />
-          </button>
+        <MobileDeck
+          cards={cards}
+          index={currentIndex}
+          onIndexChange={(i, dir) => {
+            setDirection(dir);
+            setCurrentIndex(i);
+          }}
+        />
 
-          {/* Stacked Container */}
-          <div className="relative w-full">
-            {/* Background Stacked Card Layer 3 (Farthest Back) */}
-            <div
-              onClick={handleNext}
-              className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-gray-200/50 shadow-[0_4px_16px_rgba(0,0,0,0.04)] cursor-pointer transition-all duration-300 translate-x-5 sm:translate-x-7 scale-[0.90] origin-left z-[1] overflow-hidden opacity-60"
-            >
-              <div className="w-full h-full bg-gray-50 flex items-center justify-center">
-                <img
-                  src={nextNextCard?.img || nextNextCard?.fallback}
-                  alt=""
-                  className="w-full h-full object-cover opacity-30 blur-[1px]"
-                />
-              </div>
-            </div>
-
-            {/* Background Stacked Card Layer 2 (Middle Behind) */}
-            <div
-              onClick={handleNext}
-              className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-gray-200/70 shadow-[0_6px_20px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-300 translate-x-2.5 sm:translate-x-3.5 scale-[0.95] origin-left z-[2] overflow-hidden opacity-80"
-            >
-              <div className="w-full h-full bg-gray-50 flex items-center justify-center">
-                <img
-                  src={nextCard?.img || nextCard?.fallback}
-                  alt=""
-                  className="w-full h-full object-cover opacity-50 blur-[0.5px]"
-                />
-              </div>
-            </div>
-
-            {/* Main Active Front Card */}
-            <div className="relative z-10 w-full bg-white rounded-2xl sm:rounded-3xl border border-gray-100/90 shadow-[0_10px_35px_rgba(0,0,0,0.08)] overflow-hidden">
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={current.href + current.img}
-                  custom={direction}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.3}
-                  onDragEnd={(_e, info) => {
-                    const threshold = 40;
-                    if (info.offset.x < -threshold || info.velocity.x < -300) {
-                      handleNext();
-                    } else if (info.offset.x > threshold || info.velocity.x > 300) {
-                      handlePrev();
-                    }
-                  }}
-                  initial={{ opacity: 0, x: direction * 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -direction * 50 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex flex-col cursor-grab active:cursor-grabbing touch-pan-y select-none"
-                >
-                  <InstagramCardContent card={current} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Right Arrow */}
-          <button
-            onClick={handleNext}
-            aria-label="Next Instagram Post"
-            className="absolute -right-3 sm:-right-6 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-md shadow-md border border-gray-200/80 flex items-center justify-center text-gray-800 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-          >
-            <ChevronRight size={18} className="sm:w-5 sm:h-5" strokeWidth={2.2} />
-          </button>
-        </div>
-
-        {/* Dots Pagination Indicator */}
-        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-6 md:mt-10">
+        {/* Desktop dots */}
+        <div className="hidden md:flex items-center justify-center gap-2 mt-10">
           {cards.map((_, idx) => (
             <button
               key={idx}
@@ -269,10 +182,8 @@ export const InstagramShowcase = () => {
                 setCurrentIndex(idx);
               }}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentIndex
-                  ? 'w-6 sm:w-8 bg-[#0F1417]'
-                  : 'w-1.5 sm:w-2 bg-gray-300 hover:bg-gray-400'
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === currentIndex ? 'w-8 bg-[#0F1417]' : 'w-2 bg-gray-300 hover:bg-gray-400'
               }`}
             />
           ))}
@@ -295,9 +206,121 @@ export const InstagramShowcase = () => {
   );
 };
 
-const InstagramCardContent: React.FC<{ card: InstagramCardData }> = ({ card }) => {
+const SWIPE_DISTANCE = 50;
+const SWIPE_VELOCITY = 400;
+
+/**
+ * Mobile 3D coverflow (same feel as "Shop By Category"): the active post sits
+ * in the centre, neighbours peek in at the sides angled and dimmed. Drag or
+ * swipe to move; it loops. Tapping a side card brings it to the centre.
+ */
+const MobileDeck: React.FC<{
+  cards: InstagramCardData[];
+  index: number;
+  onIndexChange: (index: number, dir: 1 | -1) => void;
+}> = ({ cards, index, onIndexChange }) => {
+  const reduceMotion = useReducedMotion();
+  const total = cards.length;
+  const dragged = useRef(false);
+
+  const go = (dir: 1 | -1) => onIndexChange((((index + dir) % total) + total) % total, dir);
+
+  // Shortest signed distance from the active card, so the carousel loops.
+  const offsetOf = (i: number) => {
+    let d = i - index;
+    if (d > total / 2) d -= total;
+    if (d < -total / 2) d += total;
+    return d;
+  };
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY) go(1);
+    else if (info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY) go(-1);
+    setTimeout(() => { dragged.current = false; }, 0);
+  };
+
+  const spring = reduceMotion
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 260, damping: 32, mass: 0.9 };
+
+  return (
+    <div className="md:hidden -mx-4 overflow-hidden pb-2">
+      <motion.div
+        className="relative mx-auto w-[74vw] max-w-[320px] grid touch-pan-y select-none"
+        style={{ perspective: 1100 }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragStart={() => { dragged.current = true; }}
+        onDragEnd={handleDragEnd}
+        aria-roledescription="carousel"
+        aria-label="Instagram posts — swipe to browse"
+      >
+        {cards.map((card, i) => {
+          const d = offsetOf(i);
+          const isActive = d === 0;
+          return (
+            <motion.div
+              key={card.href}
+              className="[grid-area:1/1] self-start"
+              initial={false}
+              animate={{
+                x: `${d * 76}%`,
+                scale: isActive ? 1 : 0.84,
+                rotateY: d * -22,
+                opacity: Math.abs(d) > 1 ? 0 : 1,
+              }}
+              transition={spring}
+              style={{ zIndex: 10 - Math.abs(d), pointerEvents: Math.abs(d) > 1 ? 'none' : 'auto' }}
+              aria-hidden={!isActive}
+              onClickCapture={(e) => {
+                if (dragged.current || !isActive) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!dragged.current) go(d > 0 ? 1 : -1);
+                }
+              }}
+            >
+              <div
+                className={`relative bg-white rounded-2xl border border-gray-100/90 overflow-hidden transition-shadow duration-500 [&_a]:[-webkit-user-drag:none] [&_img]:[-webkit-user-drag:none] ${
+                  isActive
+                    ? 'shadow-[0_22px_44px_-18px_rgba(15,20,23,0.35)]'
+                    : 'shadow-[0_10px_24px_-14px_rgba(15,20,23,0.25)]'
+                }`}
+              >
+                <InstagramCardContent card={card} autoPlay={isActive} />
+                {/* Dim the side cards so the centre card reads as the focus */}
+                <motion.div
+                  className="absolute inset-0 bg-ink pointer-events-none"
+                  initial={false}
+                  animate={{ opacity: isActive ? 0 : 0.3 }}
+                  transition={spring}
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+    </div>
+  );
+};
+
+const InstagramCardContent: React.FC<{ card: InstagramCardData; autoPlay?: boolean }> = ({ card, autoPlay = false }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Mobile deck: the front card plays its reel (muted) without needing hover.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!card.video || !v) return;
+    if (autoPlay) {
+      v.play().then(() => setIsHovered(true)).catch(() => {});
+    } else {
+      v.pause();
+      v.currentTime = 0;
+      setIsHovered(false);
+    }
+  }, [autoPlay, card.video]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);

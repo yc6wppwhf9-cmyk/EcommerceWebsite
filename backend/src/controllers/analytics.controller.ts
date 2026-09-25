@@ -58,6 +58,12 @@ export const trackMarketplaceClick = async (req: Request, res: Response) => {
       .from('products')
       .update({ [column]: ((data as any)[column] || 0) + 1 })
       .eq('id', product_id);
+    // Dated log for admin reporting. Never block the click on it.
+    const source = req.query.source === 'chatbot' ? 'chatbot' : 'site';
+    const { error: logError } = await supabase
+      .from('marketplace_clicks')
+      .insert({ product_id, marketplace, source });
+    if (logError) console.warn('marketplace_clicks insert failed:', logError.message);
     res.json({ ok: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
