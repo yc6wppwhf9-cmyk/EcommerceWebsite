@@ -110,6 +110,11 @@ export function resolveProductColors(p: Product): ColorOption[] {
  * Intelligent age range resolution for school & junior bags.
  */
 export function resolveProductAgeRange(p: Product): string {
+  // An age group set on the product (from the catalogue sheet or admin) wins over guessing.
+  const explicit = String((p as any).age_range || '').trim().toLowerCase();
+  const match = AGE_RANGE_OPTIONS.find((o) => o.label.toLowerCase() === explicit);
+  if (match) return match.label;
+
   const text = `${p.name || ''} ${p.description || ''} ${(p as any).sub_category || ''} ${(p as any).category || ''} ${JSON.stringify(p.specifications || '')}`.toLowerCase();
 
   // 1. Below 3 Years (Playgroup & Toddler)
