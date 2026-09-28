@@ -268,6 +268,7 @@ export const api = {
 
   // Reviews
   getReviews: (productId: string) => request<any[]>(`/api/reviews/product/${productId}`),
+  getMarketplaceReviews: (productId: string) => request<any[]>(`/api/reviews/product/${productId}/marketplace`),
   createReview: (data: { product_id: string; rating: number; title?: string; body?: string }) =>
     request<any>('/api/reviews', { method: 'POST', body: JSON.stringify(data) }),
   deleteReview: (id: string) => request<any>(`/api/reviews/${id}`, { method: 'DELETE' }),
