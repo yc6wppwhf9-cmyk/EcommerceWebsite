@@ -33,9 +33,9 @@ export const config = {
   SMTP_PORT: Number(process.env.SMTP_PORT) || 587,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
-  // Must be on a domain verified in Resend (prioritybags.com); an unverified
+  // Must be on a domain verified in the website's Resend account (prioritybags.in); an unverified
   // sender makes Resend reject every email.
-  FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.com',
+  FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.in',
   HR_EMAIL: resolveHrEmail(process.env.HR_EMAIL),
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
   RESEND_API_KEY: process.env.RESEND_API_KEY || process.env.SMTP_PASS || '',
