@@ -14,13 +14,14 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
   }
   const recipient = (to || '').trim();
   try {
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${config.FROM_EMAIL}>`,
       to: recipient,
       subject,
       html,
     });
-    if (error) console.error('❌ Email Sending Failed:', error);
+    if (error) console.error(`❌ Email Sending Failed (from ${config.FROM_EMAIL} to ${recipient}):`, error);
+    else console.log(`✉️ Email sent to ${recipient} (id ${data?.id}): ${subject}`);
   } catch (err) {
     console.error('❌ Email Sending Failed:', err);
   }
