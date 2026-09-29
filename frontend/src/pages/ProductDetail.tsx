@@ -118,6 +118,13 @@ const AccordionItem = ({ id, title, children, openAccordion, setOpenAccordion, a
   );
 };
 
+const MARKETPLACE_NAMES: Record<Marketplace, string> = {
+  amazon: 'Amazon',
+  flipkart: 'Flipkart',
+  myntra: 'Myntra',
+  ajio: 'Ajio',
+};
+
 // ─── Main Component ────────────────────────────────────────────────────────────
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -137,6 +144,8 @@ export const ProductDetail = () => {
   const [reviewText, setReviewText] = useState('');
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [marketplaceReviews, setMarketplaceReviews] = useState<any[]>([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -158,7 +167,7 @@ export const ProductDetail = () => {
       setProduct({
         ...raw,
         originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price,
-        reviews: raw.reviews ?? 0,
+        reviews: raw.review_count ?? 0,
         rating: raw.rating ?? 0,
         specifications: raw.specifications ?? {},
         features: Array.isArray(raw.features) ? raw.features : [],
@@ -176,6 +185,13 @@ export const ProductDetail = () => {
       });
     }).catch(() => setFetchError(true)).finally(() => setLoading(false));
   }, [slug]);
+
+  useEffect(() => {
+    setMarketplaceReviews([]);
+    setShowAllReviews(false);
+    if (!product?.id) return;
+    api.getMarketplaceReviews(product.id).then(setMarketplaceReviews).catch(() => {});
+  }, [product?.id]);
 
   useEffect(() => {
     if (!product?.category) return;
@@ -225,7 +241,7 @@ export const ProductDetail = () => {
         <h1 className="text-3xl font-black mb-4 uppercase tracking-tighter">Couldn't Load Product</h1>
         <p className="text-gray-400 mb-8 font-bold uppercase tracking-widest text-[11px]">Check your connection and try again.</p>
         <button
-          onClick={() => { setFetchError(false); setLoading(true); api.getProduct(slug!).then((raw: any) => { const rc = Array.isArray(raw.colors) ? raw.colors : []; setProduct({ ...raw, originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price, reviews: raw.reviews ?? 0, rating: raw.rating ?? 0, specifications: raw.specifications ?? {}, features: Array.isArray(raw.features) ? raw.features : [], category: raw.categories?.slug ?? raw.sub_category ?? '', images: Array.isArray(raw.images) && raw.images.length > 0 ? raw.images : raw.image ? [raw.image] : [], variants: rc.length > 0 ? rc.map((c: any) => ({ color: c.name ?? c.color ?? '', colorCode: c.code ?? c.colorCode ?? '', images: Array.isArray(c.images) ? c.images : [] })) : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []) }); setFetchError(false); }).catch(() => setFetchError(true)).finally(() => setLoading(false)); }}
+          onClick={() => { setFetchError(false); setLoading(true); api.getProduct(slug!).then((raw: any) => { const rc = Array.isArray(raw.colors) ? raw.colors : []; setProduct({ ...raw, originalPrice: raw.original_price ?? raw.originalPrice ?? raw.price, reviews: raw.review_count ?? 0, rating: raw.rating ?? 0, specifications: raw.specifications ?? {}, features: Array.isArray(raw.features) ? raw.features : [], category: raw.categories?.slug ?? raw.sub_category ?? '', images: Array.isArray(raw.images) && raw.images.length > 0 ? raw.images : raw.image ? [raw.image] : [], variants: rc.length > 0 ? rc.map((c: any) => ({ color: c.name ?? c.color ?? '', colorCode: c.code ?? c.colorCode ?? '', images: Array.isArray(c.images) ? c.images : [] })) : (Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : []) }); setFetchError(false); }).catch(() => setFetchError(true)).finally(() => setLoading(false)); }}
           className="bg-[#14052b] text-white font-black text-xs px-10 py-5 rounded-xl hover:scale-105 transition-all tracking-widest uppercase inline-flex items-center gap-2"
         >
           <RefreshCw size={14} /> Retry
@@ -273,6 +289,11 @@ export const ProductDetail = () => {
     { marketplace: 'ajio', url: (product as any).ajio_url, label: 'Buy on Ajio' },
   ];
   const marketplaceLinks = allMarketplaceLinks.filter((link) => link.url);
+  // Per-marketplace rating summary imported from the marketplace reviews sheet,
+  // e.g. { myntra: { rating: 4.4, count: 17 } }.
+  const ratingSources = (Object.entries(product.marketplace_ratings ?? {}) as Array<[Marketplace, any]>)
+    .filter(([m, v]) => MARKETPLACE_NAMES[m] && Number(v?.rating) > 0)
+    .map(([m, v]) => ({ marketplace: m, rating: Number(v.rating), count: Number(v.count) || 0 }));
 
   const handleToggleWishlist = () => {
     if (product) toggleWishlist(product);
@@ -319,8 +340,6 @@ export const ProductDetail = () => {
           price: product.price,
           originalPrice: product.originalPrice,
           stock: product.stock,
-          rating: product.rating,
-          reviewCount: product.reviews,
           sku: product.sku,
           slug: product.slug || product.id,
         }}
@@ -462,12 +481,25 @@ export const ProductDetail = () => {
                 </AccordionItem>
               )}
 
-              <AccordionItem id="reviews" title={`Customer Reviews (${product.reviews})`} {...accordionProps}>
+              <AccordionItem id="reviews" title={product.reviews > 0 ? `Ratings & Reviews (${product.reviews.toLocaleString('en-IN')})` : 'Ratings & Reviews'} {...accordionProps}>
                 <div className="space-y-10 pt-4 mb-8">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-line pb-8">
                     <div className="text-center sm:text-left">
-                      <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">{product.rating > 0 ? `${product.rating.toFixed(1)} / 5.0` : 'No ratings yet'}</h4>
-                      <p className="text-[11px] font-medium text-slate uppercase tracking-[0.18em] mt-1">{product.reviews > 0 ? `Join ${product.reviews} verified owners` : 'Be the first to review'}</p>
+                      <h4 className="text-4xl font-black text-[#14052b] tracking-tighter">{Number(product.rating) > 0 ? `${Number(product.rating).toFixed(1)} / 5.0` : 'No ratings yet'}</h4>
+                      <p className="text-[11px] font-medium text-slate uppercase tracking-[0.18em] mt-1">
+                        {ratingSources.length > 0
+                          ? `Based on ${product.reviews.toLocaleString('en-IN')} ${product.reviews === 1 ? 'rating' : 'ratings'} on ${ratingSources.map(r => MARKETPLACE_NAMES[r.marketplace]).join(' & ')}`
+                          : 'Be the first to review'}
+                      </p>
+                      {ratingSources.length > 1 && (
+                        <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-3">
+                          {ratingSources.map(r => (
+                            <span key={r.marketplace} className="text-[11px] font-medium text-graphite border border-line rounded-full px-3 py-1">
+                              {MARKETPLACE_NAMES[r.marketplace]} {r.rating.toFixed(1)}★ · {r.count.toLocaleString('en-IN')}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={() => setShowReviewForm(!showReviewForm)}
@@ -519,7 +551,38 @@ export const ProductDetail = () => {
                     )}
                   </AnimatePresence>
 
-                  {product.reviews === 0 && (
+                  {marketplaceReviews.length > 0 && (
+                    <div className="space-y-6">
+                      {(showAllReviews ? marketplaceReviews : marketplaceReviews.slice(0, 5)).map((r) => (
+                        <div key={r.id} className="border-b border-line pb-6 last:border-0">
+                          <div className="flex items-center justify-between gap-3 mb-2">
+                            <div className="flex gap-0.5" aria-label={`${r.rating} out of 5 stars`}>
+                              {[1, 2, 3, 4, 5].map(i => (
+                                <Star key={i} size={13} className={i <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
+                              ))}
+                            </div>
+                            <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate">
+                              Verified buyer · {MARKETPLACE_NAMES[r.marketplace as Marketplace] ?? r.marketplace}
+                            </span>
+                          </div>
+                          <p className="text-[13px] text-gray-700 leading-relaxed whitespace-pre-line">{r.body}</p>
+                          <p className="text-[11px] text-slate mt-2">
+                            {r.reviewer_name || 'Customer'}
+                            {r.review_date ? ` · ${new Date(r.review_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}
+                          </p>
+                        </div>
+                      ))}
+                      {marketplaceReviews.length > 5 && (
+                        <button
+                          onClick={() => setShowAllReviews(v => !v)}
+                          className="w-full py-3 border border-line text-[11px] font-medium uppercase tracking-[0.18em] text-ink hover:bg-white transition-colors"
+                        >
+                          {showAllReviews ? 'Show fewer reviews' : `Show all ${marketplaceReviews.length} reviews`}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {product.reviews === 0 && marketplaceReviews.length === 0 && (
                     <p className="text-[12px] text-slate font-normal text-center py-6">No reviews yet. Be the first to review this product!</p>
                   )}
                 </div>
