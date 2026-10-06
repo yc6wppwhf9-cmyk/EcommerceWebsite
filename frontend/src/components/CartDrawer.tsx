@@ -70,7 +70,7 @@ export const CartDrawer = () => {
                   {items.map((item) => (
                     <div key={item.product.id} className="flex gap-4 bg-gray-50 rounded-xl p-4">
                       <Link
-                        to={`/product/${item.product.id}`}
+                        to={`/product/${item.product.slug || item.product.id}`}
                         onClick={() => toggleCart(false)}
                         className="w-20 h-20 bg-white rounded-lg overflow-hidden shrink-0 flex items-center justify-center"
                       >
@@ -83,7 +83,7 @@ export const CartDrawer = () => {
                       </Link>
                       <div className="flex-1 min-w-0">
                         <Link
-                          to={`/product/${item.product.id}`}
+                          to={`/product/${item.product.slug || item.product.id}`}
                           onClick={() => toggleCart(false)}
                           className="text-sm font-bold text-gray-900 line-clamp-2 hover:text-priority-blue transition-colors"
                         >

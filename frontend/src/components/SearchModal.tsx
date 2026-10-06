@@ -15,6 +15,7 @@ interface SearchModalProps {
 
 export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalProps) => {
   const [query, setQuery] = useState('');
+  const resultCountRef = useRef(0);
   const [results, setResults] = useState<Product[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -39,7 +40,7 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
             category: raw.categories?.slug ?? raw.sub_category ?? '',
           })) as Product[];
           setResults(products.slice(0, 8));
-          trackSearch(query, products.length);
+          resultCountRef.current = products.length;
         }).catch(() => {});
       }, 300);
 
@@ -47,6 +48,15 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
     } else {
       setResults([]);
     }
+  }, [query]);
+
+  // Report a search to analytics once the visitor stops typing, not on every
+  // keystroke (which counted one search as many).
+  useEffect(() => {
+    const term = query.trim();
+    if (term.length < 2) return;
+    const timer = setTimeout(() => trackSearch(term, resultCountRef.current), 1500);
+    return () => clearTimeout(timer);
   }, [query]);
 
   const isPremium = theme === 'premium';
@@ -97,7 +107,7 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                       {results.map((product) => (
                         <Link
                           key={product.id}
-                          to={`/product/${product.id}`}
+                          to={`/product/${product.slug || product.id}`}
                           onClick={() => {
                             trackSelectItem(
                               { id: product.id, name: product.name, price: product.price, category: product.category },
@@ -155,7 +165,7 @@ export const SearchModal = ({ isOpen, onClose, theme = 'default' }: SearchModalP
                       {results.map((product) => (
                         <Link
                           key={product.id}
-                          to={`/product/${product.id}`}
+                          to={`/product/${product.slug || product.id}`}
                           onClick={() => {
                             trackSelectItem(
                               { id: product.id, name: product.name, price: product.price, category: product.category },
