@@ -84,7 +84,7 @@ export const HeroSlider = () => {
             <div className="flex items-center gap-4">
               <Link
                 to={slide.to}
-                className="inline-flex items-center gap-1.5 sm:gap-3 bg-white text-black px-2.5 py-1.5 sm:px-8 sm:py-4 rounded-md sm:rounded-sm text-[8px] sm:text-[12px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.2em] shadow-xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
+                className="inline-flex items-center gap-1.5 sm:gap-3 bg-white text-black px-2.5 py-1.5 sm:px-8 sm:py-4 rounded-md sm:rounded-sm text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.2em] shadow-xl hover:bg-[#26B3FF] hover:text-white transition-all duration-300 group"
               >
                 {slide.cta}
                 <ArrowRight size={12} className="sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform" />

@@ -346,12 +346,16 @@ export const BestReviewedShowcase: React.FC = () => {
                 setCurrentIndex(idx);
               }}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentIndex
-                  ? 'w-6 sm:w-8 bg-black dark:bg-white'
-                  : 'w-1.5 sm:w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400'
-              }`}
-            />
+              className="group flex h-6 min-w-6 items-center justify-center cursor-pointer"
+            >
+              <span
+                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex
+                    ? 'w-6 sm:w-8 bg-black dark:bg-white'
+                    : 'w-1.5 sm:w-2 bg-gray-300 dark:bg-gray-700 group-hover:bg-gray-400'
+                }`}
+              />
+            </button>
           ))}
         </div>
 

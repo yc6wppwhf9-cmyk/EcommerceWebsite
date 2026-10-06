@@ -27,7 +27,7 @@ const INSTA_CARDS: InstagramCardData[] = [
     followers: '13.1K',
     following: '4',
     img: '/instagram/post_1.webp',
-    fallback: '/Category/Backpack.jpg',
+    fallback: '/optimized/category/backpack.jpg',
     href: 'https://www.instagram.com/p/Dc2xRsrjKxT/',
     caption: 'Your backpack has a personality. Meet the DREAMER Series.',
   },
@@ -52,7 +52,7 @@ const INSTA_CARDS: InstagramCardData[] = [
     following: '4',
     img: '/instagram/post_3.jpg',
     video: '/instagram/post_3.mp4',
-    fallback: '/Category/Travelling Bag.jpg',
+    fallback: '/optimized/category/luggage.jpg',
     href: 'https://www.instagram.com/p/DcgZ4RKs6sF/',
     caption: 'Discover the "Snappy" backpack in every color. Fast, fresh & ready.',
   },
@@ -182,10 +182,14 @@ export const InstagramShowcase = () => {
                 setCurrentIndex(idx);
               }}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentIndex ? 'w-8 bg-[#0F1417]' : 'w-2 bg-gray-300 hover:bg-gray-400'
-              }`}
-            />
+              className="group flex h-6 min-w-6 items-center justify-center cursor-pointer"
+            >
+              <span
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex ? 'w-8 bg-[#0F1417]' : 'w-2 bg-gray-300 group-hover:bg-gray-400'
+                }`}
+              />
+            </button>
           ))}
         </div>
 
@@ -272,7 +276,8 @@ const MobileDeck: React.FC<{
               }}
               transition={spring}
               style={{ zIndex: 10 - Math.abs(d), pointerEvents: Math.abs(d) > 1 ? 'none' : 'auto' }}
-              aria-hidden={!isActive}
+              // Off-screen slides: hidden from screen readers and out of the tab order.
+              inert={Math.abs(d) > 1}
               onClickCapture={(e) => {
                 if (dragged.current || !isActive) {
                   e.preventDefault();
@@ -365,7 +370,7 @@ const InstagramCardContent: React.FC<{ card: InstagramCardData; autoPlay?: boole
               <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 leading-tight">
                 {card.posts}
               </span>
-              <span className="text-[8px] sm:text-[9px] text-gray-400 font-normal leading-none mt-0.5">
+              <span className="text-[8px] sm:text-[9px] text-gray-600 font-normal leading-none mt-0.5">
                 posts
               </span>
             </div>
@@ -373,7 +378,7 @@ const InstagramCardContent: React.FC<{ card: InstagramCardData; autoPlay?: boole
               <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 leading-tight">
                 {card.followers}
               </span>
-              <span className="text-[8px] sm:text-[9px] text-gray-400 font-normal leading-none mt-0.5">
+              <span className="text-[8px] sm:text-[9px] text-gray-600 font-normal leading-none mt-0.5">
                 followers
               </span>
             </div>
@@ -381,7 +386,7 @@ const InstagramCardContent: React.FC<{ card: InstagramCardData; autoPlay?: boole
               <span className="font-bold text-[11px] sm:text-[12px] text-gray-900 leading-tight">
                 {card.following}
               </span>
-              <span className="text-[8px] sm:text-[9px] text-gray-400 font-normal leading-none mt-0.5">
+              <span className="text-[8px] sm:text-[9px] text-gray-600 font-normal leading-none mt-0.5">
                 following
               </span>
             </div>
