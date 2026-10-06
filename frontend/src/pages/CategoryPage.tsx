@@ -15,51 +15,51 @@ const NO_PRICE_FILTER = 999999;
 
 const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
   'trekking-backpacks': {
-    image: '/Category/Trekking_Backpacks_Banner.png',
+    image: '/optimized/category/trekking-banner.jpg',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
   'trekking': {
-    image: '/Category/Trekking_Backpacks_Banner.png',
+    image: '/optimized/category/trekking-banner.jpg',
     alt: 'Trekking Backpacks — Explore Beyond The Limits',
   },
   'college-backpacks': {
-    image: '/Category/Campus_Backpacks_Banner.png',
+    image: '/optimized/category/campus-banner.jpg',
     alt: 'College & Campus Backpacks — Carry The Style Your Way',
   },
   'college': {
-    image: '/Category/Campus_Backpacks_Banner.png',
+    image: '/optimized/category/campus-banner.jpg',
     alt: 'College & Campus Backpacks — Carry The Style Your Way',
   },
   'campus': {
-    image: '/Category/Campus_Backpacks_Banner.png',
+    image: '/optimized/category/campus-banner.jpg',
     alt: 'College & Campus Backpacks — Carry The Style Your Way',
   },
   'laptop-backpacks': {
-    image: '/Category/Laptop_Backpacks_Banner.png',
+    image: '/optimized/category/laptop-banner.jpg',
     alt: 'Executive Laptop Backpacks — Built For Every Journey',
   },
   'laptop': {
-    image: '/Category/Laptop_Backpacks_Banner.png',
+    image: '/optimized/category/laptop-banner.jpg',
     alt: 'Executive Laptop Backpacks — Built For Every Journey',
   },
   'duffle': {
-    image: '/Category/Duffle_Bags_Banner.jpg',
+    image: '/optimized/category/duffle-banner.jpg',
     alt: 'Duffle Bags — Versatile & Stylish For Every Journey',
   },
   'duffle-bags': {
-    image: '/Category/Duffle_Bags_Banner.jpg',
+    image: '/optimized/category/duffle-banner.jpg',
     alt: 'Duffle Bags — Versatile & Stylish For Every Journey',
   },
   'luggage': {
-    image: '/Category/Luggage_Trolley_Banner.jpg',
+    image: '/optimized/category/luggage-banner.jpg',
     alt: 'Premium Luggage & Trolley Bags — Travel In Style',
   },
   'travel': {
-    image: '/Category/Luggage_Trolley_Banner.jpg',
+    image: '/optimized/category/luggage-banner.jpg',
     alt: 'Premium Luggage & Trolley Bags — Travel In Style',
   },
   'trolley': {
-    image: '/Category/Luggage_Trolley_Banner.jpg',
+    image: '/optimized/category/luggage-banner.jpg',
     alt: 'Premium Luggage & Trolley Bags — Travel In Style',
   },
 };

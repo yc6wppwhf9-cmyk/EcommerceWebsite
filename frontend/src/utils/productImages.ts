@@ -69,13 +69,13 @@ export function getProductFallback(
   }
   const cat = (product?.category || product?.sub_category || '').toLowerCase();
   if (cat.includes('luggage') || cat.includes('travel') || cat.includes('trolley')) {
-    return '/Category/Travelling Bag.jpg';
+    return '/optimized/category/luggage.jpg';
   }
   if (cat.includes('access')) {
-    return '/Category/Accessories.jpg';
+    return '/optimized/category/accessories.jpg';
   }
   if (cat.includes('junior') || cat.includes('school')) {
     return '/New Arrival/Artboard 1@2x.png';
   }
-  return '/Category/Backpack.jpg';
+  return '/optimized/category/backpack.jpg';
 }

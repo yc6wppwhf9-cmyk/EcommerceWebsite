@@ -104,9 +104,9 @@ export interface CategoryCard {
 }
 
 export const CATS: CategoryCard[] = [
-  { to: '/backpacks',   label: 'Backpacks',   img: '/Category/Backpack.jpg' },
-  { to: '/luggage',     label: 'Luggage',     img: '/Category/Travelling Bag.jpg' },
-  { to: '/accessories', label: 'Accessories', img: '/Category/Accessories.jpg' },
+  { to: '/backpacks',   label: 'Backpacks',   img: '/optimized/category/backpack.jpg' },
+  { to: '/luggage',     label: 'Luggage',     img: '/optimized/category/luggage.jpg' },
+  { to: '/accessories', label: 'Accessories', img: '/optimized/category/accessories.jpg' },
 ];
 
 // ─── Editorial Banner ────────────────────────────────────────────────────────

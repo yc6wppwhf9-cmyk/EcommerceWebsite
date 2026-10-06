@@ -82,3 +82,25 @@ $tabImages = @(
 foreach ($image in $tabImages) {
   Save-OptimizedJpeg -Source $image.Source -Destination "optimized\backpack-tabs\$($image.Name).jpg" -MaxWidth 640 -Quality 80
 }
+
+$categoryTiles = @(
+  @{ Name = 'backpack'; Source = 'Category\Backpack.jpg' },
+  @{ Name = 'luggage'; Source = 'Category\Travelling Bag.jpg' },
+  @{ Name = 'accessories'; Source = 'Category\Accessories.jpg' }
+)
+
+foreach ($image in $categoryTiles) {
+  Save-OptimizedJpeg -Source $image.Source -Destination "optimized\category\$($image.Name).jpg" -MaxWidth 720 -Quality 78
+}
+
+$categoryBanners = @(
+  @{ Name = 'campus'; Source = 'Category\Campus_Backpacks_Banner.png' },
+  @{ Name = 'laptop'; Source = 'Category\Laptop_Backpacks_Banner.png' },
+  @{ Name = 'trekking'; Source = 'Category\Trekking_Backpacks_Banner.png' },
+  @{ Name = 'duffle'; Source = 'Category\Duffle_Bags_Banner.jpg' },
+  @{ Name = 'luggage'; Source = 'Category\Luggage_Trolley_Banner.jpg' }
+)
+
+foreach ($image in $categoryBanners) {
+  Save-OptimizedJpeg -Source $image.Source -Destination "optimized\category\$($image.Name)-banner.jpg" -MaxWidth 1600 -Quality 80
+}
