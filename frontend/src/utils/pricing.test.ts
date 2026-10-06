@@ -58,6 +58,7 @@ describe('Product Filters & Color Detection', () => {
       reviews: 12,
       isNew: false,
       isPremium: false,
+      image: '/test.jpg',
       images: ['/test.jpg'],
       features: ['waterproof']
     };
@@ -79,6 +80,7 @@ describe('Product Filters & Color Detection', () => {
       reviews: 8,
       isNew: true,
       isPremium: false,
+      image: '/junior.jpg',
       images: ['/junior.jpg'],
       features: []
     };
@@ -102,6 +104,7 @@ describe('Product Image Utilities', () => {
       reviews: 20,
       isNew: false,
       isPremium: false,
+      image: 'https://example.com/img1.jpg',
       images: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
       features: []
     };

@@ -4,7 +4,6 @@ import { Headset, X, Send, Package, ShoppingBag, ExternalLink } from 'lucide-rea
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
 import { trackMarketplaceClick } from '../lib/gtag';
-import { Product } from '../types';
 
 // Renders a small subset of markdown: **bold**, *italic*, bullet lists, line breaks
 function renderMarkdown(text: string) {
