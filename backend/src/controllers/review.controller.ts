@@ -33,6 +33,8 @@ export const getMarketplaceReviewsByProduct = async (req: Request, res: Response
       .order('created_at', { ascending: true })
       .limit(50);
 
+    // Table not created yet in this database: no marketplace reviews to show.
+    if (error && (error.code === '42P01' || error.code === 'PGRST205')) return res.json([]);
     if (error) throw error;
     res.json(data || []);
   } catch (err: any) {
