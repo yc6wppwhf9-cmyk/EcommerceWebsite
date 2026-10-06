@@ -19,6 +19,28 @@ export const getReviewsByProduct = async (req: Request, res: Response) => {
   }
 };
 
+// Reviews copied from Amazon/Flipkart/Myntra/Ajio listings (imported from the
+// marketplace reviews sheet). Shown on the product page labelled with their source.
+export const getMarketplaceReviewsByProduct = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('marketplace_reviews')
+      .select('id, marketplace, rating, reviewer_name, body, review_date, is_verified')
+      .eq('product_id', productId)
+      .eq('is_visible', true)
+      .order('review_date', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err: any) {
+    console.error('getMarketplaceReviewsByProduct error:', err);
+    res.status(500).json({ error: 'Failed to fetch reviews', message: 'Something went wrong, please try again' });
+  }
+};
+
 export const createReview = async (req: AuthRequest, res: Response) => {
   try {
     const { product_id, rating, title, body } = req.body;

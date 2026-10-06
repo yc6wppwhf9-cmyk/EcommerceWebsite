@@ -8,6 +8,7 @@ import { reviewSchema } from '../types/schemas';
 const router = Router();
 
 router.get('/product/:productId', ReviewController.getReviewsByProduct);
+router.get('/product/:productId/marketplace', ReviewController.getMarketplaceReviewsByProduct);
 router.post('/', authenticateToken, validateCsrf, validate(reviewSchema), ReviewController.createReview);
 router.delete('/:id', authenticateToken, validateCsrf, ReviewController.deleteReview);
 

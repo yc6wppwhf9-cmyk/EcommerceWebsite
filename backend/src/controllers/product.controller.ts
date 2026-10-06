@@ -481,6 +481,14 @@ export const bulkUpload = async (req: MulterRequest, res: Response) => {
   }
 };
 
+function notChanged(res: Response, id: string) {
+  console.error(`❌ Delete Product: no row changed for id ${id} (not found, or the backend key lacks write access)`);
+  return res.status(404).json({
+    error: 'Product not deleted',
+    message: 'The product could not be deleted. Refresh the list and try again; if it keeps happening, the backend database key needs checking.',
+  });
+}
+
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -495,13 +503,15 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
     if (orderItem) {
       // Product has order history: archive it (soft-delete) to preserve sales records and FK constraints
-      const { error: updateErr } = await supabase
+      const { data: archived, error: updateErr } = await supabase
         .from('products')
         .update({ is_active: false, stock: 0 })
-        .eq('id', id);
+        .eq('id', id)
+        .select('id');
 
       if (updateErr) throw updateErr;
-      return res.json({ message: 'Product archived (has order history)' });
+      if (!archived?.length) return notChanged(res, id);
+      return res.json({ message: 'Product hidden from the website (it has order history, so it was archived instead of deleted)' });
     }
 
     // 2. Clean up any related child records before hard deleting
@@ -510,12 +520,29 @@ export const deleteProduct = async (req: Request, res: Response) => {
     await supabase.from('reviews').delete().eq('product_id', id);
 
     // 3. Delete the product
-    const { error: delErr } = await supabase
+    const { data: deleted, error: delErr } = await supabase
       .from('products')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select('id');
 
-    if (delErr) throw delErr;
+    if (delErr) {
+      // Still referenced elsewhere (e.g. click stats, stock alerts): hide it instead.
+      if (delErr.code === '23503') {
+        const { data: hidden, error: hideErr } = await supabase
+          .from('products')
+          .update({ is_active: false })
+          .eq('id', id)
+          .select('id');
+        if (hideErr) throw hideErr;
+        if (!hidden?.length) return notChanged(res, id);
+        return res.json({ message: 'Product hidden from the website (it is linked to other records, so it was archived instead of deleted)' });
+      }
+      throw delErr;
+    }
+    // Supabase reports no error when a delete matches nothing (e.g. wrong id,
+    // or a key without permission), so confirm a row was actually removed.
+    if (!deleted?.length) return notChanged(res, id);
     res.json({ message: 'Product deleted successfully' });
   } catch (err: any) {
     console.error('❌ Delete Product Error:', err);
