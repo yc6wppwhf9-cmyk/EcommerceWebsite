@@ -4,12 +4,11 @@ import { useEffect, useRef, useState } from 'react';
  * "Bags Sold" live counter strip.
  *
  * A headline odometer counts up to a base figure the first time the strip
- * scrolls into view, then keeps ticking upward slowly so the number feels
- * live. Supporting stats sit alongside. Honours `prefers-reduced-motion` by
+ * scrolls into view. Supporting stats sit alongside. Honours `prefers-reduced-motion` by
  * skipping the count-up animation and rendering the final values immediately.
  */
 
-// Base figure the odometer settles on before the slow live drift begins.
+// Figure the odometer counts up to. Update it from real sales totals.
 const BAGS_SOLD_BASE = 128_540;
 
 const STATS = [
@@ -53,7 +52,6 @@ function useCountUp(target: number, active: boolean, duration = 1600, decimals =
 export const BagsSoldCountdown = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
-  const [drift, setDrift] = useState(0);
 
   // Reveal the counters the first time the strip enters the viewport.
   useEffect(() => {
@@ -72,12 +70,6 @@ export const BagsSoldCountdown = () => {
     return () => io.disconnect();
   }, []);
 
-  // Slow "live" drift once the count-up has finished.
-  useEffect(() => {
-    if (!inView || prefersReducedMotion()) return;
-    const id = setInterval(() => setDrift((d) => d + Math.floor(Math.random() * 3) + 1), 4000);
-    return () => clearInterval(id);
-  }, [inView]);
 
   const bagsSold = useCountUp(BAGS_SOLD_BASE, inView, 2000);
 
@@ -96,7 +88,7 @@ export const BagsSoldCountdown = () => {
             </p>
             <div className="flex items-baseline justify-center lg:justify-start gap-3">
               <span className="font-outfit font-bold tracking-tight tabular-nums text-[52px] leading-none sm:text-[72px] md:text-[92px]">
-                {formatInt(bagsSold + drift)}
+                {formatInt(bagsSold)}
               </span>
             </div>
             <p className="mt-3 text-[14px] md:text-[16px] font-medium text-white/70">
