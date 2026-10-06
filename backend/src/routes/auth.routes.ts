@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as AuthController from '../controllers/auth.controller';
 import { validate } from '../middleware/validate';
-import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } from '../types/schemas';
+import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, changePasswordSchema } from '../types/schemas';
 import { authenticateToken } from '../middleware/auth';
 import { validateCsrf } from '../middleware/csrf';
 
@@ -19,7 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Authenticated routes — require valid session cookie + CSRF token
-router.post('/change-password', authenticateToken, validateCsrf, AuthController.changePassword);
+router.post('/change-password', authenticateToken, validateCsrf, validate(changePasswordSchema), AuthController.changePassword);
 router.post('/logout', AuthController.logout);
 
 export default router;

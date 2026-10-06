@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { supabase } from '../config/supabase';
 import { config } from '../config/env';
 import * as Mailer from '../lib/mail';
+import { passwordStamp } from '../lib/session';
 
 const isProduction = config.NODE_ENV === 'production';
 
@@ -28,13 +29,13 @@ function baseCookieOpts(httpOnly = true) {
 }
 
 /** Attach short-lived access token + long-lived refresh token as httpOnly cookies. */
-function setAuthCookies(res: Response, userId: string, email: string, role: string) {
+function setAuthCookies(res: Response, userId: string, email: string, role: string, passwordHash: string | null) {
   const opts = baseCookieOpts(true);
 
   const accessToken = jwt.sign({ id: userId, email, role }, config.JWT_SECRET, { expiresIn: ACCESS_TOKEN_TTL });
   res.cookie('access_token', accessToken, { ...opts, maxAge: ACCESS_COOKIE_AGE });
 
-  const refreshToken = jwt.sign({ id: userId }, config.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_TTL });
+  const refreshToken = jwt.sign({ id: userId, pwv: passwordStamp(passwordHash) }, config.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_TTL });
   res.cookie('refresh_token', refreshToken, { ...opts, maxAge: REFRESH_COOKIE_AGE });
 
   const csrfToken = crypto.randomBytes(32).toString('hex');
@@ -158,11 +159,14 @@ export const changePassword = async (req: any, res: Response) => {
     if (!isMatch) return res.status(400).json({ error: 'Incorrect current password' });
 
     const hash = await bcrypt.hash(newPassword, 12);
-    await supabase
+    const { error: updateError } = await supabase
       .from('users')
       .update({ password: hash })
       .eq('id', userId);
+    if (updateError) throw updateError;
 
+    // Other sessions' refresh tokens are now invalid; keep this one signed in.
+    setAuthCookies(res, userId, req.user.email, req.user.role, hash);
     res.json({ message: 'Password updated successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
@@ -217,16 +221,20 @@ export const refreshToken = (req: Request, res: Response) => {
   if (!token) return res.status(401).json({ error: 'No refresh token' });
 
   try {
-    const payload = jwt.verify(token, config.JWT_REFRESH_SECRET) as { id: string };
+    const payload = jwt.verify(token, config.JWT_REFRESH_SECRET) as { id: string; pwv?: string };
 
     supabase
       .from('users')
-      .select('id, email, role')
+      .select('id, email, role, password')
       .eq('id', payload.id)
       .single()
       .then(({ data: user, error }) => {
         if (error || !user) return res.status(401).json({ error: 'User not found' });
-        const accessToken = setAuthCookies(res, user.id, user.email, user.role);
+        // Issued before the last password change/reset (or before stamps existed).
+        if (payload.pwv !== passwordStamp(user.password)) {
+          return res.status(401).json({ error: 'Session expired, please sign in again' });
+        }
+        const accessToken = setAuthCookies(res, user.id, user.email, user.role, user.password);
         res.json({ token: accessToken });
       });
   } catch {
@@ -252,7 +260,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!user.is_verified) return res.status(403).json({ error: 'Please verify your email before logging in. Check your inbox for the verification link.' });
 
-    const token = setAuthCookies(res, user.id, user.email, user.role);
+    const token = setAuthCookies(res, user.id, user.email, user.role, user.password);
     res.json({
       user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, is_verified: user.is_verified, created_at: user.created_at },
       token,
