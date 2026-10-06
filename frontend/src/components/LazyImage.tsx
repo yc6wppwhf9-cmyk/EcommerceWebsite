@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -31,24 +31,32 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   fallbackSrc,
   ...rest
 }) => {
-  const [loaded, setLoaded] = useState(false);
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const [imgSrc, setImgSrc] = useState(src);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   React.useEffect(() => {
     setImgSrc(src);
     setHasError(false);
-    setLoaded(false);
   }, [src]);
 
   const optimizedSrc = hasError ? imgSrc : optimizeGoogleUrl(imgSrc, width);
+  // Tied to the source actually shown, so a stale reset can never hide an
+  // image whose load event already fired.
+  const loaded = hasError || loadedSrc === optimizedSrc;
+
+  // Cached images can finish loading before React attaches onLoad.
+  useLayoutEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth > 0) setLoadedSrc(optimizedSrc);
+  }, [optimizedSrc]);
 
   const handleError = () => {
     if (fallbackSrc && imgSrc !== fallbackSrc) {
       setImgSrc(fallbackSrc);
     } else {
       setHasError(true);
-      setLoaded(true);
     }
   };
 
@@ -60,12 +68,13 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         />
       )}
       <img
+        ref={imgRef}
         src={optimizedSrc}
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         referrerPolicy="no-referrer"
-        onLoad={() => setLoaded(true)}
+        onLoad={() => setLoadedSrc(optimizedSrc)}
         onError={handleError}
         className={`transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'} ${className}`}
         {...rest}
