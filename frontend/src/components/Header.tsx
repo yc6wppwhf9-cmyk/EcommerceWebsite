@@ -38,7 +38,7 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       {highlight ? (
         <Link
-          className="h-16 flex items-center pl-2 2xl:pl-4 pr-2 text-[12px] 2xl:text-[13px] font-outfit uppercase whitespace-nowrap"
+          className="h-16 flex items-center pl-3.5 2xl:pl-4 pr-2 text-[12px] 2xl:text-[13px] font-outfit uppercase whitespace-nowrap"
           to={getThemeTo(to)}
         >
           <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
@@ -48,7 +48,7 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
         </Link>
       ) : (
         <Link
-          className="h-16 flex items-center gap-1 px-2 2xl:px-5 text-[12px] 2xl:text-[13px] font-medium font-outfit tracking-[0.1em] 2xl:tracking-[0.18em] whitespace-nowrap transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
+          className="h-16 flex items-center gap-1 px-3.5 2xl:px-5 text-[12px] 2xl:text-[13px] font-medium font-outfit tracking-[0.1em] 2xl:tracking-[0.18em] whitespace-nowrap transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
           to={getThemeTo(to)}
         >
           {title}
@@ -187,7 +187,10 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
               />
             </Link>
           ) : (
-            <BrandToggle />
+            <>
+              <div className="2xl:hidden"><BrandToggle size="sm" /></div>
+              <div className="hidden 2xl:block"><BrandToggle /></div>
+            </>
           )}
         </div>
 
@@ -225,7 +228,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
 
         {/* Desktop Navigation (Centered) */}
         <nav className="hidden xl:flex items-center">
-          <ul className="flex items-center gap-1.5 2xl:gap-2.5">
+          <ul className="flex items-center gap-2 2xl:gap-3">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
         </nav>
