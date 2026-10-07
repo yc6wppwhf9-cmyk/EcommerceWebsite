@@ -38,7 +38,7 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
     <li className="relative group" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       {highlight ? (
         <Link
-          className="h-16 flex items-center pl-4 pr-2 text-[13px] font-outfit uppercase"
+          className="h-16 flex items-center pl-2 2xl:pl-4 pr-2 text-[12px] 2xl:text-[13px] font-outfit uppercase whitespace-nowrap"
           to={getThemeTo(to)}
         >
           <span className={`inline-flex items-center gap-1.5 text-white font-bold tracking-[0.16em] px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md ${PILL_CLASS[highlight]}`}>
@@ -48,7 +48,7 @@ const NavItem = ({ title, to, items, highlight }: NavItemProps) => {
         </Link>
       ) : (
         <Link
-          className="h-16 flex items-center gap-1.5 px-4 xl:px-5 text-[13px] font-medium font-outfit tracking-[0.18em] transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
+          className="h-16 flex items-center gap-1 px-2 2xl:px-5 text-[12px] 2xl:text-[13px] font-medium font-outfit tracking-[0.1em] 2xl:tracking-[0.18em] whitespace-nowrap transition-colors duration-300 relative border-b border-transparent hover:border-current uppercase"
           to={getThemeTo(to)}
         >
           {title}
@@ -127,6 +127,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         { label: 'Tote Bag', slug: 'tote-bag' },
       ]
     },
+    { title: 'BULK/CORPORATE ORDERS', to: '/corporate-gifting' },
     { title: 'ABOUT US', to: '/about' },
     { title: 'JUNIOR', to: '/junior', highlight: 'junior' },
   ];
@@ -176,7 +177,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
       <div className="max-w-[1720px] mx-auto px-4 md:px-8 h-full flex justify-between items-center relative">
 
         {/* Desktop Brand Switcher (Left) */}
-        <div className="hidden lg:flex items-center lg:flex-1">
+        <div className="hidden xl:flex items-center xl:flex-1">
           {isJunior ? (
             <Link to="/" aria-label="Priority Bags home" className="flex items-center">
               <img
@@ -191,7 +192,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         </div>
 
         {/* Mobile Navbar: BrandToggle centered, Menu button on right */}
-        <div className="flex lg:hidden items-center justify-between w-full relative">
+        <div className="flex xl:hidden items-center justify-between w-full relative">
           {isJunior ? (
             <>
               <Link to="/" aria-label="Priority Bags home" className="flex items-center">
@@ -223,14 +224,14 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
         </div>
 
         {/* Desktop Navigation (Centered) */}
-        <nav className="hidden lg:flex items-center">
-          <ul className="flex items-center gap-1.5 xl:gap-2.5">
+        <nav className="hidden xl:flex items-center">
+          <ul className="flex items-center gap-1.5 2xl:gap-2.5">
             {activeNavData.map((nav) => <NavItem key={nav.title} title={nav.title} to={nav.to} items={nav.items} highlight={(nav as { highlight?: HighlightVariant }).highlight} />)}
           </ul>
         </nav>
 
         {/* Desktop Action Icons */}
-        <div className="hidden lg:flex flex-1 items-center justify-end font-outfit gap-3 xl:gap-4">
+        <div className="hidden xl:flex flex-1 items-center justify-end font-outfit gap-3 2xl:gap-4">
           <div className="flex items-center gap-1">
             {/* Search */}
             <button
