@@ -104,3 +104,6 @@ $categoryBanners = @(
 foreach ($image in $categoryBanners) {
   Save-OptimizedJpeg -Source $image.Source -Destination "optimized\category\$($image.Name)-banner.jpg" -MaxWidth 1600 -Quality 80
 }
+
+Save-OptimizedJpeg -Source 'Creatives\corporate-hero-banner.png' -Destination 'optimized\corporate\hero.jpg' -MaxWidth 1600 -Quality 82
+Save-OptimizedJpeg -Source 'Creatives\corporate-showcase-banner.png' -Destination 'optimized\corporate\showcase.jpg' -MaxWidth 1600 -Quality 82
