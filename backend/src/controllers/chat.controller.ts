@@ -18,7 +18,7 @@ function getUserFromRequest(req: Request): { id: string; email: string; role: st
 
 // ─── Tool Implementations ────────────────────────────────────────────────────
 
-const searchProducts = async (params: {
+export const searchProducts = async (params: {
   category?: string;
   sub_category?: string;
   isPremium?: boolean;

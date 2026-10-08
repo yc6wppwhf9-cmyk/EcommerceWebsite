@@ -38,6 +38,8 @@ export const config = {
   FROM_EMAIL: process.env.FROM_EMAIL || 'noreply@prioritybags.in',
   HR_EMAIL: resolveHrEmail(process.env.HR_EMAIL),
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
+  // Shared secret Vapi sends with every webhook / tool call (X-Vapi-Secret or Bearer).
+  VAPI_WEBHOOK_SECRET: process.env.VAPI_WEBHOOK_SECRET || '',
   RESEND_API_KEY: process.env.RESEND_API_KEY || process.env.SMTP_PASS || '',
   // Shipping constants (single source of truth for backend + frontend)
   SHIPPING_THRESHOLD: 1499,
