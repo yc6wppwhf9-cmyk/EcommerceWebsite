@@ -20,7 +20,8 @@
     "react-dom": "^19.0.0",
     "react-helmet-async": "^3.0.0",
     "react-router-dom": "^7.18.1",
-    "vite": "^6.4.3"
+    "vite": "^6.4.3",
+    "write-excel-file": "^4.1.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",

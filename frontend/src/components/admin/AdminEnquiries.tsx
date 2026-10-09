@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { Building2, LifeBuoy, RefreshCw, Mail, Phone, ChevronDown, ChevronUp } from 'lucide-react';
+import { Building2, LifeBuoy, RefreshCw, Mail, Phone, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { api } from '../../lib/api';
+import { downloadEnquiriesXlsx } from '../../utils/exportEnquiries';
 
 interface AdminEnquiriesProps {
   showToast: (msg: string, type?: 'success' | 'error') => void;
@@ -79,6 +80,22 @@ export const AdminEnquiries: React.FC<AdminEnquiriesProps> = ({ showToast }) => 
     }
   };
 
+  const [exporting, setExporting] = useState(false);
+  // Exports every row of the current tab (ignores the "Only open" filter).
+  const exportXlsx = async () => {
+    const all = view === 'inquiries' ? inquiries : tickets;
+    if (all.length === 0) return showToast('Nothing to export yet', 'error');
+    setExporting(true);
+    try {
+      await downloadEnquiriesXlsx(view, all);
+      showToast(`Downloaded ${all.length} ${view === 'inquiries' ? 'enquiries' : 'tickets'}`, 'success');
+    } catch {
+      showToast('Could not create the Excel file', 'error');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const isOpen = (row: any) => (view === 'inquiries' ? !['converted', 'closed'].includes(row.status) : OPEN_TICKET.includes(row.status));
   const rows = (view === 'inquiries' ? inquiries : tickets).filter((r) => !onlyOpen || isOpen(r));
   const newInquiries = inquiries.filter((i) => i.status === 'new').length;
@@ -109,6 +126,13 @@ export const AdminEnquiries: React.FC<AdminEnquiriesProps> = ({ showToast }) => 
             <input type="checkbox" checked={onlyOpen} onChange={(e) => setOnlyOpen(e.target.checked)} className="accent-gray-900" />
             Only open
           </label>
+          <button
+            onClick={exportXlsx}
+            disabled={exporting || loading}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-gray-900 text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest hover:bg-gray-700 disabled:opacity-50"
+          >
+            <Download size={12} /> {exporting ? 'Preparing…' : 'Download Excel'}
+          </button>
           <button onClick={load} className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-900">
             <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
           </button>
