@@ -51,15 +51,15 @@ const CATEGORY_BANNERS: Record<string, { image: string; alt: string }> = {
     alt: 'Duffle Bags — Versatile & Stylish For Every Journey',
   },
   'luggage': {
-    image: '/optimized/category/luggage-banner.jpg',
+    image: '/optimized/category/luggage-banner-2026-10.jpg',
     alt: 'Premium Luggage & Trolley Bags — Travel In Style',
   },
   'travel': {
-    image: '/optimized/category/luggage-banner.jpg',
+    image: '/optimized/category/luggage-banner-2026-10.jpg',
     alt: 'Premium Luggage & Trolley Bags — Travel In Style',
   },
   'trolley': {
-    image: '/optimized/category/luggage-banner.jpg',
+    image: '/optimized/category/luggage-banner-2026-10.jpg',
     alt: 'Premium Luggage & Trolley Bags — Travel In Style',
   },
 };
