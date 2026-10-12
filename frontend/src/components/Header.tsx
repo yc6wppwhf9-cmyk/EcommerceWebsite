@@ -100,6 +100,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
   }, [isMenuOpen]);
 
   const navData = [
+    { title: 'JUNIOR', to: '/junior', highlight: 'junior' },
     {
       title: 'BACKPACKS',
       to: '/backpacks',
@@ -129,7 +130,6 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
     },
     { title: 'BULK/CORPORATE ORDERS', to: '/corporate-gifting' },
     { title: 'ABOUT US', to: '/about' },
-    { title: 'JUNIOR', to: '/junior', highlight: 'junior' },
   ];
 
   const premiumNavData = [
