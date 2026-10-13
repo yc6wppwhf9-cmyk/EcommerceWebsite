@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Star,
@@ -224,6 +225,17 @@ export const ProductDetail = () => {
     return () => clearInterval(interval);
   }, [product?.id]);
 
+  // Mobile: keep a Buy button on screen once the main buttons scroll out of view.
+  const [buyButtonsEl, setBuyButtonsEl] = useState<HTMLDivElement | null>(null);
+  const [showStickyBuy, setShowStickyBuy] = useState(false);
+  useEffect(() => {
+    if (!buyButtonsEl) return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setShowStickyBuy(!entry.isIntersecting && entry.boundingClientRect.top < 0));
+    observer.observe(buyButtonsEl);
+    return () => observer.disconnect();
+  }, [buyButtonsEl]);
+
   if (loading) {
     return (
       <main className="container mx-auto px-4 py-32 text-center font-outfit">
@@ -407,7 +419,7 @@ export const ProductDetail = () => {
             )}
 
             {/* Actions */}
-            <div className="space-y-3 pt-2">
+            <div ref={setBuyButtonsEl} className="space-y-3 pt-2">
               {/* Buy on Amazon / Flipkart / Myntra / Ajio */}
               {marketplaceLinks.length > 0 ? (
                 <div className="space-y-3">
@@ -432,6 +444,27 @@ export const ProductDetail = () => {
                 </button>
               )}
             </div>
+
+            {showStickyBuy && marketplaceLinks.length > 0 && createPortal(
+              <div className="lg:hidden fixed left-3 right-[4.75rem] z-[105] bottom-[calc(3.75rem+env(safe-area-inset-bottom))] grid gap-2"
+                style={{ gridTemplateColumns: `repeat(${Math.min(marketplaceLinks.length, 2)}, minmax(0, 1fr))` }}>
+                {marketplaceLinks.slice(0, 2).map((link) => (
+                  <MarketplaceLink
+                    key={link.marketplace}
+                    marketplace={link.marketplace}
+                    url={link.url}
+                    productId={product.id}
+                    productName={product.name}
+                    productPrice={product.price}
+                    category={product.category}
+                    className={`flex items-center justify-center min-h-[48px] px-2 rounded-sm shadow-lg font-outfit text-[12px] tracking-[0.16em] text-center ${theme.btn}`}
+                  >
+                    {(marketplaceLinks.length > 1 ? link.label.replace(/^Buy on /, '') : link.label).toUpperCase()}
+                  </MarketplaceLink>
+                ))}
+              </div>,
+              document.body,
+            )}
 
             {/* Trust badges */}
             <div className="flex items-start justify-between gap-4 border-t border-line pt-6">

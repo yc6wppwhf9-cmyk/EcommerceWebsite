@@ -205,7 +205,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                   className="w-[95px] sm:w-[110px] h-auto transition-all duration-300"
                 />
               </Link>
-              <button className="p-1.5" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
+              <button className="p-2.5 -mr-1" style={{ color: 'currentColor' }} onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </>
@@ -215,7 +215,7 @@ export const Header = ({ onSearchOpen }: { onSearchOpen: () => void }) => {
                 <BrandToggle size="sm" />
               </div>
               <button
-                className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5"
+                className="absolute -right-1 top-1/2 -translate-y-1/2 p-2.5"
                 style={{ color: 'currentColor' }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle Menu"

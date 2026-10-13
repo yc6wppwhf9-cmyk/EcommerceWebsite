@@ -137,14 +137,14 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                 productName={product.name}
                 productPrice={product.price}
                 category={product.category}
-                className={`block text-center w-full py-2.5 text-white text-[11px] uppercase transition-all rounded-sm ${quiet ? 'font-medium tracking-[0.2em] bg-marine hover:bg-marine-deep' : 'font-bold tracking-[0.15em]'} ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : quiet ? '' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
+                className={`flex items-center justify-center text-center w-full min-h-[44px] py-2.5 text-white text-[11px] uppercase transition-all rounded-sm ${quiet ? 'font-medium tracking-[0.2em] bg-marine hover:bg-marine-deep' : 'font-bold tracking-[0.15em]'} ${props.theme === 'premium' ? 'bg-[#111111] hover:bg-[#000000]' : quiet ? '' : 'bg-[#26B3FF] hover:bg-[#0fa0ee]'}`}
               >
                 {link.label}
               </MarketplaceLink>
             ))}
           </div>
         ) : (
-          <button disabled className={`w-full py-2.5 text-[11px] uppercase rounded-sm mt-1 cursor-not-allowed ${quiet ? 'font-medium tracking-[0.2em] bg-line text-slate' : 'font-bold tracking-[0.15em] bg-gray-100 text-gray-400'}`}>
+          <button disabled className={`w-full min-h-[44px] py-2.5 text-[11px] uppercase rounded-sm mt-1 cursor-not-allowed ${quiet ? 'font-medium tracking-[0.2em] bg-line text-slate' : 'font-bold tracking-[0.15em] bg-gray-100 text-gray-400'}`}>
             Coming Soon
           </button>
         )}

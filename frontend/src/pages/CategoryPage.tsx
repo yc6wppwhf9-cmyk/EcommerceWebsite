@@ -9,6 +9,7 @@ import { ChevronDown, X, SlidersHorizontal, LayoutGrid, AlignJustify, Check } fr
 import { SEO } from '../components/SEO';
 import { trackViewItemList } from '../lib/gtag';
 import { resolveProductColors, resolveProductAgeRange, isJuniorProduct, AGE_RANGE_OPTIONS } from '../utils/productFilters';
+import { webp, webpFallback } from '../utils/webp';
 
 const PAGE_LIMIT = 20;
 const NO_PRICE_FILTER = 999999;
@@ -612,7 +613,8 @@ export const CategoryPage = () => {
             >
               <h1 className="sr-only">{pageTitle}</h1>
               <img
-                src={CATEGORY_BANNERS[slug].image}
+                src={webp(CATEGORY_BANNERS[slug].image)}
+                onError={webpFallback}
                 alt={CATEGORY_BANNERS[slug].alt}
                 className="w-full h-auto block select-none"
                 loading="eager"
@@ -637,7 +639,7 @@ export const CategoryPage = () => {
           <div className="flex items-center justify-between mb-4 md:mb-6 gap-3">
             <div className="lg:hidden flex items-center gap-2">
               <button
-                className="flex items-center gap-2 px-4 py-2.5 border border-line bg-white text-[10px] font-medium uppercase tracking-[0.18em] hover:border-ink transition-colors duration-300"
+                className="flex items-center gap-2 px-4 min-h-[44px] border border-line bg-white text-[10px] font-medium uppercase tracking-[0.18em] hover:border-ink transition-colors duration-300"
                 onClick={() => setMobileFilterOpen(true)}
               >
                 <SlidersHorizontal size={13} />
@@ -651,14 +653,14 @@ export const CategoryPage = () => {
               <div className="flex border border-gray-200">
                 <button
                   onClick={() => setMobileGridCols(1)}
-                  className={`p-2 transition-colors ${mobileGridCols === 1 ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
+                  className={`flex items-center justify-center min-w-[44px] min-h-[44px] transition-colors ${mobileGridCols === 1 ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
                   title="Single column"
                 >
                   <AlignJustify size={14} />
                 </button>
                 <button
                   onClick={() => setMobileGridCols(2)}
-                  className={`p-2 transition-colors ${mobileGridCols === 2 ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
+                  className={`flex items-center justify-center min-w-[44px] min-h-[44px] transition-colors ${mobileGridCols === 2 ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
                   title="Two columns"
                 >
                   <LayoutGrid size={14} />
@@ -666,18 +668,19 @@ export const CategoryPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 bg-white border border-line px-4 py-2.5 hover:border-ink transition-colors duration-300 ml-auto">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 min-h-[44px] bg-white border border-line px-3 sm:px-4 hover:border-ink transition-colors duration-300 ml-auto">
               <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-graphite hidden sm:block">
                 {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
               </span>
               <span className="text-gray-200 hidden sm:block select-none">|</span>
-              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate">
+              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate hidden sm:block">
                 Sort:
               </span>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="bg-transparent text-[10px] font-medium uppercase tracking-[0.18em] outline-none cursor-pointer"
+                aria-label="Sort products"
+                className="min-w-0 max-w-full bg-transparent text-[10px] font-medium uppercase tracking-[0.12em] sm:tracking-[0.18em] outline-none cursor-pointer"
               >
                 <option value="newest">Newest First</option>
                 <option value="rating">Highest Rated</option>
