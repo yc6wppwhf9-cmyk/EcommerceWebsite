@@ -21,7 +21,19 @@
     <!-- Fonts: linked here (not @import in CSS) so they start downloading immediately -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Protest+Riot&display=swap" />
+    <!-- Outfit as one variable font file covering every weight the site uses (300–900) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..900&family=Protest+Riot&display=swap" />
+
+    <!-- Homepage only: start downloading the first hero slide (constants/home.ts HERO_SLIDES[0]) before the app runs -->
+    <script>
+      if (location.pathname === '/') {
+        [['/optimized/hero/campus-mobile.webp', '(max-width: 767px)'], ['/optimized/hero/campus-desktop.webp', '(min-width: 768px)']].forEach(function (h) {
+          var l = document.createElement('link');
+          l.rel = 'preload'; l.as = 'image'; l.type = 'image/webp'; l.href = h[0]; l.media = h[1]; l.fetchPriority = 'high';
+          document.head.appendChild(l);
+        });
+      }
+    </script>
 
     <!-- SEO -->
     <title>Priority Bags — Premium Backpacks, Luggage &amp; Travel Accessories</title>
@@ -49,6 +61,8 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/Priority Logo-02.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- Theme color for mobile browsers -->
     <meta name="theme-color" content="#302a5e" />
