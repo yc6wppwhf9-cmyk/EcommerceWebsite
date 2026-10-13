@@ -5,6 +5,7 @@ import { motion, useReducedMotion, type PanInfo } from 'motion/react';
 import { fadeUp, stagger, revealProps } from '../../lib/motion';
 import { LazyImage } from '../LazyImage';
 import { CATS } from '../../constants/home';
+import { webp, webpFallback } from '../../utils/webp';
 
 /**
  * "Shop By Category" section.
@@ -94,7 +95,8 @@ export const CategoryShowcase = () => {
                   }`}
                 >
                   <img
-                    src={cat.img}
+                    src={webp(cat.img)}
+                    onError={webpFallback}
                     alt={cat.label}
                     draggable={false}
                     className="w-full h-full object-cover pointer-events-none"
@@ -133,7 +135,8 @@ export const CategoryShowcase = () => {
                 className="group relative block rounded-sm overflow-hidden transition-transform duration-700 ease-out hover:-translate-y-1.5 border border-line bg-white"
               >
                 <LazyImage
-                  src={cat.img}
+                  src={webp(cat.img)}
+                  fallbackSrc={cat.img}
                   alt={cat.label}
                   className="w-full h-auto block transition-transform duration-[1.6s] ease-out group-hover:scale-[1.03]"
                   width={600}

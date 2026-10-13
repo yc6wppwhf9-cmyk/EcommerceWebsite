@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { HERO_SLIDES, heroVariants } from '../../constants/home';
+import { webp } from '../../utils/webp';
 
 /**
  * Full-bleed hero carousel with auto-advance.
@@ -15,6 +16,8 @@ import { HERO_SLIDES, heroVariants } from '../../constants/home';
 export const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isFirstRender = useRef(true);
+  useEffect(() => { isFirstRender.current = false; }, []);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -46,13 +49,17 @@ export const HeroSlider = () => {
       <motion.div
         key={current}
         variants={heroVariants}
-        initial="enter"
+        // The first slide appears immediately (no fade-in) so it can paint as
+        // the page's largest element without waiting for the animation.
+        initial={isFirstRender.current ? false : 'enter'}
         animate="center"
         transition={{ duration: 0.35, ease: 'easeOut' }}
         className="absolute inset-0 z-0"
       >
         <picture className="block h-full w-full">
+          <source media="(max-width: 767px)" type="image/webp" srcSet={webp(slide.mobileSrc)} />
           <source media="(max-width: 767px)" srcSet={slide.mobileSrc} />
+          <source type="image/webp" srcSet={webp(slide.desktopSrc)} />
           <img
             alt={slide.title}
             className="h-full w-full object-contain object-center"

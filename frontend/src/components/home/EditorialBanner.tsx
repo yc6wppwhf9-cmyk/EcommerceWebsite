@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { IMG, BANNER_CTA } from '../../constants/home';
+import { webp } from '../../utils/webp';
 
 interface EditorialBannerProps {
   hasProducts: boolean | null;
@@ -78,7 +79,9 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts })
             className="absolute inset-0"
           >
             <picture className="block h-full w-full">
-              <source media="(max-width: 767px)" srcSet={activeSlide.images.mobileSrc} />
+              <source media="(max-width: 767px)" type="image/webp" srcSet={webp(activeSlide.images.mobileSrc)} />
+          <source media="(max-width: 767px)" srcSet={activeSlide.images.mobileSrc} />
+          <source type="image/webp" srcSet={webp(activeSlide.images.desktopSrc)} />
               <img
                 src={activeSlide.images.desktopSrc}
                 alt={banner.heading}
@@ -127,7 +130,9 @@ export const EditorialBanner: React.FC<EditorialBannerProps> = ({ hasProducts })
               >
                 <Link to={activeSlide.to} className="block w-full h-full">
                   <picture className="block h-full w-full">
-                    <source media="(max-width: 767px)" srcSet={activeSlide.images.mobileSrc} />
+                    <source media="(max-width: 767px)" type="image/webp" srcSet={webp(activeSlide.images.mobileSrc)} />
+          <source media="(max-width: 767px)" srcSet={activeSlide.images.mobileSrc} />
+          <source type="image/webp" srcSet={webp(activeSlide.images.desktopSrc)} />
                     <img
                       src={activeSlide.images.desktopSrc}
                       alt={banner.heading}

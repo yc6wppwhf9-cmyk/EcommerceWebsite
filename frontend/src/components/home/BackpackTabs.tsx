@@ -8,6 +8,7 @@ import { ProductCard } from '../ProductCard';
 import { LazyImage } from '../LazyImage';
 import type { Product } from '../../types';
 import type { ColumnTier } from '../../constants/home';
+import { webp } from '../../utils/webp';
 
 interface BackpackTabsProps {
   activeTab: string;
@@ -94,7 +95,8 @@ export const BackpackTabs = ({
           >
             <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-white/30">
               <LazyImage
-                src={activeTabConfig.image}
+                src={webp(activeTabConfig.image)}
+                fallbackSrc={activeTabConfig.image}
                 alt={activeTabConfig.label}
                 className="w-full h-full object-cover"
                 width={80}
@@ -123,7 +125,8 @@ export const BackpackTabs = ({
             >
               <div className="absolute inset-0 border border-line z-10" />
               <LazyImage
-                src={activeTabConfig.image}
+                src={webp(activeTabConfig.image)}
+                fallbackSrc={activeTabConfig.image}
                 alt={activeTabConfig.label}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 width={520}
