@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { SEO } from '../components/SEO';
 import { api } from '../lib/api';
+import { trackLead } from '../lib/gtag';
 import type { Job } from '../types';
 
 interface FormState {
@@ -105,6 +106,7 @@ export const Careers = () => {
       setForm(EMPTY_FORM);
       if (fileInputRef.current) fileInputRef.current.value = '';
       setSubmittedSuccessfully(true);
+      trackLead('job_application', { position: selectedJob ? selectedJob.title : 'General Application' });
       showToast("Application submitted successfully! We'll review and get in touch.", 'success');
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (err: any) {

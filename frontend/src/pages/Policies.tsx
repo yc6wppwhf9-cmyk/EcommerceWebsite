@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { api } from '../lib/api';
+import { trackLead } from '../lib/gtag';
 
 const EFFECTIVE_DATE = '24 July 2026';
 const COMPANY_NAME = 'High Spirit Commercial Ventures Pvt. Ltd.';
@@ -165,6 +166,7 @@ export const ClaimWarranty = () => {
         issue: form.issue,
       });
       setTicketNumber(result.ticket_number);
+      trackLead('warranty_claim', { product: form.product });
     } catch (err: any) {
       setError(err.message || 'Unable to submit your warranty claim.');
     } finally {

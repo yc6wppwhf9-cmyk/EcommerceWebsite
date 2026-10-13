@@ -5,6 +5,7 @@ import {
   Clock, ArrowUpRight, ArrowRight, ShieldCheck, Search,
 } from 'lucide-react';
 import { api } from '../lib/api';
+import { trackLead } from '../lib/gtag';
 import { SEO } from '../components/SEO';
 
 interface ContactForm {
@@ -63,6 +64,7 @@ export const ContactUs = () => {
     setErrorMsg('');
     try {
       const result = await api.sendContactMessage(form);
+      trackLead('support_request', { type: 'contact' });
       setTicketNumber(result.ticket_number);
       setSubmittedEmail(form.email);
       setStatus('success');
