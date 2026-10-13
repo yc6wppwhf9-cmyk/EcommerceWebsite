@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { api } from '../lib/api';
+import { trackLead } from '../lib/gtag';
 
 const QUANTITY_OPTIONS = [
   '50 – 100 pcs',
@@ -96,6 +97,7 @@ export const CorporateGifting: React.FC = () => {
       const res = await api.submitCorporateInquiry(formData);
       setReferenceNumber(res.reference_number || `CORP-${Date.now().toString().slice(-6)}`);
       setSubmitted(true);
+      trackLead('corporate_enquiry', { category: formData.category, quantity: formData.quantity, budget: formData.approx_budget });
       window.scrollTo({ top: 300, behavior: 'smooth' });
     } catch (err: any) {
       console.error('Corporate inquiry error:', err);

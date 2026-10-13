@@ -13,7 +13,7 @@ import { SearchModal } from './components/SearchModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { ToastContainer } from './components/ui/Toast';
 import { Home } from './pages/Home';
-import { pageview } from './lib/gtag';
+import { markInternalDevice, pageview, trackLead } from './lib/gtag';
 
 const CategoryPage = lazy(() => import('./pages/CategoryPage').then((module) => ({ default: module.CategoryPage })));
 const JuniorPage = lazy(() => import('./pages/JuniorPage').then((module) => ({ default: module.JuniorPage })));
@@ -56,9 +56,31 @@ const ScrollToTop = () => {
 
 const PageTracker = () => {
   const location = useLocation();
+  const { user } = useAuth();
+
+  // Staff (admin/HR) visits are internal traffic: stop analytics on this device.
   useEffect(() => {
+    if (user?.role === 'admin' || user?.role === 'hr') markInternalDevice();
+  }, [user?.role]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) return;
     pageview(location.pathname + location.search);
   }, [location.pathname, location.search]);
+
+  // Phone, email and WhatsApp link clicks anywhere on the site count as leads.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const href = (e.target as HTMLElement | null)?.closest?.('a')?.getAttribute('href') || '';
+      const method = href.startsWith('tel:') ? 'phone'
+        : href.startsWith('mailto:') ? 'email'
+        : /wa\.me|whatsapp\.com/.test(href) ? 'whatsapp' : '';
+      if (method) trackLead('contact_click', { method, page_path: window.location.pathname });
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
+
   return null;
 };
 

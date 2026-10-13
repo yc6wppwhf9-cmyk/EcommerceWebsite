@@ -12,15 +12,26 @@ declare global {
 export const GA_TRACKING_ID = 'G-Z0DMD4Z3P9';
 
 /**
- * Log page views on SPA route change
+ * Log page views on SPA route change (index.html disables the automatic one,
+ * so each page is counted once).
  */
 export const pageview = (url: string, title?: string) => {
   if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-    window.gtag('config', GA_TRACKING_ID, {
+    window.gtag('event', 'page_view', {
       page_path: url,
+      page_location: window.location.origin + url,
       page_title: title || document.title,
     });
   }
+};
+
+/**
+ * Stop analytics on this device from now on (staff browsing the site or the
+ * admin panel). index.html reads the same flag on every visit.
+ */
+export const markInternalDevice = () => {
+  try { localStorage.setItem('pb_internal', '1'); } catch { /* storage blocked */ }
+  (window as any)[`ga-disable-${GA_TRACKING_ID}`] = true;
 };
 
 /**
@@ -177,3 +188,10 @@ export const trackSelectItem = (product: ItemListProduct, listName?: string, lis
   });
 };
 
+
+/**
+ * Lead events (mark these as Key events in GA4): corporate_enquiry,
+ * support_request, warranty_claim, job_application, contact_click.
+ * Only non-personal details are sent.
+ */
+export const trackLead = (name: string, params: Record<string, any> = {}) => event(name, params);

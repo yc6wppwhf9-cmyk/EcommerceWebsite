@@ -10,9 +10,12 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      // Devices where someone signed in as admin/HR are internal traffic: no analytics.
+      try { if (localStorage.getItem('pb_internal') === '1') window['ga-disable-G-Z0DMD4Z3P9'] = true; } catch (e) {}
       gtag('js', new Date());
 
-      gtag('config', 'G-Z0DMD4Z3P9');
+      // Page views are sent by the app on every route change (lib/gtag.ts), including the first.
+      gtag('config', 'G-Z0DMD4Z3P9', { send_page_view: false });
     </script>
 
     <!-- Fonts: linked here (not @import in CSS) so they start downloading immediately -->
