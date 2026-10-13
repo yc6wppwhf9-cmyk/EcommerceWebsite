@@ -7,14 +7,15 @@ import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { ChatBot } from './components/ChatBot';
-import { AuthModal } from './components/AuthModal';
-import { SearchModal } from './components/SearchModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { ToastContainer } from './components/ui/Toast';
 import { Home } from './pages/Home';
 import { markInternalDevice, pageview, trackLead } from './lib/gtag';
 
+// Loaded on demand so they stay out of the first download.
+const ChatBot = lazy(() => import('./components/ChatBot').then((module) => ({ default: module.ChatBot })));
+const AuthModal = lazy(() => import('./components/AuthModal').then((module) => ({ default: module.AuthModal })));
+const SearchModal = lazy(() => import('./components/SearchModal').then((module) => ({ default: module.SearchModal })));
 const CategoryPage = lazy(() => import('./pages/CategoryPage').then((module) => ({ default: module.CategoryPage })));
 const JuniorPage = lazy(() => import('./pages/JuniorPage').then((module) => ({ default: module.JuniorPage })));
 const JuniorStylePage = lazy(() => import('./pages/JuniorStylePage').then((module) => ({ default: module.JuniorStylePage })));
@@ -86,6 +87,18 @@ const PageTracker = () => {
 
 function AppContent() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const { showAuthModal } = useAuth();
+  // Mount each overlay the first time it is needed (then keep it for its exit animation).
+  const [authUsed, setAuthUsed] = useState(false);
+  const [searchUsed, setSearchUsed] = useState(false);
+  const [chatReady, setChatReady] = useState(false);
+  useEffect(() => { if (showAuthModal) setAuthUsed(true); }, [showAuthModal]);
+  useEffect(() => { if (searchOpen) setSearchUsed(true); }, [searchOpen]);
+  useEffect(() => {
+    // The chat button appears once the page has finished its first load.
+    const t = setTimeout(() => setChatReady(true), 2500);
+    return () => clearTimeout(t);
+  }, []);
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const isAdmin = location.pathname.startsWith('/admin');
@@ -131,10 +144,12 @@ function AppContent() {
         </div>
         {!isAdmin && !isPremiumTheme && <Footer />}
       </div>
-      <AuthModal />
-      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <Suspense fallback={null}>
+        {authUsed && <AuthModal />}
+        {searchUsed && <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
+        {chatReady && !isAdmin && !isPremiumTheme && <ChatBot />}
+      </Suspense>
       {!isAdmin && <MobileBottomNav onSearchOpen={() => setSearchOpen(true)} />}
-      {!isAdmin && !isPremiumTheme && <ChatBot />}
       <ToastContainer />
     </>
   );
