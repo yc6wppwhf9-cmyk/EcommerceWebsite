@@ -13,6 +13,7 @@ import { Home } from './pages/Home';
 import { markInternalDevice, pageview, trackLead } from './lib/gtag';
 
 // Loaded on demand so they stay out of the first download.
+const IntroVideo = lazy(() => import('./components/IntroVideo').then((module) => ({ default: module.IntroVideo })));
 const ChatBot = lazy(() => import('./components/ChatBot').then((module) => ({ default: module.ChatBot })));
 const AuthModal = lazy(() => import('./components/AuthModal').then((module) => ({ default: module.AuthModal })));
 const SearchModal = lazy(() => import('./components/SearchModal').then((module) => ({ default: module.SearchModal })));
@@ -145,6 +146,7 @@ function AppContent() {
         {!isAdmin && !isPremiumTheme && <Footer />}
       </div>
       <Suspense fallback={null}>
+        <IntroVideo />
         {authUsed && <AuthModal />}
         {searchUsed && <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
         {chatReady && !isAdmin && !isPremiumTheme && <ChatBot />}
