@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX, X } from 'lucide-react';
 import { event } from '../lib/gtag';
 
-// Full-screen brand film shown when someone opens the site. Muted autoplay
-// (browsers block sound until the visitor taps), Skip + sound buttons, closes
-// itself at the end, and appears at most once a day per device.
+// Small floating brand-film player in the bottom-left corner. Plays muted on a
+// loop without blocking the page; tapping the video toggles sound, X hides it.
+// Once closed it stays hidden on that device for a day.
 
-const SEEN_KEY = 'pb_intro_seen_at';
-const ONCE_PER_MS = 24 * 60 * 60 * 1000;
+const CLOSED_KEY = 'pb_intro_closed_at';
+const HIDE_FOR_MS = 24 * 60 * 60 * 1000;
 const SRC = '/optimized/intro/brand-intro';
 
 function shouldShow() {
@@ -16,98 +16,84 @@ function shouldShow() {
   if ((navigator as any).connection?.saveData) return false; // visitor asked to save data
   if (navigator.webdriver) return false; // automated browsers / crawlers
   try {
-    const last = Number(localStorage.getItem(SEEN_KEY) || 0);
-    return Date.now() - last > ONCE_PER_MS;
+    return Date.now() - Number(localStorage.getItem(CLOSED_KEY) || 0) > HIDE_FOR_MS;
   } catch {
-    return false; // storage blocked: don't risk replaying it on every page
+    return true;
   }
 }
 
 export const IntroVideo = () => {
   const [open, setOpen] = useState(shouldShow);
-  const [leaving, setLeaving] = useState(false);
+  const [shown, setShown] = useState(false);
   const [muted, setMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const close = (how: 'completed' | 'skipped') => {
-    if (leaving) return;
-    event('intro_video', { action: how });
-    setLeaving(true);
-    setTimeout(() => setOpen(false), 400);
-  };
-
   useEffect(() => {
     if (!open) return;
-    try { localStorage.setItem(SEEN_KEY, String(Date.now())); } catch { /* storage blocked */ }
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close('skipped'); };
-    window.addEventListener('keydown', onKey);
-    // If autoplay is blocked entirely, don't leave a frozen overlay up.
-    videoRef.current?.play().catch(() => close('skipped'));
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener('keydown', onKey);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const t = setTimeout(() => setShown(true), 50); // slide in after first paint
+    return () => clearTimeout(t);
   }, [open]);
 
   if (!open) return null;
+
+  const close = () => {
+    try { localStorage.setItem(CLOSED_KEY, String(Date.now())); } catch { /* storage blocked */ }
+    event('intro_video', { action: 'closed' });
+    setShown(false);
+    setTimeout(() => setOpen(false), 300);
+  };
 
   const toggleSound = () => {
     const v = videoRef.current;
     if (!v) return;
     v.muted = !v.muted;
     setMuted(v.muted);
-    if (!v.muted) v.play().catch(() => {});
+    if (!v.muted) {
+      v.currentTime = 0; // start the film from the top when sound is turned on
+      v.play().catch(() => {});
+      event('intro_video', { action: 'sound_on' });
+    }
   };
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Priority Bags brand film"
-      className={`fixed inset-0 z-[300] flex items-center justify-center bg-black transition-opacity duration-400 ${leaving ? 'opacity-0' : 'opacity-100'}`}
+      className={`fixed z-[90] left-3 bottom-[calc(7.5rem+env(safe-area-inset-bottom))] lg:left-6 lg:bottom-6 w-[96px] sm:w-[120px] lg:w-[150px] aspect-[9/16] rounded-xl overflow-hidden bg-black shadow-2xl ring-1 ring-black/10 transition-all duration-300 ${
+        shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
     >
-      {/* Desktop: blurred copy of the poster fills the sides of the portrait film */}
-      <img
-        src={`${SRC}-poster.webp`}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover blur-2xl opacity-40 scale-110 hidden md:block"
-      />
       <video
         ref={videoRef}
-        className="relative h-full w-full object-cover md:object-contain md:h-[92vh] md:w-auto md:rounded-xl md:shadow-2xl"
+        className="h-full w-full object-cover cursor-pointer"
         poster={`${SRC}-poster.webp`}
         autoPlay
         muted
+        loop
         playsInline
-        preload="auto"
-        onEnded={() => close('completed')}
-        onError={() => close('skipped')}
+        preload="metadata"
+        onClick={toggleSound}
+        onError={() => setOpen(false)}
+        aria-label="Priority Bags brand film. Tap for sound."
       >
         <source src={`${SRC}.webm`} type="video/webm" />
         <source src={`${SRC}.mp4`} type="video/mp4" />
       </video>
 
-      <div className="absolute top-0 inset-x-0 flex justify-end gap-2 p-4 pt-[max(1rem,env(safe-area-inset-top))]">
-        <button
-          type="button"
-          onClick={toggleSound}
-          aria-label={muted ? 'Turn sound on' : 'Turn sound off'}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur hover:bg-black/70"
-        >
-          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-        </button>
-        <button
-          type="button"
-          onClick={() => close('skipped')}
-          className="flex h-11 items-center gap-1.5 rounded-full bg-white/90 px-4 text-[11px] font-bold uppercase tracking-[0.18em] text-black hover:bg-white"
-        >
-          Skip <X size={14} />
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={close}
+        aria-label="Close video"
+        className="absolute top-1 right-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur hover:bg-black/75"
+      >
+        <X size={14} />
+      </button>
+      <button
+        type="button"
+        onClick={toggleSound}
+        aria-label={muted ? 'Turn sound on' : 'Turn sound off'}
+        className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur hover:bg-black/75"
+      >
+        {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+      </button>
     </div>
   );
 };
