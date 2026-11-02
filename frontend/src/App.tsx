@@ -14,6 +14,9 @@ import { markInternalDevice, pageview, trackLead } from './lib/gtag';
 
 // Loaded on demand so they stay out of the first download.
 const IntroVideo = lazy(() => import('./components/IntroVideo').then((module) => ({ default: module.IntroVideo })));
+// Website chat assistant is switched off while the AI API has no credit (it can't
+// answer). Set to true to bring the chat button back.
+const CHATBOT_ENABLED = false;
 const ChatBot = lazy(() => import('./components/ChatBot').then((module) => ({ default: module.ChatBot })));
 const AuthModal = lazy(() => import('./components/AuthModal').then((module) => ({ default: module.AuthModal })));
 const SearchModal = lazy(() => import('./components/SearchModal').then((module) => ({ default: module.SearchModal })));
@@ -97,6 +100,7 @@ function AppContent() {
   useEffect(() => { if (searchOpen) setSearchUsed(true); }, [searchOpen]);
   useEffect(() => {
     // The chat button appears once the page has finished its first load.
+    if (!CHATBOT_ENABLED) return;
     const t = setTimeout(() => setChatReady(true), 2500);
     return () => clearTimeout(t);
   }, []);
