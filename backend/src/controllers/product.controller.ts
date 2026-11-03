@@ -130,7 +130,8 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       'bestseller': { column: 'rating', ascending: false },
     };
     const s = sortMap[sort as string] || { column: 'created_at', ascending: false };
-    query = query.order(s.column, { ascending: s.ascending });
+    // id breaks ties (many products share created_at/price), so pages never repeat or skip items.
+    query = query.order(s.column, { ascending: s.ascending }).order('id', { ascending: true });
 
     const pageNum = Number(page);
     const limitNum = Number(limit);
