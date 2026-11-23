@@ -1,3 +1,4 @@
+import { clickContext } from './clickContext';
 // Keep browser auth cookies first-party in production. Vercel rewrites /api/*
 // to the backend, while local development can still use VITE_API_URL if needed.
 const BASE = import.meta.env.DEV ? (import.meta.env.VITE_API_URL || '') : '';
@@ -221,7 +222,8 @@ export const api = {
     source: 'site' | 'chatbot' = 'site',
   ) => {
     if (!productId) return;
-    const url = `${BASE}/api/analytics/click/${productId}/${marketplace}${source === 'chatbot' ? '?source=chatbot' : ''}`;
+    const qs = new URLSearchParams({ ...clickContext(), ...(source === 'chatbot' ? { source } : {}) });
+    const url = `${BASE}/api/analytics/click/${productId}/${marketplace}?${qs}`;
     try {
       if (typeof navigator !== 'undefined' && navigator.sendBeacon) navigator.sendBeacon(url);
       else fetch(url, { method: 'POST', keepalive: true }).catch(() => {});
@@ -380,6 +382,8 @@ export const api = {
   // Admin dashboard insights
   getAdminInsights: () => request<any>('/api/admin/insights/summary'),
   getAdminProductClicks: () => request<any>('/api/admin/insights/product-clicks'),
+  getAdminClickLog: (params: { from?: string; to?: string } = {}) =>
+    request<any>(`/api/admin/insights/click-log?${new URLSearchParams(params as Record<string, string>)}`),
   listAdminTickets: () => request<any[]>('/api/admin/insights/tickets'),
   updateAdminTicketStatus: (id: string, status: string) =>
     request<any>(`/api/admin/insights/tickets/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),

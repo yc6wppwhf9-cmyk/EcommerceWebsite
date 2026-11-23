@@ -244,6 +244,51 @@ export const getProductClicks = async (_req: AuthRequest, res: Response) => {
   }
 };
 
+/**
+ * Every individual marketplace click (one row each) plus the product details
+ * the admin "Product Click Report" needs. Optional ?from=&to= (ISO dates).
+ */
+export const getClickLog = async (req: AuthRequest, res: Response) => {
+  const valid = (v: unknown) => (typeof v === 'string' && !Number.isNaN(Date.parse(v)) ? new Date(v).toISOString() : null);
+  const from = valid(req.query.from);
+  const to = valid(req.query.to);
+  try {
+    const clicks: any[] = [];
+    for (let offset = 0; offset < 500000; offset += 1000) {
+      let q: any = supabase.from('marketplace_clicks').select('*').order('id', { ascending: true }).range(offset, offset + 999);
+      if (from) q = q.gte('created_at', from);
+      if (to) q = q.lt('created_at', to);
+      const { data, error } = await q;
+      if (error) return res.status(500).json({ error: 'Could not load the click log' });
+      clicks.push(...(data || []));
+      if (!data || data.length < 1000) break;
+    }
+    const { data: products, error: productsError } = await supabase
+      .from('products')
+      .select('id, name, slug, sku, image, is_active, sub_category, amazon_url, flipkart_url, myntra_url, ajio_url')
+      .range(0, 4999);
+    if (productsError) return res.status(500).json({ error: 'Could not load products' });
+    res.json({
+      generatedAt: new Date().toISOString(),
+      clicks: clicks.map((c) => ({
+        id: c.id,
+        product_id: c.product_id,
+        marketplace: c.marketplace,
+        source: c.source,
+        created_at: c.created_at,
+        page_path: c.page_path ?? null,
+        campaign: c.campaign ?? null,
+        device_type: c.device_type ?? null,
+        session_id: c.session_id ?? null,
+      })),
+      products: products || [],
+    });
+  } catch (err: any) {
+    console.error('insights click log failed:', err);
+    res.status(500).json({ error: 'Could not load the click log' });
+  }
+};
+
 export const listTickets = async (_req: AuthRequest, res: Response) => {
   const { data, error } = await supabase
     .from('support_tickets')

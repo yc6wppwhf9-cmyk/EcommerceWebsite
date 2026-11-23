@@ -60,9 +60,23 @@ export const trackMarketplaceClick = async (req: Request, res: Response) => {
       .eq('id', product_id);
     // Dated log for admin reporting. Never block the click on it.
     const source = req.query.source === 'chatbot' ? 'chatbot' : 'site';
-    const { error: logError } = await supabase
+    const q = (key: string, max: number, pattern: RegExp) => {
+      const v = typeof req.query[key] === 'string' ? (req.query[key] as string).trim().slice(0, max) : '';
+      return v && pattern.test(v) ? v : null;
+    };
+    const context = {
+      page_path: q('page', 200, /^\/[\w\-./%~]*$/),
+      campaign: q('campaign', 120, /^[\w\-./ :%]+$/),
+      device_type: q('device', 10, /^(mobile|tablet|desktop)$/),
+      session_id: q('sid', 40, /^[a-z0-9]+$/i),
+    };
+    let { error: logError } = await supabase
       .from('marketplace_clicks')
-      .insert({ product_id, marketplace, source });
+      .insert({ product_id, marketplace, source, ...context });
+    if (logError && /column|schema cache/i.test(logError.message)) {
+      // The context columns arrive with migrations/add_click_context.sql; log without them until then.
+      ({ error: logError } = await supabase.from('marketplace_clicks').insert({ product_id, marketplace, source }));
+    }
     if (logError) console.warn('marketplace_clicks insert failed:', logError.message);
     res.json({ ok: true });
   } catch (err: any) {

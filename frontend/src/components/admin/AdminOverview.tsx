@@ -2,10 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   MousePointerClick, LifeBuoy, Building2, FileText, RefreshCw, AlertTriangle,
-  Users, MessageSquareText, Package, TrendingUp, TrendingDown, Minus,
+  Users, MessageSquareText, Package, TrendingUp, TrendingDown, Minus, Download,
 } from 'lucide-react';
 import { api } from '../../lib/api';
 
+const ClickReportDialog = React.lazy(() =>
+  import('./ClickReportDialog').then((m) => ({ default: m.ClickReportDialog })),
+);
 const AdminProductClicks = React.lazy(() =>
   import('./AdminProductClicks').then((m) => ({ default: m.AdminProductClicks })),
 );
@@ -57,6 +60,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigateTab }) =
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [showAllClicks, setShowAllClicks] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -136,14 +140,27 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigateTab }) =
         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
           Updated {new Date(data.generatedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
         </p>
-        <button
-          onClick={load}
-          disabled={loading}
-          className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 disabled:opacity-50"
-        >
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowReport(true)}
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black"
+          >
+            <Download size={13} /> Download Product Click Report
+          </button>
+          <button
+            onClick={load}
+            disabled={loading}
+            className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 disabled:opacity-50"
+          >
+            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
+          </button>
+        </div>
       </div>
+      {showReport && (
+        <React.Suspense fallback={null}>
+          <ClickReportDialog onClose={() => setShowReport(false)} />
+        </React.Suspense>
+      )}
 
       {/* KPI tiles */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">

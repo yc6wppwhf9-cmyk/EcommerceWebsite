@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Download, Search, X } from 'lucide-react';
 import { api } from '../../lib/api';
+import { ClickReportDialog } from './ClickReportDialog';
 
 // Full list behind "Most-clicked products → View all": every product with its
 // marketplace clicks, filterable by period, marketplace, category and status.
@@ -43,6 +44,7 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
   const [clicked, setClicked] = useState<'clicked' | 'never' | 'all'>('clicked');
   const [sort, setSort] = useState<'most' | 'least' | 'name'>('most');
   const [shown, setShown] = useState(PAGE);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     api.getAdminProductClicks()
@@ -55,7 +57,7 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
   }, []);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !document.querySelector('[aria-label="Download Product Click Report"]')) onClose(); };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
@@ -135,6 +137,12 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
             )}
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowReport(true)}
+              className="h-9 px-3 rounded-xl bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black flex items-center gap-1.5"
+            >
+              <Download size={14} /> <span className="hidden sm:inline">Click report</span><span className="sm:hidden">Report</span>
+            </button>
             {rows && filtered.length > 0 && (
               <button
                 onClick={download}
@@ -234,6 +242,7 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
           )}
         </div>
       </div>
+      {showReport && <ClickReportDialog onClose={() => setShowReport(false)} />}
     </div>
   );
 };
