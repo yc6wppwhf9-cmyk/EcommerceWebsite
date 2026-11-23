@@ -6,6 +6,10 @@ import {
 } from 'lucide-react';
 import { api } from '../../lib/api';
 
+const AdminProductClicks = React.lazy(() =>
+  import('./AdminProductClicks').then((m) => ({ default: m.AdminProductClicks })),
+);
+
 interface AdminOverviewProps {
   onNavigateTab: (tab: string) => void;
 }
@@ -52,6 +56,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigateTab }) =
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showAllClicks, setShowAllClicks] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -236,7 +241,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigateTab }) =
       {/* Top products + activity */}
       <div className="grid lg:grid-cols-2 gap-4">
         <Card>
-          <CardTitle action={<LinkButton onClick={() => onNavigateTab('inventory')}>Products →</LinkButton>}>
+          <CardTitle action={<LinkButton onClick={() => setShowAllClicks(true)}>View all →</LinkButton>}>
             Most-clicked products
           </CardTitle>
           {clicks.topAllTime.length === 0 ? (
@@ -260,6 +265,17 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigateTab }) =
                 </li>
               ))}
             </ol>
+          )}
+          <button
+            onClick={() => setShowAllClicks(true)}
+            className="mt-3 w-full h-10 rounded-xl border border-gray-200 text-[10px] font-black uppercase tracking-widest text-gray-700 hover:border-priority-blue hover:text-priority-blue"
+          >
+            View all products with filters
+          </button>
+          {showAllClicks && (
+            <React.Suspense fallback={null}>
+              <AdminProductClicks onClose={() => setShowAllClicks(false)} />
+            </React.Suspense>
           )}
         </Card>
 

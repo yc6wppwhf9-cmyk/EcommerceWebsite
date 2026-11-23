@@ -379,6 +379,7 @@ export const api = {
 
   // Admin dashboard insights
   getAdminInsights: () => request<any>('/api/admin/insights/summary'),
+  getAdminProductClicks: () => request<any>('/api/admin/insights/product-clicks'),
   listAdminTickets: () => request<any[]>('/api/admin/insights/tickets'),
   updateAdminTicketStatus: (id: string, status: string) =>
     request<any>(`/api/admin/insights/tickets/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),

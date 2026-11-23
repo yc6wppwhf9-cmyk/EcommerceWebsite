@@ -176,6 +176,74 @@ export const getSummary = async (_req: AuthRequest, res: Response) => {
   }
 };
 
+/**
+ * Every product with its marketplace clicks (all-time from the product
+ * counters, last 7/30 days from the click log) for the "View all" list.
+ */
+export const getProductClicks = async (_req: AuthRequest, res: Response) => {
+  try {
+    // Supabase returns at most 1000 rows per request, so read the click log in pages.
+    const since = iso(30 * DAY);
+    const loadClicks = async () => {
+      const rows: any[] = [];
+      for (let from = 0; from < 100000; from += 1000) {
+        const { data, error } = await supabase
+          .from('marketplace_clicks')
+          .select('product_id, marketplace, created_at')
+          .gte('created_at', since)
+          .order('id', { ascending: true })
+          .range(from, from + 999);
+        if (error) return { data: rows, error };
+        rows.push(...(data || []));
+        if (!data || data.length < 1000) break;
+      }
+      return { data: rows, error: null };
+    };
+    const [productsRes, clicksRes] = await Promise.all([
+      supabase
+        .from('products')
+        .select('id, name, slug, sku, image, is_active, sub_category, amazon_url, flipkart_url, myntra_url, ajio_url, amazon_clicks, flipkart_clicks, myntra_clicks, ajio_clicks')
+        .range(0, 4999),
+      loadClicks(),
+    ]);
+    if (productsRes.error) return res.status(500).json({ error: 'Could not load products' });
+
+    const empty = (): Record<Marketplace, number> => ({ amazon: 0, flipkart: 0, myntra: 0, ajio: 0 });
+    const d7 = new Map<string, Record<Marketplace, number>>();
+    const d30 = new Map<string, Record<Marketplace, number>>();
+    const now = Date.now();
+    for (const c of (clicksRes.error ? [] : clicksRes.data || []) as any[]) {
+      const m = c.marketplace as Marketplace;
+      if (!c.product_id || !MARKETPLACES.includes(m)) continue;
+      if (!d30.has(c.product_id)) d30.set(c.product_id, empty());
+      d30.get(c.product_id)![m]++;
+      if (now - new Date(c.created_at).getTime() <= 7 * DAY) {
+        if (!d7.has(c.product_id)) d7.set(c.product_id, empty());
+        d7.get(c.product_id)![m]++;
+      }
+    }
+
+    const products = ((productsRes.data || []) as any[]).map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      sku: p.sku,
+      image: p.image,
+      active: p.is_active !== false,
+      category: p.sub_category || '',
+      listedOn: MARKETPLACES.filter((m) => String(p[`${m}_url`] || '').trim()),
+      allTime: Object.fromEntries(MARKETPLACES.map((m) => [m, Number(p[`${m}_clicks`]) || 0])),
+      last30: d30.get(p.id) || empty(),
+      last7: d7.get(p.id) || empty(),
+    }));
+
+    res.json({ generatedAt: new Date().toISOString(), clickLogAvailable: !clicksRes.error, products });
+  } catch (err: any) {
+    console.error('insights product clicks failed:', err);
+    res.status(500).json({ error: 'Could not load product clicks' });
+  }
+};
+
 export const listTickets = async (_req: AuthRequest, res: Response) => {
   const { data, error } = await supabase
     .from('support_tickets')

@@ -9,6 +9,7 @@ const router = Router();
 
 router.use(authenticateToken, requireAdmin);
 router.get('/summary', Insights.getSummary);
+router.get('/product-clicks', Insights.getProductClicks);
 router.get('/tickets', Insights.listTickets);
 router.patch('/tickets/:id/status', validateCsrf, Insights.updateTicketStatus);
 router.get('/inquiries', Insights.listInquiries);
