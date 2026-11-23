@@ -13,7 +13,6 @@ import { Home } from './pages/Home';
 import { markInternalDevice, pageview, trackLead } from './lib/gtag';
 
 // Loaded on demand so they stay out of the first download.
-const IntroVideo = lazy(() => import('./components/IntroVideo').then((module) => ({ default: module.IntroVideo })));
 // Website chat assistant is switched off while the AI API has no credit (it can't
 // answer). Set to true to bring the chat button back.
 const CHATBOT_ENABLED = false;
@@ -150,7 +149,6 @@ function AppContent() {
         {!isAdmin && !isPremiumTheme && <Footer />}
       </div>
       <Suspense fallback={null}>
-        <IntroVideo />
         {authUsed && <AuthModal />}
         {searchUsed && <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
         {chatReady && !isAdmin && !isPremiumTheme && <ChatBot />}
