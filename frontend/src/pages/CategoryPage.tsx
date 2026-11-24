@@ -1,3 +1,4 @@
+import { categoryDescription, categoryTitle } from '../seo/routes';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
@@ -598,8 +599,9 @@ export const CategoryPage = () => {
     <>
       <main className={`bg-bone min-h-screen font-outfit selection:bg-ink selection:text-white ${showCategoryBanner ? 'pt-0' : 'pt-3 md:pt-6'}`}>
         <SEO
-          title={`${seoName} — Shop Online`}
-          description={`Shop ${seoName.toLowerCase()} from Priority Bags. See prices and colours, and buy on Amazon, Myntra and more with delivery across India.`}
+          title={themeParam ? `${seoName} — Shop Online | Priority Bags` : categoryTitle(seoName, slug)}
+          description={themeParam ? categoryDescription(seoName) : categoryDescription(seoName, slug)}
+          exactTitle
           url={`https://www.prioritybags.in/${slug}`}
           noindex={!isLoading && allProducts.length === 0}
         />

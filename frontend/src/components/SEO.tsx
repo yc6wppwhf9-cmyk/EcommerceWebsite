@@ -19,13 +19,15 @@ interface SEOProps {
   product?: ProductSEOData;
   /** Keep the page out of search results (e.g. an empty or unknown category URL). */
   noindex?: boolean;
+  /** Use the title as given, without adding "| Priority Bags". */
+  exactTitle?: boolean;
 }
 
 const BASE_URL = 'https://www.prioritybags.in';
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.jpg`;
 
-export const SEO = ({ title, description, image = DEFAULT_IMAGE, url = BASE_URL, type = 'website', product, noindex = false }: SEOProps) => {
-  const fullTitle = title.includes('Priority Bags') ? title : `${title} | Priority Bags`;
+export const SEO = ({ title, description, image = DEFAULT_IMAGE, url = BASE_URL, type = 'website', product, noindex = false, exactTitle = false }: SEOProps) => {
+  const fullTitle = exactTitle || title.includes('Priority Bags') ? title : `${title} | Priority Bags`;
 
   const productJsonLd = type === 'product' && product ? {
     '@context': 'https://schema.org',

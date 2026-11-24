@@ -101,9 +101,49 @@ export const NAV_LINKS: [string, string][] = [
   ['/warranty', 'Claim Warranty'],
 ];
 
-export const categoryTitle = (name: string) => `${name} — Shop Online | Priority Bags`;
-export const categoryDescription = (name: string) =>
-  `Shop ${name.toLowerCase()} from Priority Bags. See prices and colours, and buy on Amazon, Myntra and more with delivery across India.`;
+// Category pages people search for by name ("priority trolley bags", "priority
+// school bags"...), worded from Search Console queries. Others use the generic form.
+const CATEGORY_SEO: Record<string, { title: string; description: string }> = {
+  luggage: {
+    title: 'Priority Trolley Bags & Suitcases – Cabin to Set of 3',
+    description: 'Priority trolley bags and suitcases: cabin, medium 24 inch and large 28 inch sizes, plus sets of 2 and 3. See colours and buy on Amazon, Myntra and Ajio.',
+  },
+  'school-backpacks': {
+    title: 'Priority School Bags for Boys & Girls | Priority Bags',
+    description: 'Priority school bags for boys and girls, from nursery to senior classes. Compare sizes, colours and characters, and buy on Amazon, Myntra and Ajio.',
+  },
+  'college-backpacks': {
+    title: 'Priority College Bags & Backpacks for Men and Women',
+    description: 'Priority college bags and backpacks for men and women, with laptop compartments and roomy storage. See colours and buy on Amazon, Myntra and Ajio.',
+  },
+  'laptop-backpacks': {
+    title: 'Priority Laptop Backpacks & Laptop Bags | Priority Bags',
+    description: 'Priority laptop backpacks with padded laptop compartments for office, college and travel. See colours and buy on Amazon, Myntra and Ajio.',
+  },
+  'trekking-backpacks': {
+    title: 'Priority Trekking Bags & Rucksacks | Priority Bags',
+    description: 'Priority trekking bags and rucksacks for hikes and travel, with multiple compartments. See colours and buy on Amazon, Myntra and Ajio.',
+  },
+  duffle: {
+    title: 'Priority Duffle Bags for Travel | Priority Bags (HSCVPL)',
+    description: 'Priority duffle bags by High Spirit Commercial Ventures (HSCVPL) for travel, gym and weekend trips. See sizes and colours and buy on Amazon, Myntra and Ajio.',
+  },
+  backpacks: {
+    title: 'Priority Backpacks – School, College, Laptop & Travel',
+    description: 'All Priority backpacks: school bags, college backpacks, laptop backpacks and trekking bags for men, women and kids. Buy on Amazon, Myntra and Ajio.',
+  },
+  accessories: {
+    title: 'Priority Bag Accessories – Pouches, Lunch Bags & Tote Bags',
+    description: 'Priority pouches, lunch bags, tote bags and daypacks. See colours and buy on Amazon, Myntra and Ajio with delivery across India.',
+  },
+};
+
+/** Full <title> for a category page (already includes the brand). */
+export const categoryTitle = (name: string, slug?: string) =>
+  (slug && CATEGORY_SEO[slug]?.title) || `${name} — Shop Online | Priority Bags`;
+export const categoryDescription = (name: string, slug?: string) =>
+  (slug && CATEGORY_SEO[slug]?.description) ||
+  `Shop ${name.toLowerCase()} from Priority Bags. See colours and details, and buy on Amazon, Myntra and more with delivery across India.`;
 export const withBrand = (title: string) => (title.includes('Priority Bags') ? title : `${title} | Priority Bags`);
 
 export const absoluteUrl = (src: string) => {

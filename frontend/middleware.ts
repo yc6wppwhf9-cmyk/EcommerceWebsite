@@ -135,12 +135,12 @@ ${nav}`,
     // Unknown slugs and empty categories stay out of search results.
     const empty = data !== null && products.length === 0;
     return {
-      title: categoryTitle(name),
-      description: categoryDescription(name),
+      title: categoryTitle(name, slug),
+      description: categoryDescription(name, slug),
       canonical,
       noindex: empty || (!CATEGORY_NAMES[slug] && data === null),
       body: `<h1>${esc(name)}</h1>
-<p>${esc(categoryDescription(name))}</p>
+<p>${esc(categoryDescription(name, slug))}</p>
 ${products.length ? `<h2>${esc(name)} (${products.length})</h2>${productLinks(products)}` : ''}
 ${nav}`,
     };
