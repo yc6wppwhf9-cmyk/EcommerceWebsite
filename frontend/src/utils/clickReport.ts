@@ -3,6 +3,8 @@
 // Orders come from marketplace order exports the admin attaches (Myntra,
 // Amazon, Ajio); matching a click to an order is indicative, not exact.
 
+import { UNKNOWN, place } from './indiaRegions';
+
 export type Marketplace = 'amazon' | 'flipkart' | 'myntra' | 'ajio';
 
 export interface ClickRow {
@@ -15,6 +17,9 @@ export interface ClickRow {
   campaign: string | null;
   device_type: string | null;
   session_id: string | null;
+  city?: string | null;
+  region_code?: string | null;
+  country?: string | null;
 }
 
 export interface ProductRow {
@@ -322,11 +327,13 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
     [c.source === 'chatbot' ? 'Chatbot' : c.page_path || 'Website', c.campaign && c.campaign !== 'direct' ? c.campaign : c.campaign === 'direct' ? 'Direct visit' : '']
       .filter(Boolean).join(' · ');
 
+  const where = (c: ClickRow) => place(c.city, c.region_code, c.country);
+
   // Per-product aggregates
-  type Agg = { id: string; clicks: number; byMarket: Record<Marketplace, number>; last7: number; prev7: number; last30: number; prev30: number; matched: number; orders: number; units: number; statuses: Map<string, number> };
+  type Agg = { id: string; states: Map<string, number>; clicks: number; byMarket: Record<Marketplace, number>; last7: number; prev7: number; last30: number; prev30: number; matched: number; orders: number; units: number; statuses: Map<string, number> };
   const agg = new Map<string, Agg>();
   const get = (id: string) => {
-    if (!agg.has(id)) agg.set(id, { id, clicks: 0, byMarket: { amazon: 0, flipkart: 0, myntra: 0, ajio: 0 }, last7: 0, prev7: 0, last30: 0, prev30: 0, matched: 0, orders: 0, units: 0, statuses: new Map() });
+    if (!agg.has(id)) agg.set(id, { id, states: new Map(), clicks: 0, byMarket: { amazon: 0, flipkart: 0, myntra: 0, ajio: 0 }, last7: 0, prev7: 0, last30: 0, prev30: 0, matched: 0, orders: 0, units: 0, statuses: new Map() });
     return agg.get(id)!;
   };
   for (const c of clicks) {
@@ -334,6 +341,8 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
     const a = get(c.product_id);
     const age = now - Date.parse(c.created_at);
     a.clicks++; a.byMarket[c.marketplace]++;
+    const st = where(c).state;
+    if (st) a.states.set(st, (a.states.get(st) || 0) + 1);
     if (age <= 7 * DAY) a.last7++; else if (age <= 14 * DAY) a.prev7++;
     if (age <= 30 * DAY) a.last30++; else if (age <= 60 * DAY) a.prev30++;
     if (clickOrder.has(c.id)) a.matched++;
@@ -385,6 +394,9 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
   block('Clicks by product category', 'Category', tally((c) => titleCase(byId.get(c.product_id || '')?.sub_category || 'Unknown')));
   block('Clicks by marketplace', 'Marketplace', tally((c) => MARKETPLACE_LABEL[c.marketplace] || c.marketplace));
   block('Clicks by device (where recorded)', 'Device', tally((c) => (c.device_type ? titleCase(c.device_type) : 'Not recorded')));
+  block('Clicks by zone (where recorded)', 'Zone', tally((c) => where(c).zone));
+  block('Clicks by state (top 25, where recorded)', 'State', tally((c) => where(c).state || UNKNOWN).slice(0, 25));
+  block('Clicks by city (top 25, where recorded)', 'City', tally((c) => (where(c).city ? `${where(c).city}${where(c).state ? `, ${where(c).state}` : ''}` : UNKNOWN)).slice(0, 25));
   block('Clicks by source / campaign', 'Source', tally((c) => (c.source === 'chatbot' ? 'Chatbot' : c.campaign ? (c.campaign === 'direct' ? 'Direct visit' : c.campaign) : 'Website (campaign not recorded)')));
 
   const months = new Map<string, number>();
@@ -416,7 +428,7 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
   const logHeader = [
     'Click Event ID', 'Click Date (IST)', 'Click Time (IST)', 'Full Click Timestamp (IST)', 'Product Name', 'Product Image URL',
     'Product SKU', 'Marketplace Product ID (Myntra Style ID / ASIN / Ajio code)', 'Product Category', 'Marketplace',
-    'Product Page URL', 'Marketplace Listing URL', 'Source Page / Campaign', 'Device Type', 'Session ID', 'Click Count',
+    'Product Page URL', 'Marketplace Listing URL', 'Source Page / Campaign', 'City', 'State', 'Zone', 'Country', 'Device Type', 'Session ID', 'Click Count',
     'Matched Sales Order ID (indicative)', 'Order Date (IST)', 'Order Status',
   ];
   const s2: Cell[][] = [logHeader.map(H)];
@@ -430,7 +442,8 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
       S(productName(c.product_id)), S(p?.image ? new URL(p.image, SITE).href : ''),
       S(p?.sku), S(marketplaceId(p, c.marketplace)), S(titleCase(p?.sub_category || '')),
       S(MARKETPLACE_LABEL[c.marketplace] || c.marketplace), S(productUrl(c.product_id)), S(p?.[`${c.marketplace}_url` as const] || ''),
-      S(sourceLabel(c)), S(c.device_type ? titleCase(c.device_type) : ''), S(c.session_id), N(1),
+      S(sourceLabel(c)), S(where(c).city), S(where(c).state), S(where(c).zone === UNKNOWN ? '' : where(c).zone), S(where(c).country),
+      S(c.device_type ? titleCase(c.device_type) : ''), S(c.session_id), N(1),
       S(o?.orderId), S(o?.date ? istDate(o.date) : ''), S(o?.status),
     ]);
   }
@@ -443,7 +456,7 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
     : 'No marketplace order file was attached, so order columns are empty. Attach the Myntra / Amazon / Ajio orders export when downloading to fill them.')]);
   s3.push(BLANK);
   const s3Header = ['', 'Product', 'SKU', 'Category', 'Clicks', ...MARKETS.map((m) => `${MARKETPLACE_LABEL[m]} clicks`),
-    'Orders credited to clicks', 'All orders for product (file)', 'Units ordered', 'Order status breakdown', 'Click-to-order rate (indicative)'];
+    'Orders credited to clicks', 'All orders for product (file)', 'Units ordered', 'Order status breakdown', 'Click-to-order rate (indicative)', 'Top states (where recorded)'];
   s3.push(s3Header.map(H));
   const s3Rows = [...aggs].sort((a, b) => b.clicks - a.clicks || b.orders - a.orders);
   const s3Start = s3.length;
@@ -455,6 +468,7 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
       N(a.matched), N(a.orders), N(a.units),
       S([...a.statuses.entries()].sort((x, y) => y[1] - x[1]).map(([s, n]) => `${s}: ${n}`).join(', ')),
       P(haveOrders && a.clicks ? a.matched / a.clicks : null),
+      S([...a.states.entries()].sort((x, y) => y[1] - x[1]).slice(0, 5).map(([k, n]) => `${k} ${n}`).join(', ')),
     ]);
   }
 
@@ -515,11 +529,11 @@ export async function downloadClickReport({ clicks, products, orderFiles, rangeL
     { data: s1, sheet: 'Click Summary', columns: [{ width: 60 }, { width: 24 }, { width: 24 }] },
     {
       data: s2, sheet: 'Detailed Click Log', stickyRowsCount: 1,
-      columns: [14, 14, 12, 26, 46, 40, 14, 22, 20, 12, 50, 40, 36, 10, 16, 8, 22, 14, 14].map((width) => ({ width })),
+      columns: [14, 14, 12, 26, 46, 40, 14, 22, 20, 12, 50, 40, 36, 18, 22, 12, 8, 10, 16, 8, 22, 14, 14].map((width) => ({ width })),
     },
     {
       data: s3, sheet: 'Clicks vs Sales Orders', images: s3Images,
-      columns: [10, 46, 14, 20, 8, 10, 10, 10, 10, 12, 14, 10, 40, 14].map((width) => ({ width })),
+      columns: [10, 46, 14, 20, 8, 10, 10, 10, 10, 12, 14, 10, 40, 14, 40].map((width) => ({ width })),
     },
     { data: s4, sheet: 'Product Performance', images: s4Imgs, columns: [10, 46, 20, 14, 14, 14, 14].map((width) => ({ width })) },
   ]).toFile(`product-click-report-${date}.xlsx`);

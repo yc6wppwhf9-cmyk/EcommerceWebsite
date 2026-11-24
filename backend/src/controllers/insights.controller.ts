@@ -280,6 +280,9 @@ export const getClickLog = async (req: AuthRequest, res: Response) => {
         campaign: c.campaign ?? null,
         device_type: c.device_type ?? null,
         session_id: c.session_id ?? null,
+        city: c.city ?? null,
+        region_code: c.region_code ?? null,
+        country: c.country ?? null,
       })),
       products: products || [],
     });

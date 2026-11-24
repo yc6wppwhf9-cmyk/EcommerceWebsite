@@ -1,4 +1,4 @@
-import { next } from '@vercel/functions';
+import { geolocation, next } from '@vercel/functions';
 import {
   CATEGORY_NAMES, HOME, NAV_LINKS, PAGES, SITE, categoryDescription, categoryTitle, isPrivate, productMeta, withBrand,
 } from './src/seo/routes';
@@ -10,8 +10,8 @@ import {
 // loads and replaces it. Everyone else gets the normal page untouched.
 
 export const config = {
-  // Page URLs only: skip the API and any path with a file extension.
-  matcher: ['/((?!api/|assets/)[^.]*)'],
+  // Page URLs (no API, no file extensions), plus the marketplace click beacon.
+  matcher: ['/((?!api/|assets/)[^.]*)', '/api/analytics/click/:path*'],
 };
 
 const API = 'https://ecommercewebsite-5z8k.onrender.com';
@@ -154,7 +154,20 @@ function setMeta(html: string, attr: 'name' | 'property', key: string, value: st
   return html.replace(re, `$1${esc(value)}$2`);
 }
 
+/** Pass the visitor's approximate city / state / country (from Vercel's IP lookup) to the click logger. */
+function withClickLocation(request: Request) {
+  const geo = geolocation(request);
+  const headers = new Headers(request.headers);
+  const decode = (v?: string) => { try { return v ? decodeURIComponent(v) : ''; } catch { return v || ''; } };
+  // Encoded so names outside Latin-1 stay valid header values; the API decodes it.
+  if (geo.city) headers.set('x-pb-city', encodeURIComponent(decode(geo.city).slice(0, 80)));
+  if (geo.countryRegion) headers.set('x-pb-region', geo.countryRegion.slice(0, 3));
+  if (geo.country) headers.set('x-pb-country', geo.country.slice(0, 2));
+  return next({ request: { headers } });
+}
+
 export default async function middleware(request: Request) {
+  if (new URL(request.url).pathname.startsWith('/api/analytics/click/')) return withClickLocation(request);
   if (request.method !== 'GET' || !CRAWLERS.test(request.headers.get('user-agent') || '')) return next();
 
   const url = new URL(request.url);

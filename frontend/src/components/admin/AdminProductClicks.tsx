@@ -2,9 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Download, Search, X } from 'lucide-react';
 import { api } from '../../lib/api';
 import { ClickReportDialog } from './ClickReportDialog';
+import { OUTSIDE_INDIA, UNKNOWN, ZONES, place } from '../../utils/indiaRegions';
 
 // Full list behind "Most-clicked products → View all": every product with its
-// marketplace clicks, filterable by period, marketplace, category and status.
+// marketplace clicks, filterable by period, marketplace, category, status and
+// visitor location (zone / state / city, from the dated click log).
 
 type Marketplace = 'amazon' | 'myntra' | 'ajio' | 'flipkart';
 type Period = 'allTime' | 'last30' | 'last7';
@@ -26,6 +28,11 @@ const PERIODS: { id: Period; label: string }[] = [
   { id: 'last7', label: 'Last 7 days' },
 ];
 const PAGE = 50;
+const DAY = 86_400_000;
+type LogClick = {
+  product_id: string | null; marketplace: Marketplace; created_at: string;
+  zone: string; state: string; city: string;
+};
 
 const fmt = (n: number) => (n || 0).toLocaleString('en-IN');
 const titleCase = (slug: string) => slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -45,6 +52,10 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
   const [sort, setSort] = useState<'most' | 'least' | 'name'>('most');
   const [shown, setShown] = useState(PAGE);
   const [showReport, setShowReport] = useState(false);
+  const [log, setLog] = useState<LogClick[] | null>(null);
+  const [zone, setZone] = useState('all');
+  const [state, setState] = useState('all');
+  const [city, setCity] = useState('all');
 
   useEffect(() => {
     api.getAdminProductClicks()
@@ -54,6 +65,13 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
           ? 'This list needs the latest server update. It will work once Render has redeployed the API.'
           : e?.message || 'Could not load products',
       ));
+    // The dated click log carries each click's location; load it alongside.
+    api.getAdminClickLog()
+      .then((d) => setLog((d.clicks || []).map((c: any) => {
+        const pl = place(c.city, c.region_code, c.country);
+        return { product_id: c.product_id, marketplace: c.marketplace, created_at: c.created_at, zone: pl.zone, state: pl.state || UNKNOWN, city: pl.city || UNKNOWN };
+      })))
+      .catch(() => setLog([]));
   }, []);
 
   useEffect(() => {
@@ -63,17 +81,60 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, [onClose]);
 
-  useEffect(() => { setShown(PAGE); }, [query, period, market, category, status, clicked, sort]);
+  useEffect(() => { setShown(PAGE); }, [query, period, market, category, status, clicked, sort, zone, state, city]);
+
+  const locationOn = zone !== 'all' || state !== 'all' || city !== 'all';
+  const located = useMemo(() => (log || []).filter((c) => c.zone !== UNKNOWN), [log]);
+  const states = useMemo(
+    () => [...new Set(located.filter((c) => zone === 'all' || c.zone === zone).map((c) => c.state))].filter((x) => x !== UNKNOWN).sort(),
+    [located, zone],
+  );
+  const cities = useMemo(
+    () => [...new Set(located.filter((c) => (zone === 'all' || c.zone === zone) && (state === 'all' || c.state === state)).map((c) => c.city))]
+      .filter((x) => x !== UNKNOWN).sort(),
+    [located, zone, state],
+  );
+  const locatedSince = useMemo(
+    () => (located.length ? new Date(Math.min(...located.map((c) => Date.parse(c.created_at)))) : null),
+    [located],
+  );
+
+  // Log clicks in the chosen period, marketplace and location, grouped by product.
+  const byProduct = useMemo(() => {
+    const cutoff = period === 'last7' ? Date.now() - 7 * DAY : period === 'last30' ? Date.now() - 30 * DAY : 0;
+    const map = new Map<string, LogClick[]>();
+    for (const c of log || []) {
+      if (!c.product_id || Date.parse(c.created_at) < cutoff) continue;
+      if (zone !== 'all' && c.zone !== zone) continue;
+      if (state !== 'all' && c.state !== state) continue;
+      if (city !== 'all' && c.city !== city) continue;
+      if (!map.has(c.product_id)) map.set(c.product_id, []);
+      map.get(c.product_id)!.push(c);
+    }
+    return map;
+  }, [log, period, zone, state, city]);
+
+  const top = (list: LogClick[], key: 'state' | 'city' | 'zone', n = 3) => {
+    const m = new Map<string, number>();
+    for (const c of list) if (c[key] && c[key] !== UNKNOWN && (market === 'all' || c.marketplace === market)) m.set(c[key], (m.get(c[key]) || 0) + 1);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `${k} ${v}`).join(', ');
+  };
+  const counts = (r: Row): Record<Marketplace, number> => {
+    if (!locationOn) return r[period];
+    const out: Record<Marketplace, number> = { amazon: 0, myntra: 0, ajio: 0, flipkart: 0 };
+    for (const c of byProduct.get(r.id) || []) out[c.marketplace]++;
+    return out;
+  };
 
   const categories = useMemo(
     () => [...new Set((rows || []).map((r) => r.category).filter(Boolean))].sort(),
     [rows],
   );
 
-  const clicksOf = (r: Row) =>
-    market === 'all'
-      ? MARKETPLACES.reduce((a, m) => a + (r[period][m.id] || 0), 0)
-      : r[period][market] || 0;
+  const clicksOf = (r: Row) => {
+    const c = counts(r);
+    return market === 'all' ? MARKETPLACES.reduce((a, m) => a + (c[m.id] || 0), 0) : c[market] || 0;
+  };
 
   const filtered = useMemo(() => {
     if (!rows) return [];
@@ -90,11 +151,12 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
     );
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, query, period, market, category, status, clicked, sort]);
+  }, [rows, query, period, market, category, status, clicked, sort, byProduct, locationOn]);
 
   const total = filtered.reduce((a, x) => a + x.n, 0);
   const periodLabel = PERIODS.find((p) => p.id === period)!.label;
   const marketLabel = market === 'all' ? 'All marketplaces' : MARKETPLACES.find((m) => m.id === market)!.label;
+  const locationLabel = [city !== 'all' && city, state !== 'all' && state, zone !== 'all' && `${zone} zone`].filter(Boolean).join(', ');
 
   const download = async () => {
     const { default: writeXlsxFile } = await import('write-excel-file/browser');
@@ -104,8 +166,11 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
       { header: 'SKU', width: 16, value: (r) => r.sku || '' },
       { header: 'Category', width: 20, value: (r) => titleCase(r.category) },
       { header: 'Status', width: 8, value: (r) => (r.active ? 'Live' : 'Hidden') },
-      { header: `Clicks (${periodLabel}, ${marketLabel})`, width: 18, value: (_r, n) => n },
-      ...MARKETPLACES.map((m) => ({ header: m.label, width: 10, value: (r: Row) => r[period][m.id] || 0 })),
+      { header: `Clicks (${[periodLabel, marketLabel, locationLabel].filter(Boolean).join(', ')})`, width: 22, value: (_r, n) => n },
+      ...MARKETPLACES.map((m) => ({ header: m.label, width: 10, value: (r: Row) => counts(r)[m.id] || 0 })),
+      { header: 'Top zones (recorded clicks)', width: 30, value: (r) => top(byProduct.get(r.id) || [], 'zone') },
+      { header: 'Top states (recorded clicks)', width: 40, value: (r) => top(byProduct.get(r.id) || [], 'state', 5) },
+      { header: 'Top cities (recorded clicks)', width: 40, value: (r) => top(byProduct.get(r.id) || [], 'city', 5) },
       { header: 'Website link', width: 60, value: (r) => `https://www.prioritybags.in/product/${r.slug}` },
     ];
     await writeXlsxFile(filtered.map((x, i) => ({ ...x, i })), {
@@ -132,7 +197,7 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
             <h2 className="text-[13px] font-black uppercase tracking-widest text-gray-900">All products by clicks</h2>
             {rows && (
               <p className="text-[11px] text-gray-400 mt-0.5">
-                {fmt(filtered.length)} products · {fmt(total)} clicks · {periodLabel} · {marketLabel}
+                {fmt(filtered.length)} products · {fmt(total)} clicks · {periodLabel} · {marketLabel}{locationLabel && ` · ${locationLabel}`}
               </p>
             )}
           </div>
@@ -193,6 +258,26 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
             <option value="least">Fewest clicks first</option>
             <option value="name">Name A–Z</option>
           </select>
+          <select aria-label="Zone" className={selectCls} value={zone} onChange={(e) => { setZone(e.target.value); setState('all'); setCity('all'); }}>
+            <option value="all">All zones</option>
+            {ZONES.map((z) => <option key={z} value={z}>{z} zone</option>)}
+            <option value={OUTSIDE_INDIA}>{OUTSIDE_INDIA}</option>
+          </select>
+          <select aria-label="State" className={selectCls} value={state} onChange={(e) => { setState(e.target.value); setCity('all'); }}>
+            <option value="all">All states</option>
+            {states.map((x) => <option key={x} value={x}>{x}</option>)}
+          </select>
+          <select aria-label="City" className={`${selectCls} col-span-2 md:col-span-1`} value={city} onChange={(e) => setCity(e.target.value)}>
+            <option value="all">All cities</option>
+            {cities.map((x) => <option key={x} value={x}>{x}</option>)}
+          </select>
+          {locationOn && (
+            <p className="col-span-2 md:col-span-4 text-[11px] text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
+              {locatedSince
+                ? `Location filters count only clicks with a recorded location (since ${locatedSince.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}). Older clicks have no location.`
+                : 'No clicks with a location have been recorded yet. Location is recorded for new clicks once the database update has been run.'}
+            </p>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 md:px-6 py-2">
@@ -222,9 +307,12 @@ export const AdminProductClicks: React.FC<{ onClose: () => void }> = ({ onClose 
                         {[
                           titleCase(r.category),
                           !r.active && 'Hidden',
-                          MARKETPLACES.filter((m) => r[period][m.id]).map((m) => `${m.label} ${fmt(r[period][m.id])}`).join(' · '),
+                          MARKETPLACES.filter((m) => counts(r)[m.id]).map((m) => `${m.label} ${fmt(counts(r)[m.id])}`).join(' · '),
                         ].filter(Boolean).join(' · ')}
                       </p>
+                      {top(byProduct.get(r.id) || [], 'state') && (
+                        <p className="text-[10px] text-gray-500 truncate">Top states: {top(byProduct.get(r.id) || [], 'state')}</p>
+                      )}
                     </div>
                     <span className="text-[14px] font-black text-gray-900 tabular-nums">{fmt(n)}</span>
                   </li>

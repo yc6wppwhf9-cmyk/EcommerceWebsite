@@ -70,12 +70,33 @@ export const trackMarketplaceClick = async (req: Request, res: Response) => {
       device_type: q('device', 10, /^(mobile|tablet|desktop)$/),
       session_id: q('sid', 40, /^[a-z0-9]+$/i),
     };
-    let { error: logError } = await supabase
-      .from('marketplace_clicks')
-      .insert({ product_id, marketplace, source, ...context });
-    if (logError && /column|schema cache/i.test(logError.message)) {
-      // The context columns arrive with migrations/add_click_context.sql; log without them until then.
-      ({ error: logError } = await supabase.from('marketplace_clicks').insert({ product_id, marketplace, source }));
+    // Approximate location: added by the Vercel middleware, or Vercel's own headers if present.
+    const header = (names: string[], max: number, pattern: RegExp) => {
+      for (const n of names) {
+        const raw = req.headers[n];
+        let v = (Array.isArray(raw) ? raw[0] : raw || '').trim();
+        try { v = decodeURIComponent(v); } catch { /* keep as is */ }
+        v = v.slice(0, max);
+        if (v && pattern.test(v)) return v;
+      }
+      return null;
+    };
+    const location = {
+      city: header(['x-pb-city', 'x-vercel-ip-city'], 80, /^[\p{L}\p{M} .'()-]+$/u),
+      region_code: header(['x-pb-region', 'x-vercel-ip-country-region'], 3, /^[A-Z0-9]{1,3}$/i),
+      country: header(['x-pb-country', 'x-vercel-ip-country'], 2, /^[A-Z]{2}$/i),
+    };
+    // Newer columns arrive with migrations (add_click_context.sql, add_click_location.sql);
+    // until they are run, log with whatever columns exist.
+    const attempts = [
+      { product_id, marketplace, source, ...context, ...location },
+      { product_id, marketplace, source, ...context },
+      { product_id, marketplace, source },
+    ];
+    let logError: { message: string } | null = null;
+    for (const row of attempts) {
+      ({ error: logError } = await supabase.from('marketplace_clicks').insert(row));
+      if (!logError || !/column|schema cache/i.test(logError.message)) break;
     }
     if (logError) console.warn('marketplace_clicks insert failed:', logError.message);
     res.json({ ok: true });
