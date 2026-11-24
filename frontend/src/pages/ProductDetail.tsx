@@ -1,3 +1,4 @@
+import { productMeta } from '../seo/routes';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -330,9 +331,7 @@ export const ProductDetail = () => {
     }
   };
 
-  const productImage = product.images?.[0] || product.image;
-  const rawDesc = product.description ?? `Buy ${product.name} at Priority Bags. Premium quality, fast shipping across India.`;
-  const productDesc = rawDesc.length > 155 ? rawDesc.slice(0, 152) + '…' : rawDesc;
+  const { description: productDesc, image: productImage } = productMeta(product);
 
   const accordionProps = { openAccordion, setOpenAccordion, accordionActiveClass: theme.accordionActive };
 

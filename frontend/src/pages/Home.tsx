@@ -1,3 +1,4 @@
+import { HOME, SITE } from '../seo/routes';
 import { useState, useEffect } from 'react';
 import { COLUMN_TIERS } from '../constants/home';
 import { useHomeData } from './useHomeData';
@@ -48,11 +49,11 @@ export const Home = () => {
 
   return (
     <main className="font-outfit">
-      <h1 className="sr-only">Priority Bags — Official Online Store | Backpacks, Luggage &amp; Travel Gear by High Spirit Commercial Ventures</h1>
+      <h1 className="sr-only">{HOME.h1}</h1>
       <SEO
-        title="Priority Bags — Premium Backpacks, Luggage & Travel Accessories"
-        description="Official Priority Bags store: school bags, college and laptop backpacks, trolley luggage and TRAWORLD travel gear. Buy on Amazon, Myntra and Ajio."
-        url="https://www.prioritybags.in"
+        title={HOME.title}
+        description={HOME.description}
+        url={`${SITE}/`}
       />
 
       <HeroSlider />
