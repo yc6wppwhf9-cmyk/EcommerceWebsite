@@ -600,7 +600,8 @@ export const CategoryPage = () => {
         <SEO
           title={`${seoName} — Shop Online`}
           description={`Shop ${seoName.toLowerCase()} from Priority Bags. See prices and colours, and buy on Amazon, Myntra and more with delivery across India.`}
-          url={`https://prioritybags.in/${slug}`}
+          url={`https://www.prioritybags.in/${slug}`}
+          noindex={!isLoading && allProducts.length === 0}
         />
 
         {/* Title or Category Banner */}

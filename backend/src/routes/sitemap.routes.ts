@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase';
 
 const router = Router();
 
-const BASE = 'https://prioritybags.in';
+const BASE = 'https://www.prioritybags.in';
 
 const STATIC_PAGES = [
   { url: '/', priority: '1.0', freq: 'daily' },

@@ -346,7 +346,7 @@ export const ProductDetail = () => {
         title={product.name}
         description={productDesc}
         image={productImage}
-        url={`https://prioritybags.in/product/${product.slug || product.id}`}
+        url={`https://www.prioritybags.in/product/${product.slug || product.id}`}
         type="product"
         product={{
           price: product.price,

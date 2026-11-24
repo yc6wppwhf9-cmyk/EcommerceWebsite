@@ -385,6 +385,7 @@ export const JuniorPage = () => {
 
   return (
     <main className="bg-white min-h-screen overflow-x-hidden junior-theme">
+      <h1 className="sr-only">Priority Junior — School Bags, Trolley Backpacks &amp; Combo Sets for Kids</h1>
 
       {/* ═══════════════════════════════════════════════
           RESPONSIVE HERO — scales with image's natural aspect ratio

@@ -17,12 +17,14 @@ interface SEOProps {
   url?: string;
   type?: 'website' | 'product';
   product?: ProductSEOData;
+  /** Keep the page out of search results (e.g. an empty or unknown category URL). */
+  noindex?: boolean;
 }
 
-const BASE_URL = 'https://prioritybags.in';
+const BASE_URL = 'https://www.prioritybags.in';
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.jpg`;
 
-export const SEO = ({ title, description, image = DEFAULT_IMAGE, url = BASE_URL, type = 'website', product }: SEOProps) => {
+export const SEO = ({ title, description, image = DEFAULT_IMAGE, url = BASE_URL, type = 'website', product, noindex = false }: SEOProps) => {
   const fullTitle = title.includes('Priority Bags') ? title : `${title} | Priority Bags`;
 
   const productJsonLd = type === 'product' && product ? {
@@ -56,7 +58,8 @@ export const SEO = ({ title, description, image = DEFAULT_IMAGE, url = BASE_URL,
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={url} />
+      <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+      {!noindex && <link rel="canonical" href={url} />}
 
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />

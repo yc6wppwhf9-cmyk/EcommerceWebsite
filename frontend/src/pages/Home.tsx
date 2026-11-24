@@ -51,8 +51,8 @@ export const Home = () => {
       <h1 className="sr-only">Priority Bags — Official Online Store | Backpacks, Luggage &amp; Travel Gear by High Spirit Commercial Ventures</h1>
       <SEO
         title="Priority Bags — Premium Backpacks, Luggage & Travel Accessories"
-        description="Shop Priority Bags for premium backpacks, travel luggage, and accessories. Free shipping across India. Trusted by thousands of travellers."
-        url="https://prioritybags.in"
+        description="Official Priority Bags store: school bags, college and laptop backpacks, trolley luggage and TRAWORLD travel gear. Buy on Amazon, Myntra and Ajio."
+        url="https://www.prioritybags.in"
       />
 
       <HeroSlider />

@@ -91,7 +91,7 @@ export const ContactUs = () => {
       <SEO
         title="Contact Priority Bags"
         description="Talk to the Priority Bags concierge team. Send us a message about orders, products, warranty, and bulk enquiries."
-        url="https://prioritybags.in/contact"
+        url="https://www.prioritybags.in/contact"
       />
 
       {/* ── Hero ───────────────────────────────────────────────── */}

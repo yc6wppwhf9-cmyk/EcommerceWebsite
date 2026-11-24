@@ -190,6 +190,7 @@ export const PremiumCollection = () => {
   return (
     <main className="bg-white text-black min-h-screen font-outfit selection:bg-black selection:text-white pt-16">
       <PremiumNav onSearchOpen={() => setIsSearchOpen(true)} />
+      <h1 className="sr-only">TRAWORLD Premium Collection — Luggage, Travel Backpacks &amp; Duffles</h1>
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} theme="premium" />
 
       {/* 1. CINEMATIC HERO */}

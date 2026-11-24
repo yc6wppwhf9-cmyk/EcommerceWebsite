@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { RouteSEO } from './components/RouteSEO';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -117,6 +118,7 @@ function AppContent() {
         {!isAdmin && !isPremium && <Header onSearchOpen={() => setSearchOpen(true)} />}
         <div className={`flex-grow ${!isAdmin && !isPremium ? 'pt-16' : ''} ${!isAdmin && isPremiumTheme ? 'pb-20 lg:pb-0' : ''}`}>
           <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-sm font-semibold text-gray-500">Loading…</div>}>
+          <RouteSEO />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/wishlist" element={<Wishlist />} />

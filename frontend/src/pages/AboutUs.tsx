@@ -102,7 +102,7 @@ export const AboutUs: React.FC = () => {
       <SEO
         title="About Us — High Spirit Commercial Ventures (HSCVPL) & Priority Bags"
         description="Learn about HSCVPL, one of India's largest backpack manufacturers with 25+ years of excellence, powering Priority and Traworld brands."
-        url="https://prioritybags.in/about"
+        url="https://www.prioritybags.in/about"
       />
 
       {/* ─── In-Page Secondary Sticky Navigation ─────────────────────────── */}

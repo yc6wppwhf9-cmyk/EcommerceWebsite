@@ -292,7 +292,7 @@ export const devVerify = async (req: Request, res: Response) => {
     <div style="font-family: sans-serif; text-align: center; padding: 50px;">
       <h1 style="color: #10b981;">Success!</h1>
       <p>User <strong>${email}</strong> has been verified.</p>
-      <p>You can now close this tab and log in at <a href="https://prioritybags.in/login">prioritybags.in</a></p>
+      <p>You can now close this tab and log in at <a href="https://www.prioritybags.in/login">prioritybags.in</a></p>
     </div>
   `);
 };

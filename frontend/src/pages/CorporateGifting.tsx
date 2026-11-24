@@ -112,11 +112,13 @@ export const CorporateGifting: React.FC = () => {
       <SEO
         title="Corporate Gifting & Bulk Orders — Priority Bags"
         description="Premium corporate gifting, custom branded backpacks, luggage, and executive duffles for organizations. Direct factory pricing, custom logo branding & pan-India delivery."
-        url="https://prioritybags.in/corporate-gifting"
+        url="https://www.prioritybags.in/corporate-gifting"
       />
 
       {/* ─── Hero Banner ──────────────────────────────────────────────────────── */}
       <section className="relative w-full bg-[#18120c] overflow-hidden">
+        {/* The banner image carries the visible headline; this gives the page its h1 for search and screen readers. */}
+        <h1 className="sr-only">Corporate Gifting &amp; Bulk Orders – Priority Bags and Traworld</h1>
         <div className="w-full">
           <img
             src="/Creatives/corporate-hero-banner.png"

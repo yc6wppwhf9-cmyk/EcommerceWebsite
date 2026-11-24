@@ -127,7 +127,7 @@ export const Careers = () => {
       <SEO
         title="Careers & Opportunities"
         description="Join the Priority Bags and TRAWORLD team. Explore open roles and build the future of travel and everyday gear."
-        url="https://prioritybags.in/careers"
+        url="https://www.prioritybags.in/careers"
       />
 
       {/* ── 1. Hero Header ── */}
