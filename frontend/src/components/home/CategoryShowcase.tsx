@@ -101,6 +101,7 @@ export const CategoryShowcase = () => {
                     draggable={false}
                     className="w-full h-full object-cover pointer-events-none"
                     loading={i === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={i === 0 ? 'high' : undefined}
                     decoding="async"
                   />
                   {/* Dim the side cards so the centre card reads as the focus */}

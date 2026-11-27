@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="google-site-verification" content="edb705363146bd8d" />
 
-    <!-- Google tag (gtag.js) - Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z0DMD4Z3P9"></script>
+    <!-- Google tag (gtag.js) - Google Analytics 4. Calls queue in dataLayer straight away; the
+         library itself loads after the page (or on the first tap/scroll) so it doesn't slow first paint. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -16,6 +16,22 @@
 
       // Page views are sent by the app on every route change (lib/gtag.ts), including the first.
       gtag('config', 'G-Z0DMD4Z3P9', { send_page_view: false });
+
+      (function () {
+        var started = false;
+        function loadGtag() {
+          if (started) return;
+          started = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-Z0DMD4Z3P9';
+          document.head.appendChild(s);
+        }
+        ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function (e) {
+          addEventListener(e, loadGtag, { once: true, passive: true });
+        });
+        addEventListener('load', function () { setTimeout(loadGtag, 2500); });
+      })();
     </script>
 
     <!-- Fonts: linked here (not @import in CSS) so they start downloading immediately -->
@@ -27,7 +43,9 @@
     <!-- Homepage only: start downloading the first hero slide (constants/home.ts HERO_SLIDES[0]) before the app runs -->
     <script>
       if (location.pathname === '/') {
-        [['/optimized/hero/campus-mobile.webp', '(max-width: 767px)'], ['/optimized/hero/campus-desktop.webp', '(min-width: 768px)']].forEach(function (h) {
+        // Plus the first category card, which is the largest thing on a phone screen.
+        [['/optimized/hero/campus-mobile.webp', '(max-width: 767px)'], ['/optimized/hero/campus-desktop.webp', '(min-width: 768px)'],
+         ['/optimized/category/backpack.webp', '(max-width: 767px)']].forEach(function (h) {
           var l = document.createElement('link');
           l.rel = 'preload'; l.as = 'image'; l.type = 'image/webp'; l.href = h[0]; l.media = h[1]; l.fetchPriority = 'high';
           document.head.appendChild(l);

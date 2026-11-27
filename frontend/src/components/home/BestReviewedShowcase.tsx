@@ -26,7 +26,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'GIRLS SCHOOL BACKPACK',
     productName: 'PRIORITY 16" PRINTED SCHOOL 24L',
     price: '',
-    image: '/reviews/rev_1.jpg',
+    image: '/reviews/rev_1.webp',
     rating: 5,
     reviewCount: 142,
     reviewTitle: 'VIBRANT PRINT & EXCEPTIONAL DURABILITY',
@@ -42,7 +42,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'COLLEGE BACKPACK WITH POUCH',
     productName: 'PRIORITY 18.5" COLORBLOCK BACKPACK 36L',
     price: '',
-    image: '/reviews/rev_2.jpg',
+    image: '/reviews/rev_2.webp',
     rating: 5,
     reviewCount: 236,
     reviewTitle: 'SPACIOUS, TRENDY & SOLID BUILD QUALITY',
@@ -58,7 +58,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'TRENDY CASUAL BACKPACK',
     productName: 'PRIORITY UNISEX COLOURBLOCKED BACKPACK',
     price: '',
-    image: '/reviews/rev_3.jpg',
+    image: '/reviews/rev_3.webp',
     rating: 5,
     reviewCount: 189,
     reviewTitle: 'TRENDY AESTHETIC & SOLID BUILD QUALITY',
@@ -74,7 +74,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'ERGONOMIC TECH BACKPACK',
     productName: 'PRIORITY UNISEX LAPTOP BACKPACK (16")',
     price: '',
-    image: '/reviews/rev_4.jpg',
+    image: '/reviews/rev_4.webp',
     rating: 5,
     reviewCount: 310,
     reviewTitle: 'EXCELLENT FOR WORK & DAILY COMMUTE',
@@ -90,7 +90,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: '360° ROTATION LUGGAGE SET',
     productName: 'PRIORITY HARD-SIDED TROLLEY SET OF 2',
     price: '',
-    image: '/reviews/rev_5.jpg',
+    image: '/reviews/rev_5.webp',
     rating: 5,
     reviewCount: 428,
     reviewTitle: 'SMOOTH SPINNER WHEELS & SOLID SHELL',
@@ -106,7 +106,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'HARD SHELL COMBO SET 29L',
     productName: 'PRIORITY SCHOOL COMBO + TIFFIN POUCH (PINK)',
     price: '',
-    image: '/reviews/rev_6.jpg',
+    image: '/reviews/rev_6.webp',
     rating: 5,
     reviewCount: 165,
     reviewTitle: 'COMPLETE ALL-IN-ONE SCHOOL SET',
@@ -122,7 +122,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'HARD SHELL COMBO SET 29L',
     productName: 'PRIORITY SCHOOL COMBO + TIFFIN POUCH (YELLOW)',
     price: '',
-    image: '/reviews/rev_7.jpg',
+    image: '/reviews/rev_7.webp',
     rating: 5,
     reviewCount: 198,
     reviewTitle: 'SUPER ATTRACTIVE & STURDY FOR KIDS',
@@ -138,7 +138,7 @@ const FEATURED_REVIEWS: MarketplaceReview[] = [
     subtitle: 'COMFORT TRAVEL DUFFLE',
     productName: 'PRIORITY CULT 001 TRAVELLING DUFFLE BAG',
     price: '',
-    image: '/reviews/rev_8.jpg',
+    image: '/reviews/rev_8.webp',
     rating: 5,
     reviewCount: 345,
     reviewTitle: 'LIGHTWEIGHT, DURABLE & TRAVEL-READY',
@@ -261,6 +261,8 @@ export const BestReviewedShowcase: React.FC = () => {
                       <img
                         src={current.image}
                         alt={current.productName}
+                        loading="lazy"
+                        decoding="async"
                         className="max-h-full max-w-full object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.12)] transition-transform duration-500 hover:scale-105 pointer-events-none"
                       />
                     </div>

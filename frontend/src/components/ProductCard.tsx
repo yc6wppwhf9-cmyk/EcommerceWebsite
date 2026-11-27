@@ -17,6 +17,8 @@ interface ProductCardProps {
    * false for them. Styling only — it never affects the product link.
    */
   variant?: 'quiet' | 'loud';
+  /** First cards on screen: load the photo immediately and at high priority. */
+  priority?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = (props) => {
@@ -79,7 +81,8 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
           className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] object-contain transition-opacity duration-300"
           src={displayImage}
           fallbackSrc={fallbackSrc}
-          width={400}
+          width={500}
+          priority={props.priority}
         />
 
         {/* Best Seller badge — top right (takes priority over NEW) */}

@@ -806,12 +806,13 @@ export const CategoryPage = () => {
                     {filteredProducts.map((product, idx) => (
                       <motion.div
                         key={product.id}
-                        initial={{ opacity: 0 }}
+                        // The first row is the page's main content: show it at once.
+                        initial={idx < 4 ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: Math.min(idx, 9) * 0.05 }}
                         className="text-center"
                       >
-                        <ProductCard product={product} theme={themeParam} />
+                        <ProductCard product={product} theme={themeParam} priority={idx < 4} />
                       </motion.div>
                     ))}
                   </motion.div>

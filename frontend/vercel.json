@@ -23,6 +23,12 @@
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" }
       ]
+    },
+    {
+      "source": "/thumbs/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" }
+      ]
     }
   ],
   "redirects": [
