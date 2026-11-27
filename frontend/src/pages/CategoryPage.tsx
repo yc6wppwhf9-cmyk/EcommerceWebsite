@@ -1,3 +1,4 @@
+import { CategoryGuide } from '../components/CategoryGuide';
 import { categoryDescription, categoryTitle } from '../seo/routes';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
@@ -848,6 +849,7 @@ export const CategoryPage = () => {
             </div>
           </div>
         </div>
+        {!themeParam && <CategoryGuide slug={slug} />}
       </main>
 
       {themeParam === 'premium' && (

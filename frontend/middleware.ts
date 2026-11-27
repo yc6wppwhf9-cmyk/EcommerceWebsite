@@ -2,6 +2,7 @@ import { geolocation, next } from '@vercel/functions';
 import {
   CATEGORY_NAMES, HOME, NAV_LINKS, PAGES, SITE, categoryDescription, categoryTitle, isPrivate, productMeta, withBrand,
 } from './src/seo/routes';
+import { CATEGORY_CONTENT } from './src/seo/categoryContent';
 
 // Crawlers and link-preview bots (Google, Bing, Seobility, WhatsApp, Facebook,
 // LinkedIn...) either don't run JavaScript or judge the raw HTML first. For them
@@ -142,11 +143,23 @@ ${nav}`,
       body: `<h1>${esc(name)}</h1>
 <p>${esc(categoryDescription(name, slug))}</p>
 ${products.length ? `<h2>${esc(name)} (${products.length})</h2>${productLinks(products)}` : ''}
+${guideHtml(slug)}
 ${nav}`,
     };
   }
 
   return { title: HOME.title, description: HOME.description, canonical, noindex: true, body: `<h1>Priority Bags</h1>${nav}` };
+}
+
+/** The category buying guide (same text as the page shows), as HTML. */
+function guideHtml(slug: string) {
+  const c = CATEGORY_CONTENT[slug];
+  if (!c) return '';
+  return `<section><h2>${esc(c.heading)}</h2><p>${esc(c.intro)}</p>
+${c.sections.map((s) => `<h3>${esc(s.heading)}</h3><p>${esc(s.body)}</p>`).join('\n')}
+<h3>Frequently asked questions</h3>
+${c.faqs.map((f) => `<h4>${esc(f.q)}</h4><p>${esc(f.a)}</p>`).join('\n')}
+${list(c.related)}</section>`;
 }
 
 function setMeta(html: string, attr: 'name' | 'property', key: string, value: string) {
